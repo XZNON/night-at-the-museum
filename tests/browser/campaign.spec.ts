@@ -1,4 +1,4 @@
-import { expandedRoute } from './expanded-route';
+import { expandedRoute, captureFrozenArt } from './expanded-route';
 import { test, expect, type Page } from '@playwright/test';
 
 const production = 'http://127.0.0.1:4173/';
@@ -32,10 +32,45 @@ async function inspectFromReturn(page: Page): Promise<void> {
 }
 async function supperRoute(page: Page): Promise<void> {
   await expandedRoute(page, async index => {
+    if (index === 4) {
+      await walk(page, 'KeyD', 800);
+      await expect(page.locator('#diner-state')).toContainText('HIDDEN');
+      await expect(page.locator('#diner-state')).toContainText('AWAY');
+      await page.keyboard.press('Escape'); await captureFrozenArt(page, 'hidden-away');
+      await page.getByRole('button', { name: 'Resume', exact: false }).click();
+      await expect(page.locator('#diner-state')).toContainText('LOOK');
+      await page.keyboard.press('Escape'); await captureFrozenArt(page, 'hidden-look');
+      await page.getByRole('button', { name: 'Resume', exact: false }).click();
+    }
+    if (index === 5) {
+      await page.keyboard.press('Escape'); await captureFrozenArt(page, 'dessert-approach');
+      await page.getByRole('button', { name: 'Resume', exact: false }).click();
+    }
+    if (index === 6) await captureFrozenArt(page, 'pear-finale');
+    if (index <= 2) {
+      await page.keyboard.press('Escape');
+      await captureFrozenArt(page, ['butter', 'grapes', 'fork'][index]);
+      await page.getByRole('button', { name: 'Resume', exact: false }).click();
+    }
+    if (index === 2) {
+      // Inspect the authored fork pivot mid-rotation through the normal E action.
+      await page.keyboard.press('KeyE'); await page.waitForTimeout(350);
+      await page.keyboard.press('Escape'); await captureFrozenArt(page, 'fork-rotating');
+      await page.getByRole('button', { name: 'Resume', exact: false }).click();
+    }
     if (index !== 3) return;
     await walk(page, 'KeyD', 1900);
     await page.keyboard.press('Escape');
+    await captureFrozenArt(page, 'trident');
     await page.screenshot({ path: 'test-results/expanded-fan-observation.png' });
+    await page.getByRole('button', { name: 'Resume', exact: false }).click();
+    for (const candle of [1, 2, 3]) {
+      await expect(page.locator('#candle-state')).toContainText(new RegExp(`${candle}: [0-9]`));
+      await page.keyboard.press('Escape'); await captureFrozenArt(page, `trident-ember-${candle}`);
+      await page.getByRole('button', { name: 'Resume', exact: false }).click();
+    }
+    await expect(page.locator('#candle-state')).toContainText('1: LIT · 2: LIT · 3: LIT');
+    await page.keyboard.press('Escape'); await captureFrozenArt(page, 'trident-relit');
     await page.getByRole('button', { name: 'Resume', exact: false }).click();
     // The next recorded stage starts with R at the same safe checkpoint.
   });

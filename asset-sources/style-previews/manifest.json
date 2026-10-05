@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-06",
+  "provider": "OpenAI image_gen",
+  "purpose": "Explicitly disclosed user-requested style comparison only",
+  "approved": false,
+  "runtimeIntegration": false,
+  "sourcePath": "public/assets/supper/bread.png",
+  "sourceSha256": "ad3b465110d8fb04f53ba0e2874a2428a8bc2986b5dd0152190387b59bc3d0c0",
+  "cost": null,
+  "costNote": "Image tool does not expose billing here; not part of DreamLayer credit ledger.",
+  "assets": [
+    {
+      "sourcePath": "asset-sources/style-previews/bread-comparison-painterly.png",
+      "sourceSha256": "9f8ad6992872b02f28efa0dad5f776390ef22a5f69e529f04b948f8f3244821c",
+      "promptPath": "asset-sources/style-previews/bread-comparison-painterly-prompt.txt",
+      "referencePath": "public/assets/supper/bread.png",
+      "status": "superseded_preview"
+    },
+    {
+      "sourcePath": "asset-sources/style-previews/bread-comparison-cartoon.png",
+      "sourceSha256": "111aa483dff605efd9cc1f875bdd77f3e6c6fb973e9813dbb268d23658720b2b",
+      "promptPath": "asset-sources/style-previews/bread-comparison-cartoon-prompt.txt",
+      "referencePath": "asset-sources/style-previews/bread-comparison-painterly.png",
+      "status": "direction_preview"
+    }
+  ]
+}

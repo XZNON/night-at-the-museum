@@ -4,9 +4,9 @@
 
 Build a small, polished browser game for the DreamLayer jam and hiring submission. One damaged masterpiece is restored by recovering pieces inside other museum artworks. The museum is 3D; adventures inside artwork are side-view 2.5D.
 
-This checkout contains the M0–M2 TypeScript/Vite/Three.js foundation and expanded M3 Royal Supper mechanics blockout, minimal first-person museum, pear placement/restoration loop, validated campaign saves, focused tests and planning documents. No generated production art, audio, mountain or campaign ending exists. Node v22.14.0 and npm v10.9.2 were re-verified on 2026-10-05. It is now a Git repository with origin `https://github.com/XZNON/night-at-the-museum.git`. Verify the environment before implementation rather than assuming these observations remain current.
+This checkout contains the M0–M2 TypeScript/Vite/Three.js foundation, approved expanded Royal Supper gameplay, minimal museum/restoration loop and validated saves. M3 DreamLayer slice/restoration art and original Howler audio are integrated. After repeated DreamLayer 503 errors, the user explicitly authorized ImageGen for the remaining required props on 2026-10-06; three atlases/14 props are integrated and final camera/full-loop verification has passed. User-requested golden LOOK rays replace watcher eye blobs; the backdrop follows the high dessert camera. No mountain or campaign ending exists. Node v22.14.0 and npm v10.9.2 were re-verified on 2026-10-06. The repository is on main with origin `https://github.com/XZNON/night-at-the-museum.git`; M3 is complete; verify the current snapshot/worktree before implementation. Verify the environment before implementation rather than assuming these observations remain current.
 
-M3 now contains the expanded mechanics blockout: guarded double jump, butter/crumb sliding, rolling grapes, required fork, separated trident candle jumps with timed relighting, three diner cover crossings and a varied two-jelly finale. The user approved the final gameplay layout on 2026-10-05 after playtesting. Production generation now depends on separate visual-reference approval and a live access/balance/cost recheck. See PLAN.md for actual verification and NEXT_SESSION.md for the handoff; M3 art/audio is incomplete. No measured human duration or representative-machine performance claim is recorded.
+M3 preserves guarded double jump, butter/crumb sliding, rolling grapes, required fork, separated trident candle jumps with timed relighting, three diner cover crossings and a varied two-jelly finale. Gameplay and the separate masterpiece, banquet-v5 and player references are user-approved on 2026-10-05. Do not ask for reference approval again or regenerate delivered assets. The slice/props and complete loop are camera-validated, with distinct ImageGen provenance. See PLAN.md and NEXT_SESSION.md; next is M4 Sleeping Mountain and the two-stage ending. No measured human duration or representative-machine performance claim is recorded.
 
 ## Read order and authority
 
@@ -21,7 +21,7 @@ Direct user instructions take precedence. Among documents, DECISIONS defines cur
 
 ## Scope and working style
 
-- Next session: finish M3 art and sound against the user-approved Royal Supper layout; do not reopen its gameplay or add repeated padding. Review the separate masterpiece, banquet-v5 and player references and obtain visual-direction approval before production generation. Recheck DreamLayer access/balance/costs, then validate a small player/background/platform art slice before expanding. Preserve the museum/restoration loop, campaign saves and isolated development entry. Do not start with the final museum or generate the entire art set.
+- Current task: M4 Sleeping Mountain placeholder traversal and the two-stage ending; M3 camera/full-loop verification is complete. The user explicitly authorized ImageGen for remaining required props on 2026-10-06 after persistent DreamLayer failures; three atlases/14 props are integrated, with distinct provenance. Preserve existing DreamLayer assets and approved gameplay. Retired food request identity remains for audit; do not retry it automatically. Preserve audio, museum/restoration, saves and isolated entry. Do not start the final museum or generate an entire catalogue. Sleeping Mountain/ending follow in M4 after completed M3.
 - Commit to Royal Supper + Sleeping Mountain. Drowned Garden is a gated third adventure. Reserve ideas remain outside the jam build.
 - Progress from one complete playable loop toward a complete ending; do not leave unavailable adventures as playable doors in the release.
 - Use placeholders for layout and movement. Establish art references early, generate final assets after camera and layout stabilize.
@@ -46,7 +46,7 @@ Direct user instructions take precedence. Among documents, DECISIONS defines cur
 
 ## Art and credentials
 
-- DreamLayer is the intended source for major visual assets. Do not silently substitute another generator.
+- DreamLayer is the intended source for major visual assets. The user explicitly authorized OpenAI ImageGen for the remaining required M3 props on 2026-10-06; record this exception and distinct provenance. Do not silently substitute for later worlds or replace approved existing assets.
 - Preserve approved references and record generated assets in a manifest as described in ASSETS.md.
 - Never put API keys in browser code, public assets, prompts/logs checked into the project, or the production bundle.
 - Verify DreamLayer access, credit balance and costs before making a generation batch. The 100 credits are allocated API credits, not an assumed count of 100 images.

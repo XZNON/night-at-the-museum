@@ -24,7 +24,7 @@ Use saved execution IDs and stable idempotency keys to recover interrupted jobs 
 4. Create a small asset list for the current milestone with size, viewpoint, layer/cutout requirements and priority.
 5. Reserve roughly 20% of available credits for retries/edits as a planning default; adjust to actual pricing and successful outputs.
 
-Missing generation access does not stop placeholder gameplay work. Do not replace DreamLayer with another generator without user direction.
+Missing generation access does not stop placeholder gameplay work. Do not replace DreamLayer with another generator without user direction. On 2026-10-06 the user explicitly directed generating and using the remaining required props here; OpenAI ImageGen is authorized for that M3 set only. Keep providers/cost evidence distinct and preserve existing DreamLayer sources and failed request identities.
 
 ## Production order
 
@@ -44,7 +44,7 @@ Build and tune the placeholder route. Capture its camera view and document requi
 
 Derive scene layers and props from the approved banquet reference. Generate the pear with consistent appearance between masterpiece, king's plate and inventory. Work in small batches, inspect results, then integrate before generating more.
 
-The user subsequently requested a longer route with double jumping, butter/crumb sliding, rolling grapes, timed fan/three-candle relighting, diner attention/cover and bounce ascent. Validate that expanded placeholder layout/camera before production. The old M2 geometry is no longer the final export target. Add butter/crumb, grape, fan/three-candle, jelly and attention/cover assets only where that tested route needs them. Gameplay implementation was authorized on 2026-10-05. Production generation remains on hold until revised-layout validation and recorded reference approval; this blockout pass makes no generation requests.
+The expanded route and separate masterpiece, banquet-v5 and player references are user-approved on 2026-10-05. The old M2 geometry is no longer the export target. The DreamLayer player/background/bread slice, matching pear, entrance and aligned restoration images are integrated; original audio has separate provenance. Three production plus seven reference DreamLayer credits are recorded; latest successful balance is 90. After seven failed same-key food recovery rounds (21 attempts), the user explicitly authorized ImageGen for remaining required props. Three separate ImageGen atlases now supply 14 prepared props, integrated against unchanged camera/colliders and verified in final full-loop/camera QA. Failed DreamLayer food identity is retired and preserved, actual cost null. Sources/prompts are separate under production/imagegen and prompts/imagegen-*.txt; local crop/resize is reproducible with scripts/prepare-props.py. ImageGen billing is not exposed, so no DreamLayer credit amount is assigned. Do not regenerate delivered assets or retry retired requests automatically. See manifest.json and NEXT_SESSION.md.
 
 ### D. Other adventures and museum finish
 

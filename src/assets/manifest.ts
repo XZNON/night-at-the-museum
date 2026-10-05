@@ -1,5 +1,5 @@
-// No generated art is present in M0–M2. Logical IDs and placeholder palettes
-// are separate from layout. Prepared DreamLayer URLs can replace these later.
+// Prepared art uses logical IDs independently of collision/layout.
+// ImageGen props are the user-authorized M3 exception to DreamLayer sourcing.
 export const placeholderArt = {
   basket: { color: 0x9f613d, accent: 0xd79b58 },
   bread: { color: 0xcb8a47, accent: 0xffcf86 },
@@ -14,5 +14,34 @@ export const placeholderArt = {
   jelly: { color: 0xa34796, accent: 0xf793dc },
 } as const;
 
-export const runtimeAssets: Record<string, { path: string; provider: 'DreamLayer' }> = {};
+export const runtimeAssets = {
+  'player.idle': { path: 'assets/player/idle.png', provider: 'DreamLayer' },
+  'player.walk-a': { path: 'assets/player/walk-a.png', provider: 'DreamLayer' },
+  'player.walk-b': { path: 'assets/player/walk-b.png', provider: 'DreamLayer' },
+  'player.jump': { path: 'assets/player/jump.png', provider: 'DreamLayer' },
+  'royal-supper.background': { path: 'assets/supper/background.webp', provider: 'DreamLayer' },
+  'royal-supper.bread': { path: 'assets/supper/bread.png', provider: 'DreamLayer' },
+  'royal-supper.entrance': { path: 'assets/supper/entrance.webp', provider: 'DreamLayer' },
+  'royal-supper.basket': { path: 'assets/supper/props/basket.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.butter': { path: 'assets/supper/props/butter.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.crumb': { path: 'assets/supper/props/crumb.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.grape': { path: 'assets/supper/props/grape.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.jelly': { path: 'assets/supper/props/jelly.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.cake': { path: 'assets/supper/props/cake.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.plate': { path: 'assets/supper/props/plate.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.goblet': { path: 'assets/supper/props/goblet.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.cover': { path: 'assets/supper/props/cover.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.wax': { path: 'assets/supper/props/wax.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.fork': { path: 'assets/supper/props/fork.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.fan': { path: 'assets/supper/props/fan.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.holder': { path: 'assets/supper/props/holder.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.diner': { path: 'assets/supper/props/diner.png', provider: 'OpenAI ImageGen' },
+  'restoration.pear': { path: 'assets/restoration/pear.png', provider: 'DreamLayer' },
+  'masterpiece.damaged': { path: 'assets/restoration/damaged.webp', provider: 'DreamLayer' },
+  'masterpiece.pear-restored': { path: 'assets/restoration/pear-restored.webp', provider: 'DreamLayer' },
+} as const;
+export type ArtId = keyof typeof runtimeAssets;
+export const supperArtIds = Object.keys(runtimeAssets).filter(id => id.startsWith('player.') ||
+  (id.startsWith('royal-supper.') && id !== 'royal-supper.entrance') || id === 'restoration.pear') as ArtId[];
+export const museumArtIds: ArtId[] = ['royal-supper.entrance', 'masterpiece.damaged', 'masterpiece.pear-restored', 'restoration.pear'];
 export const runtimeAssetUrl = (path: string): string => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;

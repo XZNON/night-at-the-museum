@@ -12,10 +12,12 @@
     "test:browser": "playwright test"
   },
   "dependencies": {
+    "howler": "2.2.4",
     "three": "0.186.1"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
+    "@types/howler": "2.2.13",
     "@types/node": "26.6.4",
     "@types/three": "0.186.0",
     "dreamlayer": "0.3.0",

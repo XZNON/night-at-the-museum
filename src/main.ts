@@ -11,6 +11,9 @@ import { museum, type MuseumPose } from './levels/museum';
 import { RoyalSupperScene } from './scenes/royal-supper';
 import { MuseumScene } from './scenes/museum';
 import { GameUi } from './ui/game-ui';
+import { GameAudio } from './core/audio';
+import { loadArtSet } from './assets/images';
+import { supperArtIds, museumArtIds } from './assets/manifest';
 
 const root = document.querySelector<HTMLElement>('#app')!;
 const parameters = new URLSearchParams(location.search);
@@ -35,6 +38,7 @@ let diagnosticTime = 0;
 let previousRenderSeconds = 0;
 let frameMs = 16.67;
 let inputReadyAt = 0;
+let retryAction: (() => void) | null = null;
 const lifetime = new AbortController();
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const input = new Input(() => togglePause(), () => toggleDebug());
@@ -43,11 +47,16 @@ const ui = new GameUi(root, {
   replay: () => { void startSupper(true); }, resume, leave: () => { void leave(); }, pause: () => pause(),
   checkpoint: () => { const scene = activeSupper(); if (!scene || manager?.transitioning) return; scene.model.restartCheckpoint(); resume(); },
   quality: low => { settings.quality = low ? 'low' : 'normal'; resize(); persist(); },
-  volume: value => { settings.masterVolume = value; persist(); },
+  volume: value => { settings.masterVolume = value; audio.volume(value); persist(); },
   debug: toggleDebug, lane: () => { lane = true; void startSupper(true, true); },
   reset: requestReset, confirmReset, cancelReset, closeInspection, place,
   look: () => { ui.canvas.focus(); activeMuseum()?.requestLook(); },
+  retry: () => { if (retryAction) retryAction(); else void (isolated ? startSupper(false) : enterMuseum()); },
+  back: () => { if (manager?.active) { overlay = 'none'; resume(); } else { overlay = 'menu'; ui.menu(remembered); } },
 }, isolated);
+const audio = new GameAudio(text => ui.notice(text));
+window.addEventListener('pointerdown', event => { if (event.isTrusted) audio.activate(); }, { capture: true, signal: lifetime.signal });
+window.addEventListener('keydown', event => { if (event.isTrusted) audio.activate(); }, { capture: true, signal: lifetime.signal });
 // Isolated entry never reads localStorage. These wrappers also keep access to
 // the storage property itself inside SaveStore's guarded operations.
 const store = isolated ? null : new SaveStore({
@@ -59,11 +68,13 @@ if (store) {
   const loaded = store.load(); progression = new Progression(loaded.save); settings = loaded.save.settings;
   remembered = loaded.exists; ui.menu(remembered);
 }
+audio.volume(settings.masterVolume);
 function persist(): void { store?.write(progression.snapshot, settings); }
 function activeSupper(): RoyalSupperScene | null { return manager?.active instanceof RoyalSupperScene ? manager.active : null; }
 function activeMuseum(): MuseumScene | null { return manager?.active instanceof MuseumScene ? manager.active : null; }
 function setPaused(value: boolean): void {
   paused = value; input.clear(); input.enabled = !value; loop?.setPaused(value);
+  audio.setPaused(value);
   if (value) activeMuseum()?.suspend();
 }
 function pause(reason = 'Take a moment. The gallery will wait.'): void {
@@ -113,35 +124,39 @@ function initializeRenderer(): boolean {
 async function enterMuseum(pose: MuseumPose = museum.spawn): Promise<void> {
   if (disposed || manager?.transitioning || !initializeRenderer() || !manager) return;
   setPaused(true); overlay = 'none';
+  retryAction = () => { void enterMuseum(pose); };
   try {
-    const changed = await manager.transition(() => new MuseumScene(ui.canvas, pose,
+    const changed = await manager.transition(async () => new MuseumScene(ui.canvas, pose,
       progression.snapshot.restoredPieceIds.includes('golden-pear'),
       () => !paused && !manager?.transitioning && performance.now() >= inputReadyAt,
       id => { if (id === 'masterpiece') inspect(); else if (id === royalSupper.id) void startSupper(false); },
-      text => ui.museumPrompt(text)));
-    if (changed) { inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS; remembered = true; ui.museumState(progression.snapshot); ui.museumPrompt(''); resume(); }
+      text => ui.museumPrompt(text), await loadArtSet(museumArtIds)));
+    if (changed) { audio.setScene('museum'); inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS; remembered = true; ui.museumState(progression.snapshot); ui.museumPrompt(''); resume(); }
   } catch (error) { showError(error); }
 }
 async function startSupper(restart: boolean, preserveLane = false): Promise<void> {
   if (disposed || manager?.transitioning || !initializeRenderer() || !manager) return;
   setPaused(true); overlay = 'none';
+  retryAction = () => { void startSupper(restart, preserveLane); }; ui.loading();
   if (restart) { session = createSupperSession(); if (!preserveLane) lane = false; }
   try {
-    const changed = await manager.transition(() => {
+    const changed = await manager.transition(async () => {
+      const art = await loadArtSet(supperArtIds);
       const scene = new RoyalSupperScene(lane ? movementLane : royalSupper, session,
         () => { const result = progression.applyCampaignCommand({ action: 'collect', artworkId: royalSupper.id, pieceId: royalSupper.pieceId }); if (result.changed) persist(); return result; },
-        state => ui.updateHud(state), result => { setPaused(true); overlay = 'success'; ui.success(result); }, reducedMotion);
+        state => ui.updateHud(state), result => { setPaused(true); audio.play('collect', true); overlay = 'success'; ui.success(result); }, reducedMotion,
+        cue => audio.play(cue), art);
       scene.debug.visible = debugEnabled; return scene;
     });
-    if (changed) { inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS; remembered = true; resume(); }
+    if (changed) { audio.setScene('royal-supper'); inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS; remembered = true; resume(); }
   } catch (error) { showError(error); }
 }
 async function leave(): Promise<void> {
   if (!manager || manager.transitioning) return;
-  if (!isolated) { await enterMuseum(museum.returnPose); return; }
+  if (!isolated) { await enterMuseum(museum.returnPose); audio.play('return', true); return; }
   const finished = activeSupper()?.model.completed ?? false;
   setPaused(true); overlay = 'menu';
-  try { await manager.transition(() => null); ui.diagnostics(null); if (finished) ui.finished(); else ui.menu(remembered); }
+  try { await manager.transition(() => null); audio.setScene(null); ui.diagnostics(null); if (finished) ui.finished(); else ui.menu(remembered); }
   catch (error) { showError(error); }
 }
 function inspect(): void {
@@ -155,7 +170,7 @@ function place(piece: string, target: string): void {
   const result = progression.applyCampaignCommand({ action: 'restore', artworkId: royalSupper.id, pieceId: piece });
   if (!result.ok) { ui.placementMessage('Recover the golden pear from Royal Supper first.'); return; }
   if (!result.changed) return;
-  persist(); activeMuseum()?.restoreColour(); ui.museumState(progression.snapshot); ui.inspection(progression.snapshot, !reducedMotion);
+  persist(); audio.play('restore', true); activeMuseum()?.restoreColour(); ui.museumState(progression.snapshot); ui.inspection(progression.snapshot, !reducedMotion);
 }
 function requestReset(): void {
   if (isolated || manager?.transitioning || overlay === 'reset') return;
@@ -172,7 +187,7 @@ function cancelReset(): void {
 }
 function confirmReset(): void {
   if (overlay !== 'reset' || manager?.transitioning || isolated) return;
-  ui.notice(''); store?.reset(); progression = new Progression(); settings = defaultSettings(); session = createSupperSession(); remembered = false; resize();
+  ui.notice(''); store?.reset(); progression = new Progression(); settings = defaultSettings(); audio.volume(settings.masterVolume); session = createSupperSession(); remembered = false; resize();
   overlay = 'none'; void enterMuseum();
 }
 function showError(error: unknown): void { setPaused(true); overlay = 'menu'; ui.error(error instanceof Error ? error.message : String(error)); }
@@ -180,13 +195,13 @@ function resize(): void {
   renderer?.setPixelRatio(Math.min(window.devicePixelRatio || 1, settings.quality === 'low' ? 1 : 1.5)); manager?.resize(window.innerWidth, window.innerHeight);
 }
 window.addEventListener('resize', resize, { signal: lifetime.signal });
-window.addEventListener('blur', () => { input.clear(); pause('Focus was lost. Resume when you are ready.'); }, { signal: lifetime.signal });
-document.addEventListener('visibilitychange', () => { if (document.hidden) { input.clear(); pause('The game paused while this tab was hidden.'); } }, { signal: lifetime.signal });
+window.addEventListener('blur', () => { input.clear(); audio.setPaused(true); pause('Focus was lost. Resume when you are ready.'); }, { signal: lifetime.signal });
+document.addEventListener('visibilitychange', () => { if (document.hidden) { input.clear(); audio.setPaused(true); pause('The game paused while this tab was hidden.'); } }, { signal: lifetime.signal });
 document.addEventListener('pointerlockchange', () => { if (!document.pointerLockElement && activeMuseum()) pause('Mouse look released. Resume to continue; dragging also works.'); }, { signal: lifetime.signal });
 ui.canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); pause('Graphics context was lost. Reload if it cannot recover.'); }, { signal: lifetime.signal });
 function dispose(): void {
   if (disposed) return;
-  disposed = true; lifetime.abort(); loop?.dispose(); manager?.dispose(); input.dispose(); ui.dispose(); renderer?.dispose();
+  disposed = true; lifetime.abort(); loop?.dispose(); manager?.dispose(); audio.dispose(); input.dispose(); ui.dispose(); renderer?.dispose();
   if (import.meta.env.DEV) delete (window as Window & { __curatorDebug?: unknown }).__curatorDebug;
 }
 window.addEventListener('pagehide', event => { if (!(event as PageTransitionEvent).persisted) dispose(); else pause(); }, { signal: lifetime.signal });
@@ -201,6 +216,7 @@ if (import.meta.env.DEV) {
     geometryCount: renderer?.info.memory.geometries ?? 0, canvasCount: document.querySelectorAll('canvas').length,
     textureCount: renderer?.info.memory.textures ?? 0,
     lowQuality: settings.quality === 'low', pixelRatio: renderer?.getPixelRatio(),
+    audio: audio.diagnostics,
   });
 }
 if (isolated) void startSupper(false);

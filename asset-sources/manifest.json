@@ -67,7 +67,7 @@
   "assets": [
     {
       "id": "masterpiece.reference",
-      "status": "generated",
+      "status": "approved",
       "world": "masterpiece",
       "purpose": "Visual-direction approval reference",
       "referenceIds": [],
@@ -87,11 +87,15 @@
         "height": 1440
       },
       "preparationNotes": "Reference only. Awaiting user visual-direction approval.",
-      "approved": false,
+      "approved": true,
       "conversationId": "06ec392e-88bd-4ad6-8b3a-885664a44d74",
       "outputAssetId": "893bd28e-ef88-481c-a043-f14791aa9d38",
       "creditEvidence": "Sequential API available-balance delta; one active local job.",
-      "sourceSha256": "d15f083f56273bd946437b39561282b13e87124dbd81911e9c1fa5059556038c"
+      "sourceSha256": "d15f083f56273bd946437b39561282b13e87124dbd81911e9c1fa5059556038c",
+      "approval": {
+        "date": "2026-10-05",
+        "evidence": "User response: Looks good to me, after presentation of all three references."
+      }
     },
     {
       "id": "banquet.reference",
@@ -124,7 +128,7 @@
     },
     {
       "id": "player.reference",
-      "status": "generated",
+      "status": "approved",
       "world": "shared",
       "purpose": "Visual-direction approval reference",
       "referenceIds": [],
@@ -144,11 +148,16 @@
         "height": 2048
       },
       "preparationNotes": "Reference only. Awaiting user visual-direction approval.",
-      "approved": false,
+      "approved": true,
       "conversationId": "0f16bbd5-b313-4b19-8c74-ccf239f2c018",
       "outputAssetId": "9e0712dd-dc87-46d8-b66b-76a385575e71",
       "creditEvidence": "Sequential API available-balance delta; one active local job.",
-      "sourceSha256": "cc923b2faac8c1a2339512d489610e8ca5c19d94c220922bd649d7e4d235739b"
+      "sourceSha256": "cc923b2faac8c1a2339512d489610e8ca5c19d94c220922bd649d7e4d235739b",
+      "approval": {
+        "date": "2026-10-05",
+        "evidence": "User response: Looks good to me, after presentation of all three references."
+      },
+      "aspect": null
     },
     {
       "id": "banquet.reference.v2",
@@ -258,7 +267,7 @@
     },
     {
       "id": "banquet.reference.v5",
-      "status": "generated",
+      "status": "approved",
       "world": "royal-supper",
       "purpose": "User-requested wider full-table reference with more diners, feast props and three-candle candelabra",
       "referenceIds": [
@@ -282,7 +291,7 @@
         "height": 1440
       },
       "preparationNotes": "Inspected approval candidate: complete table with both ends framed, more diners eating/drinking, wine/glassware/fruit/cutlery and two three-candle holders. Oblique table depth remains; derive side-view gameplay layers separately. No player embedded; use separate player reference.",
-      "approved": false,
+      "approved": true,
       "capabilityCheckAt": "2026-10-05T13:20:20.595Z",
       "quotedCredits": 1,
       "referenceUsage": "Original banquet direction described in text; no image attached. Fresh panoramic composition after edit framing failures.",
@@ -290,7 +299,1011 @@
       "outputAssetId": "8ecae438-1605-4fe3-8cb9-d952d4a4a9dd",
       "sourceSha256": "deb5483015401138ea36d5ee81c6821626c840c950d489295c4d60fbd69c05dc",
       "creditEvidence": "Sequential API available-balance delta; one active local job.",
-      "inspectedAt": "2026-10-05T13:22:32.084Z"
+      "inspectedAt": "2026-10-05T13:22:32.084Z",
+      "approval": {
+        "date": "2026-10-05",
+        "evidence": "User response: Looks good to me, after presentation of all three references."
+      }
+    },
+    {
+      "id": "player.idle",
+      "status": "integrated",
+      "world": "shared",
+      "purpose": "Standing restorer cutout for first camera slice",
+      "referenceIds": [
+        "player.reference"
+      ],
+      "operation": "cutout",
+      "inputPath": "asset-sources/references/player.png",
+      "inputSha256": "cc923b2faac8c1a2339512d489610e8ca5c19d94c220922bd649d7e4d235739b",
+      "sourcePath": "asset-sources/production/player-idle-cutout.png",
+      "runtimePath": "public/assets/player/idle.png",
+      "promptPath": null,
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-m3-player-idle-cutout-20261005-v1",
+      "executionId": "cf400c74-c9ca-48b8-b2e4-70c67e1baa2f",
+      "generatedAt": "2026-10-05T17:46:56.320Z",
+      "creditsSpent": 1,
+      "quotedCredits": 1,
+      "balanceBefore": 93,
+      "balanceAfter": 92,
+      "pixelSize": {
+        "width": 2048,
+        "height": 2048
+      },
+      "approved": false,
+      "preparationNotes": "Inspected DreamLayer cutout; locally authored pose, common 128x272 canvas, foot baseline y264. No separate generation credit.",
+      "recoveryAttemptedAt": "2026-10-05T17:46:04.748Z",
+      "conversationId": "43be4d6f-fbde-41d2-a794-de14d1655c0f",
+      "outputAssetId": "465a1b2b-6220-43da-924a-722e6047721d",
+      "sourceSha256": "286769352b804ef8d95f3ddcff6c36262f93298182380c363cc66f2045d00dd8",
+      "creditEvidence": "Recovered sequential available-balance delta before any next local job.",
+      "preparedPixelSize": {
+        "width": 128,
+        "height": 272
+      },
+      "runtimeSha256": "6e76290d0222c6fd68faf6dfdcfde5152a937326e9052186bb1e17b21d2de187",
+      "cropBox": [
+        691,
+        152,
+        1356,
+        1915
+      ],
+      "aspect": null,
+      "integrationEvidence": {
+        "date": "2026-10-06",
+        "agentVerified": true,
+        "referencesApproved": true,
+        "evidence": "Actual camera inspection at 1280x720/960x540 and final 9-scenario Chromium production/isolated regression passed. Output approval remains distinct from user-approved references."
+      }
+    },
+    {
+      "id": "royal-supper.background",
+      "status": "integrated",
+      "world": "royal-supper",
+      "purpose": "Quiet side-view banquet scenery behind authored route",
+      "referenceIds": [
+        "banquet.reference.v5"
+      ],
+      "operation": "edit",
+      "inputPath": "asset-sources/references/banquet-v5.png",
+      "inputSha256": "deb5483015401138ea36d5ee81c6821626c840c950d489295c4d60fbd69c05dc",
+      "sourcePath": "asset-sources/production/supper-background.png",
+      "runtimePath": "public/assets/supper/background.webp",
+      "promptPath": "asset-sources/prompts/supper-background.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-m3-supper-background-20261005-v1",
+      "executionId": "db9e3211-b315-44aa-8e41-f3d69e7d297d",
+      "generatedAt": "2026-10-05T17:54:32.393Z",
+      "creditsSpent": 1,
+      "quotedCredits": 1,
+      "balanceBefore": 92,
+      "balanceAfter": 91,
+      "pixelSize": {
+        "width": 2560,
+        "height": 1440
+      },
+      "approved": false,
+      "preparationNotes": "Kept only palace and far-side diner strip; excluded erroneous modern foreground figures and near table edge below source y790. Authored 80-pixel lower-edge fade into the scene background. Local proportional Lanczos resize; original preserved.",
+      "recoveryAttemptedAt": "2026-10-05T17:53:20.220Z",
+      "conversationId": "61bc118a-d7ca-430e-892b-859b97e54155",
+      "outputAssetId": "207d6129-ec96-46a5-a376-ab174c000dfd",
+      "sourceSha256": "dcd09af3d581b4cb98c0b1efda2c5bc11707dcd8690a84fa952f0af88f8275ce",
+      "creditEvidence": "Sequential available-balance delta; one active local job.",
+      "preparedPixelSize": {
+        "width": 1600,
+        "height": 494
+      },
+      "runtimeSha256": "661f5bcd567acedd7480cfce1b98c05b369dcd5f7800521509dbd22daa73e58c",
+      "cropBox": [
+        0,
+        0,
+        2560,
+        790
+      ],
+      "aspect": null,
+      "integrationEvidence": {
+        "date": "2026-10-06",
+        "agentVerified": true,
+        "referencesApproved": true,
+        "evidence": "Actual camera inspection at 1280x720/960x540 and final 9-scenario Chromium production/isolated regression passed. Output approval remains distinct from user-approved references."
+      }
+    },
+    {
+      "id": "royal-supper.bread",
+      "status": "integrated",
+      "world": "royal-supper",
+      "purpose": "Reusable side-view bread platform",
+      "referenceIds": [
+        "banquet.reference.v5"
+      ],
+      "operation": "edit",
+      "inputPath": "asset-sources/references/banquet-v5.png",
+      "inputSha256": "deb5483015401138ea36d5ee81c6821626c840c950d489295c4d60fbd69c05dc",
+      "sourcePath": "asset-sources/production/bread-side.png",
+      "runtimePath": "public/assets/supper/bread.png",
+      "promptPath": "asset-sources/prompts/bread-side.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-m3-bread-side-20261005-v1",
+      "executionId": "fb5f7f1b-5f84-4cba-9dcb-7a876ce84b6d",
+      "generatedAt": "2026-10-05T18:02:34.888Z",
+      "creditsSpent": 1,
+      "quotedCredits": 1,
+      "balanceBefore": 91,
+      "balanceAfter": 90,
+      "pixelSize": {
+        "width": 2560,
+        "height": 1440
+      },
+      "approved": false,
+      "preparationNotes": "Local painted bread cross-section crop plus source-crust border for flat authored rectangular landings. Cutout service was unavailable; opaque texture and authored crust cap align to collision.",
+      "conversationId": "638217b9-986f-4ccb-8572-f4bccc304699",
+      "outputAssetId": "bafbf19f-87f7-4bcf-9bd3-8e1e4108267a",
+      "sourceSha256": "653178b4d0732033754c1abccbcb5933d44036abcfbf60ed5e4f133921404447",
+      "creditEvidence": "Sequential available-balance delta; one active local job.",
+      "preparedPixelSize": {
+        "width": 640,
+        "height": 256
+      },
+      "cropBox": [
+        500,
+        690,
+        2070,
+        1080
+      ],
+      "runtimeSha256": "ad3b465110d8fb04f53ba0e2874a2428a8bc2986b5dd0152190387b59bc3d0c0",
+      "aspect": null,
+      "integrationEvidence": {
+        "date": "2026-10-06",
+        "agentVerified": true,
+        "referencesApproved": true,
+        "evidence": "Actual camera inspection at 1280x720/960x540 and final 9-scenario Chromium production/isolated regression passed. Output approval remains distinct from user-approved references."
+      }
+    },
+    {
+      "id": "royal-supper.bread.cutout",
+      "status": "rejected",
+      "world": "royal-supper",
+      "purpose": "Transparent reusable bread platform",
+      "referenceIds": [
+        "royal-supper.bread"
+      ],
+      "operation": "cutout",
+      "inputPath": "asset-sources/production/bread-side.png",
+      "inputSha256": "653178b4d0732033754c1abccbcb5933d44036abcfbf60ed5e4f133921404447",
+      "sourcePath": "asset-sources/production/bread-cutout.png",
+      "runtimePath": null,
+      "promptPath": null,
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-m3-bread-cutout-20261005-v1",
+      "executionId": null,
+      "generatedAt": null,
+      "creditsSpent": null,
+      "quotedCredits": 1,
+      "balanceBefore": 90,
+      "balanceAfter": 90,
+      "pixelSize": null,
+      "approved": false,
+      "preparationNotes": "No deliverable or execution identity after repeated UPSTREAM_UNAVAILABLE responses. Flat bread uses a local cross-section crop of the delivered DreamLayer loaf. As of the final read-only check, available balance stayed 90; no per-job charge evidence, so creditsSpent remains null. Preserve the original key for audit; do not automatically submit this unused cutout again.",
+      "lastAttemptError": {
+        "code": "UPSTREAM_UNAVAILABLE",
+        "reason": "temporarily_unavailable",
+        "message": "The service is temporarily unavailable. Please try again.",
+        "retryable": true,
+        "request_id": "efbe1073-1316-40e1-bae9-70cb82c3aecc"
+      },
+      "lastAttemptFailedAt": "2026-10-05T18:08:17.575Z",
+      "recoveryAttemptedAt": "2026-10-05T18:07:22.402Z",
+      "aspect": null,
+      "observedCreditDelta": 0
+    },
+    {
+      "id": "player.walk-a",
+      "world": "shared",
+      "provider": "DreamLayer",
+      "operation": "local_pose_composite",
+      "sourcePath": "asset-sources/production/player-idle-cutout.png",
+      "referenceIds": [
+        "player.idle"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "integrated",
+      "runtimePath": "public/assets/player/walk-a.png",
+      "preparedPixelSize": {
+        "width": 128,
+        "height": 272
+      },
+      "runtimeSha256": "caba49f8c08dcdd7280bb01806c430e6fb19193fa28c2744fbbcdddcf6f5f25d",
+      "preparationNotes": "Inspected DreamLayer cutout; locally authored pose, common 128x272 canvas, foot baseline y264. No separate generation credit.",
+      "aspect": null,
+      "integrationEvidence": {
+        "date": "2026-10-06",
+        "agentVerified": true,
+        "referencesApproved": true,
+        "evidence": "Actual camera inspection at 1280x720/960x540 and final 9-scenario Chromium production/isolated regression passed. Output approval remains distinct from user-approved references."
+      }
+    },
+    {
+      "id": "player.walk-b",
+      "world": "shared",
+      "provider": "DreamLayer",
+      "operation": "local_pose_composite",
+      "sourcePath": "asset-sources/production/player-idle-cutout.png",
+      "referenceIds": [
+        "player.idle"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "integrated",
+      "runtimePath": "public/assets/player/walk-b.png",
+      "preparedPixelSize": {
+        "width": 128,
+        "height": 272
+      },
+      "runtimeSha256": "21cb472cbedec519f398918ef3f0049c75cbd97a45c26c61c2ec61f1d64cadcb",
+      "preparationNotes": "Inspected DreamLayer cutout; locally authored pose, common 128x272 canvas, foot baseline y264. No separate generation credit.",
+      "aspect": null,
+      "integrationEvidence": {
+        "date": "2026-10-06",
+        "agentVerified": true,
+        "referencesApproved": true,
+        "evidence": "Actual camera inspection at 1280x720/960x540 and final 9-scenario Chromium production/isolated regression passed. Output approval remains distinct from user-approved references."
+      }
+    },
+    {
+      "id": "player.jump",
+      "world": "shared",
+      "provider": "DreamLayer",
+      "operation": "local_pose_composite",
+      "sourcePath": "asset-sources/production/player-idle-cutout.png",
+      "referenceIds": [
+        "player.idle"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "integrated",
+      "runtimePath": "public/assets/player/jump.png",
+      "preparedPixelSize": {
+        "width": 128,
+        "height": 272
+      },
+      "runtimeSha256": "f0832c2c29a2d79e10b8b74041748b15699d28562ce1a65b0a3e57542eb5500d",
+      "preparationNotes": "Inspected DreamLayer cutout; locally authored pose, common 128x272 canvas, foot baseline y264. No separate generation credit.",
+      "aspect": null,
+      "integrationEvidence": {
+        "date": "2026-10-06",
+        "agentVerified": true,
+        "referencesApproved": true,
+        "evidence": "Actual camera inspection at 1280x720/960x540 and final 9-scenario Chromium production/isolated regression passed. Output approval remains distinct from user-approved references."
+      }
+    },
+    {
+      "id": "royal-supper.food-sheet",
+      "status": "rejected",
+      "world": "royal-supper",
+      "purpose": "Only required basket, butter, crumb, grape, jelly and cake artwork",
+      "referenceIds": [
+        "banquet.reference.v5"
+      ],
+      "operation": "edit",
+      "inputPath": "asset-sources/references/banquet-v5.png",
+      "inputSha256": "deb5483015401138ea36d5ee81c6821626c840c950d489295c4d60fbd69c05dc",
+      "sourcePath": "asset-sources/production/food-sheet.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/food-sheet.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-m3-food-sheet-20261006-v1",
+      "aspect": "4:3",
+      "executionId": null,
+      "generatedAt": null,
+      "creditsSpent": null,
+      "quotedCredits": 1,
+      "balanceBefore": 90,
+      "balanceAfter": null,
+      "pixelSize": null,
+      "approved": false,
+      "preparationNotes": "Undelivered request retired after user explicitly authorized ImageGen fallback. Immutable request identity retained for audit; do not retry automatically. Actual cost remains unknown.",
+      "lastAttemptError": {
+        "code": "UPSTREAM_UNAVAILABLE",
+        "reason": "temporarily_unavailable",
+        "message": "The service is temporarily unavailable. Please try again.",
+        "retryable": true,
+        "request_id": "f5b39560-0e62-40ff-ade9-339bcd2490ff"
+      },
+      "lastAttemptFailedAt": "2026-10-05T20:14:46.983Z",
+      "recoveryAttemptedAt": "2026-10-05T20:12:58.836Z"
+    },
+    {
+      "id": "restoration.pear",
+      "world": "masterpiece",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "masterpiece.reference"
+      ],
+      "sourcePath": "asset-sources/references/masterpiece.png",
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "integrated",
+      "runtimePath": "public/assets/restoration/pear.png",
+      "preparedPixelSize": {
+        "width": 128,
+        "height": 160
+      },
+      "preparationNotes": "Locally authored feathered pear silhouette at source box 1024,535,1170,717. Same pixels/shape in world and inventory.",
+      "runtimeSha256": "1d46b7cab0ca5acf1393646bbfa5f09bd024f1c3bf58922f6ec73f3c824cd5a3",
+      "integrationEvidence": {
+        "date": "2026-10-06",
+        "agentVerified": true,
+        "referencesApproved": true,
+        "evidence": "Actual camera inspection at 1280x720/960x540 and final 9-scenario Chromium production/isolated regression passed. Output approval remains distinct from user-approved references."
+      }
+    },
+    {
+      "id": "masterpiece.damaged",
+      "world": "masterpiece",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "masterpiece.reference"
+      ],
+      "sourcePath": "asset-sources/references/masterpiece.png",
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "integrated",
+      "runtimePath": "public/assets/restoration/damaged.webp",
+      "preparedPixelSize": {
+        "width": 1600,
+        "height": 900
+      },
+      "preparationNotes": "Aligned grayscale base with authored pear/sun silhouettes.",
+      "runtimeSha256": "3066acc121265297367f3f5f3d50c6480eb3ab8d0ee4e8d7cad5415d78eee56f",
+      "integrationEvidence": {
+        "date": "2026-10-06",
+        "agentVerified": true,
+        "referencesApproved": true,
+        "evidence": "Actual camera inspection at 1280x720/960x540 and final 9-scenario Chromium production/isolated regression passed. Output approval remains distinct from user-approved references."
+      }
+    },
+    {
+      "id": "masterpiece.pear-restored",
+      "world": "masterpiece",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "masterpiece.reference"
+      ],
+      "sourcePath": "asset-sources/references/masterpiece.png",
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "integrated",
+      "runtimePath": "public/assets/restoration/pear-restored.webp",
+      "preparedPixelSize": {
+        "width": 1600,
+        "height": 900
+      },
+      "preparationNotes": "Same canvas; pear/tree/garden region coloured using authored feathered garden mask; sun remains missing.",
+      "runtimeSha256": "63d3c111b9df7a7a893bdde68ce7082a6cd2ec3b4dcdb2d435da12c7ff1ad82d",
+      "integrationEvidence": {
+        "date": "2026-10-06",
+        "agentVerified": true,
+        "referencesApproved": true,
+        "evidence": "Actual camera inspection at 1280x720/960x540 and final 9-scenario Chromium production/isolated regression passed. Output approval remains distinct from user-approved references."
+      }
+    },
+    {
+      "id": "masterpiece.complete",
+      "world": "masterpiece",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "masterpiece.reference"
+      ],
+      "sourcePath": "asset-sources/references/masterpiece.png",
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "runtimePath": "public/assets/restoration/complete.webp",
+      "preparedPixelSize": {
+        "width": 1600,
+        "height": 900
+      },
+      "preparationNotes": "Approved reference resized; aligned full composition retained for later sun restoration.",
+      "runtimeSha256": "f67ca3001a6b07f1f00c33a75af08e35dc5f8b9f35cb4a61a836526ac0b915f5"
+    },
+    {
+      "id": "masterpiece.pear-mask",
+      "world": "masterpiece",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "masterpiece.reference"
+      ],
+      "sourcePath": "asset-sources/references/masterpiece.png",
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "runtimePath": "public/assets/restoration/pear-mask.png",
+      "preparedPixelSize": {
+        "width": 1600,
+        "height": 900
+      },
+      "preparationNotes": "Authored aligned pear alpha mask.",
+      "runtimeSha256": "d472805b79207f92e84fe165dfa36a417cfa0f2bbc6b441e5fb9d4e3156df771"
+    },
+    {
+      "id": "masterpiece.sun-mask",
+      "world": "masterpiece",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "masterpiece.reference"
+      ],
+      "sourcePath": "asset-sources/references/masterpiece.png",
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "runtimePath": "public/assets/restoration/sun-mask.png",
+      "preparedPixelSize": {
+        "width": 1600,
+        "height": 900
+      },
+      "preparationNotes": "Authored aligned sun region mask; no mountain scene asset generated.",
+      "runtimeSha256": "309d9e4a5bc70f8fdfef076e218ded57c0aecbf9524473fcc586ef9478d3ddf6"
+    },
+    {
+      "id": "masterpiece.garden-mask",
+      "world": "masterpiece",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "masterpiece.reference"
+      ],
+      "sourcePath": "asset-sources/references/masterpiece.png",
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "runtimePath": "public/assets/restoration/garden-mask.png",
+      "preparedPixelSize": {
+        "width": 1600,
+        "height": 900
+      },
+      "preparationNotes": "Authored aligned first-stage colour restoration mask.",
+      "runtimeSha256": "fca97f795f739401f3500250e439f894a4f26f1fc478722583f54b15740a38cc"
+    },
+    {
+      "id": "royal-supper.entrance",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "banquet.reference.v5"
+      ],
+      "sourcePath": "asset-sources/references/banquet-v5.png",
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "integrated",
+      "runtimePath": "public/assets/supper/entrance.webp",
+      "preparedPixelSize": {
+        "width": 1600,
+        "height": 900
+      },
+      "preparationNotes": "Approved banquet reference resized for the existing museum frame; room geometry unchanged.",
+      "runtimeSha256": "fa0fe1e031f175a1fec716e0e54befc4765bcb5df851c39743402f00b7bd38f6",
+      "integrationEvidence": {
+        "date": "2026-10-06",
+        "agentVerified": true,
+        "referencesApproved": true,
+        "evidence": "Actual camera inspection at 1280x720/960x540 and final 9-scenario Chromium production/isolated regression passed. Output approval remains distinct from user-approved references."
+      }
+    },
+    {
+      "id": "royal-supper.bread.cartoon-preview",
+      "status": "rejected",
+      "world": "royal-supper",
+      "purpose": "User-requested animation-film style comparison only; not a runtime replacement or approved new direction",
+      "referenceIds": [
+        "royal-supper.bread"
+      ],
+      "operation": "edit",
+      "inputPath": "public/assets/supper/bread.png",
+      "inputSha256": "ad3b465110d8fb04f53ba0e2874a2428a8bc2986b5dd0152190387b59bc3d0c0",
+      "sourcePath": "asset-sources/production/bread-cartoon-preview.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/bread-cartoon-preview.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-m3-bread-cartoon-preview-20261006-v1",
+      "aspect": "16:9",
+      "executionId": null,
+      "generatedAt": null,
+      "creditsSpent": null,
+      "quotedCredits": 1,
+      "balanceBefore": 90,
+      "balanceAfter": null,
+      "pixelSize": null,
+      "approved": false,
+      "preparationNotes": "Retired after three bounded same-key upstream 503 failures. User-requested comparison was made through explicitly disclosed OpenAI image_gen as a non-runtime style preview; not a DreamLayer deliverable. Actual credits remain unknown; do not automatically recover this unused preview.",
+      "lastAttemptError": {
+        "code": "UPSTREAM_UNAVAILABLE",
+        "reason": "temporarily_unavailable",
+        "message": "The service is temporarily unavailable. Please try again.",
+        "retryable": true,
+        "request_id": "bae8b3f7-589a-4eb3-a6e3-5031d501273c"
+      },
+      "lastAttemptFailedAt": "2026-10-05T19:21:30.496Z"
+    },
+    {
+      "id": "royal-supper.food-sheet.imagegen",
+      "status": "generated",
+      "world": "royal-supper",
+      "purpose": "Only required food props, user-authorized ImageGen fallback",
+      "provider": "OpenAI ImageGen",
+      "operation": "reference_edit",
+      "referenceIds": [
+        "banquet.reference.v5"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/food-sheet.png",
+      "sourceSha256": "8c39eddd051e14eac79ae8068fe48fe7d3c89a944d191a7aba7d567b83841462",
+      "promptPath": "asset-sources/prompts/imagegen-food-sheet.txt",
+      "generatedAt": "2026-10-05T20:20:53.948Z",
+      "pixelSize": {
+        "width": 1672,
+        "height": 941
+      },
+      "creditsSpent": null,
+      "creditEvidence": "Not submitted to DreamLayer; ImageGen billing is not exposed by this tool. No DreamLayer credit amount is assigned.",
+      "approved": false,
+      "preparationNotes": "User explicitly authorized generating remaining props here after repeated DreamLayer failure. Pending collider/camera QA."
+    },
+    {
+      "id": "royal-supper.crockery-sheet.imagegen",
+      "status": "generated",
+      "world": "royal-supper",
+      "purpose": "Only required crockery props, user-authorized ImageGen fallback",
+      "provider": "OpenAI ImageGen",
+      "operation": "reference_edit",
+      "referenceIds": [
+        "banquet.reference.v5"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/crockery-sheet.png",
+      "sourceSha256": "41ca1cf989ac35975959f6d7c6e867d1099960852e0f4fc3001702f284585484",
+      "promptPath": "asset-sources/prompts/imagegen-crockery-sheet.txt",
+      "generatedAt": "2026-10-05T20:20:53.951Z",
+      "pixelSize": {
+        "width": 1536,
+        "height": 1024
+      },
+      "creditsSpent": null,
+      "creditEvidence": "Not submitted to DreamLayer; ImageGen billing is not exposed by this tool. No DreamLayer credit amount is assigned.",
+      "approved": false,
+      "preparationNotes": "User explicitly authorized generating remaining props here after repeated DreamLayer failure. Pending collider/camera QA."
+    },
+    {
+      "id": "royal-supper.mechanics-sheet.imagegen",
+      "status": "generated",
+      "world": "royal-supper",
+      "purpose": "Only required mechanics props, user-authorized ImageGen fallback",
+      "provider": "OpenAI ImageGen",
+      "operation": "reference_edit",
+      "referenceIds": [
+        "banquet.reference.v5"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/mechanics-sheet.png",
+      "sourceSha256": "7c1c267a7604527b5ddb90f441cbf185ccf4be2b0e24a8b1ffbbecb7739d030a",
+      "promptPath": "asset-sources/prompts/imagegen-mechanics-sheet.txt",
+      "generatedAt": "2026-10-05T20:20:53.952Z",
+      "pixelSize": {
+        "width": 1672,
+        "height": 941
+      },
+      "creditsSpent": null,
+      "creditEvidence": "Not submitted to DreamLayer; ImageGen billing is not exposed by this tool. No DreamLayer credit amount is assigned.",
+      "approved": false,
+      "preparationNotes": "User explicitly authorized generating remaining props here after repeated DreamLayer failure. Pending collider/camera QA."
+    },
+    {
+      "id": "royal-supper.basket",
+      "world": "royal-supper",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "royal-supper.food-sheet.imagegen"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/food-sheet.png",
+      "executionId": null,
+      "creditsSpent": null,
+      "approved": false,
+      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
+      "status": "integrated",
+      "runtimePath": "public/assets/supper/props/basket.png",
+      "preparedPixelSize": {
+        "width": 640,
+        "height": 160
+      },
+      "cropBox": [
+        70,
+        246,
+        567,
+        365
+      ],
+      "runtimeSha256": "82d75198f65bc0a81eaa14d3260f34c2add96d30dff1b08ccc536ea2968d2913",
+      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+    },
+    {
+      "id": "royal-supper.butter",
+      "world": "royal-supper",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "royal-supper.food-sheet.imagegen"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/food-sheet.png",
+      "executionId": null,
+      "creditsSpent": null,
+      "approved": false,
+      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
+      "status": "integrated",
+      "runtimePath": "public/assets/supper/props/butter.png",
+      "preparedPixelSize": {
+        "width": 640,
+        "height": 128
+      },
+      "cropBox": [
+        651,
+        292,
+        1100,
+        380
+      ],
+      "runtimeSha256": "ccebf469937e80c5a0571e23d99a0dd8e20294c2fadc83755171f00e20a081b8",
+      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+    },
+    {
+      "id": "royal-supper.crumb",
+      "world": "royal-supper",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "royal-supper.food-sheet.imagegen"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/food-sheet.png",
+      "executionId": null,
+      "creditsSpent": null,
+      "approved": false,
+      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
+      "status": "integrated",
+      "runtimePath": "public/assets/supper/props/crumb.png",
+      "preparedPixelSize": {
+        "width": 192,
+        "height": 175
+      },
+      "cropBox": [
+        1270,
+        120,
+        1585,
+        415
+      ],
+      "runtimeSha256": "5663ddebf12ddcd83c7b93b4351078e3d7480f37152392db77b62d5218b0cf0e",
+      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+    },
+    {
+      "id": "royal-supper.grape",
+      "world": "royal-supper",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "royal-supper.food-sheet.imagegen"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/food-sheet.png",
+      "executionId": null,
+      "creditsSpent": null,
+      "approved": false,
+      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
+      "status": "integrated",
+      "runtimePath": "public/assets/supper/props/grape.png",
+      "preparedPixelSize": {
+        "width": 191,
+        "height": 192
+      },
+      "cropBox": [
+        165,
+        608,
+        426,
+        865
+      ],
+      "runtimeSha256": "dd19b8c955a2cc4dc5aa279ab38702b6816e9a233244844d9d97f1de7561b91d",
+      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+    },
+    {
+      "id": "royal-supper.jelly",
+      "world": "royal-supper",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "royal-supper.food-sheet.imagegen"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/food-sheet.png",
+      "executionId": null,
+      "creditsSpent": null,
+      "approved": false,
+      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
+      "status": "integrated",
+      "runtimePath": "public/assets/supper/props/jelly.png",
+      "preparedPixelSize": {
+        "width": 640,
+        "height": 96
+      },
+      "cropBox": [
+        590,
+        756,
+        1082,
+        829
+      ],
+      "runtimeSha256": "cd6c3a525c066bcb82b419016d1d3486497e9b10da64a7bf70b8b36c40dfcd68",
+      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+    },
+    {
+      "id": "royal-supper.cake",
+      "world": "royal-supper",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "royal-supper.food-sheet.imagegen"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/food-sheet.png",
+      "executionId": null,
+      "creditsSpent": null,
+      "approved": false,
+      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
+      "status": "integrated",
+      "runtimePath": "public/assets/supper/props/cake.png",
+      "preparedPixelSize": {
+        "width": 640,
+        "height": 200
+      },
+      "cropBox": [
+        1164,
+        695,
+        1600,
+        830
+      ],
+      "runtimeSha256": "d42d8cccc08459f9f692fd60b33bcbd5fa2a8ccf40f54d23a2bbf3c349f366c5",
+      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+    },
+    {
+      "id": "royal-supper.plate",
+      "world": "royal-supper",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "royal-supper.crockery-sheet.imagegen"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/crockery-sheet.png",
+      "executionId": null,
+      "creditsSpent": null,
+      "approved": false,
+      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
+      "status": "integrated",
+      "runtimePath": "public/assets/supper/props/plate.png",
+      "preparedPixelSize": {
+        "width": 768,
+        "height": 96
+      },
+      "cropBox": [
+        136,
+        353,
+        972,
+        416
+      ],
+      "runtimeSha256": "aa41ef6df181065ffeab054d299c7d3a5354800d073f248494d2a36dcae87469",
+      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+    },
+    {
+      "id": "royal-supper.goblet",
+      "world": "royal-supper",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "royal-supper.crockery-sheet.imagegen"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/crockery-sheet.png",
+      "executionId": null,
+      "creditsSpent": null,
+      "approved": false,
+      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
+      "status": "integrated",
+      "runtimePath": "public/assets/supper/props/goblet.png",
+      "preparedPixelSize": {
+        "width": 256,
+        "height": 366
+      },
+      "cropBox": [
+        1050,
+        35,
+        1395,
+        530
+      ],
+      "runtimeSha256": "697035115cef03c4d5fc79f0dbc0daf9a07806699e28237dd00f4096c2d2af23",
+      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+    },
+    {
+      "id": "royal-supper.cover",
+      "world": "royal-supper",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "royal-supper.crockery-sheet.imagegen"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/crockery-sheet.png",
+      "executionId": null,
+      "creditsSpent": null,
+      "approved": false,
+      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
+      "status": "integrated",
+      "runtimePath": "public/assets/supper/props/cover.png",
+      "preparedPixelSize": {
+        "width": 640,
+        "height": 256
+      },
+      "cropBox": [
+        108,
+        709,
+        959,
+        917
+      ],
+      "runtimeSha256": "f566cb92eb45c25bbcad0b9e7d87a4d4b6f459422509c971f9140aa92823eeb7",
+      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+    },
+    {
+      "id": "royal-supper.wax",
+      "world": "royal-supper",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "royal-supper.crockery-sheet.imagegen"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/crockery-sheet.png",
+      "executionId": null,
+      "creditsSpent": null,
+      "approved": false,
+      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
+      "status": "integrated",
+      "runtimePath": "public/assets/supper/props/wax.png",
+      "preparedPixelSize": {
+        "width": 256,
+        "height": 256
+      },
+      "cropBox": [
+        1140,
+        668,
+        1382,
+        916
+      ],
+      "runtimeSha256": "c5ceee8aab34902f6d52c9d8e7d358db057042f1c0473412318757440d2589f2",
+      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+    },
+    {
+      "id": "royal-supper.fork",
+      "world": "royal-supper",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "royal-supper.mechanics-sheet.imagegen"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/mechanics-sheet.png",
+      "executionId": null,
+      "creditsSpent": null,
+      "approved": false,
+      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
+      "status": "integrated",
+      "runtimePath": "public/assets/supper/props/fork.png",
+      "preparedPixelSize": {
+        "width": 69,
+        "height": 490
+      },
+      "cropBox": [
+        366,
+        0,
+        461,
+        505
+      ],
+      "runtimeSha256": "5ea661f6a7498aff130375c3ef8a75484402d6b12b0f677d45eea70b8b630fcc",
+      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+    },
+    {
+      "id": "royal-supper.fan",
+      "world": "royal-supper",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "royal-supper.mechanics-sheet.imagegen"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/mechanics-sheet.png",
+      "executionId": null,
+      "creditsSpent": null,
+      "approved": false,
+      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
+      "status": "integrated",
+      "runtimePath": "public/assets/supper/props/fan.png",
+      "preparedPixelSize": {
+        "width": 384,
+        "height": 365
+      },
+      "cropBox": [
+        956,
+        0,
+        1492,
+        493
+      ],
+      "runtimeSha256": "3e3d9294014238079710131ddc19f238ad2512f549f3f28e7c38fa11d643c32a",
+      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+    },
+    {
+      "id": "royal-supper.holder",
+      "world": "royal-supper",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "royal-supper.mechanics-sheet.imagegen"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/mechanics-sheet.png",
+      "executionId": null,
+      "creditsSpent": null,
+      "approved": false,
+      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
+      "status": "integrated",
+      "runtimePath": "public/assets/supper/props/holder.png",
+      "preparedPixelSize": {
+        "width": 658,
+        "height": 335
+      },
+      "cropBox": [
+        84,
+        567,
+        759,
+        924
+      ],
+      "runtimeSha256": "c7e55a019537f33bf43abc2fd91fe1356ade25b369575c65b7a9e70464a8f42b",
+      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+    },
+    {
+      "id": "royal-supper.diner",
+      "world": "royal-supper",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "royal-supper.mechanics-sheet.imagegen"
+      ],
+      "sourcePath": "asset-sources/production/imagegen/mechanics-sheet.png",
+      "executionId": null,
+      "creditsSpent": null,
+      "approved": false,
+      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
+      "status": "integrated",
+      "runtimePath": "public/assets/supper/props/diner.png",
+      "preparedPixelSize": {
+        "width": 640,
+        "height": 434
+      },
+      "cropBox": [
+        873,
+        493,
+        1555,
+        941
+      ],
+      "runtimeSha256": "cd4b09e6dbe8cb077049d14e79cb1f231ecac9bbd41b90471aef641c0f2b7915",
+      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
     }
   ],
   "balanceAfterReferences": {
@@ -306,5 +1319,830 @@
     "note": "CLI 0.3.0 default balance reports legacy 0.17; current purchase pricing explicitly verified. Ordinary operation charge remains 1 API credit."
   },
   "currentBanquetReferenceId": "banquet.reference.v5",
-  "totalObservedReferenceCredits": 7
+  "totalObservedReferenceCredits": 7,
+  "productionChecks": [
+    {
+      "checkedAt": "2026-10-05T17:30:19.610Z",
+      "capabilities": {
+        "api_version": "1",
+        "key_mode": "live",
+        "operations": [
+          "text_to_image",
+          "image_to_image",
+          "background_remove",
+          "upscale",
+          "sprite_sheet"
+        ],
+        "managed_execute": true,
+        "server_sent_events": true,
+        "interactive_questions": true,
+        "maximum_input_bytes": 20971520,
+        "staged_input_uploads": true,
+        "maximum_source_input_bytes": 209715200,
+        "maximum_input_dimension": 4096,
+        "supported_input_extensions": [
+          ".arw",
+          ".cr2",
+          ".cr3",
+          ".crw",
+          ".dng",
+          ".jpeg",
+          ".jpg",
+          ".nef",
+          ".nrw",
+          ".orf",
+          ".pef",
+          ".png",
+          ".raf",
+          ".rw2",
+          ".sr2",
+          ".srw",
+          ".webp"
+        ],
+        "live_charge_credits_per_image": 1,
+        "test_mode_uses_credits": false,
+        "sprite_sheet_credits": 9.9,
+        "sprite_pricing": {
+          "minimum_frames": 7,
+          "maximum_frames": 100,
+          "default_frames": 12,
+          "tier_boundary": 14,
+          "first_tier_cents": 14,
+          "additional_frame_cents": 7,
+          "credit_cents": 17,
+          "charge_rounding": "up_to_tenth",
+          "plain_frame_cents": 7
+        }
+      },
+      "balance": {
+        "promotional": 93,
+        "purchased": 0,
+        "available": 93,
+        "credit_usd": "0.25"
+      },
+      "batch": "slice",
+      "reserveCredits": 20
+    },
+    {
+      "checkedAt": "2026-10-05T17:33:38.517Z",
+      "capabilities": {
+        "api_version": "1",
+        "key_mode": "live",
+        "operations": [
+          "text_to_image",
+          "image_to_image",
+          "background_remove",
+          "upscale",
+          "sprite_sheet"
+        ],
+        "managed_execute": true,
+        "server_sent_events": true,
+        "interactive_questions": true,
+        "maximum_input_bytes": 20971520,
+        "staged_input_uploads": true,
+        "maximum_source_input_bytes": 209715200,
+        "maximum_input_dimension": 4096,
+        "supported_input_extensions": [
+          ".arw",
+          ".cr2",
+          ".cr3",
+          ".crw",
+          ".dng",
+          ".jpeg",
+          ".jpg",
+          ".nef",
+          ".nrw",
+          ".orf",
+          ".pef",
+          ".png",
+          ".raf",
+          ".rw2",
+          ".sr2",
+          ".srw",
+          ".webp"
+        ],
+        "live_charge_credits_per_image": 1,
+        "test_mode_uses_credits": false,
+        "sprite_sheet_credits": 9.9,
+        "sprite_pricing": {
+          "minimum_frames": 7,
+          "maximum_frames": 100,
+          "default_frames": 12,
+          "tier_boundary": 14,
+          "first_tier_cents": 14,
+          "additional_frame_cents": 7,
+          "credit_cents": 17,
+          "charge_rounding": "up_to_tenth",
+          "plain_frame_cents": 7
+        }
+      },
+      "balance": {
+        "promotional": 93,
+        "purchased": 0,
+        "available": 93,
+        "credit_usd": "0.25"
+      },
+      "batch": "slice",
+      "reserveCredits": 20
+    },
+    {
+      "checkedAt": "2026-10-05T17:41:03.306Z",
+      "capabilities": {
+        "api_version": "1",
+        "key_mode": "live",
+        "operations": [
+          "text_to_image",
+          "image_to_image",
+          "background_remove",
+          "upscale",
+          "sprite_sheet"
+        ],
+        "managed_execute": true,
+        "server_sent_events": true,
+        "interactive_questions": true,
+        "maximum_input_bytes": 20971520,
+        "staged_input_uploads": true,
+        "maximum_source_input_bytes": 209715200,
+        "maximum_input_dimension": 4096,
+        "supported_input_extensions": [
+          ".arw",
+          ".cr2",
+          ".cr3",
+          ".crw",
+          ".dng",
+          ".jpeg",
+          ".jpg",
+          ".nef",
+          ".nrw",
+          ".orf",
+          ".pef",
+          ".png",
+          ".raf",
+          ".rw2",
+          ".sr2",
+          ".srw",
+          ".webp"
+        ],
+        "live_charge_credits_per_image": 1,
+        "test_mode_uses_credits": false,
+        "sprite_sheet_credits": 9.9,
+        "sprite_pricing": {
+          "minimum_frames": 7,
+          "maximum_frames": 100,
+          "default_frames": 12,
+          "tier_boundary": 14,
+          "first_tier_cents": 14,
+          "additional_frame_cents": 7,
+          "credit_cents": 17,
+          "charge_rounding": "up_to_tenth",
+          "plain_frame_cents": 7
+        }
+      },
+      "balance": {
+        "promotional": 93,
+        "purchased": 0,
+        "available": 93,
+        "credit_usd": "0.25"
+      },
+      "batch": [
+        "player.idle"
+      ],
+      "reserveCredits": 20
+    },
+    {
+      "checkedAt": "2026-10-05T17:46:03.501Z",
+      "capabilities": {
+        "api_version": "1",
+        "key_mode": "live",
+        "operations": [
+          "text_to_image",
+          "image_to_image",
+          "background_remove",
+          "upscale",
+          "sprite_sheet"
+        ],
+        "managed_execute": true,
+        "server_sent_events": true,
+        "interactive_questions": true,
+        "maximum_input_bytes": 20971520,
+        "staged_input_uploads": true,
+        "maximum_source_input_bytes": 209715200,
+        "maximum_input_dimension": 4096,
+        "supported_input_extensions": [
+          ".arw",
+          ".cr2",
+          ".cr3",
+          ".crw",
+          ".dng",
+          ".jpeg",
+          ".jpg",
+          ".nef",
+          ".nrw",
+          ".orf",
+          ".pef",
+          ".png",
+          ".raf",
+          ".rw2",
+          ".sr2",
+          ".srw",
+          ".webp"
+        ],
+        "live_charge_credits_per_image": 1,
+        "test_mode_uses_credits": false,
+        "sprite_sheet_credits": 9.9,
+        "sprite_pricing": {
+          "minimum_frames": 7,
+          "maximum_frames": 100,
+          "default_frames": 12,
+          "tier_boundary": 14,
+          "first_tier_cents": 14,
+          "additional_frame_cents": 7,
+          "credit_cents": 17,
+          "charge_rounding": "up_to_tenth",
+          "plain_frame_cents": 7
+        }
+      },
+      "balance": {
+        "promotional": 93,
+        "purchased": 0,
+        "available": 93,
+        "credit_usd": "0.25"
+      },
+      "batch": [
+        "player.idle"
+      ],
+      "reserveCredits": 20
+    },
+    {
+      "checkedAt": "2026-10-05T17:49:14.687Z",
+      "capabilities": {
+        "api_version": "1",
+        "key_mode": "live",
+        "operations": [
+          "text_to_image",
+          "image_to_image",
+          "background_remove",
+          "upscale",
+          "sprite_sheet"
+        ],
+        "managed_execute": true,
+        "server_sent_events": true,
+        "interactive_questions": true,
+        "maximum_input_bytes": 20971520,
+        "staged_input_uploads": true,
+        "maximum_source_input_bytes": 209715200,
+        "maximum_input_dimension": 4096,
+        "supported_input_extensions": [
+          ".arw",
+          ".cr2",
+          ".cr3",
+          ".crw",
+          ".dng",
+          ".jpeg",
+          ".jpg",
+          ".nef",
+          ".nrw",
+          ".orf",
+          ".pef",
+          ".png",
+          ".raf",
+          ".rw2",
+          ".sr2",
+          ".srw",
+          ".webp"
+        ],
+        "live_charge_credits_per_image": 1,
+        "test_mode_uses_credits": false,
+        "sprite_sheet_credits": 9.9,
+        "sprite_pricing": {
+          "minimum_frames": 7,
+          "maximum_frames": 100,
+          "default_frames": 12,
+          "tier_boundary": 14,
+          "first_tier_cents": 14,
+          "additional_frame_cents": 7,
+          "credit_cents": 17,
+          "charge_rounding": "up_to_tenth",
+          "plain_frame_cents": 7
+        }
+      },
+      "balance": {
+        "promotional": 92,
+        "purchased": 0,
+        "available": 92,
+        "credit_usd": "0.25"
+      },
+      "batch": [
+        "royal-supper.background",
+        "royal-supper.bread",
+        "royal-supper.bread.cutout"
+      ],
+      "reserveCredits": 20
+    },
+    {
+      "checkedAt": "2026-10-05T17:56:35.585Z",
+      "capabilities": {
+        "api_version": "1",
+        "key_mode": "live",
+        "operations": [
+          "text_to_image",
+          "image_to_image",
+          "background_remove",
+          "upscale",
+          "sprite_sheet"
+        ],
+        "managed_execute": true,
+        "server_sent_events": true,
+        "interactive_questions": true,
+        "maximum_input_bytes": 20971520,
+        "staged_input_uploads": true,
+        "maximum_source_input_bytes": 209715200,
+        "maximum_input_dimension": 4096,
+        "supported_input_extensions": [
+          ".arw",
+          ".cr2",
+          ".cr3",
+          ".crw",
+          ".dng",
+          ".jpeg",
+          ".jpg",
+          ".nef",
+          ".nrw",
+          ".orf",
+          ".pef",
+          ".png",
+          ".raf",
+          ".rw2",
+          ".sr2",
+          ".srw",
+          ".webp"
+        ],
+        "live_charge_credits_per_image": 1,
+        "test_mode_uses_credits": false,
+        "sprite_sheet_credits": 9.9,
+        "sprite_pricing": {
+          "minimum_frames": 7,
+          "maximum_frames": 100,
+          "default_frames": 12,
+          "tier_boundary": 14,
+          "first_tier_cents": 14,
+          "additional_frame_cents": 7,
+          "credit_cents": 17,
+          "charge_rounding": "up_to_tenth",
+          "plain_frame_cents": 7
+        }
+      },
+      "balance": {
+        "promotional": 91,
+        "purchased": 0,
+        "available": 91,
+        "credit_usd": "0.25"
+      },
+      "batch": [
+        "royal-supper.bread",
+        "royal-supper.bread.cutout"
+      ],
+      "reserveCredits": 20
+    },
+    {
+      "checkedAt": "2026-10-05T18:01:13.545Z",
+      "capabilities": {
+        "api_version": "1",
+        "key_mode": "live",
+        "operations": [
+          "text_to_image",
+          "image_to_image",
+          "background_remove",
+          "upscale",
+          "sprite_sheet"
+        ],
+        "managed_execute": true,
+        "server_sent_events": true,
+        "interactive_questions": true,
+        "maximum_input_bytes": 20971520,
+        "staged_input_uploads": true,
+        "maximum_source_input_bytes": 209715200,
+        "maximum_input_dimension": 4096,
+        "supported_input_extensions": [
+          ".arw",
+          ".cr2",
+          ".cr3",
+          ".crw",
+          ".dng",
+          ".jpeg",
+          ".jpg",
+          ".nef",
+          ".nrw",
+          ".orf",
+          ".pef",
+          ".png",
+          ".raf",
+          ".rw2",
+          ".sr2",
+          ".srw",
+          ".webp"
+        ],
+        "live_charge_credits_per_image": 1,
+        "test_mode_uses_credits": false,
+        "sprite_sheet_credits": 9.9,
+        "sprite_pricing": {
+          "minimum_frames": 7,
+          "maximum_frames": 100,
+          "default_frames": 12,
+          "tier_boundary": 14,
+          "first_tier_cents": 14,
+          "additional_frame_cents": 7,
+          "credit_cents": 17,
+          "charge_rounding": "up_to_tenth",
+          "plain_frame_cents": 7
+        }
+      },
+      "balance": {
+        "promotional": 91,
+        "purchased": 0,
+        "available": 91,
+        "credit_usd": "0.25"
+      },
+      "batch": [
+        "royal-supper.bread",
+        "royal-supper.bread.cutout"
+      ],
+      "reserveCredits": 20
+    },
+    {
+      "checkedAt": "2026-10-05T18:39:39.244Z",
+      "capabilities": {
+        "api_version": "1",
+        "key_mode": "live",
+        "operations": [
+          "text_to_image",
+          "image_to_image",
+          "background_remove",
+          "upscale",
+          "sprite_sheet"
+        ],
+        "managed_execute": true,
+        "server_sent_events": true,
+        "interactive_questions": true,
+        "maximum_input_bytes": 20971520,
+        "staged_input_uploads": true,
+        "maximum_source_input_bytes": 209715200,
+        "maximum_input_dimension": 4096,
+        "supported_input_extensions": [
+          ".arw",
+          ".cr2",
+          ".cr3",
+          ".crw",
+          ".dng",
+          ".jpeg",
+          ".jpg",
+          ".nef",
+          ".nrw",
+          ".orf",
+          ".pef",
+          ".png",
+          ".raf",
+          ".rw2",
+          ".sr2",
+          ".srw",
+          ".webp"
+        ],
+        "live_charge_credits_per_image": 1,
+        "test_mode_uses_credits": false,
+        "sprite_sheet_credits": 9.9,
+        "sprite_pricing": {
+          "minimum_frames": 7,
+          "maximum_frames": 100,
+          "default_frames": 12,
+          "tier_boundary": 14,
+          "first_tier_cents": 14,
+          "additional_frame_cents": 7,
+          "credit_cents": 17,
+          "charge_rounding": "up_to_tenth",
+          "plain_frame_cents": 7
+        }
+      },
+      "balance": {
+        "promotional": 90,
+        "purchased": 0,
+        "available": 90,
+        "credit_usd": "0.25"
+      },
+      "batch": [
+        "royal-supper.food-sheet",
+        "royal-supper.crockery-sheet",
+        "royal-supper.mechanics-sheet"
+      ],
+      "reserveCredits": 20
+    },
+    {
+      "checkedAt": "2026-10-05T19:20:53.515Z",
+      "capabilities": {
+        "api_version": "1",
+        "key_mode": "live",
+        "operations": [
+          "text_to_image",
+          "image_to_image",
+          "background_remove",
+          "upscale",
+          "sprite_sheet"
+        ],
+        "managed_execute": true,
+        "server_sent_events": true,
+        "interactive_questions": true,
+        "maximum_input_bytes": 20971520,
+        "staged_input_uploads": true,
+        "maximum_source_input_bytes": 209715200,
+        "maximum_input_dimension": 4096,
+        "supported_input_extensions": [
+          ".arw",
+          ".cr2",
+          ".cr3",
+          ".crw",
+          ".dng",
+          ".jpeg",
+          ".jpg",
+          ".nef",
+          ".nrw",
+          ".orf",
+          ".pef",
+          ".png",
+          ".raf",
+          ".rw2",
+          ".sr2",
+          ".srw",
+          ".webp"
+        ],
+        "live_charge_credits_per_image": 1,
+        "test_mode_uses_credits": false,
+        "sprite_sheet_credits": 9.9,
+        "sprite_pricing": {
+          "minimum_frames": 7,
+          "maximum_frames": 100,
+          "default_frames": 12,
+          "tier_boundary": 14,
+          "first_tier_cents": 14,
+          "additional_frame_cents": 7,
+          "credit_cents": 17,
+          "charge_rounding": "up_to_tenth",
+          "plain_frame_cents": 7
+        }
+      },
+      "balance": {
+        "promotional": 90,
+        "purchased": 0,
+        "available": 90,
+        "credit_usd": "0.25"
+      },
+      "batch": [
+        "royal-supper.bread.cartoon-preview"
+      ],
+      "reserveCredits": 20
+    }
+  ],
+  "balanceAfterProduction": {
+    "promotional": 90,
+    "purchased": 0,
+    "available": 90,
+    "credit_usd": "0.25"
+  },
+  "sliceValidation": {
+    "passed": true,
+    "date": "2026-10-06",
+    "viewports": [
+      "1280x720",
+      "960x540"
+    ],
+    "evidence": "Agent inspected both actual camera screenshots, complete real-input bread traversal passed with zero retries, required asset failure/retry passed.",
+    "captures": [
+      "docs/validation/m3-slice-1280.png",
+      "docs/validation/m3-slice-960.png"
+    ]
+  },
+  "finalAvailableBalanceObservation": {
+    "promotional": 90,
+    "purchased": 0,
+    "available": 90,
+    "credit_usd": "0.25",
+    "date": "2026-10-06",
+    "observedAt": "2026-10-05T20:14:48.095Z",
+    "evidence": "Post-explicit-submission balance; no current pre-submit balance available."
+  },
+  "m3Handoff": {
+    "date": "2026-10-06",
+    "complete": false,
+    "focusedTestsPassed": 40,
+    "browserScenariosPassed": 9,
+    "browserElapsedMinutes": 12.4,
+    "blocker": "Required props not delivered after repeated DreamLayer upstream 503 responses.",
+    "commitPush": "Deferred until completed M3; current work uncommitted."
+  },
+  "continuationChecks": [
+    {
+      "recordedAt": "2026-10-05T19:24:12.555Z",
+      "localDate": "2026-10-06",
+      "baseline": "605bee4",
+      "access": "live",
+      "ordinaryImageQuotedCredits": 1,
+      "preAttemptBalance": {
+        "promotional": 90,
+        "purchased": 0,
+        "available": 90,
+        "credit_usd": "0.25"
+      },
+      "recovery": {
+        "assetId": "royal-supper.food-sheet",
+        "idempotencyKey": "last-curator-m3-food-sheet-20261006-v1",
+        "attempts": 3,
+        "lastAttemptFailedAt": "2026-10-05T19:22:13.666Z",
+        "lastError": {
+          "code": "UPSTREAM_UNAVAILABLE",
+          "reason": "temporarily_unavailable",
+          "message": "The service is temporarily unavailable. Please try again.",
+          "retryable": true,
+          "request_id": "d03c9028-5cba-46db-acf8-0ff0cb120761"
+        },
+        "executionId": null
+      },
+      "postAttemptBalance": null,
+      "postAttemptBalanceQueryFailures": 2,
+      "postAttemptBalanceError": {
+        "status": 503,
+        "code": "UPSTREAM_UNAVAILABLE",
+        "reason": "temporarily_unavailable"
+      },
+      "notes": "Existing immutable food request only. No output delivered. Actual cost remains null; post-attempt balance unavailable. No subsequent generation submitted."
+    },
+    {
+      "recordedAt": "2026-10-05T19:41:54.390Z",
+      "localDate": "2026-10-06",
+      "trigger": "User requested retry now",
+      "access": "live",
+      "ordinaryImageQuotedCredits": 1,
+      "preAttemptBalance": {
+        "promotional": 90,
+        "purchased": 0,
+        "available": 90,
+        "credit_usd": "0.25"
+      },
+      "recovery": {
+        "assetId": "royal-supper.food-sheet",
+        "idempotencyKey": "last-curator-m3-food-sheet-20261006-v1",
+        "attempts": 3,
+        "lastAttemptFailedAt": "2026-10-05T19:41:09.347Z",
+        "lastError": {
+          "code": "UPSTREAM_UNAVAILABLE",
+          "reason": "temporarily_unavailable",
+          "message": "The service is temporarily unavailable. Please try again.",
+          "retryable": true,
+          "request_id": "0a619014-892e-4268-a5af-9ef0f42ededa"
+        },
+        "executionId": null
+      },
+      "postAttemptBalance": null,
+      "postAttemptBalanceQueryFailures": 1,
+      "postAttemptBalanceError": {
+        "status": 503,
+        "code": "UPSTREAM_UNAVAILABLE",
+        "reason": "temporarily_unavailable"
+      },
+      "notes": "Same immutable food request only; no output delivered. Actual cost remains null. No subsequent generation submitted."
+    },
+    {
+      "recordedAt": "2026-10-05T20:08:46.945Z",
+      "localDate": "2026-10-06",
+      "trigger": "User requested another retry now",
+      "capabilitiesQueries": {
+        "attempts": 2,
+        "result": "UPSTREAM_UNAVAILABLE"
+      },
+      "pricingBasis": "Recent successful capabilities preflight; saved one-credit operation recovered without changing identity.",
+      "preAttemptBalance": {
+        "promotional": 90,
+        "purchased": 0,
+        "available": 90,
+        "credit_usd": "0.25"
+      },
+      "recovery": {
+        "assetId": "royal-supper.food-sheet",
+        "idempotencyKey": "last-curator-m3-food-sheet-20261006-v1",
+        "attempts": 3,
+        "lastAttemptFailedAt": "2026-10-05T20:08:15.679Z",
+        "lastError": {
+          "code": "UPSTREAM_UNAVAILABLE",
+          "reason": "temporarily_unavailable",
+          "message": "The service is temporarily unavailable. Please try again.",
+          "retryable": true,
+          "request_id": "96df1e9e-75bb-4099-a59c-0ea8675a3c34"
+        },
+        "executionId": null
+      },
+      "postAttemptBalance": {
+        "promotional": 90,
+        "purchased": 0,
+        "available": 90,
+        "credit_usd": "0.25"
+      },
+      "observedAvailableBalanceDelta": 0,
+      "notes": "No output/execution identity; actual job cost remains null. No replacement or subsequent generation."
+    }
+  ],
+  "visualDirectionReview": {
+    "date": "2026-10-06",
+    "status": "awaiting_user_choice",
+    "priorReferencesStillApproved": true,
+    "comparison": "asset-sources/style-previews/bread-comparison-cartoon.png",
+    "productionAssetsUnchanged": true,
+    "note": "User requested animation-style comparison after observing realistic props. No change of production direction approved yet."
+  },
+  "keyUpdateChecks": [
+    {
+      "checkedAt": "2026-10-05T20:10:48.872Z",
+      "localDate": "2026-10-06",
+      "trigger": "User updated local API key and requested access check",
+      "effectiveKeyMatchesLocal": true,
+      "localAliasesConflict": false,
+      "capabilities": {
+        "result": "success",
+        "keyMode": "live",
+        "ordinaryImageQuotedCredits": 1
+      },
+      "currentBalance": {
+        "result": "unavailable",
+        "attempts": 3,
+        "status": 503,
+        "code": "UPSTREAM_UNAVAILABLE",
+        "reason": "temporarily_unavailable"
+      },
+      "generationAttempted": false,
+      "notes": "No credential values or fingerprints recorded. Fresh balance unavailable for updated key; did not reuse previous key balance for spending."
+    }
+  ],
+  "explicitSubmissionChecks": [
+    {
+      "requestedAt": "2026-10-05T20:12:58.836Z",
+      "localDate": "2026-10-06",
+      "assetId": "royal-supper.food-sheet",
+      "idempotencyKey": "last-curator-m3-food-sheet-20261006-v1",
+      "authorization": "User explicitly requested generation submission after updated-key balance checks failed.",
+      "quotedCredits": 1,
+      "preAttemptBalance": null,
+      "attempts": 3,
+      "postAttemptBalance": {
+        "promotional": 90,
+        "purchased": 0,
+        "available": 90,
+        "credit_usd": "0.25"
+      },
+      "lastError": {
+        "code": "UPSTREAM_UNAVAILABLE",
+        "reason": "temporarily_unavailable",
+        "message": "The service is temporarily unavailable. Please try again.",
+        "retryable": true,
+        "request_id": "f5b39560-0e62-40ff-ade9-339bcd2490ff"
+      },
+      "status": "failed",
+      "executionId": null
+    }
+  ],
+  "productionProviderException": {
+    "date": "2026-10-06",
+    "scope": "Only remaining required M3 props",
+    "authorization": "Bro at this point you generate the images and use them",
+    "provider": "OpenAI ImageGen",
+    "dreamLayerSourcesPreserved": true
+  },
+  "m3PropValidation": {
+    "date": "2026-10-06",
+    "focusedTestsPassed": 40,
+    "typecheck": true,
+    "build": true,
+    "verifiedHashes": 41,
+    "initialTracedBrowserSuite": {
+      "passed": 6,
+      "failed": 3,
+      "elapsedMinutes": 12.2,
+      "reason": "Wall-clock keyboard schedules missed butter in traced runs; gameplay files unchanged."
+    },
+    "isolatedUntraced": {
+      "passed": true,
+      "elapsedMinutes": 4.2,
+      "firstTraversalSeconds": 116.366,
+      "firstTraversalRetries": 0,
+      "replaySeconds": 118.018,
+      "replayRetries": 1,
+      "coverage": "Full route, early flame recovery, HIDDEN/LOOK protection, exposure/retry, pause/frozen timers, replay/reentry/disposal/save isolation."
+    },
+    "captures": [
+      "docs/validation/m3-props/hidden-look-1280.png",
+      "docs/validation/m3-props/hidden-look-960.png",
+      "docs/validation/m3-props/jelly-approach.png",
+      "docs/validation/m3-props/candle-exit.png"
+    ],
+    "completeProductionRevalidationPending": true,
+    "viewportNote": "Recheck player visibility in the 960px paused LOOK capture, where it is not clearly visible despite visible player in the 1280px capture. Do not claim final visual QA until repeated.",
+    "publicBytes": 7190042,
+    "distBytes": 7835994,
+    "credentialAuditMatches": 0
+  }
 }

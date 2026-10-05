@@ -1,8 +1,8 @@
 # M3 visual-direction review — 2026-10-05
 
-All three images are DreamLayer direction references awaiting the user's approval. They are outside the runtime build. Production generation depends on explicit approval requested by the user in this task.
+All three DreamLayer direction references were explicitly approved on 2026-10-05: the user replied “Looks good to me” after the three images were presented. Their source hashes match the manifest. They remain preserved outside the runtime build; production preparation uses their recorded lineage.
 
-**Current supper candidate:** references/banquet-v5.png, revised for the user's fuller whole-table direction. The original banquet and unsuccessful revisions remain preserved with inspection notes in the manifest. Masterpiece and player references remain unchanged and unapproved.
+**Approved supper direction:** references/banquet-v5.png, revised for the user's fuller whole-table direction. The original banquet and unsuccessful revisions remain preserved with inspection notes in the manifest. Masterpiece and player references were approved unchanged. Do not request this same approval again.
 
 ## References to approve
 
@@ -47,7 +47,7 @@ The user's revised direction adds fuller scenery groups of wine bottles/decanter
 
 Current ordinary operation cost: one API credit each for generate, reference edit, cutout or upscale. Sprite access is available; transparent 7-frame output quotes 5.8 credits and 12 frames quote 9.9, with max_credits required if used. The pinned stable CLI supports ordinary images only; sprite work would need a documented beta CLI upgrade. Keep a 20-credit reserve and verify balance before each production batch. No sprite requests have been made.
 
-Audio remains a separate original/licensed workflow: implement essential Howler feedback, explicit activation, saved volume, pause/resume and disposal after the reference checkpoint. Validate the full production loop and visual result before committing and pushing completed M3 to origin/main, as authorized. No deployment/submission/email is authorized.
+Original locally synthesized audio is integrated through pinned Howler with explicit activation, saved volume, pause/resume and disposal. Provenance is in audio-manifest.json. Existing DreamLayer art remains integrated. After persistent 503 failures, the user explicitly authorized generating/using the remaining required props here on 2026-10-06; three ImageGen atlases supply 14 prepared props. Providers/billing remain distinct in manifest.json. Validate final actual-camera rendering and the complete loop before committing/pushing completed M3 as authorized. References remain approved; no repeat approval or deployment/submission/email is needed/authorized respectively.
 
 ## Local tooling
 

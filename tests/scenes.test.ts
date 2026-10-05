@@ -10,6 +10,16 @@ const fakeScene = (id: string): GameScene => ({
 const createManager = () => new SceneManager({ setSize: vi.fn(), clear: vi.fn(), render: vi.fn() } as unknown as WebGLRenderer, vi.fn());
 
 describe('serialized scene lifecycle', () => {
+  it('keeps loading serialized and discards a scene delivered after teardown', async () => {
+    const manager = createManager(); const late = fakeScene('late');
+    let finish!: (scene: GameScene) => void;
+    const loading = manager.transition(() => new Promise<GameScene>(resolve => { finish = resolve; }));
+    await Promise.resolve(); await Promise.resolve();
+    expect(await manager.transition(() => fakeScene('duplicate'))).toBe(false);
+    manager.dispose(); finish(late); expect(await loading).toBe(false);
+    expect(late.enter).not.toHaveBeenCalled(); expect(late.dispose).toHaveBeenCalledTimes(1);
+    expect(manager.active).toBeNull();
+  });
   it('ignores rapid entry/return activations and disposes the previous scene once', async () => {
     const manager = createManager(); const first = fakeScene('first'); const second = fakeScene('second');
     const enter = manager.transition(() => first);

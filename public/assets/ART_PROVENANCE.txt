@@ -1,0 +1,22 @@
+The Last Curator — Royal Supper study
+
+DreamLayer generated the approved masterpiece, banquet and restorer references,
+the player cutout, banquet scenery and bread source. Runtime player poses,
+background crops, bread front panels, matching pear and aligned restoration
+variants were prepared locally. Existing approved references are preserved.
+
+After repeated DreamLayer upstream 503 failures, the user explicitly authorized
+OpenAI ImageGen for the remaining required Royal Supper props on 2026-10-06.
+Three reference-guided ImageGen sheets supplied basket, butter, crumb, grape,
+jelly, cake, platter, goblet, cover terrine, wax, fork, fan, trident holder and
+diner portrait. Runtime images are locally cropped/resized from these sheets.
+Collision geometry, landing edges, motion, flame/attention cues and gameplay
+remain authored code, independent of generated image pixels.
+
+Detailed sources, prompts, hashes and provider-specific cost evidence are in the
+repository's asset-sources/manifest.json. Known delivered DreamLayer usage is
+seven reference plus three production credits. Failed-job costs remain unknown;
+ImageGen billing is not exposed and is not counted as DreamLayer credit usage.
+
+Audio is original synthesized work; see audio/NOTICE.txt. Software dependency
+notices are in THIRD_PARTY_NOTICES.txt.

@@ -1,6 +1,6 @@
-# The Last Curator — M3 mechanics blockout
+# The Last Curator — M3 Royal Supper art and sound complete
 
-Vanilla TypeScript, Vite and Three.js. One renderer, active scene and animation loop; fixed 60 Hz gameplay. Runtime visuals are original geometric placeholders. Existing DreamLayer references/tooling live outside the production bundle; this mechanics pass generated no production art. Audio/Howler integration is deferred to the remainder of M3.
+Vanilla TypeScript, Vite, Three.js and Howler. One renderer, active scene and animation loop; fixed 60 Hz gameplay. Approved DreamLayer player/background/bread art, matching pear and aligned restoration images remain integrated alongside original synthesized audio. After persistent DreamLayer 503 failures, the user authorized OpenAI ImageGen for the remaining required props: three sheets supply 14 integrated props with distinct provenance. Final camera/full-loop checks have passed; M3 is complete. Sleeping Mountain and the two-stage ending are next. Gameplay layout, movement and timings remain user-approved and unchanged.
 
 ## Run
 
@@ -19,7 +19,7 @@ Development: http://127.0.0.1:5173/. Production preview: http://127.0.0.1:4173/.
 
 ```powershell
 npx playwright install chromium
-npm run test:browser
+npm run test:browser -- --trace off
 ```
 
 Playwright starts dev/preview servers if needed; build first. Tests use real keyboard/mouse controls. Development snapshots are read-only; production traversal uses visible HUD/prompts, with no teleports, campaign setters or debug shortcuts. Save fixtures cover reloaded inventory and corruption. Screenshots/traces are kept in ignored `test-results/`.
@@ -37,13 +37,13 @@ Playwright starts dev/preview servers if needed; build first. Tests use real key
 
 A/D or left/right move; hold Space for height, release and press again for one air jump. E topples the fork. R restarts at the latest section checkpoint, retaining the settled fork and resetting cyclic hazards. Pause offers clean adventure restart, checkpoint restart and museum return. Clean restart preserves campaign pieces.
 
-Climb twelve bread landings, pass under the goblet, then slide faster across three varied butter patches. Momentum survives jumps; touching a crumb retries the section. Avoid predictable grape pairs, then topple the required fork. Observe the fan from safety and commit through three sequential ember windows before the flames return. Make three progressively longer cover crossings during AWAY. Keep your foot-centre marker inside the inset blue strip; green/HIDDEN confirms full-body protection during LOOK. Jumping above cover exposes you. Bounce from jelly, climb two cake rises, cross a flat shelf and drop to a second jelly for the final rise to the pear. A checkpoint follows each hard section, with none inside the fan, watched run or finale. Falls, crumbs, grapes, burns and detection recover in 0.35 seconds without inventory loss. Replays cannot duplicate a collected/restored pear. The camera follows horizontally and vertically; there is no route map.
+Climb twelve bread landings, pass under the goblet, then slide faster across three varied butter patches. Momentum survives jumps; touching a crumb retries the section. Avoid predictable grape pairs, then topple the required fork. Observe the fan from safety and commit through three sequential ember windows before the flames return. Make three progressively longer cover crossings during AWAY. Keep your foot-centre marker inside the inset blue strip; green/HIDDEN confirms full-body protection during LOOK. Golden rays from the painted eyes mark LOOK; normal lighting returns during AWAY/TURNING. Jumping above cover exposes you. Bounce from jelly, climb two cake rises, cross a flat shelf and drop to a second jelly for the final rise to the pear. A checkpoint follows each hard section, with none inside the fan, watched run or finale. Falls, crumbs, grapes, burns and detection recover in 0.35 seconds without inventory loss. Replays cannot duplicate a collected/restored pear. The camera follows horizontally and vertically; there is no route map.
 
 ## Persistence and reset
 
 Campaign progress/settings use `last-curator.save.v1`. Inventory, unlocks and completion are derived; no redundant flags are saved. Malformed/incompatible data falls back safely with a notice. Unknown/duplicate IDs and invalid restoration prefixes are repaired; unavailable future awards cannot bypass progression. Storage failure preserves play in memory and warns that reload will lose it.
 
-Reload preserves collected/restored pieces and quality/volume settings; traversal/checkpoints restart after reload. **Reset progress** (Pause) or **New Game / reset progress** (menu) opens an explicit confirmation with **Keep progress** as the first/default focus. Confirmation clears only this game's save and session, and opens a fresh museum. Volume is saved for the future audio milestone; The mechanics blockout is silent.
+Reload preserves collected/restored pieces and quality/volume settings; traversal/checkpoints restart after reload. **Reset progress** (Pause) or **New Game / reset progress** (menu) opens an explicit confirmation with **Keep progress** as the first/default focus. Confirmation clears only this game's save and session, and opens a fresh museum. Original ambience and feedback play through Howler after a real click/key gesture. Master volume is saved, including mute; pause/blur stops sound, and scene exits unload their sounds. Sources and provenance are in `scripts/make-audio.py` and `asset-sources/audio-manifest.json`.
 
 ## Isolated development entry
 

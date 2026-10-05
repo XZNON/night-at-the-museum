@@ -2,7 +2,8 @@ import type { CampaignResult } from '../campaign/progression';
 import type { SupperHud } from '../scenes/royal-supper';
 import type { CampaignState } from '../campaign/progression';
 import type { Settings } from '../campaign/save';
-import { masterpieceStudy } from './masterpiece';
+import { masterpieceImage } from './masterpiece';
+import { runtimeAssets, runtimeAssetUrl } from '../assets/manifest';
 import { museum } from '../levels/museum';
 
 export interface UiActions {
@@ -12,6 +13,7 @@ export interface UiActions {
   reset(): void; confirmReset(): void; cancelReset(): void;
   closeInspection(): void; place(piece: string, target: string): void;
   look(): void; volume(value: number): void;
+  retry(): void; back(): void;
 }
 
 export class GameUi {
@@ -19,7 +21,7 @@ export class GameUi {
   private readonly modal: HTMLElement;
   private readonly hud: HTMLElement;
   private readonly controller = new AbortController();
-  private mode: 'menu' | 'pause' | 'success' | 'finished' | 'inspection' | 'reset' | 'none' = 'menu';
+  private mode: 'menu' | 'pause' | 'success' | 'finished' | 'inspection' | 'reset' | 'none' | 'loading' = 'menu';
   private collection: CampaignResult | null = null;
   private hudCache = '';
   private selectedPiece = '';
@@ -46,7 +48,7 @@ export class GameUi {
       </section>
       <aside id="save-notice" class="save-notice" role="status" hidden></aside>
       <aside id="diagnostics" class="diagnostics" hidden></aside>
-      <span class="build-tag">M3 · MECHANICS BLOCKOUT${direct ? ' · ISOLATED DEV SESSION' : ''}</span>`;
+      <span class="build-tag">ROYAL SUPPER STUDY${direct ? ' · ISOLATED DEV SESSION' : ''}</span>`;
     this.canvas = root.querySelector<HTMLCanvasElement>('#world')!;
     this.modal = root.querySelector<HTMLElement>('#modal')!;
     this.hud = root.querySelector<HTMLElement>('#hud')!;
@@ -55,6 +57,8 @@ export class GameUi {
       if (!target) return;
       switch (target.dataset.action) {
         case 'start': this.actions.start(); break;
+        case 'retry': this.actions.retry(); break;
+        case 'back': this.actions.back(); break;
         case 'replay': this.actions.replay(); break;
         case 'resume': this.actions.resume(); break;
         case 'leave': this.actions.leave(); break;
@@ -116,7 +120,7 @@ export class GameUi {
     this.hud.hidden = true;
     document.getElementById('museum-hud')!.hidden = true;
     if (!this.direct) {
-      this.show('menu', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / A restoration study</p><h2>The garden<br><em>before dawn.</em></h2><p class="intro">A quiet museum.<br>A borrowed golden pear.<br>A garden waiting for colour.</p><p class="menu-description">Walk to the frames, enter Royal Supper and bring a missing piece home.</p><button class="primary" data-action="start" aria-label="${remembered ? 'Continue' : 'New Game'}">${remembered ? 'Continue' : 'New Game'} <span>→</span></button>${remembered ? '<button class="quiet" data-action="reset">New Game / reset progress</button>' : ''}<div class="menu-controls"><kbd>WASD</kbd> Walk · Drag to look · Click frame</div><p class="small-note">M2 placeholder study · Two-adventure campaign in progress.<br>The sun adventure arrives in a later milestone.</p>`);
+      this.show('menu', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / A restoration study</p><h2>The garden<br><em>before dawn.</em></h2><p class="intro">A quiet museum.<br>A borrowed golden pear.<br>A garden waiting for colour.</p><p class="menu-description">Walk to the frames, enter Royal Supper and bring a missing piece home.</p><button class="primary" data-action="start" aria-label="${remembered ? 'Continue' : 'New Game'}">${remembered ? 'Continue' : 'New Game'} <span>→</span></button>${remembered ? '<button class="quiet" data-action="reset">New Game / reset progress</button>' : ''}<div class="menu-controls"><kbd>WASD</kbd> Walk · Drag to look · Click frame</div><p class="small-note">Royal Supper is playable. The two-artwork campaign is in progress.<br>The sun adventure arrives in a later update.</p>`);
       return;
     }
     this.show('menu', `
@@ -145,7 +149,7 @@ export class GameUi {
       <label class="setting">Master volume <input id="master-volume" type="range" min="0" max="1" step="0.05" value="${settings?.masterVolume ?? 0.7}"></label>
       ${!this.direct ? '<button class="quiet" data-action="reset">Reset progress</button>' : ''}
       ${import.meta.env.DEV ? '<button class="quiet" data-action="debug">Toggle collision view · F3</button>' : ''}
-      <p class="small-note">${this.context === 'supper' ? 'Unlimited retries. Each hard section ends at a checkpoint. Falls keep the fork; timed hazards restart. Restart adventure preserves your pear.' : 'Drag to look or use Mouse look for pointer lock.'}<br>Audio arrives with the art milestone.</p>`);
+      <p class="small-note">${this.context === 'supper' ? 'Unlimited retries. Each hard section ends at a checkpoint. Falls keep the fork; timed hazards restart. Restart adventure preserves your pear.' : 'Drag to look or use Mouse look for pointer lock.'}<br>Sound follows Master volume. Visual cues work with sound muted.</p>`);
   }
   success(result: CampaignResult): void {
     this.collection = result;
@@ -163,9 +167,10 @@ export class GameUi {
   }
   error(message: string): void {
     this.hud.hidden = true;
-    this.show('menu', '<p class="eyebrow">The painting could not open</p><h2 class="compact">A blank canvas.</h2><p class="menu-description" id="error-message"></p><button class="primary" data-action="start">Retry <span>→</span></button>');
+    this.show('menu', '<p class="eyebrow">The painting could not open</p><h2 class="compact">A blank canvas.</h2><p class="menu-description" id="error-message"></p><button class="primary" data-action="retry">Retry <span>→</span></button><button class="secondary" data-action="back">Back</button>');
     this.modal.querySelector('#error-message')!.textContent = message;
   }
+  loading(): void { this.show('loading', '<p class="eyebrow">Opening a painting</p><h2 class="compact">Between<br><em>brushstrokes.</em></h2><p class="menu-description" role="status">Preparing the artwork…</p>'); }
   updateHud(state: SupperHud): void {
     const serialized = JSON.stringify(state);
     if (serialized === this.hudCache) return;
@@ -203,10 +208,10 @@ export class GameUi {
     const pear = museum.targets.pear; const sun = museum.targets.sun;
     const style = (t: typeof pear | typeof sun) => `left:${t.left}%;top:${t.top}%;width:${t.width}%;height:${t.height}%`;
     this.show('inspection', `<p class="eyebrow">Masterpiece / Close inspection</p><h2 class="compact">The Garden Before Dawn</h2>
-      <div class="painting-study ${animate ? 'restoring' : ''}" data-action="invalid-drop"><img alt="A traveller under a pear tree, mountains and the missing sun. ${restored ? 'The tree and garden have regained colour.' : 'The pear and garden are grey.'}" src="${masterpieceStudy(restored).toDataURL()}">
+      <div class="painting-study ${animate ? 'restoring' : ''}" data-action="invalid-drop"><img alt="A traveller under a pear tree, mountains and the missing sun. ${restored ? 'The tree and garden have regained colour.' : 'The pear and garden are grey.'}" src="${masterpieceImage(restored)}">
       <button id="pear-target" class="restoration-target ${restored ? 'placed' : ''}" data-action="target" data-target="golden-pear" style="${style(pear)}" aria-label="Pear silhouette" ${restored ? 'disabled' : ''}>${restored ? 'Pear restored' : 'Pear'}</button>
       <button class="restoration-target sun-target" data-action="target" data-target="sun-disc" style="${style(sun)}" aria-label="Sun silhouette">Sun</button></div>
-      <div class="inspection-inventory" aria-label="Inventory">${owned ? '<button class="piece-button" data-action="piece" data-piece="golden-pear" draggable="true" aria-pressed="false">♧ Golden pear</button>' : '<span>Inventory · Empty</span>'}</div>
+      <div class="inspection-inventory" aria-label="Inventory">${owned ? `<button class="piece-button" data-action="piece" data-piece="golden-pear" draggable="true" aria-pressed="false"><img class="inventory-art" src="${runtimeAssetUrl(runtimeAssets['restoration.pear'].path)}" alt="" draggable="false"> Golden pear</button>` : '<span>Inventory · Empty</span>'}</div>
       <p id="placement-message" class="placement-message" role="status" aria-live="polite">${restored ? 'Colour restored. Next objective: wake the sun above the mountain. Its adventure is in development.' : owned ? 'Drag the pear onto its silhouette, or select it and activate the target. Tab / Enter also works.' : 'The king has borrowed the golden pear. Look inside Royal Supper.'}</p>
       <button class="secondary" data-action="close-inspection">Back to Museum <kbd>Esc</kbd></button>`);
     this.modal.classList.add('inspection-modal');

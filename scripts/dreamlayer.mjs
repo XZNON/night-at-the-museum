@@ -12,7 +12,14 @@ if (process.argv[2] === 'balance-current') {
   try {
     const api = new ManagedClient(key, 'https://api.dreamlayer.io');
     process.stdout.write(JSON.stringify(await api.request('/v1/balance?pricing=current'), null, 2) + '\n');
-  } catch { process.stderr.write('Current pricing balance check failed.\n'); process.exitCode = 1; }
+  } catch (error) {
+    // Emit only bounded public diagnostics; never raw responses, URLs or headers.
+    const safe = value => typeof value === 'string' && /^[A-Z_a-z0-9]{1,80}$/.test(value) ? value : null;
+    process.stderr.write(JSON.stringify({ error: 'Current pricing balance check failed',
+      status: typeof error.status === 'number' ? error.status : null,
+      code: safe(error.code), reason: safe(error.reason), causeCode: safe(error.cause?.code) }) + '\n');
+    process.exitCode = 1;
+  }
 } else {
 const child = spawn(process.execPath, ['node_modules/dreamlayer/dist/cli.js', ...process.argv.slice(2)], {
   env: { ...process.env, DREAMLAYER_API_KEY: key },

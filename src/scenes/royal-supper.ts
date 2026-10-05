@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { placeholderArt } from '../assets/manifest';
+import { placeholderArt, type ArtId } from '../assets/manifest';
+import { supperPlatformArt, supperPlatformOverrides, supperPropPresentation } from '../assets/supper-props';
 import type { GameScene } from '../core/scenes';
 import type { Controls } from '../gameplay/controller';
 import { RoyalSupperModel } from '../gameplay/royal-supper-model';
@@ -7,6 +8,7 @@ import type { SupperSession } from '../gameplay/royal-supper-model';
 import type { CampaignResult } from '../campaign/progression';
 import type { Rect } from '../gameplay/collision';
 import type { RoyalSupperLevel } from '../levels/royal-supper';
+import type { AudioCue } from '../core/audio';
 
 export interface SupperHud {
   checkpoint: string; section: string; prompt: string; cue: string; hint: string;
@@ -19,6 +21,8 @@ export class RoyalSupperScene implements GameScene {
   readonly model: RoyalSupperModel;
   readonly debug = new THREE.Group();
   private readonly player = new THREE.Group();
+  private playerPicture!: THREE.Mesh;
+  private readonly textures = new Map<ArtId, THREE.Texture>();
   private readonly fork = new THREE.Group();
   private readonly fan = new THREE.Group();
   private readonly pear = new THREE.Group();
@@ -26,8 +30,12 @@ export class RoyalSupperScene implements GameScene {
   private readonly flames: THREE.Group[] = [];
   private readonly embers: THREE.Mesh[] = [];
   private readonly heads: THREE.Group[] = [];
+  private readonly backdrop = new THREE.Group();
+  private readonly gaze = new THREE.Group();
+  private readonly gazeRays: { mesh: THREE.Mesh; head: THREE.Group; eyeX: number }[] = [];
   private readonly coverStrips: THREE.Mesh[] = [];
   private readonly grapeMeshes: THREE.Mesh[] = [];
+  private forkLanding!: THREE.Mesh;
   private previous = new THREE.Vector2();
   private previousCamera = new THREE.Vector2();
   private cameraPosition = new THREE.Vector2();
@@ -35,11 +43,13 @@ export class RoyalSupperScene implements GameScene {
   private elapsed = 0;
   private viewWidth = 24;
   private didComplete = false;
-  private resources = new Set<THREE.BufferGeometry | THREE.Material>();
+  private slideSoundTime = 0;
+  private resources = new Set<THREE.BufferGeometry | THREE.Material | THREE.Texture>();
 
   constructor(readonly level: RoyalSupperLevel, session: SupperSession,
     collect: () => CampaignResult, private readonly onHud: (hud: SupperHud) => void,
-    private readonly onComplete: (result: CampaignResult) => void, private readonly reducedMotion: boolean) {
+    private readonly onComplete: (result: CampaignResult) => void, private readonly reducedMotion: boolean,
+    private readonly sound: (cue: AudioCue) => void, private readonly art: Partial<Record<ArtId, HTMLImageElement>>) {
     this.model = new RoyalSupperModel(level, session, collect);
     this.world.background = new THREE.Color(0x241720);
     this.world.add(new THREE.HemisphereLight(0xffe9cc, 0x382332, 2.2));
@@ -59,44 +69,119 @@ export class RoyalSupperScene implements GameScene {
   private box(x: number, y: number, z: number, w: number, h: number, d: number, color: number, parent: THREE.Object3D = this.world, metalness = 0): THREE.Mesh {
     return this.mesh(new THREE.BoxGeometry(w, h, d), color, x, y, z, parent, metalness);
   }
-  private sphere(x: number, y: number, z: number, radius: number, color: number, parent: THREE.Object3D = this.world): THREE.Mesh {
-    return this.mesh(new THREE.SphereGeometry(radius, 12, 10), color, x, y, z, parent);
-  }
   private translucent(mesh: THREE.Mesh, opacity: number): void {
     const m = mesh.material as THREE.MeshStandardMaterial; m.transparent = true; m.opacity = opacity; m.depthWrite = false;
   }
+  private picture(id: ArtId, x: number, y: number, width: number, height: number, z: number,
+    parent: THREE.Object3D = this.world, tint = 0xffffff, repeat = 1): THREE.Mesh {
+    const texture = this.texture(id);
+    const geometry = new THREE.PlaneGeometry(width, height);
+    if (repeat > 1) {
+      texture.wrapS = THREE.RepeatWrapping;
+      const uv = geometry.getAttribute('uv');
+      for (let i = 0; i < uv.count; i++) uv.setX(i, uv.getX(i) * repeat);
+    }
+    const material = new THREE.MeshBasicMaterial({ map: texture, color: tint, transparent: true, alphaTest: 0.03 });
+    this.resources.add(geometry); this.resources.add(material);
+    const mesh = new THREE.Mesh(geometry, material); mesh.position.set(x, y, z); parent.add(mesh); return mesh;
+  }
+  private texture(id: ArtId): THREE.Texture {
+    let texture = this.textures.get(id);
+    if (!texture) {
+      const image = this.art[id]; if (!image) throw new Error(`Missing prepared artwork: ${id}`);
+      texture = new THREE.Texture(image); texture.colorSpace = THREE.SRGBColorSpace; texture.needsUpdate = true;
+      this.textures.set(id, texture); this.resources.add(texture);
+    }
+    return texture;
+  }
   private buildBackdrop(): void {
     const l = this.level; const length = l.bounds.width;
-    this.box(length / 2, 15, -9, length + 20, 65, 0.5, 0x2c1c27);
+    const image = this.art['royal-supper.background']!;
+    const scenicHeight = 48 * image.height / image.width;
+    this.world.add(this.backdrop);
+    for (let x = -24, index = 0; x < length + 48; x += 48, index++) {
+      const scenic = this.picture('royal-supper.background', x + 24, 8, 48, scenicHeight, -9, this.backdrop, 0x776a5c);
+      if (index % 2) scenic.scale.x = -1;
+    }
     this.box(length / 2, -6.5, -2, length + 20, 3, 4, 0x53303a);
     const dinerPositions = l.diner.cover.map(c => c.x + c.width / 2);
-    const backgroundPositions = Array.from({ length: Math.ceil(length / 24) }, (_, i) => 5 + i * 24)
-      .filter(x => x < l.diner.zone.x - 8 || x > l.diner.zone.x + l.diner.zone.width + 8);
-    for (const x of [...backgroundPositions, ...dinerPositions]) {
-      this.box(x, 8, -7, 8, 5, 1.3, 0x4a2c34);
-      const head = new THREE.Group(); head.position.set(x, 11, -7); this.world.add(head);
-      this.sphere(0, 0, 0, 1.3, 0x7c574b, head);
-      this.sphere(0.45, -0.2, 1.2, 0.16, 0xffdfa0, head);
-      this.sphere(-0.45, -0.2, 1.2, 0.16, 0xffdfa0, head);
-      if (dinerPositions.includes(x)) this.heads.push(head);
+    for (const x of dinerPositions) {
+      const d = supperPropPresentation.diner;
+      const head = new THREE.Group(); head.position.set(x, d.centreY, -7); this.world.add(head);
+      this.picture('royal-supper.diner', 0, 0, d.width, d.height, 0, head, 0xc4ab97);
+      this.heads.push(head);
     }
+    this.buildGaze();
     for (let i = 0; i < 3; i++) this.mesh(new THREE.ConeGeometry(0.4, 0.9, 4), 0xd6ab58, l.pear.x + i * 0.8, l.pear.y + 7, -7);
+  }
+  private buildGaze(): void {
+    const d = supperPropPresentation.diner; const zone = this.level.diner.zone;
+    // Illustrated props are unlit planes. An additive shaft makes the gaze
+    // visible on them without adding lights that cannot illuminate their art.
+    const material = new THREE.ShaderMaterial({
+      uniforms: { color: { value: new THREE.Color(d.gaze.color) }, opacity: { value: d.gaze.opacity } },
+      vertexShader: `varying vec2 beamUv;
+        void main() { beamUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+      fragmentShader: `uniform vec3 color; uniform float opacity; varying vec2 beamUv;
+        void main() {
+          float edge = pow(max(0.0, 4.0 * beamUv.x * (1.0 - beamUv.x)), 1.2);
+          float strength = mix(1.0, 0.35, beamUv.y);
+          gl_FragColor = vec4(color, opacity * edge * strength);
+        }`,
+      transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
+    });
+    this.resources.add(material);
+    this.heads.forEach((head, i) => {
+      const left = i === 0 ? zone.x : (this.heads[i - 1].position.x + head.position.x) / 2;
+      const right = i === this.heads.length - 1 ? zone.x + zone.width : (head.position.x + this.heads[i + 1].position.x) / 2;
+      for (const eyeX of [-d.eyeX, d.eyeX]) {
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute([
+          -d.gaze.sourceWidth, 0, 0, d.gaze.sourceWidth, 0, 0,
+          left - head.position.x - eyeX, zone.y - d.centreY - d.eyeY, 0,
+          right - head.position.x - eyeX, zone.y - d.centreY - d.eyeY, 0,
+        ], 3));
+        geometry.setAttribute('uv', new THREE.Float32BufferAttribute([0, 0, 1, 0, 0, 1, 1, 1], 2));
+        geometry.setIndex([0, 2, 1, 1, 2, 3]); this.resources.add(geometry);
+        const mesh = new THREE.Mesh(geometry, material); this.gaze.add(mesh);
+        this.gazeRays.push({ mesh, head, eyeX });
+      }
+    });
+    this.gaze.visible = false; this.world.add(this.gaze);
   }
   private buildPlatforms(): void {
     for (const p of this.level.platforms) {
-      if (p.art === 'bound' || p.art === 'candle' || p.gate) continue;
+      if (p.art === 'bound' || p.art === 'candle') continue;
+      if (p.gate) {
+        this.forkLanding = this.box(p.x + p.width / 2, p.y + p.height - 0.025, 1, p.width, 0.05, 0.03, 0xe7d5a6);
+        this.forkLanding.visible = false;
+        continue;
+      }
+      const imageArt = supperPlatformArt[p.art];
+      if (imageArt) {
+        this.picture(supperPlatformOverrides[p.id] ?? imageArt.id, p.x + p.width / 2, p.y + p.height / 2,
+          p.width, p.height, 0.95, this.world, 0xffffff, imageArt.tileWidth ? Math.max(1, p.width / imageArt.tileWidth) : 1);
+        // Exact landing edge; generated pixels never define the platform height.
+        this.box(p.x + p.width / 2, p.y + p.height - 0.025, 0.98, p.width, 0.05, 0.03, imageArt.lip);
+        if (p.art === 'goblet') {
+          const g = supperPropPresentation.gobletArch;
+          const height = Math.max(p.height, g.height);
+          this.picture('royal-supper.goblet', p.x + p.width / 2, p.y + p.height - height / 2,
+            Math.min(p.width, g.width), height, -1.5);
+        }
+        continue;
+      }
       const a = placeholderArt[p.art];
       this.box(p.x + p.width / 2, p.y + p.height / 2, 0, p.width, p.height, 1.6, a.color);
       this.box(p.x + p.width / 2, p.y + p.height - 0.07, 0.06, p.width, 0.14, 1.72, a.accent);
     }
     for (const c of this.level.diner.cover) {
-      this.translucent(this.box(c.x + c.width / 2, c.y + c.height / 2, -0.4, c.width, c.height, 0.15, 0x56bfd4), 0.35);
+      this.picture('royal-supper.cover', c.x + c.width / 2, c.y + c.height / 2, c.width, c.height, -0.4);
       this.box(c.x, c.y + c.height / 2, 0, 0.1, c.height, 0.4, 0x8ddbea);
       this.box(c.x + c.width, c.y + c.height / 2, 0, 0.1, c.height, 0.4, 0x8ddbea);
       this.box(c.x + c.width / 2, c.y + c.height, 0, c.width, 0.09, 0.4, 0x8ddbea);
       // The dish silhouette fills the protection volume. The inset floor strip
       // marks safe FOOT CENTRES, so a player at its edge still fits fully inside.
-      this.box(c.x + c.width / 2, c.y + c.height / 2, -1.2, c.width, c.height, 0.3, 0x527b8b);
       this.coverStrips.push(this.box(c.x + c.width / 2, c.y + 0.035, 0.95,
         c.width - this.level.tuning.width, 0.07, 0.18, 0x8ddbea));
     }
@@ -107,9 +192,8 @@ export class RoyalSupperScene implements GameScene {
   private buildProps(): void {
     const l = this.level;
     this.fork.position.set(l.fork.pivot.x, l.fork.pivot.y - 0.125, 0.1);
-    this.box(0, l.fork.length / 2, 0, 0.25, l.fork.length, 0.65, 0xbec6cb, this.fork, 0.65);
-    this.box(0, l.fork.length - 0.8, 0, 1.2, 0.25, 0.65, 0xbec6cb, this.fork, 0.65);
-    for (let i = 0; i < 4; i++) this.box(-0.45 + i * 0.3, l.fork.length - 0.35, 0, 0.13, 0.7, 0.6, 0xbec6cb, this.fork, 0.65);
+    this.picture('royal-supper.fork', 0, l.fork.length / 2, supperPropPresentation.fork.width,
+      l.fork.length, 0.9, this.fork);
     this.fork.visible = l.fork.triggerBounds.x > 0;
     l.candle.flames.forEach(h => {
       const flame = new THREE.Group(); flame.position.set(h.x + h.width / 2, h.y, 0.3); this.world.add(flame); this.flames.push(flame);
@@ -123,39 +207,32 @@ export class RoyalSupperScene implements GameScene {
       const centre = (first.x + last.x + last.width) / 2;
       const holder = l.candle.holder;
       const armSpan = last.x + last.width / 2 - first.x - first.width / 2;
-      // One brass trident supports three separate wax tops. Its connecting
-      // arms sit below the route and never provide a walkable bridge.
-      this.box(centre, holder.baseY, -0.5, 5, 0.3, 1.4, 0xb38b43, this.world, 0.6);
-      this.box(centre, (holder.baseY + holder.crossbarY) / 2, -0.5, 0.5,
-        holder.crossbarY - holder.baseY, 0.6, 0xb38b43, this.world, 0.6);
-      this.box(centre, holder.crossbarY, -0.5, armSpan, 0.3, 0.6, 0xb38b43, this.world, 0.6);
+      // Three cups align to the existing wax centres. The common brass holder
+      // remains decoration below the route, with no connecting collision floor.
+      this.picture('royal-supper.holder', centre, (holder.baseY + holder.waxBaseY) / 2,
+        armSpan * supperPropPresentation.holder.widthPerCupSpan, holder.waxBaseY - holder.baseY, -0.5);
       l.candle.flames.forEach(h => {
         const x = h.x + h.width / 2;
-        this.box(x, (holder.crossbarY + holder.waxBaseY) / 2, -0.5, 0.4,
-          holder.waxBaseY - holder.crossbarY, 0.6, 0xb38b43, this.world, 0.6);
-        this.box(x, holder.waxBaseY, 0, h.width + 0.25, 0.2, 1.6, 0xb38b43, this.world, 0.6);
-        this.box(x, (holder.waxBaseY + h.y) / 2, 0, h.width, h.y - holder.waxBaseY, 1.6, 0xf0d4a0);
+        this.picture('royal-supper.wax', x, (holder.waxBaseY + h.y) / 2, h.width, h.y - holder.waxBaseY, 0.9);
         this.box(x, h.y - 0.06, 0, h.width, 0.12, 1.7, 0xffe7bf);
       });
       this.fan.position.set(l.candle.fan.x, l.candle.fan.y, 1.4);
-      for (let i = 0; i < 4; i++) { const blade = this.box(0, 0, 0, 2.6, 0.25, 0.15, 0x8abfc0, this.fan); blade.rotation.z = i * Math.PI / 4; }
-      this.sphere(0, 0, 0.2, 0.28, 0xd3ae63, this.fan);
+      const diameter = supperPropPresentation.fan.diameter;
+      this.picture('royal-supper.fan', 0, 0, diameter, diameter, 0, this.fan);
     }
     const g = l.grapes; const count = g.offsets.length * (Math.ceil((g.startX - g.endX) / g.speed / g.period) + 1);
-    for (let i = 0; i < count; i++) { const grape = this.sphere(0, 0, 0.4, g.radius, 0x925ab8); grape.visible = false; this.grapeMeshes.push(grape); }
+    for (let i = 0; i < count; i++) {
+      const grape = this.picture('royal-supper.grape', 0, 0, g.radius * 2, g.radius * 2, 0.4);
+      grape.visible = false; this.grapeMeshes.push(grape);
+    }
     const p = l.pear; this.pear.position.set(p.x + p.width / 2, p.y, 0.3);
-    const fruit = this.sphere(0, 0.55, 0, 0.6, 0xefbf54, this.pear); fruit.scale.set(1, 1.12, 0.8);
-    this.sphere(0, 1.05, 0, 0.32, 0xefbf54, this.pear);
-    this.box(0.03, 1.45, 0, 0.09, 0.4, 0.1, 0x6d4c32, this.pear);
-    const leaf = this.sphere(0.22, 1.47, 0, 0.22, 0x779c66, this.pear); leaf.scale.set(1.4, 0.4, 0.35);
+    this.picture('restoration.pear', 0, p.height / 2, p.width, p.height, 0.9, this.pear);
   }
   private buildPlayer(): void {
     const t = this.level.tuning;
-    this.box(t.width / 2, t.height * 0.4, 0.5, t.width * 0.72, t.height * 0.72, 0.55, 0x284447, this.player);
-    this.sphere(t.width / 2, t.height * 0.82, 0.5, 0.23, 0xf2ddac, this.player);
-    this.box(t.width / 2, t.height * 0.97, 0.5, t.width * 0.8, 0.11, 0.6, 0x21373e, this.player);
-    this.box(t.width / 2, t.height * 0.58, 0.82, 0.52, 0.14, 0.08, 0xcba363, this.player);
-    this.box(t.width / 2, 0.07, 0.95, 0.12, 0.14, 0.08, 0xf2ddac, this.player);
+    const image = this.art['player.idle']!;
+    const height = t.height * 272 / 256;
+    this.playerPicture = this.picture('player.idle', 0, t.height / 2, height * image.width / image.height, height, 1.35, this.player);
   }
   private debugRect(rect: Rect, color: number, parent: THREE.Object3D): void {
     const box = new THREE.BoxGeometry(rect.width, rect.height, 0.05); const g = new THREE.EdgesGeometry(box); box.dispose();
@@ -172,7 +249,23 @@ export class RoyalSupperScene implements GameScene {
   enter(): void { this.previous.set(this.model.controller.body.x, this.model.controller.body.y); this.updateHud(); }
   fixedUpdate(dt: number, input: Controls): void {
     const b = this.model.controller.body; this.previous.set(b.x, b.y); this.previousCamera.copy(this.cameraPosition);
+    const oldVy = b.vy; const wasGrounded = b.grounded; const airReady = this.model.controller.airJumpAvailable;
+    const wasRecovering = this.model.recoveryRemaining > 0;
+    const oldFork = this.model.session.fork; const oldAttention = this.model.dinerPhase;
+    const lit = this.level.candle.flames.map((_, i) => this.model.flameLit(i));
     this.model.update(dt, input); this.elapsed += dt;
+    if (!wasRecovering && this.model.recoveryRemaining > 0) this.sound('hazard');
+    else if (!wasRecovering && !input.restartPressed) {
+      if (b.vy === this.level.tuning.bounceSpeed && oldVy < 0) this.sound('bounce');
+      else if (b.vy > 0 && ((wasGrounded && !b.grounded) || (airReady && !this.model.controller.airJumpAvailable) || oldVy <= 0)) this.sound('jump');
+      if (oldFork !== 'bridged' && this.model.session.fork === 'bridged') this.sound('fork');
+      if (oldAttention !== 'TURNING' && this.model.dinerPhase === 'TURNING' && b.x >= this.level.sections[5].start && b.x < this.level.sections[6].start) this.sound('attention');
+      if (lit.some((wasLit, i) => wasLit && !this.model.flameLit(i)) && b.x >= this.level.sections[4].start && b.x < this.level.sections[5].start) this.sound('fan');
+      this.slideSoundTime = Math.max(0, this.slideSoundTime - dt);
+      if (this.model.controller.slidingActive && b.grounded && Math.abs(b.vx) > 1 && this.slideSoundTime === 0) {
+        this.sound('slide'); this.slideSoundTime = 0.4;
+      }
+    }
     if (input.axis) this.facing = input.axis;
     const target = new THREE.Vector2(this.clampCamera(b.x + b.width / 2 + this.facing * this.level.camera.lookAhead), Math.max(this.level.camera.y, b.y + 2.4));
     if (Math.abs(b.x - this.previous.x) > this.level.tuning.speed * dt * 2 || Math.abs(b.y - this.previous.y) > 2) {
@@ -194,13 +287,21 @@ export class RoyalSupperScene implements GameScene {
   }
   render(alpha: number, _seconds: number): void {
     const b = this.model.controller.body;
-    this.player.position.set(THREE.MathUtils.lerp(this.previous.x, b.x, alpha), THREE.MathUtils.lerp(this.previous.y, b.y, alpha), 0);
+    this.player.position.set(THREE.MathUtils.lerp(this.previous.x, b.x, alpha) + b.width / 2, THREE.MathUtils.lerp(this.previous.y, b.y, alpha), 0);
+    this.player.scale.x = this.facing;
+    const pose: ArtId = !b.grounded ? 'player.jump' : Math.abs(b.vx) > 0.25 && !this.reducedMotion ?
+      (Math.floor(this.elapsed * 9) % 2 ? 'player.walk-a' : 'player.walk-b') : 'player.idle';
+    (this.playerPicture.material as THREE.MeshBasicMaterial).map = this.texture(pose);
     this.player.visible = this.model.recoveryRemaining <= 0;
     this.camera.position.x = THREE.MathUtils.lerp(this.previousCamera.x, this.cameraPosition.x, alpha);
     this.camera.position.y = THREE.MathUtils.lerp(this.previousCamera.y, this.cameraPosition.y, alpha);
+    // Keep the distant palace in view above the high dessert platforms.
+    // Foreground props, painted watchers and collision remain in world space.
+    this.backdrop.position.y = Math.max(0, this.camera.position.y - this.level.camera.y);
     const s = this.model.session;
     const t = s.fork === 'bridged' ? 1 : THREE.MathUtils.clamp(s.forkElapsed / this.level.fork.duration, 0, 1);
     this.fork.rotation.z = -Math.PI / 2 * (t * t * (3 - 2 * t));
+    if (this.forkLanding) this.forkLanding.visible = s.fork === 'bridged';
     this.flames.forEach((flame, i) => { flame.visible = this.model.flameLit(i); this.embers[i].visible = !flame.visible;
       this.embers[i].scale.x = Math.max(0.05, this.model.flameRemaining(i) / this.level.candle.safeSeconds); });
     // Fan uses the same frozen gameplay clock as extinguishing, not render time.
@@ -209,8 +310,14 @@ export class RoyalSupperScene implements GameScene {
     this.grapeMeshes.forEach((mesh, i) => { const g = grapes[i]; mesh.visible = !!g; if (g) {
       mesh.position.set(g.x + g.width / 2, g.y + g.height / 2, 0.4); mesh.rotation.z = -g.x / this.level.grapes.radius; } });
     const headTilt = this.model.dinerPhase === 'LOOK' ? 0.5 : this.model.dinerPhase === 'TURNING' ? 0.25 : -0.25;
-    this.heads.forEach(head => { head.rotation.x = headTilt; const eyeColor = this.model.dinerPhase === 'LOOK' ? 0xff5544 : 0xffdfa0;
-      head.children.slice(1).forEach(eye => ((eye as THREE.Mesh).material as THREE.MeshStandardMaterial).color.setHex(eyeColor)); });
+    this.heads.forEach(head => { head.rotation.x = headTilt; });
+    this.gaze.visible = this.model.dinerPhase === 'LOOK';
+    const diner = supperPropPresentation.diner;
+    this.gazeRays.forEach(({ mesh, head, eyeX }) => {
+      // Match the projected painted eye as the head tilts; the shaft stays
+      // behind the player and cover so their silhouettes remain readable.
+      mesh.position.set(head.position.x + eyeX, diner.centreY + diner.eyeY * Math.cos(headTilt), diner.gaze.z);
+    });
     this.coverStrips.forEach((strip, i) => {
       const c = this.level.diner.cover[i]; const centre = b.x + b.width / 2;
       const inside = this.model.hidden && centre >= c.x && centre <= c.x + c.width;
@@ -227,5 +334,5 @@ export class RoyalSupperScene implements GameScene {
     this.cameraPosition.x = this.clampCamera(this.cameraPosition.x); this.previousCamera.copy(this.cameraPosition);
   }
   exit(): void {}
-  dispose(): void { for (const resource of this.resources) resource.dispose(); this.resources.clear(); this.world.clear(); }
+  dispose(): void { for (const resource of this.resources) resource.dispose(); this.resources.clear(); this.textures.clear(); this.world.clear(); }
 }

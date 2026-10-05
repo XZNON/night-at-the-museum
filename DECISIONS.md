@@ -1,6 +1,6 @@
 # Decisions — The Last Curator
 
-Updated: 2026-10-05. The user authorized closing routine design and implementation decisions for a new-session handoff. Agent-selected choices below are working defaults, not previously explicit user selections.
+Updated: 2026-10-06. The user authorized closing routine design and implementation decisions for a new-session handoff. Agent-selected choices below are working defaults, not previously explicit user selections.
 
 ## Settled direction
 
@@ -38,7 +38,7 @@ Updated: 2026-10-05. The user authorized closing routine design and implementati
 | Candle timing | User-confirmed: rotating fan extinguishes flames in sequence; flames relight if the crossing is not completed quickly. Replace the old permanent extinguishing gate. |
 | Route discovery | User-confirmed: camera follows the player forward into new sections. Readable scenery/animation communicates obstacles; no player-facing route map. |
 | Persistence | Save campaign piece/restoration progress and settings. Puzzle states/checkpoint survive falls and hub exits in the same session, but may reset on page reload. |
-| Generation | Development-time DreamLayer assets bundled locally; no live generation during play. |
+| Generation | Development-time DreamLayer assets bundled locally; no live generation during play. User-authorized exception on 2026-10-06: OpenAI ImageGen for the remaining required M3 props after persistent DreamLayer 503 failures. Existing DreamLayer assets/reference approvals remain unchanged; this exception does not generate mountain or a broad catalogue. |
 | Primary platform | Desktop/laptop browser, keyboard and mouse. Touch and controller support deferred. |
 
 ## Deferred opening presentation
@@ -63,6 +63,7 @@ The user lifted the gameplay planning hold on 2026-10-05 and authorized the expa
 - Duration: user selected 5–7 minutes on a first playthrough including a few retries. Revisit the previous whole-game 5–10 minute target once the second adventure is timed; do not claim a new measured campaign duration.
 - Difficulty/checkpoints: user selected demanding jumps and timing, unlimited retries and one checkpoint after each hard section, rather than frequent intermediate checkpoints. No campaign piece loss. Retry the challenging section from the last cleared section; tune section duration to avoid excessively long repeats.
 - Diner: user selected exposure when a diner tilts their head/looks down as the detection condition. Standing still outside cover is not safe during that phase. Jumping above or out of cover while watched exposes the player and triggers checkpoint recovery. Telegraph the head turn before the active detection phase; authored cover must hide the entire character.
+- Watcher lighting (user-requested 2026-10-06): replace the animated eye blobs with soft golden rays from the painted eyes toward the tabletop during LOOK. AWAY and TURNING use normal banquet lighting; retain the head-turn warning and unchanged detection/cover timing.
 - Fan: automatic repeating sweep, with sequential extinguishing and timed relighting. User-confirmed final revision: three separate candle tops on one trident holder, with gaps that require jumping between them. Wait safely before entering; no permanent E/snuffer solution. Phase timings are tuned against an actual traversal.
 - Grapes: visible, scripted rolling waves with predictable intervals. Avoid spawning hazards on the player or requiring an unseen reaction.
 - Butter: a distinct slippery surface with reduced braking and faster 9.2-unit speed, retaining directional control and airborne momentum until a dry landing. Crumb contact retries the section. Three varied short patches replace the repetitive run, following user playtest feedback.
@@ -89,10 +90,10 @@ Free 3D movement inside paintings, a different rendering engine, complex combat,
 The expanded Royal Supper's major gameplay choices are now recorded. Routine layout distances, timing and movement values should be measured/tuned during its new blockout proof, rather than reopening the selected mechanics.
 
 1. DreamLayer access, actual credits and generation costs: verified for references; recheck before production batches.
-2. Final painterly reference and player design: references exist; record explicit approval before production art. Expanded camera/movement proof precedes layout-specific exports.
+2. Final painterly reference and player design: masterpiece.png, banquet-v5.png and player.png were explicitly approved on 2026-10-05 (“Looks good to me”). Preserve their manifest approval and lineage; production starts with a camera-validated small slice.
 3. Whether to ship the third adventure: decide after M4 in PLAN.md; do not build it speculatively.
 4. Final title, soundtrack sources and submission copy: finalize during polish.
 5. Exact jam cutoff timezone: verify the live jam page before scheduling submission; plan to upload ahead of the cutoff.
 
 
-After user playtest feedback on 2026-10-05, the placeholder route ends at approximately 435 units. Preserve the bread/grape introduction and mandatory fork/fan gates; cap the watched passage at three progressively longer crossings with narrower cover. Replace fourteen repeated dessert rises with two jelly launches, varied rises, a level shelf and a drop. Cover visuals mark safe foot centres and confirm HIDDEN; full-body protection remains the rule. The user accepted the rest of this layout and requested separated trident candles as the final gameplay revision. Three 3-unit tops now have 3-unit gaps, no floor between them, and a 4-unit exit jump. The holder's brass arms are decorative below the route. A raised canopy permits ordinary jumps but prevents a route above lit heat; deep candle bodies block an underneath bypass. Ember windows begin at 2.0 / 3.1 / 4.2 seconds in an 11-second cycle and last 2 seconds each. The user subsequently approved the final gameplay layout on 2026-10-05. The original 5–7 minute target has no measured human timing; do not stretch playtime with repetition. Separate production-art reference approval remains pending.
+After user playtest feedback on 2026-10-05, the placeholder route ends at approximately 435 units. Preserve the bread/grape introduction and mandatory fork/fan gates; cap the watched passage at three progressively longer crossings with narrower cover. Replace fourteen repeated dessert rises with two jelly launches, varied rises, a level shelf and a drop. Cover visuals mark safe foot centres and confirm HIDDEN; full-body protection remains the rule. The user accepted the rest of this layout and requested separated trident candles as the final gameplay revision. Three 3-unit tops now have 3-unit gaps, no floor between them, and a 4-unit exit jump. The holder's brass arms are decorative below the route. A raised canopy permits ordinary jumps but prevents a route above lit heat; deep candle bodies block an underneath bypass. Ember windows begin at 2.0 / 3.1 / 4.2 seconds in an 11-second cycle and last 2 seconds each. The user subsequently approved the final gameplay layout on 2026-10-05. The original 5–7 minute target has no measured human timing; do not stretch playtime with repetition. Separate production-art reference approval was subsequently supplied on 2026-10-05.

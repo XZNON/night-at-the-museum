@@ -1,7 +1,25 @@
 import { expect, type Page } from '@playwright/test';
 import { recordRoute } from '../route-plan';
 
-export async function expandedRoute(page: Page, onStage?: (index: number) => Promise<void>): Promise<void> {
+// Call while paused: resize/capture the actual renderer without advancing hazards.
+// Hide only the pause dialog for these inspection images, then restore it.
+export async function captureFrozenArt(page: Page, name: string): Promise<void> {
+  await page.locator('#modal').evaluate(el => { el.style.visibility = 'hidden'; });
+  try {
+    for (const [width, height] of [[1280, 720], [960, 540]]) {
+      await page.setViewportSize({ width, height });
+      // Let the resize and a subsequent rendered frame settle at this size.
+      // Software WebGL can need longer than a fixed 80 ms on a busy machine.
+      await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
+      await page.screenshot({ path: `test-results/m3-props-${name}-${width}.png` });
+    }
+  } finally {
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.locator('#modal').evaluate(el => { el.style.removeProperty('visibility'); });
+  }
+}
+
+export async function expandedRoute(page: Page, onStage?: (index: number) => Promise<void>, endStage = Infinity): Promise<void> {
   const { stages } = recordRoute(); const began = Date.now(); let retries = 0;
   for (const [index, stage] of stages.entries()) {
     let reached = false;
@@ -40,6 +58,7 @@ export async function expandedRoute(page: Page, onStage?: (index: number) => Pro
     expect(reached, `Expanded section ${stage.checkpoint}`).toBe(true);
     console.log('Expanded section reached', stage.checkpoint, ((Date.now() - began) / 1000).toFixed(1));
     if (onStage) await onStage(index);
+    if (index >= endStage) break;
     if (index === 4 || index === 5 || index === 6) await page.screenshot({ path: `test-results/expanded-${stage.checkpoint}.png` });
   }
   console.log('Expanded route elapsed seconds / retries', (Date.now() - began) / 1000, retries);

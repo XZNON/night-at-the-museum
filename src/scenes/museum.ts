@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import type { GameScene } from '../core/scenes';
 import type { Controls } from '../gameplay/controller';
 import { museum, type MuseumPose } from '../levels/museum';
-import { masterpieceStudy } from '../ui/masterpiece';
+import type { ArtId } from '../assets/manifest';
 
 export class MuseumScene implements GameScene {
   readonly id = museum.id;
@@ -17,11 +17,11 @@ export class MuseumScene implements GameScene {
   private pointerStart: { x: number; y: number; moved: boolean; id: number } | null = null;
   private readonly cursor = new THREE.Vector2();
   private lastPrompt = '';
-  private masterpieceTexture: THREE.CanvasTexture | null = null;
+  private masterpieceTexture: THREE.Texture | null = null;
 
   constructor(private readonly canvas: HTMLCanvasElement, pose: MuseumPose, restored: boolean,
     private readonly enabled: () => boolean, private readonly activate: (id: string) => void,
-    private readonly prompt: (text: string) => void) {
+    private readonly prompt: (text: string) => void, private readonly artImages: Partial<Record<ArtId, HTMLImageElement>>) {
     this.yaw = pose.yaw;
     this.camera.position.set(pose.x, museum.eyeHeight, pose.z);
     this.camera.rotation.order = 'YXZ';
@@ -44,8 +44,9 @@ export class MuseumScene implements GameScene {
     box(width, 0.15, depth, 0, height, 0, 0x302b2e);
     for (const art of museum.artworks) {
       box(art.width + 0.28, art.height + 0.28, 0.18, art.x, art.y, art.z - 0.06, 0xad8550);
-      const g = new THREE.PlaneGeometry(art.width, art.height);
-      const texture = new THREE.CanvasTexture(art.id === 'masterpiece' ? masterpieceStudy(restored) : this.supperStudy());
+      const image = artImages[art.id === 'masterpiece' ? restored ? 'masterpiece.pear-restored' : 'masterpiece.damaged' : 'royal-supper.entrance']!;
+      const g = new THREE.PlaneGeometry(art.width, Math.min(art.height, art.width * image.height / image.width));
+      const texture = new THREE.Texture(image); texture.needsUpdate = true;
       texture.colorSpace = THREE.SRGBColorSpace;
       if (art.id === 'masterpiece') this.masterpieceTexture = texture;
       const m = new THREE.MeshBasicMaterial({ map: texture });
@@ -59,13 +60,6 @@ export class MuseumScene implements GameScene {
       this.resources.add(t); this.resources.add(lg); this.resources.add(lm);
       const plaque = new THREE.Mesh(lg, lm); plaque.position.set(art.x, art.y - art.height / 2 - 0.4, art.z + 0.06); this.world.add(plaque);
     }
-  }
-  private supperStudy(): HTMLCanvasElement {
-    const c = document.createElement('canvas'); c.width = 800; c.height = 500; const ctx = c.getContext('2d')!;
-    ctx.fillStyle = '#442936'; ctx.fillRect(0, 0, 800, 500); ctx.fillStyle = '#8d4b43'; ctx.fillRect(0, 330, 800, 170);
-    for (const x of [140, 370, 620]) { ctx.fillStyle = '#b7a68b'; ctx.beginPath(); ctx.ellipse(x, 360, 100, 23, 0, 0, Math.PI * 2); ctx.fill(); }
-    ctx.fillStyle = '#ccb990'; ctx.fillRect(365, 150, 23, 195); ctx.fillStyle = '#e4b857'; ctx.beginPath(); ctx.ellipse(375, 125, 13, 24, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(620, 305, 35, 48, 0, 0, Math.PI * 2); ctx.fill(); ctx.beginPath(); ctx.ellipse(620, 270, 20, 28, 0, 0, Math.PI * 2); ctx.fill(); return c;
   }
   enter(): void {
     const signal = this.lifetime.signal;
@@ -115,7 +109,7 @@ export class MuseumScene implements GameScene {
   }
   restoreColour(): void {
     if (!this.masterpieceTexture) return;
-    this.masterpieceTexture.image = masterpieceStudy(true); this.masterpieceTexture.needsUpdate = true;
+    this.masterpieceTexture.image = this.artImages['masterpiece.pear-restored']!; this.masterpieceTexture.needsUpdate = true;
   }
   fixedUpdate(dt: number, input: Controls): void {
     const forward = input.forward ?? 0; const length = Math.max(1, Math.hypot(input.axis, forward));

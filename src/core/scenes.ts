@@ -20,10 +20,11 @@ export class SceneManager {
   transitioning = false;
   private width = 1;
   private height = 1;
+  private disposed = false;
   constructor(private readonly renderer: WebGLRenderer, private readonly clearInput: () => void) {}
 
-  async transition(create: () => GameScene | null): Promise<boolean> {
-    if (this.transitioning) return false;
+  async transition(create: () => GameScene | null | Promise<GameScene | null>): Promise<boolean> {
+    if (this.transitioning || this.disposed) return false;
     this.transitioning = true;
     this.clearInput();
     let next: GameScene | null = null;
@@ -31,7 +32,8 @@ export class SceneManager {
       // Serialization stays active across the microtask even for placeholder
       // scenes. Rapid UI activations cannot create two scenes in one turn.
       await Promise.resolve();
-      next = create();
+      next = await create();
+      if (this.disposed) { next?.dispose(); next = null; return false; }
       next?.resize(this.width, this.height);
       next?.enter();
       this.active?.exit();
@@ -53,5 +55,5 @@ export class SceneManager {
     this.active.render(alpha, seconds);
     this.renderer.render(this.active.world, this.active.camera);
   }
-  dispose(): void { this.active?.exit(); this.active?.dispose(); this.active = null; }
+  dispose(): void { if (this.disposed) return; this.disposed = true; this.active?.exit(); this.active?.dispose(); this.active = null; }
 }

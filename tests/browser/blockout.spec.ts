@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { expandedRoute } from './expanded-route';
+import { expandedRoute, captureFrozenArt } from './expanded-route';
 interface Snapshot {
   scene: string | null; paused: boolean; completed: boolean;
   body: { x: number; y: number; vx: number; vy: number; grounded: boolean } | null;
@@ -35,8 +35,13 @@ test('expanded isolated route, frozen timers, quality, recovery, replay and scen
       await page.keyboard.press('KeyR'); await page.waitForTimeout(100);
       await page.keyboard.down('KeyD'); await page.waitForTimeout(800); await page.keyboard.up('KeyD');
       await expect(page.locator('#diner-state')).toContainText('HIDDEN');
+      await expect(page.locator('#diner-state')).toContainText('AWAY');
+      await page.keyboard.press('Escape'); await captureFrozenArt(page, 'hidden-away');
+      await page.getByRole('button', { name: 'Resume', exact: false }).click();
       await expect(page.locator('#diner-state')).toContainText('LOOK');
       await page.screenshot({ path: 'test-results/expanded-hidden-look.png' });
+      await page.keyboard.press('Escape'); await captureFrozenArt(page, 'hidden-look');
+      await page.getByRole('button', { name: 'Resume', exact: false }).click();
       await page.keyboard.down('Space'); await page.waitForTimeout(200); await page.keyboard.up('Space');
       await expect(page.locator('#cue')).toContainText('Caught'); await page.waitForTimeout(500);
       expect((await snapshot(page)).session.checkpointId).toBe('after-candle');
