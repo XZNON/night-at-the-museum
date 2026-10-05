@@ -4,9 +4,9 @@
 
 Build a small, polished browser game for the DreamLayer jam and hiring submission. One damaged masterpiece is restored by recovering pieces inside other museum artworks. The museum is 3D; adventures inside artwork are side-view 2.5D.
 
-This checkout contains the M0–M2 TypeScript/Vite/Three.js foundation, playable Royal Supper geometry blockout, minimal first-person museum, pear placement/restoration loop, validated campaign saves, focused tests and planning documents. No generated production art, audio, mountain or campaign ending exists. Node v22.14.0 and npm v10.9.2 were re-verified on 2026-10-05. It is now a Git repository with origin `https://github.com/XZNON/night-at-the-museum.git`. Verify the environment before implementation rather than assuming these observations remain current.
+This checkout contains the M0–M2 TypeScript/Vite/Three.js foundation and expanded M3 Royal Supper mechanics blockout, minimal first-person museum, pear placement/restoration loop, validated campaign saves, focused tests and planning documents. No generated production art, audio, mountain or campaign ending exists. Node v22.14.0 and npm v10.9.2 were re-verified on 2026-10-05. It is now a Git repository with origin `https://github.com/XZNON/night-at-the-museum.git`. Verify the environment before implementation rather than assuming these observations remain current.
 
-The next implementation milestone is M3: first adventure art and sound. Do not treat this file as an instruction to start coding or spending credits without a user task.
+M3 now contains the expanded mechanics blockout: guarded double jump, butter/crumb sliding, rolling grapes, required fork, separated trident candle jumps with timed relighting, three diner cover crossings and a varied two-jelly finale. The user approved the final gameplay layout on 2026-10-05 after playtesting. Production generation now depends on separate visual-reference approval and a live access/balance/cost recheck. See PLAN.md for actual verification and NEXT_SESSION.md for the handoff; M3 art/audio is incomplete. No measured human duration or representative-machine performance claim is recorded.
 
 ## Read order and authority
 
@@ -21,7 +21,7 @@ Direct user instructions take precedence. Among documents, DECISIONS defines cur
 
 ## Scope and working style
 
-- Next session: verify DreamLayer access/costs, establish approved references and integrate the required first-adventure art/sound against the proven M2 layout. Preserve the museum/restoration loop and isolated development entry. Do not start with the final museum or generate the entire art set.
+- Next session: finish M3 art and sound against the user-approved Royal Supper layout; do not reopen its gameplay or add repeated padding. Review the separate masterpiece, banquet-v5 and player references and obtain visual-direction approval before production generation. Recheck DreamLayer access/balance/costs, then validate a small player/background/platform art slice before expanding. Preserve the museum/restoration loop, campaign saves and isolated development entry. Do not start with the final museum or generate the entire art set.
 - Commit to Royal Supper + Sleeping Mountain. Drowned Garden is a gated third adventure. Reserve ideas remain outside the jam build.
 - Progress from one complete playable loop toward a complete ending; do not leave unavailable adventures as playable doors in the release.
 - Use placeholders for layout and movement. Establish art references early, generate final assets after camera and layout stabilize.

@@ -1,3 +1,4 @@
+import { expandedRoute } from './expanded-route';
 import { test, expect, type Page } from '@playwright/test';
 
 const production = 'http://127.0.0.1:4173/';
@@ -29,38 +30,15 @@ async function inspectFromReturn(page: Page): Promise<void> {
   await page.locator('#world').click({ position: { x: 640, y: 360 } });
   await expect(page.getByRole('button', { name: 'Pear silhouette' })).toBeVisible();
 }
-async function traverseByVisibleUi(page: Page, reached: () => Promise<boolean>): Promise<void> {
-  const until = Date.now() + 30_000;
-  let jumping = false; let nextChange = 0;
-  await page.keyboard.down('KeyD');
-  try {
-    while (Date.now() < until) {
-      if (await reached()) return;
-      if (Date.now() >= nextChange) {
-        jumping = !jumping;
-        if (jumping) await page.keyboard.down('Space'); else await page.keyboard.up('Space');
-        nextChange = Date.now() + (jumping ? 500 : 230);
-      }
-      await page.waitForTimeout(25);
-    }
-    throw new Error('Production traversal did not reach its visible objective');
-  } finally { await page.keyboard.up('KeyD'); await page.keyboard.up('Space'); }
-}
 async function supperRoute(page: Page): Promise<void> {
-  await expect(page.locator('#world')).toBeFocused();
-  // Let the initial body settle onto its authored spawn floor before jumping.
-  await page.waitForTimeout(150);
-  await traverseByVisibleUi(page, async () => (await page.locator('#prompt').textContent()) === 'E — Topple fork');
-  await page.keyboard.press('KeyE'); await page.keyboard.press('KeyE');
-  await expect(page.locator('#fork-state')).toHaveText('Fork · bridge ready');
-  await page.keyboard.down('KeyD'); await expect(page.locator('#checkpoint')).toContainText('after fork');
-  await page.keyboard.up('KeyD'); await page.keyboard.press('KeyR'); await page.waitForTimeout(100);
-  await walk(page, 'KeyD', 500); await page.waitForTimeout(60);
-  await page.keyboard.down('KeyD'); await page.keyboard.down('Space'); await page.waitForTimeout(320); await page.keyboard.up('KeyD');
-  await expect(page.locator('#prompt')).toHaveText('E — Extinguish candle'); await page.keyboard.up('Space');
-  await page.keyboard.press('KeyE'); await page.keyboard.press('KeyE'); await expect(page.locator('#candle-state')).toHaveText('Candle · safe');
-  await traverseByVisibleUi(page, () => page.getByRole('button', { name: 'Return to Museum', exact: true }).isVisible());
-  await expect(page.locator('#modal')).toContainText('golden pear');
+  await expandedRoute(page, async index => {
+    if (index !== 3) return;
+    await walk(page, 'KeyD', 1900);
+    await page.keyboard.press('Escape');
+    await page.screenshot({ path: 'test-results/expanded-fan-observation.png' });
+    await page.getByRole('button', { name: 'Resume', exact: false }).click();
+    // The next recorded stage starts with R at the same safe checkpoint.
+  });
 }
 
 test('production museum → supper → pear → return → click placement → reload → replay → confirmed reset', async ({ page }) => {

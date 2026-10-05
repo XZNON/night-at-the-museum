@@ -1,97 +1,124 @@
-# Royal Supper — First adventure build specification
+# Royal Supper — Expanded adventure specification
 
-## Purpose
+## Status and purpose
 
-Build a short, side-view 2.5D platforming adventure inside a painting of a royal supper. The player is tiny on a giant table. Food, cutlery and crockery form the route; the golden pear waits on the king's plate.
+Build a varied side-view 2.5D platforming adventure across a lavish royal banquet. The player is tiny on the table; the golden pear waits on the king's plate. The original user-selected 5–7 minute first-playthrough target is provisional following playtest feedback to shorten repetitive challenges. Difficulty is demanding, with unlimited retries and one checkpoint after each hard section.
 
-First deliverable: a playable blockout with simple meshes/colours. Final art and museum integration are subsequent milestones. Keep a direct development entry for quick iteration.
+The user lifted the gameplay planning hold on 2026-10-05 and subsequently playtested the blockout, reporting lost butter momentum, harmless crumbs, misleading cover boundaries and excessive repetition. The revised route prioritizes variety and shorter retries: three distinct butter patches, three cover crossings and a compact two-bounce dessert route, followed by the requested separated trident candle tops. The user approved the complete final gameplay layout on 2026-10-05. No human first-time duration measurement is recorded; do not pad the route to meet the original 5–7 minute target. PLAN.md records verification. M3 art/audio remains incomplete; separate visual-reference approval precedes production generation.
 
 ## Stable IDs and shared contract
 
-- Artwork/scene: `royal-supper`.
-- Awarded piece: `golden-pear`.
-- Interactions: `fork-bridge`, `candle-flame`.
-- Checkpoints: `basket-start`, `before-fork`, `after-fork`, `after-candle`.
-- Report collection through CampaignCommand; do not directly edit inventory or museum objects.
-- Return through the scene manager. In direct development mode, show a completion screen with Replay; do not invent a final museum just for this milestone.
+- Artwork/scene: `royal-supper`; awarded piece: `golden-pear`.
+- Preserve the `fork-bridge` interaction ID and shared campaign collection operation.
+- Preserve `candle-flame` as the identity of the required candle passage; replace its permanent extinguishing mechanics with the fan-driven timed three-candle section.
+- Existing checkpoint IDs are a compatibility baseline. Retain useful IDs and add explicit stable IDs for the new section ends in typed level data. Runtime checkpoint state remains session-only; reload may reset it.
+- Report collection through CampaignCommand. Do not directly edit inventory, museum objects or global unlocks.
+- Keep the isolated development entry and movement lane independent of campaign storage.
 
 ## Player and camera
 
-- Orthographic side view, player motion on XY, decorative depth on Z.
-- Move A/D or arrows; Space jump; E nearby interaction; R checkpoint restart; Escape pause.
-- No crouch, ladders, double jump, combat or free depth movement.
-- Pass-under section has clearance for the standing character; avoid introducing another controller ability.
-- Character/world measurements use one consistent scale. Put width, height, speed, acceleration, gravity, jump speed, coyote time and input buffer in a tuning object.
-- Initial tuning defaults: coyote time 100 ms, jump buffer 120 ms; tune speed/gravity against the first test jumps rather than locking arbitrary numbers in prose.
-- Provide a collision/debug view and a small movement test lane during development.
-- Follow camera with forward look-ahead, clamped to level bounds. Show landing surfaces before compulsory jumps; no compulsory blind drops.
+- Orthographic side view; motion on XY, decoration on Z. Camera follows the player left to right with look-ahead so upcoming landings/hazards are visible. No player-facing route map.
+- A/D or arrows move, Space jumps, E interacts where needed, R checkpoint restart, Escape pause. No combat, crouch, ladders or free depth movement.
+- Double jump: one ground launch plus one airborne jump, each on a fresh Space press. Holding/repeating input cannot grant further jumps. Ceiling, side contact, hazard overlap or walking off a ledge cannot recharge jumps. After coyote time expires, a ledge fall permits at most the single airborne rescue jump.
+- A valid downward landing on solid gameplay geometry or checkpoint respawn restores the jump allowance. The controller must distinguish this from incidental touching/overlap.
+- Jelly bounce: a downward landing launches automatically, consumes the first launch/coyote opportunity and allows exactly one airborne jump. Remaining inside its collider or brushing its side cannot repeatedly launch/recharge the player. Re-arm only for a new legitimate landing.
+- Measure the full horizontal/vertical double-jump and bounce envelopes before authoring required gaps. Fork gap/overhead geometry must prevent bypass; bounce launch points must not permit skipping later mandatory sections.
+- Store tuning and positions in typed configuration. Butter raises running speed from 6.8 to 9.2, reduces braking/acceleration and carries that movement mode through a jump until landing on dry ground. Airborne neutral input preserves slide momentum; reversal remains possible. No dynamic rigid-body engine is required.
 
-## Route, left to right
+## Proposed route order
 
-| Section | Playable requirement | Layout/art intention |
+The user selected the mechanics and progression style; this sequence is the working implementation order. Players read scenery and timing in the game rather than a map.
+
+| Section | Challenge and purpose | Checkpoint policy |
 | --- | --- | --- |
-| Bread basket | Safe spawn and 2–3 easy jumps teach movement | Bread pieces rise from basket to tabletop |
-| Crockery | Cross plates and pass beneath overturned goblet | Wide landing surfaces and readable cutouts |
-| Fork gap | E topples upright fork into a bridge | Two raised dishes separated by an unjumpable gap |
-| Candle passage | E extinguishes flame before crossing | Narrow necessary route across candle top; side alcove reaches snuffer |
-| King's plate | Final forgiving jumps and pear collection | King/banquet behind play plane; pear clearly visible |
+| Bread basket and crockery | Introduce ordinary jump, then double jump through increasingly tall bread/plate steps and standing-height goblet passages | Starting spawn; no extra checkpoint for each small jump |
+| Butter and crumbs | Controlled slippery run; time jumps over crumbs while momentum persists, then land on a clear dish | One checkpoint after clearing the section |
+| Rolling grapes | Predictable rolling waves with visible approach; mix stepped landings and airborne avoidance | One checkpoint after clearing the section |
+| Fork crossing | E topples the fork into the required bridge; dimensions account for full double-jump reach | Preserve settled bridge; checkpoint after crossing |
+| Fan and three candles | Automatic rotating fan briefly extinguishes candles one by one. Commit and cross before flames return | One checkpoint after the entire timed section; none between the candles |
+| Diner attention and cover | Three safe dishes, followed by three progressively longer crossings (13, 15 and about 20 units to safety), with narrowing cover widths | One checkpoint after the whole watched passage |
+| Jelly and dessert ascent | Jelly launch, two cake rises, a level shelf, a drop to a second jelly, then a final rise to the pear | The previous section's checkpoint covers retries; arrival completes the route |
 
-Author route data after measuring the tuned jump envelope. Ordinary required jumps should use at most about 75% of demonstrated horizontal/vertical capability. Fork gap must exceed maximum unassisted reach and have no lower bypass. Candle gate must be hazardous while lit and traversable when extinguished; side trigger must be reachable safely.
+Checkpoint spacing follows completed hard sections, not every platform. Tune section duration to keep repeated attempts meaningful without repeating most of the level. Platforms/checkpoint spawns must be stable and independent of moving hazards.
 
-Keep level bounds, hazard volumes and checkpoint spawns explicit. Decoration is never implicitly solid. Use a death plane beneath gaps. Ceiling/bounds prevent jumping around compulsory gates. Checkpoint spawn positions must be stable, clear of hazards and never depend on a prop still animating.
+## Butter slide
+
+- Clearly different surface appearance and a short safe introduction demonstrate reduced braking.
+- Use authored crumbs as obstacles with explicit collision, visible takeoff space and a readable exit landing.
+- Crumb contact from any side causes checkpoint recovery and a clear cue. Swept collision contacts count even when wall resolution prevents final overlap. Crumbs are obstacles to clear, not safe landing platforms.
+- Three short patches vary crumb width, height, spacing and gap placement; avoid repeating a full obstacle pattern. Sliding survives butter takeoff/landing and ends on dry ground or respawn.
+- No forced loss of directional control or unavoidable failure after entering the slide. Do not hide crumbs behind decorative food.
+- Introduce this challenge separately from grapes. A later combination is optional after both mechanics prove readable.
+
+## Rolling grapes
+
+- Script motion/spawns with predictable timing; rolling appearance does not determine collision.
+- Grapes enter through visible approach space, never on top of the player or a checkpoint. Hazard contact causes checkpoint recovery.
+- Increase challenge through spacing/waves and landing positions; avoid random impossible sequences.
+- Reset the retry wave to a readable phase after failure. Pause/blur freezes grape motion and spawn timing; leaving the scene stops its updates.
 
 ## Fork interaction
 
-1. Player approaches the fork trigger on the near side of the gap.
-2. Show “E — Topple fork” when in range.
-3. E starts `upright → toppling → bridged`; ignore repeated E while moving.
-4. Animate the fork into a known resting position.
-5. Enable its horizontal bridge collider only when settled. Keep the player off the moving prop during the transition.
-6. The bridged state persists through falls and session re-entry. Repeated activation is a no-op.
-7. Crossing reaches the after-fork checkpoint; that checkpoint cannot be reached before the bridge is available.
+1. Reach a safe near-side trigger and show E — Topple fork.
+2. E starts upright → toppling → bridged; repeat activation while moving is ignored.
+3. Animate to its known resting pose and enable bridge collision only when settled. Presentation and collider state agree.
+4. Settled bridge remains through falls and session re-entry; restart adventure resets local puzzles without removing campaign awards.
+5. Verify both the full double-jump envelope and available bounce launch positions cannot bypass this required crossing.
 
-## Candle interaction
+## Timed fan and three-candle passage
 
-1. Flame blocks the required candle-top passage and is visibly hazardous.
-2. Reach a safe snuffer interaction from the near side; no jump through flame required.
-3. Show “E — Extinguish candle”.
-4. E starts `lit → extinguishing → extinguished` with clear feedback.
-5. Remove flame hazard at the defined extinguishing moment; keep collider/presentation state consistent.
-6. Candle body remains a platform and the route becomes safe.
-7. Extinguished state persists through falls and session re-entry; it never relights automatically.
+- Use the approved trident-shaped holder with three candles as the visual basis. Each flame has an explicit independent hazard volume.
+- Three 3-unit-wide candle tops are separated by 3-unit gaps. Jump onto the first candle, between both pairs, and across the 4-unit exit gap; there is no floor bridging the arms. A common brass foot, stem and crossbar sit below the route and provide no walkable shortcut.
+- A fan automatically rotates/sweeps, extinguishing the flames in sequence. Each remains safe for a limited interval, then relights. The section requires timely forward traversal; waiting indefinitely within it is not a solution.
+- Let the player observe the cycle from a safe entry area. Fan orientation, diminishing flame/embers and relighting cues communicate which candle is safe and when the window is closing.
+- Timing values come from measured jumps and tested traversal. Choose offsets/windows that admit a reliable route with the allowed double jump, then tune difficulty. No permanently safe snuffer action replaces the timing challenge.
+- Current jump-route windows open at 2.0 / 3.1 / 4.2 seconds in the 11-second cycle, each for 2 seconds. The canopy underside is at y7, allowing full ordinary jumps between y3.2 tops; heat fills the clearance to prevent jumping above lit candles. Deep column collision prevents an underneath shortcut.
+- Relit flame contact burns and recovers at the last checkpoint, even if the player has not crossed fast enough. There is no checkpoint midway through the three-candle challenge.
+- On failed retry, restart the cycle at a readable phase. Pause/blur freezes every phase timer. Leaving the scene stops local updates; session re-entry resumes the local state coherently, and reload may reset it.
+- Reaching the far side can update the checkpoint; it does not permanently disable relighting. Prove that jumping above/below the hazard route cannot bypass the required timing.
 
-The snuffer can be a scripted prop; no grabbing inventory, aiming mechanic or simulated candle physics is needed.
+## Diner attention and cover
 
-## Recovery and completion
+- User-selected rule: if a diner tilts their head/looks down during the active detection phase and the player is outside cover, the player is caught. Standing still outside cover is not safe. Jumping above or out of cover can cause detection.
+- A visible head-turn lead-in precedes the active look phase; afterwards the diner looks away. Implement one scripted cycle first, rather than general AI.
+- Authored goblet/dish cover regions protect only a fully hidden player body. Art must explain cover boundaries and its height; pixels do not perform line-of-sight simulation.
+- The dish fills the protection volume. An inset blue floor strip marks safe foot-centre positions, including both edges; it turns green when the player is fully hidden, matching the HIDDEN status. Use only a tiny numeric boundary tolerance, not a grace period that makes genuine exposure safe.
+- Cap the passage at three cover crossings. Increase travel distance and narrow the safe dishes rather than extending a repeated pattern. Keep the same visible attention cycle and whole-section checkpoint.
+- Reaching the exposed section from a checkpoint must not cause instant unavoidable detection. Tune lead-in/look-away intervals against actual travel time and provide reachable cover.
+- Being caught returns to the last checkpoint with a clear cue. Freeze attention timing on pause/blur and stop it with scene lifecycle.
 
-- Place checkpoint immediately before fork, after bridge and beyond candle.
-- Fall/flame gives a short cue and respawns within the recovery target in REQUIREMENTS.md.
-- Keep completed interaction states on checkpoint restart. Restart Adventure resets the local route, but does not delete an awarded campaign piece.
-- On overlap with pear, collect once, play a brief celebration and show Return to Museum / Continue Exploring.
-- Return to Museum goes to the source painting's safe hub position. Replay in dev mode returns to the start with a clean local session.
-- If pear is already collected or restored, show a replay completion cue without a second inventory award.
+## Recovery, session state and completion
 
-## Art direction and asset boundary
+- Unlimited retries, no lives, death counter or campaign piece loss. Recovery remains quick.
+- Use starting spawn and one checkpoint after each cleared hard section; no intermediate checkpoints split an individual challenge.
+- Preserve the settled fork and campaign awards during recovery. Cyclic hazards restart at readable retry phases rather than becoming permanently cleared. Local traversal state remains session-owned and separate from campaign saves.
+- Restart Adventure resets the local route while preserving collected/restored pieces. Replay cannot duplicate the pear or reverse restoration.
+- Pear overlap awards once, gives feedback and offers Return to Museum / Continue Exploring. Return near the source frame; preserve drag/click/keyboard placement, immediate restoration saving and confirmed reset.
+- Timers and motion use the one fixed-step gameplay clock, not unmanaged browser intervals. Input clears on pause/blur and transitions remain serialized.
 
-A painterly royal banquet with warm candlelight, rich red/gold fabrics, oversized diners, porcelain, bread and reflective cutlery. The visual hierarchy puts the playable route and pear above background detail.
+## Art and audio boundary
 
-Banquet illustration and playable scene share an approved DreamLayer reference, but the playable level uses derived layers/cutouts rather than trying to walk through a single flattened image. Background diners need only subtle ambient movement, not AI or dialogue.
+A warm painterly whole-table banquet: many diners eating/drinking, rich red/gold fabric, bread, dishes, wine/glasses/goblets/cutlery/fruit and three-candle brass candelabra. Keep gameplay silhouettes and landings stronger than background detail. Banquet-v5 is a direction reference, not a geometry map; derive layers/props for the side-view camera.
 
-Minimum production assets: banquet background layers, bread/basket, plate/platform artwork, goblet, fork, candle and snuffer, pear cutout, player frames/reference, flame/feedback effects. Some simple geometry/effects can be authored in code; major art should visibly come from DreamLayer.
+Validate the expanded blockout and camera before production generation. Then prepare only required background layers, reusable platform/food/crockery art, butter/crumbs, grapes, fork, fan/candelabrum, cover props, jelly, pear and player frames. Record DreamLayer provenance, executions and actual credits; inspect edges, transparency and animation alignment. Keep source and runtime assets separate.
 
-## Verification checklist
+Essential Howler audio includes ambience, jump/bounce, interaction, slide/hazard/attention cues, collection, return and restoration. Use original/licensed sources and record provenance. Respect saved master volume, explicit activation, pause and scene disposal. Audio cues supplement visible timing rather than making sound mandatory.
 
-- [x] Movement is controllable at normal and low rendering quality (keyboard-driven Chromium routes).
-- [x] Jump buffer/coyote behavior works and maximum-speed collisions do not tunnel through surfaces (focused simulation tests).
-- [ ] First-time player can read the route and land without blind leaps.
-- [x] Fork and candle each block progress until activated and cannot be bypassed (jump attempts against authored collision).
-- [x] Trigger ranges work from safe positions; unrelated nearby props do not capture E.
-- [x] Falls before/after each interaction restore a safe checkpoint and correct prop state.
-- [x] Repeated E, R, pause and rapid return do not create softlocks or duplicate scene ownership (unit/browser checks).
-- [x] Pear is awarded once; replay cannot duplicate it.
-- [x] Resize, dispatched focus-loss handling, production preview and scene exit/re-entry behave correctly. Actual app/tab switching remains a manual follow-up.
-- [x] Blockout is playable end to end; known issues and measured checks recorded in PLAN.md.
+No mountain scene, final museum decoration, extra adventure, deployment/submission/email or broad speculative art catalogue is part of this expanded M3 pass.
 
-## Not in the first build
+## Expanded verification gates
 
-Shadow bridges from the earlier Feast of Shadows pitch, moving diners, timed scoring, optional collectibles, procedural levels, free-falling physics props, final museum decoration or the other adventures.
+- [x] User playtest approval of the revised gameplay layout, including the final trident candle jumps.
+- [x] Ground plus airborne jump only; held input, repeat presses, coyote transitions, ceiling/side contact and bounce overlap cannot stack more.
+- [x] Double jump and jelly cannot bypass the fork or timed candle passage.
+- [x] Sliding is controllable; crumb landings remain readable and collision works at supported sliding speed.
+- [x] Grapes offer a visible, reproducible route and never spawn on the player.
+- [x] Three flames extinguish/relight in sequence; slow traversal burns, timed crossing succeeds, pause freezes phases.
+- [x] Diner head turn is readable; exposure including jumping out of cover is detected; full cover protects.
+- [x] Checkpoints occur after hard sections; each retry starts safely and preserves campaign awards/settled fork.
+- [ ] Camera shows upcoming landings, first-time traversal is timed against the 5–7 minute target, and difficulty is reviewed by playtesting.
+- [x] Full production museum → supper → pear → restoration flow, save/reload, replay, confirmed reset and all placement methods remain correct.
+- [x] Isolated entry, resource disposal, repeated scene entry, resize, blur/pause, asset loading and production paths pass.
+- [ ] Generated art/audio provenance and actual costs are recorded; integrated rendering is visually inspected.
+
+Checked items have focused test, automated Chromium traversal and placeholder visual-inspection evidence in PLAN.md. They do not claim a first-time human difficulty review; the camera/duration and art/audio gates stay open. Historical M1–M2 checks remain in PLAN.md. They validate the old blockout and must not be presented as evidence that the new mechanics pass.

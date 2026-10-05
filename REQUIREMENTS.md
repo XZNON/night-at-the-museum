@@ -8,7 +8,7 @@ A desktop browser adventure in which the player explores a small museum and ente
 
 ### Goals
 
-- One complete new-game-to-ending journey, roughly 5–10 minutes on a first successful playthrough; tune against playtests.
+- One complete new-game-to-ending journey. The user selected a 5–7 minute first-playthrough target for expanded Royal Supper, including a few retries. The original whole-game roughly 5–10 minute target is under review; time the second adventure before setting a revised total campaign estimate.
 - Responsive, forgiving platforming and understandable environmental interactions.
 - Museum exploration, inventory and restoration that connect the adventures meaningfully.
 - Substantial, documented DreamLayer contribution to masterpiece, artwork worlds and props.
@@ -28,7 +28,7 @@ Primary player: a jam voter or hiring reviewer opening the itch.io game with key
 2. Player enters the museum and approaches the masterpiece. First inspection reveals the pear silhouette and a clue toward Royal Supper.
 3. Player walks to Royal Supper and clicks its frame while within interaction range and line of sight.
 4. A transition loads the adventure and starts at its entrance or remembered session checkpoint.
-5. Player crosses the tabletop, topples the fork, extinguishes the candle and reaches the king's plate.
+5. Player advances through the longer side-scrolling tabletop route using double jumps, butter/crumb sliding, grape avoidance, the fork bridge, timed fan/three-candle crossing, diner attention/cover and dessert bounce ascent, then reaches the king's plate. Exact section order is a planning default defined in ROYAL_SUPPER.md.
 6. Collecting the pear awards it once to inventory. A success cue offers Return to Museum.
 7. Player returns near the supper frame and walks back to the masterpiece.
 8. Clicking the masterpiece opens inspection. Player drags the pear to its target, or uses click/keyboard placement.
@@ -41,8 +41,9 @@ Primary player: a jam voter or hiring reviewer opening the itch.io game with key
 
 1. Invalid placement returns the piece to inventory and gives a gentle cue; no progress is lost.
 2. Falling or touching an active flame respawns at the latest checkpoint.
-3. Completed prop interactions remain completed during checkpoint recovery.
+3. Completed persistent prop interactions, such as the settled fork, remain completed during checkpoint recovery. Cyclic candle flames relight and are not a permanently completed prop state; failed timed challenges reset to a readable starting phase.
 4. No death counter, lives, combat health or inventory loss is required.
+5. Expanded Royal Supper is demanding, with unlimited retries and one checkpoint after each hard section. No intermediate checkpoint divides an individual challenge. Detection while outside cover in the diner's active look phase also returns to the last checkpoint.
 
 ## 4. Functional requirements
 
@@ -62,6 +63,11 @@ Primary player: a jam voter or hiring reviewer opening the itch.io game with key
 - FR12: Reset requires an explicit confirmation and clears only this game's stored data.
 - FR13: Completed artworks remain replayable; replay never reverses a restoration.
 - FR14: End condition derives from the selected campaign stages, not a hardcoded three-piece check.
+- FR15: Royal Supper allows at most one airborne jump after the initial launch; fresh presses, ceiling/side contact, falling, held input or bounce overlap cannot stack additional jumps. Valid landing/checkpoint recovery restores the allowance. Required gates must be tested against the measured full jump/bounce reach.
+- FR16: The three-candle fan section uses timed sequential extinguishing and relighting; active flames cause checkpoint recovery. Three separated tops on a trident holder require jumps between the candles, with no underlying walkable bridge. Timing and overhead clearance must allow those jumps while preventing a bypass above or beneath lit candles. Timed hazards and diner attention use gameplay time and freeze on pause, blur, inspection and scene exit.
+- FR17: Butter sliding, rolling grapes, diner attention/cover and bounce pads use explicit authored gameplay geometry and scripted states independent of illustration pixels. Diner exposure during the signalled active look phase triggers recovery, even if standing still; jumping above/out of cover exposes the player. Cover must hide the full player body.
+- FR18: Butter takeoff and landing preserve sliding momentum; neutral airborne input does not apply dry-ground braking. Crumb contact triggers section recovery, including swept side/top/underside contacts. Three varied butter patches use faster sliding, irregular spacing and differing obstacle sizes.
+- FR19: Limit the diner passage to three progressively harder cover crossings. The visible safe standing strip and HIDDEN feedback must match full-body protection at their boundaries. The dessert finale mixes rises, a flat shelf, a drop and two jelly launches rather than a long repeated staircase. The original duration target remains provisional after user feedback; prioritize variety and readable retries.
 
 ### State transitions
 
@@ -98,6 +104,7 @@ Primary player: a jam voter or hiring reviewer opening the itch.io game with key
 - Mini-games: readable silhouettes and landing surfaces; decorative foreground cannot hide hazards or interaction points.
 - Introduce move/jump/E at the relevant first use. Show only the nearest reachable interaction prompt.
 - Camera follows smoothly but shows the next landing before a jump. No blind compulsory leaps.
+- The longer supper progresses left to right; players discover challenges through the scene, motion and contextual cues, with no player-facing route map. Flame/attention changes need readable advance cues, and grapes need visible approach distance. Timing can be demanding while remaining learnable.
 - Return/loading/collection/placement states have visible feedback.
 - Inventory and missing targets use shape and labels as well as colour.
 - Placement supports drag, click and keyboard. Menus expose visible focus and basic keyboard navigation.
@@ -238,4 +245,4 @@ Assumptions: first-person hub and two-stage campaign are working defaults chosen
 
 ## 15. Implementation handoff
 
-Follow PLAN.md M0–M6. M0–M2 are implemented; the next milestone is M3, first adventure art and sound. Validate meaningful collision/progression risks with focused tests and playtest the complete route; compilation alone is insufficient. Log automated versus human verification and limitations before handing off. The game is done when the selected campaign ends correctly, required acceptance checks pass, and release materials are ready.
+Follow PLAN.md M0–M6. M0–M2 are implemented; M3 now first requires a user-requested expanded supper mechanics proof, then first-adventure art and sound. The user authorized gameplay implementation on 2026-10-05. Expanded placeholder mechanics now exist; use the latest PLAN.md validation rather than historical M2 results. Production art remains on hold pending revised-layout validation and recorded reference approval. Validate meaningful collision/progression risks with focused tests and playtest the complete route; compilation alone is insufficient. Log automated versus human verification and limitations before handing off. The game is done when the selected campaign ends correctly, required acceptance checks pass, and release materials are ready.

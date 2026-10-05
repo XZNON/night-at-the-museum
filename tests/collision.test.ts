@@ -26,6 +26,14 @@ describe('swept kinematic collision', () => {
     const b = body({ y: 0, vx: 6.8, vy: -1 }); moveBody(b, [floor], dt);
     expect(b.x).toBeCloseTo(6.8 * dt); expect(b.y).toBe(0);
   });
+  it('reports only the resolved contact when a fast sweep crosses multiple walls', () => {
+    const near = { id: 'near', x: 2, y: -5, width: 0.1, height: 10 };
+    const far = { ...near, id: 'far', x: 4 };
+    const b = body({ vx: 300 }); const contacts: typeof near[] = [];
+    moveBody(b, [far, near], dt, contacts);
+    expect(b.x + b.width).toBeCloseTo(near.x);
+    expect(contacts.map(c => c.id)).toEqual(['near']);
+  });
 });
 
 describe('forgiving jump control', () => {
@@ -37,13 +45,14 @@ describe('forgiving jump control', () => {
     c.update(dt, { ...idleControls(), jumpPressed: true, jumpHeld: true }, []);
     expect(c.body.vy).toBeLessThan(10);
   });
-  it('expires coyote time and buffers a press just before landing', () => {
+  it('expires coyote time into one rescue jump and buffers a press after the air jump is spent', () => {
     const c = new CharacterController(royalSupper.tuning, 0, 0);
     c.update(dt, idleControls(), [floor]);
     for (let i = 0; i < 10; i++) c.update(dt, idleControls(), []);
     c.update(dt, { ...idleControls(), jumpPressed: true, jumpHeld: true }, []);
-    expect(c.body.vy).toBeLessThan(0);
-    c.respawn(0, 0.09); c.body.vy = -3;
+    expect(c.body.vy).toBeGreaterThan(9);
+    c.body.y = 0.09; c.body.vy = -3;
+    c.update(dt, idleControls(), [floor]);
     c.update(dt, { ...idleControls(), jumpPressed: true, jumpHeld: true }, [floor]);
     c.update(dt, { ...idleControls(), jumpHeld: true }, [floor]);
     c.update(dt, { ...idleControls(), jumpHeld: true }, [floor]);

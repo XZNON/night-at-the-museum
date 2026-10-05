@@ -67,3 +67,8 @@ h2.compact { font-size: 56px; }
 @keyframes restore-colour { from { filter: saturate(0); } to { filter: saturate(1); } }
 @media (prefers-reduced-motion: reduce) { .restoring { animation: none; } }
 @media (max-width: 650px) { #museum-hud .hud-top { gap: 8px; } #museum-hud h1 { font-size: 22px; } #museum-hud .bottom-hud { font-size: 10px; } }
+
+.section-hint { position: absolute; top: 130px; left: 30px; max-width: 620px; color: #f2ddba; font-size: 13px; margin: 0; }
+.route-status { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; width: max-content; max-width: 65%; top: 88px; left: auto; right: 34px; transform: none; }
+.route-status [hidden] { display: none; }
+@media (max-width: 800px) { .section-hint { top: 172px; left: 20px; max-width: 85%; } .route-status { top: 118px; right: 20px; max-width: 90%; } }

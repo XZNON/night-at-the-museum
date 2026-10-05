@@ -32,8 +32,9 @@ export class GameUi {
       <section id="hud" class="hud" hidden aria-label="Adventure status">
         <header class="hud-top"><div><span class="eyebrow">The Last Curator</span><h1>Royal Supper</h1><span id="section-name" class="section-name"></span></div>
           <button data-action="pause" class="quiet">Pause <kbd>Esc</kbd></button></header>
-        <div class="route-status"><span id="fork-state"></span><span class="divider">/</span><span id="candle-state"></span><div class="route-track"><div id="route-progress"></div></div></div>
-        <div class="bottom-hud"><div class="controls"><span><kbd>A</kbd><kbd>D</kbd> move</span><span><kbd>Space</kbd> jump</span><span><kbd>E</kbd> interact</span><span><kbd>R</kbd> checkpoint</span></div>
+        <div class="route-status"><span id="fork-state"></span><span id="candle-state"></span><span id="diner-state"></span><span id="jump-state"></span></div>
+        <p id="section-hint" class="section-hint"></p>
+        <div class="bottom-hud"><div class="controls"><span><kbd>A</kbd><kbd>D</kbd> move</span><span><kbd>Space</kbd> jump ×2</span><span><kbd>E</kbd> interact</span><span><kbd>R</kbd> checkpoint</span></div>
           <span id="checkpoint" class="checkpoint"></span></div>
         <div id="prompt" class="prompt" hidden></div><div id="cue" class="cue" role="status" aria-live="polite"></div>
       </section>
@@ -45,7 +46,7 @@ export class GameUi {
       </section>
       <aside id="save-notice" class="save-notice" role="status" hidden></aside>
       <aside id="diagnostics" class="diagnostics" hidden></aside>
-      <span class="build-tag">M2 · PLACEHOLDER STUDY${direct ? ' · ISOLATED DEV SESSION' : ''}</span>`;
+      <span class="build-tag">M3 · MECHANICS BLOCKOUT${direct ? ' · ISOLATED DEV SESSION' : ''}</span>`;
     this.canvas = root.querySelector<HTMLCanvasElement>('#world')!;
     this.modal = root.querySelector<HTMLElement>('#modal')!;
     this.hud = root.querySelector<HTMLElement>('#hud')!;
@@ -121,7 +122,7 @@ export class GameUi {
     this.show('menu', `
       <div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / Study No. 01</p>
       <h2>Royal<br><em>Supper.</em></h2><p class="intro">A small restorer.<br>A very grand table.<br>One missing golden pear.</p>
-      <p class="menu-description">Leap across the bread, topple the fork, and snuff the candle to reach the king’s dessert.</p>
+      <p class="menu-description">Double jump across a long banquet. Slide over butter, dodge grapes, follow the fan’s three ember windows, hide from diners and bounce up to the pear.</p>
       <button class="primary" data-action="start">${remembered ? 'Continue the painting' : 'Enter the painting'} <span>→</span></button>
       ${remembered ? '<button class="quiet" data-action="replay">Restart adventure</button>' : ''}
       <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move <span>·</span> <kbd>Space</kbd> Jump <span>·</span> <kbd>E</kbd> Interact</div>
@@ -144,7 +145,7 @@ export class GameUi {
       <label class="setting">Master volume <input id="master-volume" type="range" min="0" max="1" step="0.05" value="${settings?.masterVolume ?? 0.7}"></label>
       ${!this.direct ? '<button class="quiet" data-action="reset">Reset progress</button>' : ''}
       ${import.meta.env.DEV ? '<button class="quiet" data-action="debug">Toggle collision view · F3</button>' : ''}
-      <p class="small-note">${this.context === 'supper' ? 'Falls keep the fork and candle states. Restart adventure preserves your pear.' : 'Drag to look or use Mouse look for pointer lock.'}<br>Audio arrives with the art milestone.</p>`);
+      <p class="small-note">${this.context === 'supper' ? 'Unlimited retries. Each hard section ends at a checkpoint. Falls keep the fork; timed hazards restart. Restart adventure preserves your pear.' : 'Drag to look or use Mouse look for pointer lock.'}<br>Audio arrives with the art milestone.</p>`);
   }
   success(result: CampaignResult): void {
     this.collection = result;
@@ -156,7 +157,7 @@ export class GameUi {
   finished(): void {
     this.hud.hidden = true;
     this.show('finished', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">Royal Supper / Blockout complete</p>
-      <h2 class="compact">A path<br><em>restored.</em></h2><p class="menu-description">Fork bridged. Candle extinguished. Golden pear recovered${this.collection?.changed === false ? ' again' : ''}.</p>
+      <h2 class="compact">A path<br><em>restored.</em></h2><p class="menu-description">Fork bridged. Three timed flames crossed. Diner evaded. Golden pear recovered${this.collection?.changed === false ? ' again' : ''}.</p>
       <button class="primary" data-action="replay">Replay the painting <span>→</span></button><button class="quiet" data-action="start">Re-enter at your checkpoint</button>
       <p class="small-note">Open the normal entry for the museum/restoration loop.<br>This isolated study keeps progress in memory until reload.</p>`);
   }
@@ -172,11 +173,16 @@ export class GameUi {
     const text = (id: string, value: string) => { const el = document.getElementById(id)!; if (el.textContent !== value) el.textContent = value; };
     text('section-name', state.section);
     text('fork-state', `Fork · ${state.fork === 'bridged' ? 'bridge ready' : state.fork === 'toppling' ? 'toppling…' : 'upright'}`);
-    text('candle-state', `Candle · ${state.candle === 'extinguished' ? 'safe' : state.candle === 'extinguishing' ? 'snuffing…' : 'lit'}`);
+    text('candle-state', `Candles · ${state.candle}`);
+    text('diner-state', `Diner · ${state.diner}`);
+    text('jump-state', state.jump);
+    text('section-hint', state.hint);
+    document.getElementById('fork-state')!.hidden = !state.section.includes('fork');
+    document.getElementById('candle-state')!.hidden = !state.section.includes('candles');
+    document.getElementById('diner-state')!.hidden = !state.section.includes('diner');
     text('checkpoint', `Checkpoint / ${state.checkpoint.replaceAll('-', ' ')}`);
     text('prompt', state.prompt); document.getElementById('prompt')!.hidden = !state.prompt;
     text('cue', state.cue);
-    document.getElementById('route-progress')!.style.width = `${state.progress * 100}%`;
   }
   diagnostics(text: string | null): void {
     const el = document.getElementById('diagnostics')!; el.hidden = text === null;

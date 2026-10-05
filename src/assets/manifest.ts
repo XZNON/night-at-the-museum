@@ -9,6 +9,9 @@ export const placeholderArt = {
   bridge: { color: 0xbfc6cb, accent: 0xffe0a6 },
   ceiling: { color: 0x6a4540, accent: 0xc39862 },
   bound: { color: 0x000000, accent: 0x000000 },
+  butter: { color: 0xe7bb38, accent: 0xffeb76 },
+  crumb: { color: 0x925a2d, accent: 0xdca966 },
+  jelly: { color: 0xa34796, accent: 0xf793dc },
 } as const;
 
 export const runtimeAssets: Record<string, { path: string; provider: 'DreamLayer' }> = {};

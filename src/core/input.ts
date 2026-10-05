@@ -7,6 +7,7 @@ const isFormControl = (target: EventTarget | null): boolean => target instanceof
 export class Input {
   private held = new Set<string>();
   private pressed = new Set<string>();
+  private jumpReleased = false;
   enabled = false;
 
   constructor(private readonly onPause: () => void, private readonly onDebug: () => void) {
@@ -23,6 +24,7 @@ export class Input {
     this.held.add(event.code);
   };
   private keyup = (event: KeyboardEvent): void => {
+    if (event.code === 'Space') this.jumpReleased = true;
     this.held.delete(event.code);
     if (this.enabled && gameplayKeys.has(event.code) && !isFormControl(event.target)) event.preventDefault();
   };
@@ -30,13 +32,15 @@ export class Input {
     const frame: Controls = {
       axis: Number(this.held.has('KeyD') || this.held.has('ArrowRight')) - Number(this.held.has('KeyA') || this.held.has('ArrowLeft')),
       jumpPressed: this.pressed.has('Space'), jumpHeld: this.held.has('Space'),
+      jumpReleased: this.jumpReleased,
       interactPressed: this.pressed.has('KeyE'), restartPressed: this.pressed.has('KeyR'),
       forward: Number(this.held.has('KeyW') || this.held.has('ArrowUp')) - Number(this.held.has('KeyS') || this.held.has('ArrowDown')),
     };
     this.pressed.clear();
+    this.jumpReleased = false;
     return frame;
   }
-  clear(): void { this.held.clear(); this.pressed.clear(); }
+  clear(): void { this.jumpReleased ||= this.held.has('Space'); this.held.clear(); this.pressed.clear(); }
   dispose(): void {
     window.removeEventListener('keydown', this.keydown);
     window.removeEventListener('keyup', this.keyup);

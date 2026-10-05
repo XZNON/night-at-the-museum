@@ -34,6 +34,8 @@ Generate a small set of masterpiece and Royal Supper style references. Establish
 
 Masterpiece default: The Garden Before Dawn. Supper default: warm candlelit royal banquet, red/gold fabric and oversized crockery. Preserve one approved reference for each world.
 
+On 2026-10-05 the user requested a wider full-table supper reference with more diners eating/drinking, wine and glasses, cutlery/goblets/fruit, and trident-shaped three-candle candelabra. Preserve the original reference and record the reference-edit lineage. After visual approval, include these decorations only as needed by the tested supper camera; maintain foreground readability and authored collision geometry. The later expanded mechanics request changes the final layout; validate it before production.
+
 ### B. Geometry proof
 
 Build and tune the placeholder route. Capture its camera view and document required platform/prop dimensions. Choose final two/three-stage campaign before producing final restoration masks and compositing.
@@ -41,6 +43,8 @@ Build and tune the placeholder route. Capture its camera view and document requi
 ### C. First adventure production
 
 Derive scene layers and props from the approved banquet reference. Generate the pear with consistent appearance between masterpiece, king's plate and inventory. Work in small batches, inspect results, then integrate before generating more.
+
+The user subsequently requested a longer route with double jumping, butter/crumb sliding, rolling grapes, timed fan/three-candle relighting, diner attention/cover and bounce ascent. Validate that expanded placeholder layout/camera before production. The old M2 geometry is no longer the final export target. Add butter/crumb, grape, fan/three-candle, jelly and attention/cover assets only where that tested route needs them. Gameplay implementation was authorized on 2026-10-05. Production generation remains on hold until revised-layout validation and recorded reference approval; this blockout pass makes no generation requests.
 
 ### D. Other adventures and museum finish
 
@@ -89,7 +93,7 @@ Status values: planned, generated, approved, prepared, integrated, rejected. Pro
 | Set | Required visual content |
 | --- | --- |
 | Masterpiece | Finished composition, damaged base, region masks, matching inventory pieces |
-| Royal Supper | Entrance artwork, background layers, bread/crockery/goblet/fork/candle/snuffer, pear, player art |
+| Royal Supper | Entrance artwork, background layers, bread/crockery/goblet, butter/crumbs, grapes, fork, rotating fan/three-candle holder, dish cover, jelly, pear and player art |
 | Sleeping Mountain | Entrance artwork, landscape layers, terrain/platform art, wind/bridge props, sun |
 | Optional garden | Entrance artwork, garden layers, fountain/channels/valves/wheel, bird |
 | Museum | Artwork textures, selected floor/carpet/decor textures; room/frame geometry authored separately |
