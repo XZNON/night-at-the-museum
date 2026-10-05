@@ -1,0 +1,214 @@
+import type { CampaignResult } from '../campaign/progression';
+import type { SupperHud } from '../scenes/royal-supper';
+import type { CampaignState } from '../campaign/progression';
+import type { Settings } from '../campaign/save';
+import { masterpieceStudy } from './masterpiece';
+import { museum } from '../levels/museum';
+
+export interface UiActions {
+  start(): void; replay(): void; resume(): void; leave(): void;
+  pause(): void; checkpoint(): void; quality(low: boolean): void;
+  debug(): void; lane(): void;
+  reset(): void; confirmReset(): void; cancelReset(): void;
+  closeInspection(): void; place(piece: string, target: string): void;
+  look(): void; volume(value: number): void;
+}
+
+export class GameUi {
+  readonly canvas: HTMLCanvasElement;
+  private readonly modal: HTMLElement;
+  private readonly hud: HTMLElement;
+  private readonly controller = new AbortController();
+  private mode: 'menu' | 'pause' | 'success' | 'finished' | 'inspection' | 'reset' | 'none' = 'menu';
+  private collection: CampaignResult | null = null;
+  private hudCache = '';
+  private selectedPiece = '';
+  private context: 'museum' | 'supper' = 'supper';
+
+  constructor(root: HTMLElement, private readonly actions: UiActions, private readonly direct: boolean) {
+    root.innerHTML = `
+      <canvas id="world" tabindex="0" aria-label="Royal Supper. A or D to move, Space to jump, E to interact, R for checkpoint, Escape to pause."></canvas>
+      <div class="vignette" aria-hidden="true"></div>
+      <section id="hud" class="hud" hidden aria-label="Adventure status">
+        <header class="hud-top"><div><span class="eyebrow">The Last Curator</span><h1>Royal Supper</h1><span id="section-name" class="section-name"></span></div>
+          <button data-action="pause" class="quiet">Pause <kbd>Esc</kbd></button></header>
+        <div class="route-status"><span id="fork-state"></span><span class="divider">/</span><span id="candle-state"></span><div class="route-track"><div id="route-progress"></div></div></div>
+        <div class="bottom-hud"><div class="controls"><span><kbd>A</kbd><kbd>D</kbd> move</span><span><kbd>Space</kbd> jump</span><span><kbd>E</kbd> interact</span><span><kbd>R</kbd> checkpoint</span></div>
+          <span id="checkpoint" class="checkpoint"></span></div>
+        <div id="prompt" class="prompt" hidden></div><div id="cue" class="cue" role="status" aria-live="polite"></div>
+      </section>
+      <section id="modal" class="modal" aria-label="Game menu"></section>
+      <section id="museum-hud" class="hud" hidden aria-label="Museum status">
+        <header class="hud-top"><div><span class="eyebrow">The Last Curator</span><h1>The quiet gallery</h1><span id="objective" class="section-name"></span></div><div><button data-action="look" class="quiet">Mouse look</button><button data-action="pause" class="quiet">Pause <kbd>Esc</kbd></button></div></header>
+        <div class="reticle" aria-hidden="true">+</div><div id="museum-prompt" class="prompt" hidden></div>
+        <div class="bottom-hud"><div class="controls"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> walk</span><span>Drag to look · Click / <kbd>E</kbd> frame</span></div><span id="inventory" class="inventory"></span></div>
+      </section>
+      <aside id="save-notice" class="save-notice" role="status" hidden></aside>
+      <aside id="diagnostics" class="diagnostics" hidden></aside>
+      <span class="build-tag">M2 · PLACEHOLDER STUDY${direct ? ' · ISOLATED DEV SESSION' : ''}</span>`;
+    this.canvas = root.querySelector<HTMLCanvasElement>('#world')!;
+    this.modal = root.querySelector<HTMLElement>('#modal')!;
+    this.hud = root.querySelector<HTMLElement>('#hud')!;
+    root.addEventListener('click', event => {
+      const target = (event.target as HTMLElement).closest<HTMLElement>('[data-action]');
+      if (!target) return;
+      switch (target.dataset.action) {
+        case 'start': this.actions.start(); break;
+        case 'replay': this.actions.replay(); break;
+        case 'resume': this.actions.resume(); break;
+        case 'leave': this.actions.leave(); break;
+        case 'pause': this.actions.pause(); break;
+        case 'checkpoint': this.actions.checkpoint(); break;
+        case 'debug': this.actions.debug(); break;
+        case 'lane': this.actions.lane(); break;
+        case 'reset': this.actions.reset(); break;
+        case 'confirm-reset': this.actions.confirmReset(); break;
+        case 'cancel-reset': this.actions.cancelReset(); break;
+        case 'close-inspection': this.actions.closeInspection(); break;
+        case 'look': this.actions.look(); break;
+        case 'piece': this.selectedPiece = target.dataset.piece ?? ''; target.setAttribute('aria-pressed', 'true'); this.placementMessage('Golden pear selected. Choose the pear silhouette.'); break;
+        case 'target': this.actions.place(this.selectedPiece, target.dataset.target ?? ''); break;
+        case 'invalid-drop': this.placementMessage('That is not the pear silhouette. Your piece stays in inventory.'); break;
+      }
+    }, { signal: this.controller.signal });
+    root.addEventListener('change', event => {
+      const target = event.target as HTMLInputElement;
+      if (target.id === 'low-quality') this.actions.quality(target.checked);
+      if (target.id === 'master-volume') this.actions.volume(Number(target.value));
+    }, { signal: this.controller.signal });
+    root.addEventListener('dragstart', event => {
+      const piece = (event.target as HTMLElement).closest<HTMLElement>('[data-piece]');
+      if (!piece || !event.dataTransfer) return;
+      this.selectedPiece = piece.dataset.piece ?? '';
+      event.dataTransfer.setData('text/plain', this.selectedPiece); event.dataTransfer.effectAllowed = 'move';
+    }, { signal: this.controller.signal });
+    root.addEventListener('dragover', event => { if ((event.target as HTMLElement).closest('.painting-study')) { event.preventDefault(); if (event.dataTransfer) event.dataTransfer.dropEffect = 'move'; } }, { signal: this.controller.signal });
+    root.addEventListener('drop', event => {
+      const painting = (event.target as HTMLElement).closest('.painting-study'); if (!painting) return;
+      event.preventDefault();
+      const target = (event.target as HTMLElement).closest<HTMLElement>('[data-target]');
+      this.actions.place(event.dataTransfer?.getData('text/plain') ?? '', target?.dataset.target ?? '');
+    }, { signal: this.controller.signal });
+    root.addEventListener('keydown', event => {
+      if (this.mode === 'none' || event.key !== 'Tab') return;
+      const focusable = [...this.modal.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), a[href]')];
+      const first = focusable[0]; const last = focusable.at(-1);
+      if (!first || !last) return;
+      if (event.shiftKey && (document.activeElement === first || !this.modal.contains(document.activeElement))) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && (document.activeElement === last || !this.modal.contains(document.activeElement))) { event.preventDefault(); first.focus(); }
+    }, { signal: this.controller.signal });
+    this.menu(false);
+  }
+
+  private show(mode: typeof this.mode, content: string): void {
+    this.mode = mode;
+    this.hud.hidden = true;
+    document.getElementById('museum-hud')!.hidden = true;
+    this.modal.classList.remove('inspection-modal');
+    this.modal.hidden = false;
+    this.modal.innerHTML = `<div class="menu-card">${content}</div>`;
+    this.modal.setAttribute('role', 'dialog');
+    this.modal.setAttribute('aria-modal', 'true');
+    this.modal.querySelector<HTMLElement>('button')?.focus();
+  }
+  menu(remembered: boolean): void {
+    this.hud.hidden = true;
+    document.getElementById('museum-hud')!.hidden = true;
+    if (!this.direct) {
+      this.show('menu', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / A restoration study</p><h2>The garden<br><em>before dawn.</em></h2><p class="intro">A quiet museum.<br>A borrowed golden pear.<br>A garden waiting for colour.</p><p class="menu-description">Walk to the frames, enter Royal Supper and bring a missing piece home.</p><button class="primary" data-action="start" aria-label="${remembered ? 'Continue' : 'New Game'}">${remembered ? 'Continue' : 'New Game'} <span>→</span></button>${remembered ? '<button class="quiet" data-action="reset">New Game / reset progress</button>' : ''}<div class="menu-controls"><kbd>WASD</kbd> Walk · Drag to look · Click frame</div><p class="small-note">M2 placeholder study · Two-adventure campaign in progress.<br>The sun adventure arrives in a later milestone.</p>`);
+      return;
+    }
+    this.show('menu', `
+      <div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / Study No. 01</p>
+      <h2>Royal<br><em>Supper.</em></h2><p class="intro">A small restorer.<br>A very grand table.<br>One missing golden pear.</p>
+      <p class="menu-description">Leap across the bread, topple the fork, and snuff the candle to reach the king’s dessert.</p>
+      <button class="primary" data-action="start">${remembered ? 'Continue the painting' : 'Enter the painting'} <span>→</span></button>
+      ${remembered ? '<button class="quiet" data-action="replay">Restart adventure</button>' : ''}
+      <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move <span>·</span> <kbd>Space</kbd> Jump <span>·</span> <kbd>E</kbd> Interact</div>
+      <p class="small-note">Isolated development study · Campaign saves are untouched.<br>Open the normal entry for the museum/restoration loop.</p>
+      ${import.meta.env.DEV ? '<div class="dev-actions"><button class="quiet" data-action="lane">Movement test lane</button></div>' : ''}`);
+  }
+  play(context: 'museum' | 'supper' = 'supper'): void {
+    this.context = context;
+    this.mode = 'none'; this.modal.hidden = true; this.hud.hidden = context !== 'supper';
+    document.getElementById('museum-hud')!.hidden = context !== 'museum';
+    this.canvas.setAttribute('aria-label', context === 'museum' ? 'Museum. WASD to walk, drag to look, click or E on a nearby frame, Escape to pause.' : 'Royal Supper. A or D to move, Space to jump, E to interact, R for checkpoint, Escape to pause.');
+    this.canvas.focus({ preventScroll: true });
+  }
+  pause(lowQuality: boolean, reason: string, settings?: Settings): void {
+    this.show('pause', `<p class="eyebrow">A moment between brushstrokes</p><h2 class="compact">Paused.</h2>
+      <p class="menu-description">${reason}</p><button class="primary" data-action="resume">Resume <span>→</span></button>
+      ${this.context === 'supper' ? `<button class="secondary" data-action="checkpoint">Restart from checkpoint</button>
+      <button class="quiet" data-action="replay">Restart adventure</button><button class="quiet" data-action="leave">${this.direct ? 'Leave painting' : 'Return to Museum'}</button>` : ''}
+      <label class="setting"><input type="checkbox" id="low-quality" ${lowQuality ? 'checked' : ''}> Low rendering quality</label>
+      <label class="setting">Master volume <input id="master-volume" type="range" min="0" max="1" step="0.05" value="${settings?.masterVolume ?? 0.7}"></label>
+      ${!this.direct ? '<button class="quiet" data-action="reset">Reset progress</button>' : ''}
+      ${import.meta.env.DEV ? '<button class="quiet" data-action="debug">Toggle collision view · F3</button>' : ''}
+      <p class="small-note">${this.context === 'supper' ? 'Falls keep the fork and candle states. Restart adventure preserves your pear.' : 'Drag to look or use Mouse look for pointer lock.'}<br>Audio arrives with the art milestone.</p>`);
+  }
+  success(result: CampaignResult): void {
+    this.collection = result;
+    this.show('success', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">A piece recovered</p><h2 class="compact">The golden<br><em>pear.</em></h2>
+      <p class="menu-description">${result.changed ? 'The king’s dessert belongs in the masterpiece. The golden pear is now in your inventory.' : 'A lovely return visit. The golden pear is already yours; replay adds no duplicate.'}</p>
+      <button class="primary" data-action="leave" aria-label="${this.direct ? 'Finish blockout' : 'Return to Museum'}">${this.direct ? 'Finish blockout' : 'Return to Museum'} <span>→</span></button>
+      <button class="secondary" data-action="resume">Continue exploring</button><p class="small-note">${this.direct ? 'Isolated development session. Campaign saves are untouched.' : 'Your pear is in inventory. Walk to the masterpiece to place it.'}</p>`);
+  }
+  finished(): void {
+    this.hud.hidden = true;
+    this.show('finished', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">Royal Supper / Blockout complete</p>
+      <h2 class="compact">A path<br><em>restored.</em></h2><p class="menu-description">Fork bridged. Candle extinguished. Golden pear recovered${this.collection?.changed === false ? ' again' : ''}.</p>
+      <button class="primary" data-action="replay">Replay the painting <span>→</span></button><button class="quiet" data-action="start">Re-enter at your checkpoint</button>
+      <p class="small-note">Open the normal entry for the museum/restoration loop.<br>This isolated study keeps progress in memory until reload.</p>`);
+  }
+  error(message: string): void {
+    this.hud.hidden = true;
+    this.show('menu', '<p class="eyebrow">The painting could not open</p><h2 class="compact">A blank canvas.</h2><p class="menu-description" id="error-message"></p><button class="primary" data-action="start">Retry <span>→</span></button>');
+    this.modal.querySelector('#error-message')!.textContent = message;
+  }
+  updateHud(state: SupperHud): void {
+    const serialized = JSON.stringify(state);
+    if (serialized === this.hudCache) return;
+    this.hudCache = serialized;
+    const text = (id: string, value: string) => { const el = document.getElementById(id)!; if (el.textContent !== value) el.textContent = value; };
+    text('section-name', state.section);
+    text('fork-state', `Fork · ${state.fork === 'bridged' ? 'bridge ready' : state.fork === 'toppling' ? 'toppling…' : 'upright'}`);
+    text('candle-state', `Candle · ${state.candle === 'extinguished' ? 'safe' : state.candle === 'extinguishing' ? 'snuffing…' : 'lit'}`);
+    text('checkpoint', `Checkpoint / ${state.checkpoint.replaceAll('-', ' ')}`);
+    text('prompt', state.prompt); document.getElementById('prompt')!.hidden = !state.prompt;
+    text('cue', state.cue);
+    document.getElementById('route-progress')!.style.width = `${state.progress * 100}%`;
+  }
+  diagnostics(text: string | null): void {
+    const el = document.getElementById('diagnostics')!; el.hidden = text === null;
+    if (text !== null) el.textContent = text;
+  }
+  notice(text: string): void { const el = document.getElementById('save-notice')!; el.textContent = text; el.hidden = !text; }
+  museumState(state: CampaignState): void {
+    const restored = state.restoredPieceIds.includes('golden-pear');
+    const owned = state.collectedPieceIds.includes('golden-pear') && !restored;
+    document.getElementById('inventory')!.textContent = owned ? 'Inventory · Golden pear' : 'Inventory · Empty';
+    document.getElementById('objective')!.textContent = restored ? 'Next: wake the sun above the mountain · Adventure in development' : owned ? 'Bring the golden pear to the masterpiece' : 'Inspect the masterpiece · Find its missing pear in Royal Supper';
+  }
+  museumPrompt(text: string): void { const el = document.getElementById('museum-prompt')!; el.textContent = text; el.hidden = !text; }
+  inspection(state: CampaignState, animate = false): void {
+    this.selectedPiece = '';
+    const restored = state.restoredPieceIds.includes('golden-pear');
+    const owned = state.collectedPieceIds.includes('golden-pear') && !restored;
+    const pear = museum.targets.pear; const sun = museum.targets.sun;
+    const style = (t: typeof pear | typeof sun) => `left:${t.left}%;top:${t.top}%;width:${t.width}%;height:${t.height}%`;
+    this.show('inspection', `<p class="eyebrow">Masterpiece / Close inspection</p><h2 class="compact">The Garden Before Dawn</h2>
+      <div class="painting-study ${animate ? 'restoring' : ''}" data-action="invalid-drop"><img alt="A traveller under a pear tree, mountains and the missing sun. ${restored ? 'The tree and garden have regained colour.' : 'The pear and garden are grey.'}" src="${masterpieceStudy(restored).toDataURL()}">
+      <button id="pear-target" class="restoration-target ${restored ? 'placed' : ''}" data-action="target" data-target="golden-pear" style="${style(pear)}" aria-label="Pear silhouette" ${restored ? 'disabled' : ''}>${restored ? 'Pear restored' : 'Pear'}</button>
+      <button class="restoration-target sun-target" data-action="target" data-target="sun-disc" style="${style(sun)}" aria-label="Sun silhouette">Sun</button></div>
+      <div class="inspection-inventory" aria-label="Inventory">${owned ? '<button class="piece-button" data-action="piece" data-piece="golden-pear" draggable="true" aria-pressed="false">♧ Golden pear</button>' : '<span>Inventory · Empty</span>'}</div>
+      <p id="placement-message" class="placement-message" role="status" aria-live="polite">${restored ? 'Colour restored. Next objective: wake the sun above the mountain. Its adventure is in development.' : owned ? 'Drag the pear onto its silhouette, or select it and activate the target. Tab / Enter also works.' : 'The king has borrowed the golden pear. Look inside Royal Supper.'}</p>
+      <button class="secondary" data-action="close-inspection">Back to Museum <kbd>Esc</kbd></button>`);
+    this.modal.classList.add('inspection-modal');
+    if (animate) this.modal.querySelector<HTMLElement>('[data-action="close-inspection"]')?.focus();
+  }
+  placementMessage(text: string): void { const el = document.getElementById('placement-message'); if (el) el.textContent = text; }
+  resetConfirmation(): void {
+    this.show('reset', '<p class="eyebrow">Start again</p><h2 class="compact">Reset progress?</h2><p class="menu-description">This clears this game’s pear, restoration, settings and current adventure. Other stored data is kept.</p><button class="secondary" data-action="cancel-reset">Keep progress</button><button class="primary" data-action="confirm-reset">Confirm reset / New Game</button>');
+  }
+  dispose(): void { this.controller.abort(); }
+}
