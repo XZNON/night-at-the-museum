@@ -1,0 +1,23 @@
+{
+  "unpinnedMovingLandings": 0,
+  "skips": [
+    {
+      "skip": "A",
+      "gap": 13.5,
+      "drop": 0,
+      "generousReach": 12.889999999999997
+    },
+    {
+      "skip": "B",
+      "gap": 15,
+      "drop": 1.4000000000000004,
+      "generousReach": 13.796666666666663
+    },
+    {
+      "skip": "C",
+      "gap": 13.299999999999997,
+      "drop": 0.37499999999999645,
+      "generousReach": 13.116666666666664
+    }
+  ]
+}

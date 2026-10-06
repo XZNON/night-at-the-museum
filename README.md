@@ -1,6 +1,10 @@
-# The Last Curator — M3 Royal Supper art and sound complete
+# The Last Curator
 
-Vanilla TypeScript, Vite, Three.js and Howler. One renderer, active scene and animation loop; fixed 60 Hz gameplay. Approved DreamLayer player/background/bread art, matching pear and aligned restoration images remain integrated alongside original synthesized audio. After persistent DreamLayer 503 failures, the user authorized OpenAI ImageGen for the remaining required props: three sheets supply 14 integrated props with distinct provenance. Final camera/full-loop checks have passed; M3 is complete. Sleeping Mountain and the two-stage ending are next. Gameplay layout, movement and timings remain user-approved and unchanged.
+Vanilla TypeScript, Vite, Three.js and Howler. One renderer, active scene and animation loop; fixed 60 Hz gameplay. Royal Supper/M3 and the scoped art-cohesion pass are complete, with approved DreamLayer art, separately recorded user-authorized ImageGen props and original audio. Unfinished Sketch replaces Sleeping Mountain as the second adventure. Its save-isolated S1 mechanics playground is complete after user review; S2 is implemented through the first escalator and safe Layer 2 landing, with mandatory nail reuse; S3A is implemented through the isolated Layer 2 board/axe route and fixed exit; S3B onward and the campaign ending remain unimplemented. Royal Supper gameplay, art, audio and restoration remain preserved.
+
+## Documentation
+
+Use the [documentation index](docs/README.md) for all plans, designs, references and evidence. Start a new session with the [current handoff](docs/planning/NEXT_SESSION.md). [AGENTS.md](AGENTS.md) remains at the root for agent discovery.
 
 ## Run
 
@@ -50,6 +54,9 @@ Reload preserves collected/restored pieces and quality/volume settings; traversa
 - http://127.0.0.1:5173/?scene=royal-supper — direct isolated supper study, with blockout completion/replay menus. It never reads/writes/deletes campaign saves, including on quality/volume changes.
 - Append `&debug=1`, or use F3, for collision/scene diagnostics.
 - http://127.0.0.1:5173/?lane=movement — isolated movement tuning lane.
+- http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-1 — Slice 2 review route. Moving dashed pendulums become solid only while pinned. Use A/D and Space, click rings, Q to recall the oldest nail, E to board the escalator, R to retry and Escape to pause. Ends on the safe Layer 2 landing; campaign saves are untouched.
+- http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-2 — S3A review route. Travel left, freeze moving boards A/B, Q recalls A for C, time both active axes and reach fixed exit ground. Solid moving boards also permit unpinned traversal; pinning is a strategy, not a compulsory gate. See [S3A evidence](docs/validation/sketch-s3/README.md).
+- http://127.0.0.1:5173/?scene=unfinished-sketch&study=mechanics — completed Sketch S1 playground. A/D moves/pumps; Space jumps/wall-kicks/releases; E grabs/releases a nail; left click places on a marked socket; Q recalls the oldest nail; R resets; digits 1–6 choose bays. Recheck the dev server before use. This study does not advance campaign saves.
 - Production ignores these queries, opens the campaign menu, and excludes debug hooks/controls.
 
 Layout/tuning live in `src/levels/`; supper puzzle/controller/collision stay in `src/gameplay/`. `src/campaign/` owns stable stage definitions, validated persistence and command operations. Scenes own GPU resources and listeners, and dispose them on transition. `src/ui/` owns menus, inventory and accessible inspection. The masterpiece study is shared by its frame and close-up.

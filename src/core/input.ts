@@ -1,6 +1,6 @@
 import type { Controls } from '../gameplay/controller';
 
-const gameplayKeys = new Set(['KeyW', 'KeyS', 'ArrowUp', 'ArrowDown', 'KeyA', 'KeyD', 'ArrowLeft', 'ArrowRight', 'Space', 'KeyE', 'KeyR']);
+const gameplayKeys = new Set(['KeyW', 'KeyS', 'ArrowUp', 'ArrowDown', 'KeyA', 'KeyD', 'ArrowLeft', 'ArrowRight', 'Space', 'KeyE', 'KeyR', 'KeyQ']);
 const isFormControl = (target: EventTarget | null): boolean => target instanceof HTMLElement &&
   (target.matches('button, input, select, textarea, a') || target.isContentEditable);
 
@@ -34,6 +34,7 @@ export class Input {
       jumpPressed: this.pressed.has('Space'), jumpHeld: this.held.has('Space'),
       jumpReleased: this.jumpReleased,
       interactPressed: this.pressed.has('KeyE'), restartPressed: this.pressed.has('KeyR'),
+      recallPressed: this.pressed.has('KeyQ'),
       forward: Number(this.held.has('KeyW') || this.held.has('ArrowUp')) - Number(this.held.has('KeyS') || this.held.has('ArrowDown')),
     };
     this.pressed.clear();

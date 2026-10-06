@@ -1,0 +1,119 @@
+# Decisions — The Last Curator
+
+Updated: 2026-10-06. The user authorized closing routine design and implementation decisions for a new-session handoff. Agent-selected choices below are working defaults, not previously explicit user selections.
+
+## Settled direction
+
+| Decision | Choice | Basis |
+| --- | --- | --- |
+| Game structure | One masterpiece, recover pieces through artwork adventures, return and restore | User-confirmed |
+| Museum | Small walkable 3D museum; dim light, red palette/carpet, wooden floor, focal masterpiece | User-confirmed |
+| Artwork entry | Click nearby artwork to enter | User-confirmed |
+| Adventures | Side-view 2.5D | User-confirmed |
+| Restoration | Inventory piece dragged into a matching location; region gains colour; next objective unlocks | User-confirmed |
+| First adventure | Royal Supper tabletop parkour | User-confirmed for next session |
+| Second adventure | Unfinished Sketch, replacing Sleeping Mountain on 2026-10-06; two reusable nails and three stacked layers | User-confirmed |
+| Reserve concept | Sleeping Mountain; previous wind/bridge plan superseded | User-selected replacement |
+| Stack | TypeScript, Vite, Three.js, HTML/CSS, Howler.js | Proposed and accepted planning direction |
+| Sequence | Mechanics first, early minimal hub loop, final art/museum presentation afterward | User-approved plan |
+
+## Closed working defaults
+
+| Decision | Choice and reason |
+| --- | --- |
+| Museum camera | First person. A small hub does not require a visible 3D player or third-person camera collision. |
+| Mini-game camera | Orthographic side view; motion on XY with Z used for scenery depth. |
+| Sketch camera/layout | User refined on 2026-10-06: three stacked layers in one connected scene/canvas, moderately zoomed/reframed toward the active layer for comfortably sized mechanics while retaining adjacent-layer context. No isolated single-row screen. Smooth escalator transitions; tune zoom/framing in S2 at both review sizes. Supersedes the fixed-full-board/no-zoom choice. S2 delivered this framing: an 18-unit view on a roughly 34-unit stacked world, authored per-section vertical bands and no zoom change between layers, measured at 1280x720 and 960x540. |
+| Release scope | Two committed adventures: Royal Supper then Unfinished Sketch. Drowned Garden remains gated until the two-adventure game has a working ending. |
+| Masterpiece | The Garden Before Dawn: traveller beneath a pear tree, mountains, sun and optional bird. Working art composition; identity may change without rewriting mechanics. |
+| Pieces | `golden-pear`, `sun-disc`, optionally `blue-bird`; stable IDs independent of labels. |
+| Progression | Linear. Royal Supper available initially; restoring pear unlocks Sketch. Restoring sun completes the two-adventure version. Preserve stable piece/restoration/save identities. |
+| Three-adventure version | Add bird stage after sun and finish after bird. Decide release stage count before generating final restoration assets. |
+| Return | Collect the piece, show a short success cue, then let the player choose Return to Museum. Return near the source artwork; walk back to the masterpiece. |
+| Failure | Falls and flame contact respawn at the latest checkpoint, with no lives, score penalty or lost piece. |
+| Replay | Completed artwork remains viewable and replayable; collected piece never duplicates. Replay does not reverse restoration. |
+| Physics | Custom kinematic collision. Fork, valves and bridges follow scripted states. No free rigid-body simulation. |
+| Player appearance | Small, readable restorer silhouette. Placeholder initially; final character reference chosen with art direction. No detailed 3D player required. |
+| Visual style follow-up | User accepted stylised, leaning animated on 2026-10-06: simplified readable player/props with light painted texture; richer, softer painterly backgrounds. Completed art-only bread/player/basket pilot led to four selective offline bread/basket/crumb/cake variants. Player/background/other props, original sources, identity, approved compositions and gameplay are preserved. 40 focused/nine browser checks pass. See docs/art/ART_DIRECTION.md. |
+| Sketch visual style | User-selected on 2026-10-06: fully animated/cartoon theme and artifacts, including backgrounds; no realism or semi-realism. Simple outlines/colour areas/shading; exact new reference composition/palette remains open. Do not extend M3's richer painterly background rule to Sketch or change approved existing assets. |
+| Sketch dimensional feel | User-emphasized: modern cartoon 2.5D, not flat 2D/retro pixel-game presentation. Side-view movement plus visible platform thickness, rounded volumes, layered scenery and soft stylised lighting. Existing illustrated player poses may be reused; no full-3D movement/character requirement. |
+| Royal Supper presentation | User requested the whole long banquet table, more diners eating/drinking, abundant wine/glasses/goblets/cutlery/fruit, and a trident-shaped three-candle candelabrum on 2026-10-05. Use decoration behind a readable foreground; extend the gameplay route according to the later expanded specification. Reference approval must be recorded before production generation. |
+| Expanded Royal Supper | User subsequently requested a longer Mario-style side-scrolling route with butter/crumb sliding, rolling grapes, timed three-candle/fan passage, a diner attention section, stepped/double jumps and a bounce ascent. Build and validate the revised placeholder route before production art. The existing M2 layout is a regression baseline, not a fixed final layout. |
+| Royal Supper double jump | User-confirmed: one ground jump plus one airborne jump; repeated input cannot stack additional jumps. Reset only on a valid landing or checkpoint respawn. Preserve this behaviour; prove Sketch's local wall/grip rules separately. Measure the full envelope and prove that required gates cannot be skipped. |
+| Candle timing | User-confirmed: rotating fan extinguishes flames in sequence; flames relight if the crossing is not completed quickly. Replace the old permanent extinguishing gate. |
+| Route discovery | User-confirmed: camera follows the player forward into new sections. Readable scenery/animation communicates obstacles; no player-facing route map. |
+| Persistence | Save campaign piece/restoration progress and settings. Settled interactions/checkpoint survive falls and hub exits in the same session, but may reset on page reload. Sketch retries reset temporary nails/local motion at the current section while retaining earlier cleared sections; ordinary hub exit/re-entry retains its session. |
+| Generation | Development-time DreamLayer assets bundled locally; no live generation during play. User-authorized exception on 2026-10-06: OpenAI ImageGen for the remaining required M3 props after persistent DreamLayer 503 failures. Existing DreamLayer assets/reference approvals remain unchanged; this exception does not cover Sketch or a broad catalogue. |
+| Primary platform | Desktop/laptop browser, keyboard and mouse. Touch and controller support deferred. |
+
+## Deferred opening presentation
+
+At M6, add a short nighttime opening: the restorer lives inside the masterpiece, comes alive and jumps out onto the red carpet to recover missing pieces. Use DreamLayer-generated character poses with authored Three.js motion, not AI-generated video. Preserve the first-person museum; no 3D character/controller change is required. Align the final masterpiece traveller with the restorer reference. See docs/gameplay/OPENING.md for shot sequence and lifecycle checks. This is a user-requested polish task, not current production generation scope.
+
+## Controls
+
+| Context | Controls |
+| --- | --- |
+| Museum | WASD / arrows move; mouse look; left click artwork under centre reticle. Pointer-lock fallback: drag to look and click artwork under cursor. |
+| Mini-games | A/D or left/right move; Space jumps; E interacts with nearby highlighted object. |
+| Sketch additions (working input defaults) | Mouse/left click places at a reachable marked target; Q remotely recalls the oldest placed nail. A/D builds momentum while gripping a nail; Space wall-jumps or releases. No rope. Prove defaults in S1. |
+| Inspection | Drag-and-drop or click piece then click target; keyboard select with Tab/Enter and activate target with Enter. |
+| Global | Escape pauses gameplay or closes inspection; R restarts from the current checkpoint in a mini-game. Menu offers restart adventure and return to museum. |
+
+Release pointer lock for menus/inspection. Reacquire only on an explicit player click. Space uses a fresh press for the airborne jump; holding the key does not retrigger it. No crouch or combat controller is planned; low passages must fit the standing character. Sketch adds local wall-slide/jump and direct nail-grip states; these do not alter approved Royal Supper movement. Double jumping is part of the user-requested expanded Royal Supper, superseding the M1 single-jump default.
+
+## Unfinished Sketch — selected rules and bounded defaults
+
+The user explicitly replaced Mountain, retained the sun reward, specified the three-layer route and requested six testable implementation slices. They selected two nails, marked placement sites, FIFO button retrieval, A/D-driven direct nail swinging (no rope), frozen pendulums/boards, active axes and moving finale swing sockets. The player's route and story are in docs/gameplay/UNFINISHED_SKETCH.md. These supersede the earlier deferred Sketch/stroke concept and Mountain's wind/bridge tasks.
+
+S1 is now complete per the user. Preserve its reviewed explicit E grip (no auto-grip), E/Space release, wall-owned sliding/jump credit, Q FIFO recall and target-specific nail presentation. Earlier automatic-grip defaults are superseded by the S1 review fixes. S2 is implemented and awaiting its playable review gate. Numerical layout for later layers and exact art/ending presentation remain open for blockout review.
+
+The user required mandatory nail reuse during the 2026-10-06 S2 review. Layer 1 pendulums are moving dashed outlines without collision until pinned; pinning freezes and inks a solid platform, and FIFO recall removes its support immediately. This route-only authored rule preserves S1's moving solid platforms. All four pendulums remain geometrically required: the exit is at least 5.43 units above B's highest surface (above the 4.479-unit double-jump ceiling), and C is beyond the 10-unit placement reach from the terrace and A. No completion flag rejects a valid landing; the drawn platform and collision change together. This supersedes the earlier claim that geometry alone required nail reuse, which review disproved. The later speed/difficulty review adds D: from C, Q recalls B before pinning D; the widened horizontal route prevents skipping C or D. Platforms use progressively narrower 4.6/4.2/3.8/3.4-unit landings and 3.4/2.8/2.45/2.1-second periods. Placed platform nails show only a circular head centered on the clicked hole.
+
+Six planned slices: S1 mechanics playground (complete); S2 pendulums/escalator (implemented, awaiting review); S3 boards/axes/escalator; S4 Layer 3 wall climb/glue; S5 moving-socket finale plus sun/campaign/ending; S6 refinement/regression. Final references/production art follow validated geometry as a separate scoped task. Do one named slice per implementation request and hand off a playable review gate.
+
+S3 planning requested on 2026-10-06 is recorded in [SKETCH_S3_PLAN](../gameplay/SKETCH_S3_PLAN.md). It recommends two bounded implementation sessions with review between them: S3A isolated Layer 2 boards/active axes, then S3B joined Layers 1/2 and the second escalator. The later explicit S3A implementation request is delivered at its playable review gate; S3B remains unimplemented and needs a separate request after review. Three boards/two axes and right-to-left traversal remain layout defaults. The later explicit S3A difficulty review supersedes solid moving Layer 2 boards: nails are required, so Layer 2 also uses moving outlines that ink solid only while pinned. Recall removes support; S1 stays unchanged. Faster/narrower boards and faster axes are requested; strict FIFO and active axes remain settled. S3 remains one milestone, completed only at the S3B gate. S3A uses three outlined/inked boards, two independent rotating axes, leftward framing, entrance/exit checkpoints and Layer 2-local retry. All three board pins and FIFO reuse are required by physical support and measured skip gaps; no invisible completion flag is added. The initial solid-board unpinned route is historical and was rejected by the user as too easy. See [S3A difficulty evidence](../validation/sketch-s3/hard-v1/README.md).
+
+The subsequent user request prepares [S3B implementation](../gameplay/SKETCH_S3B_PLAN.md) and checkpoints current work to origin/main. This is planning/commit authorization, not S3B runtime implementation in the same session. Preserve reviewed hard-v1 tuning; next-session scope ends on safe Layer 3 ground. Future commits/pushes require their own authorization.
+
+## Expanded Royal Supper implementation choices
+
+The user lifted the gameplay planning hold on 2026-10-05 and authorized the expanded mechanics blockout. Confirmed mechanics above supersede the older blockout rules. Duration, difficulty, checkpoint density and diner detection were selected in the follow-up planning answers. Other implementation choices below are working defaults to tune during the mechanics proof.
+
+- Duration: user selected 5–7 minutes on a first playthrough including a few retries. Revisit the previous whole-game 5–10 minute target once the second adventure is timed; do not claim a new measured campaign duration.
+- Difficulty/checkpoints: user selected demanding jumps and timing, unlimited retries and one checkpoint after each hard section, rather than frequent intermediate checkpoints. No campaign piece loss. Retry the challenging section from the last cleared section; tune section duration to avoid excessively long repeats.
+- Diner: user selected exposure when a diner tilts their head/looks down as the detection condition. Standing still outside cover is not safe during that phase. Jumping above or out of cover while watched exposes the player and triggers checkpoint recovery. Telegraph the head turn before the active detection phase; authored cover must hide the entire character.
+- Watcher lighting (user-requested 2026-10-06): replace the animated eye blobs with soft golden rays from the painted eyes toward the tabletop during LOOK. AWAY and TURNING use normal banquet lighting; retain the head-turn warning and unchanged detection/cover timing.
+- Fan: automatic repeating sweep, with sequential extinguishing and timed relighting. User-confirmed final revision: three separate candle tops on one trident holder, with gaps that require jumping between them. Wait safely before entering; no permanent E/snuffer solution. Phase timings are tuned against an actual traversal.
+- Grapes: visible, scripted rolling waves with predictable intervals. Avoid spawning hazards on the player or requiring an unseen reaction.
+- Butter: a distinct slippery surface with reduced braking and faster 9.2-unit speed, retaining directional control and airborne momentum until a dry landing. Crumb contact retries the section. Three varied short patches replace the repetitive run, following user playtest feedback.
+- Jelly: launch automatically on a downward landing. The bounce counts as the first launch and permits one airborne jump; side contact, overlap or sustained contact cannot repeatedly recharge/launch the player. Tune and verify this rule alongside the double jump.
+- Checkpoints: starting spawn, then one after each hard section; no checkpoint midway through a challenge. Resets preserve the settled fork and campaign awards. Timed challenges restart at a readable phase after a failed attempt. Pause freezes all hazard/attention timers.
+- Art: the banquet image supplies direction and prop identity. Runtime camera remains side-on; prepare separate geometry-aligned assets only after the expanded blockout passes. Existing reference approval remains recorded separately in the provenance manifest.
+
+Exact distances, velocities, cycle periods and detection grace are tuning values to measure during the mechanics proof, not more design questions to ask the user.
+
+## Changes supported cheaply
+
+- Level layout, camera framing and difficulty through level/controller configuration.
+- Piece names, art style and asset files through manifests.
+- Adventure order and two/three-stage ending through one campaign definition.
+- Replacement of the third adventure through the scene and completion contracts.
+- Museum layout through a separate hub configuration.
+
+## Changes requiring a deliberate scope revision
+
+Free 3D movement inside paintings, a different rendering engine, complex combat, online generation, branching campaigns, mobile controls or a multi-masterpiece campaign. Do not introduce these during the initial build without user direction.
+
+## Remaining decisions and their timing
+
+The expanded Royal Supper's major gameplay choices are now recorded. Routine layout distances, timing and movement values should be measured/tuned during its new blockout proof, rather than reopening the selected mechanics.
+
+1. DreamLayer access, actual credits and generation costs: verified for references; recheck before production batches.
+2. Final painterly reference and player design: masterpiece.png, banquet-v5.png and player.png were explicitly approved on 2026-10-05 (“Looks good to me”). Preserve their manifest approval and lineage; production starts with a camera-validated small slice.
+3. Whether to ship the third adventure: decide after M4 in docs/planning/PLAN.md; do not build it speculatively.
+4. Final title, soundtrack sources and submission copy: finalize during polish.
+5. Exact jam cutoff timezone: verify the live jam page before scheduling submission; plan to upload ahead of the cutoff.
+
+
+After user playtest feedback on 2026-10-05, the placeholder route ends at approximately 435 units. Preserve the bread/grape introduction and mandatory fork/fan gates; cap the watched passage at three progressively longer crossings with narrower cover. Replace fourteen repeated dessert rises with two jelly launches, varied rises, a level shelf and a drop. Cover visuals mark safe foot centres and confirm HIDDEN; full-body protection remains the rule. The user accepted the rest of this layout and requested separated trident candles as the final gameplay revision. Three 3-unit tops now have 3-unit gaps, no floor between them, and a 4-unit exit jump. The holder's brass arms are decorative below the route. A raised canopy permits ordinary jumps but prevents a route above lit heat; deep candle bodies block an underneath bypass. Ember windows begin at 2.0 / 3.1 / 4.2 seconds in an 11-second cycle and last 2 seconds each. The user subsequently approved the final gameplay layout on 2026-10-05. The original 5–7 minute target has no measured human timing; do not stretch playtime with repetition. Separate production-art reference approval was subsequently supplied on 2026-10-05.

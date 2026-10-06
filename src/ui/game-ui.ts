@@ -5,6 +5,9 @@ import type { Settings } from '../campaign/save';
 import { masterpieceImage } from './masterpiece';
 import { runtimeAssets, runtimeAssetUrl } from '../assets/manifest';
 import { museum } from '../levels/museum';
+import type { SketchHud } from '../gameplay/sketch-model';
+import type { SketchBayId, SketchStudy } from '../levels/unfinished-sketch';
+import { sketchBayList } from '../levels/unfinished-sketch';
 
 export interface UiActions {
   start(): void; replay(): void; resume(): void; leave(): void;
@@ -14,6 +17,7 @@ export interface UiActions {
   closeInspection(): void; place(piece: string, target: string): void;
   look(): void; volume(value: number): void;
   retry(): void; back(): void;
+  sketchBay(id: SketchBayId): void;
 }
 
 export class GameUi {
@@ -24,10 +28,12 @@ export class GameUi {
   private mode: 'menu' | 'pause' | 'success' | 'finished' | 'inspection' | 'reset' | 'none' | 'loading' = 'menu';
   private collection: CampaignResult | null = null;
   private hudCache = '';
+  private sketchHudCache = '';
   private selectedPiece = '';
-  private context: 'museum' | 'supper' = 'supper';
+  private context: 'museum' | 'supper' | 'sketch' = 'supper';
 
-  constructor(root: HTMLElement, private readonly actions: UiActions, private readonly direct: boolean) {
+  constructor(root: HTMLElement, private readonly actions: UiActions, private readonly direct: boolean,
+    private readonly study: 'supper' | 'sketch' = 'supper', private sketchMode: SketchStudy = 'mechanics') {
     root.innerHTML = `
       <canvas id="world" tabindex="0" aria-label="Royal Supper. A or D to move, Space to jump, E to interact, R for checkpoint, Escape to pause."></canvas>
       <div class="vignette" aria-hidden="true"></div>
@@ -40,6 +46,15 @@ export class GameUi {
           <span id="checkpoint" class="checkpoint"></span></div>
         <div id="prompt" class="prompt" hidden></div><div id="cue" class="cue" role="status" aria-live="polite"></div>
       </section>
+      <section id="sketch-hud" class="hud" hidden aria-label="Sketch status">
+        <header class="hud-top"><div><span id="sketch-eyebrow" class="eyebrow">The Last Curator</span><h1>Unfinished Sketch</h1><span id="sketch-bay-name" class="section-name"></span></div><button data-action="pause" class="quiet">Pause <kbd>Esc</kbd></button></header>
+        <div class="sketch-status"><span id="sketch-layer"></span><span id="sketch-nails"></span><span id="sketch-oldest"></span><span id="sketch-nearest"></span><span id="sketch-motion"></span></div>
+        <p id="sketch-hint" class="section-hint"></p>
+        <div id="sketch-bays" class="sketch-bays">${sketchBayList.map((bay, i) => `<button class="quiet" data-action="bay" data-bay="${bay.id}">${i + 1} ${bay.name.split(' · ')[1]}</button>`).join('')}</div>
+        <div class="bottom-hud"><div class="controls"><span><kbd>A</kbd><kbd>D</kbd> move / pump</span><span><kbd>Space</kbd> jump · kick · release</span><span>Left click pins a nail</span><span><kbd>Q</kbd> recall oldest</span><span><kbd>E</kbd> grab / board</span><span><kbd>R</kbd> retry</span></div><span id="sketch-goal" class="checkpoint"></span></div>
+        <span id="sketch-endpoint" class="sketch-endpoint" hidden></span>
+        <div id="sketch-prompt" class="prompt" hidden></div><div id="sketch-cue" class="cue" role="status" aria-live="polite"></div>
+      </section>
       <section id="modal" class="modal" aria-label="Game menu"></section>
       <section id="museum-hud" class="hud" hidden aria-label="Museum status">
         <header class="hud-top"><div><span class="eyebrow">The Last Curator</span><h1>The quiet gallery</h1><span id="objective" class="section-name"></span></div><div><button data-action="look" class="quiet">Mouse look</button><button data-action="pause" class="quiet">Pause <kbd>Esc</kbd></button></div></header>
@@ -48,7 +63,7 @@ export class GameUi {
       </section>
       <aside id="save-notice" class="save-notice" role="status" hidden></aside>
       <aside id="diagnostics" class="diagnostics" hidden></aside>
-      <span class="build-tag">ROYAL SUPPER STUDY${direct ? ' · ISOLATED DEV SESSION' : ''}</span>`;
+      <span class="build-tag">${this.tagLabel()}</span>`;
     this.canvas = root.querySelector<HTMLCanvasElement>('#world')!;
     this.modal = root.querySelector<HTMLElement>('#modal')!;
     this.hud = root.querySelector<HTMLElement>('#hud')!;
@@ -56,6 +71,7 @@ export class GameUi {
       const target = (event.target as HTMLElement).closest<HTMLElement>('[data-action]');
       if (!target) return;
       switch (target.dataset.action) {
+        case 'bay': this.actions.sketchBay(target.dataset.bay as SketchBayId); break;
         case 'start': this.actions.start(); break;
         case 'retry': this.actions.retry(); break;
         case 'back': this.actions.back(); break;
@@ -105,10 +121,17 @@ export class GameUi {
     this.menu(false);
   }
 
+  private tagLabel(): string {
+    const base = this.study !== 'sketch' ? 'ROYAL SUPPER STUDY'
+      : this.sketchMode === 'layer-2' ? 'UNFINISHED SKETCH · LAYER 2 (S3A)'
+      : this.sketchMode === 'layer-1' ? 'UNFINISHED SKETCH · LAYER 1 (SLICE 2)' : 'UNFINISHED SKETCH · SLICE 1 PLAYGROUND';
+    return `${base}${this.direct ? ' · ISOLATED DEV SESSION' : ''}`;
+  }
   private show(mode: typeof this.mode, content: string): void {
     this.mode = mode;
     this.hud.hidden = true;
     document.getElementById('museum-hud')!.hidden = true;
+    document.getElementById('sketch-hud')!.hidden = true;
     this.modal.classList.remove('inspection-modal');
     this.modal.hidden = false;
     this.modal.innerHTML = `<div class="menu-card">${content}</div>`;
@@ -119,8 +142,41 @@ export class GameUi {
   menu(remembered: boolean): void {
     this.hud.hidden = true;
     document.getElementById('museum-hud')!.hidden = true;
+    document.getElementById('sketch-hud')!.hidden = true;
     if (!this.direct) {
       this.show('menu', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / A restoration study</p><h2>The garden<br><em>before dawn.</em></h2><p class="intro">A quiet museum.<br>A borrowed golden pear.<br>A garden waiting for colour.</p><p class="menu-description">Walk to the frames, enter Royal Supper and bring a missing piece home.</p><button class="primary" data-action="start" aria-label="${remembered ? 'Continue' : 'New Game'}">${remembered ? 'Continue' : 'New Game'} <span>→</span></button>${remembered ? '<button class="quiet" data-action="reset">New Game / reset progress</button>' : ''}<div class="menu-controls"><kbd>WASD</kbd> Walk · Drag to look · Click frame</div><p class="small-note">Royal Supper is playable. The two-artwork campaign is in progress.<br>The sun adventure arrives in a later update.</p>`);
+      return;
+    }
+    if (this.study === 'sketch') {
+      if (this.sketchMode === 'layer-2') {
+        this.show('menu', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / S3A · Layer 2</p>
+        <h2>Boards &amp;<br><em>axes.</em></h2><p class="intro">Three moving boards.<br>Two nails.<br>Axes that keep turning.</p>
+        <p class="menu-description">Moving outlines cannot hold you. Pin A and B, then recall A with Q to ink C. Narrow landings and fast red blades demand timed double jumps. Reach the gold strip on fixed ground.</p>
+        <button class="primary" data-action="start">Enter Layer 2 <span>←</span></button>
+        ${remembered ? '<button class="quiet" data-action="replay">Restart Layer 2</button>' : ''}
+        <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move · <kbd>Space</kbd> Jump ×2 · Left click pin · <kbd>Q</kbd> Recall · <kbd>R</kbd> Retry</div>
+        <p class="small-note">Campaign saves are untouched. This study ends on Layer 2 fixed ground.</p>`);
+        return;
+      }
+      if (this.sketchMode === 'layer-1') {
+        this.show('menu', `
+      <div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / Slice 2 · Layer 1</p>
+      <h2>Four<br><em>pendulums.</em></h2><p class="intro">One unfinished picture.<br>Two nails.<br>Three layers to climb.</p>
+      <p class="menu-description">Start at the bottom left. Pin a pendulum, land on it, pin the next, then press Q so the oldest nail frees one for the third. Each target is only in reach from the platform you just reached, so the reuse cannot be skipped. The escalator on the right carries you to a safe Layer 2 landing.</p>
+      <button class="primary" data-action="start">Enter Layer 1 <span>→</span></button>
+      ${remembered ? '<button class="quiet" data-action="replay">Restart the route</button>' : ''}
+      <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move <span>·</span> <kbd>Space</kbd> Jump ×2 <span>·</span> Left click pin <span>·</span> <kbd>Q</kbd> Recall <span>·</span> <kbd>E</kbd> Board</div>
+      <p class="small-note">Isolated development route · Campaign saves are untouched.<br>Layer 2 content, the second escalator and Layer 3 are scenery only in this slice.</p>`);
+        return;
+      }
+      this.show('menu', `
+      <div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / Slice 1 · mechanics playground</p>
+      <h2>Unfinished<br><em>Sketch.</em></h2><p class="intro">Two nails.<br>One picture still deciding<br>where its pieces go.</p>
+      <p class="menu-description">Six independent bays prove the FIFO nail ledger, frozen boards, active axes, pinned-wall slides, foothold nail heads and direct nail swinging — with no rope anywhere.</p>
+      <button class="primary" data-action="start">Enter the playground <span>→</span></button>
+      ${remembered ? '<button class="quiet" data-action="replay">Restart adventure</button>' : ''}
+      <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move / pump · <kbd>Space</kbd> Jump / release · <kbd>E</kbd> Grip / release · Click pin · <kbd>Q</kbd> Recall</div>
+      <p class="small-note">Isolated development study · Campaign saves are untouched.</p>`);
       return;
     }
     this.show('menu', `
@@ -133,23 +189,57 @@ export class GameUi {
       <p class="small-note">Isolated development study · Campaign saves are untouched.<br>Open the normal entry for the museum/restoration loop.</p>
       ${import.meta.env.DEV ? '<div class="dev-actions"><button class="quiet" data-action="lane">Movement test lane</button></div>' : ''}`);
   }
-  play(context: 'museum' | 'supper' = 'supper'): void {
+  play(context: 'museum' | 'supper' | 'sketch' = 'supper'): void {
     this.context = context;
     this.mode = 'none'; this.modal.hidden = true; this.hud.hidden = context !== 'supper';
     document.getElementById('museum-hud')!.hidden = context !== 'museum';
-    this.canvas.setAttribute('aria-label', context === 'museum' ? 'Museum. WASD to walk, drag to look, click or E on a nearby frame, Escape to pause.' : 'Royal Supper. A or D to move, Space to jump, E to interact, R for checkpoint, Escape to pause.');
+    document.getElementById('sketch-hud')!.hidden = context !== 'sketch';
+    this.canvas.setAttribute('aria-label', context === 'museum' ? 'Museum. WASD to walk, drag to look, click or E on a nearby frame, Escape to pause.' : context === 'sketch' ? 'Unfinished Sketch. A/D move or pump, Space jump or release, E grip or board, click pin, Q recalls oldest, R retry, Escape pause.' : 'Royal Supper. A or D to move, Space to jump, E to interact, R for checkpoint, Escape to pause.');
     this.canvas.focus({ preventScroll: true });
   }
+  markSketch(mode: SketchStudy, bayId: SketchBayId): void {
+    this.sketchMode = mode;
+    document.getElementById('sketch-hud')!.dataset.study = mode;
+    document.getElementById('sketch-eyebrow')!.textContent = mode === 'layer-2' ? 'Unfinished Sketch / S3A · Layer 2' : mode === 'layer-1'
+      ? 'The Last Curator · Slice 2 · Layer 1 of the unfinished picture' : 'The Last Curator · Slice 1 mechanics playground';
+    document.getElementById('sketch-bays')!.hidden = mode !== 'mechanics';
+    const tag = document.querySelector<HTMLElement>('.build-tag');
+    if (tag) tag.textContent = this.tagLabel();
+    if (mode === 'mechanics') this.markBay(bayId);
+  }
+  markBay(bayId: SketchBayId): void {
+    if (this.sketchMode !== 'mechanics') return;
+    for (const button of document.querySelectorAll<HTMLElement>('#sketch-bays [data-bay]')) {
+      button.classList.toggle('active', button.dataset.bay === bayId);
+    }
+  }
+  updateSketchHud(state: SketchHud): void {
+    const serialized = JSON.stringify(state);
+    if (serialized === this.sketchHudCache) return;
+    this.sketchHudCache = serialized;
+    const text = (id: string, value: string) => { const el = document.getElementById(id)!; if (el.textContent !== value) el.textContent = value; };
+    text('sketch-bay-name', state.bayName); text('sketch-hint', state.hint);
+    text('sketch-nails', `Nails · ${state.nails}`); text('sketch-oldest', state.oldest);
+    text('sketch-nearest', state.nearest); text('sketch-motion', state.swing ? `Swing · ${state.swing}` : `Motion · ${state.motion}`);
+    text('sketch-goal', state.checkpoint ?? (state.completed ? 'Goal reached · press R to retry' : state.goal));
+    text('sketch-layer', state.layer ?? ''); document.getElementById('sketch-layer')!.hidden = !state.layer;
+    text('sketch-endpoint', state.endpoint ?? ''); document.getElementById('sketch-endpoint')!.hidden = !state.endpoint;
+    text('sketch-prompt', state.prompt ?? ''); document.getElementById('sketch-prompt')!.hidden = !state.prompt;
+    text('sketch-cue', state.cue); this.markBay(state.bay as SketchBayId);
+  }
   pause(lowQuality: boolean, reason: string, settings?: Settings): void {
+    const sketch = this.context === 'sketch';
+    const adventure = this.context === 'supper' || sketch;
+    const route = sketch && this.sketchMode !== 'mechanics';
     this.show('pause', `<p class="eyebrow">A moment between brushstrokes</p><h2 class="compact">Paused.</h2>
       <p class="menu-description">${reason}</p><button class="primary" data-action="resume">Resume <span>→</span></button>
-      ${this.context === 'supper' ? `<button class="secondary" data-action="checkpoint">Restart from checkpoint</button>
-      <button class="quiet" data-action="replay">Restart adventure</button><button class="quiet" data-action="leave">${this.direct ? 'Leave painting' : 'Return to Museum'}</button>` : ''}
+      ${adventure ? `<button class="secondary" data-action="checkpoint">${route ? 'Back to the last safe checkpoint' : sketch ? 'Restart bay' : 'Restart from checkpoint'}</button>
+      <button class="quiet" data-action="replay">${route ? `Restart ${this.sketchMode === 'layer-2' ? 'Layer 2' : 'Layer 1'}` : 'Restart adventure'}</button><button class="quiet" data-action="leave">${this.direct ? 'Leave painting' : 'Return to Museum'}</button>` : ''}
       <label class="setting"><input type="checkbox" id="low-quality" ${lowQuality ? 'checked' : ''}> Low rendering quality</label>
       <label class="setting">Master volume <input id="master-volume" type="range" min="0" max="1" step="0.05" value="${settings?.masterVolume ?? 0.7}"></label>
       ${!this.direct ? '<button class="quiet" data-action="reset">Reset progress</button>' : ''}
       ${import.meta.env.DEV ? '<button class="quiet" data-action="debug">Toggle collision view · F3</button>' : ''}
-      <p class="small-note">${this.context === 'supper' ? 'Unlimited retries. Each hard section ends at a checkpoint. Falls keep the fork; timed hazards restart. Restart adventure preserves your pear.' : 'Drag to look or use Mouse look for pointer lock.'}<br>Sound follows Master volume. Visual cues work with sound muted.</p>`);
+      <p class="small-note">${route ? 'Retries are unlimited. Falling or R returns to the last safe checkpoint. Leaving and re-entering resumes that checkpoint; reloading restarts the route.' : sketch ? 'Every retry resets the current bay to two available nails and an empty queue.' : this.context === 'supper' ? 'Unlimited retries. Each hard section ends at a checkpoint. Falls keep the fork; timed hazards restart. Restart adventure preserves your pear.' : 'Drag to look or use Mouse look for pointer lock.'}<br>Sound follows Master volume. Visual cues work with sound muted.</p>`);
   }
   success(result: CampaignResult): void {
     this.collection = result;

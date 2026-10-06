@@ -13,6 +13,8 @@ export interface Controls {
   interactPressed: boolean; restartPressed: boolean;
   jumpReleased?: boolean;
   forward?: number;
+  /** Sketch-only remote FIFO recall. Optional so existing callers are unaffected. */
+  recallPressed?: boolean;
 }
 export const idleControls = (): Controls => ({ axis: 0, jumpPressed: false, jumpHeld: false, interactPressed: false, restartPressed: false });
 
@@ -24,9 +26,13 @@ export class CharacterController {
   private airborneJump = true;
   private automaticLaunch = false;
   private sliding = false;
+  private carry = 0;
+  private carrySpeed = 0;
   readonly contacts: Collider[] = [];
   get airJumpAvailable(): boolean { return this.airborneJump; }
   get slidingActive(): boolean { return this.sliding; }
+  /** Remaining seconds of carried release momentum, for observable state. */
+  get momentumCarry(): number { return this.carry; }
 
   constructor(readonly tuning: MovementTuning, x: number, y: number) {
     this.body = { x, y, width: tuning.width, height: tuning.height, vx: 0, vy: 0, grounded: false };
@@ -39,6 +45,35 @@ export class CharacterController {
     this.airborneJump = true;
     this.automaticLaunch = false;
     this.sliding = false;
+    this.carry = this.carrySpeed = 0;
+    this.contacts.length = 0;
+  }
+
+  /** A wall owns vertical motion while it holds the player: no air jump here. */
+  consumeAirJump(): void { this.airborneJump = false; this.buffer = 0; this.coyote = 0; }
+
+  /**
+   * Explicit hand-off into externally driven motion (Sketch wall kick, swing
+   * release, forced detach). Stale transient state is discarded so the next
+   * ordinary update cannot replay a buffered press, reuse coyote time or carry
+   * a slide mode across the transition. Additive: the Supper path is untouched.
+   *
+   * `carrySpeed` briefly raises the horizontal cap so a released arc keeps the
+   * momentum it earned instead of braking to walking speed on the next tick.
+   */
+  launch(vx: number, vy: number, options: { airJump?: boolean; keepHeight?: boolean; carrySpeed?: number; carrySeconds?: number } = {}): void {
+    const b = this.body;
+    if (!options.keepHeight) b.grounded = false;
+    b.vx = vx; b.vy = vy;
+    this.coyote = this.buffer = 0;
+    this.wasJumpHeld = false;
+    this.airborneJump = options.airJump ?? true;
+    // An authored launch owns its own velocity; a later Space release must not
+    // multiply it down the way a held variable jump does.
+    this.automaticLaunch = true;
+    this.sliding = false;
+    this.carrySpeed = Math.max(0, options.carrySpeed ?? 0);
+    this.carry = this.carrySpeed > 0 ? (options.carrySeconds ?? 0.9) : 0;
     this.contacts.length = 0;
   }
 
@@ -50,11 +85,12 @@ export class CharacterController {
     this.buffer = freshPress ? t.jumpBuffer : Math.max(0, this.buffer - dt);
     if (b.grounded) this.sliding = solids.some(p => surfaces.butterIds?.includes(p.id) &&
       Math.abs(b.y - p.y - p.height) < 0.001 && b.x + b.width > p.x && b.x < p.x + p.width);
-    const target = input.axis * (this.sliding ? t.slideSpeed : t.speed);
+    const target = input.axis * (this.sliding ? t.slideSpeed : Math.max(t.speed, this.carry > 0 ? this.carrySpeed : 0));
     // A butter takeoff carries its momentum until the next landing. Releasing
     // direction in the air must not silently apply dry-ground braking.
     const rate = (input.axis === 0 ? (this.sliding ? (b.grounded ? t.slideBraking : 0) : t.braking) : (this.sliding ? t.slideAcceleration : t.acceleration)) * dt;
     b.vx += Math.max(-rate, Math.min(rate, target - b.vx));
+    this.carry = Math.max(0, this.carry - dt);
     if (this.buffer > 0 && this.coyote > 0) {
       b.vy = t.jumpSpeed;
       b.grounded = false;

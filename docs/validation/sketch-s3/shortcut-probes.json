@@ -1,0 +1,38 @@
+{
+  "unpinnedA": [
+    0,
+    12,
+    24,
+    36,
+    48,
+    60,
+    72,
+    84,
+    96,
+    108,
+    120,
+    132,
+    144,
+    156,
+    168,
+    180,
+    192,
+    204,
+    216,
+    228,
+    240,
+    252,
+    264,
+    276,
+    288,
+    300,
+    312,
+    324
+  ],
+  "entranceToB": 0,
+  "unpinnedSolution": {
+    "bWait": 228,
+    "cWait": 264
+  },
+  "note": "Solid Layer 2 boards permit moving landings. Pinning is a strategy, not a hidden completion requirement."
+}

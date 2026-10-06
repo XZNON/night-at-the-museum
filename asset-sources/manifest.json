@@ -458,7 +458,8 @@
         "agentVerified": true,
         "referencesApproved": true,
         "evidence": "Actual camera inspection at 1280x720/960x540 and final 9-scenario Chromium production/isolated regression passed. Output approval remains distinct from user-approved references."
-      }
+      },
+      "activeRevisionId": "royal-supper.bread.cohesion-v1"
     },
     {
       "id": "royal-supper.bread.cutout",
@@ -939,7 +940,8 @@
         365
       ],
       "runtimeSha256": "82d75198f65bc0a81eaa14d3260f34c2add96d30dff1b08ccc536ea2968d2913",
-      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes.",
+      "activeRevisionId": "royal-supper.basket.cohesion-v1"
     },
     {
       "id": "royal-supper.butter",
@@ -995,7 +997,8 @@
         415
       ],
       "runtimeSha256": "5663ddebf12ddcd83c7b93b4351078e3d7480f37152392db77b62d5218b0cf0e",
-      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes.",
+      "activeRevisionId": "royal-supper.crumb.cohesion-v1"
     },
     {
       "id": "royal-supper.grape",
@@ -1079,7 +1082,8 @@
         830
       ],
       "runtimeSha256": "d42d8cccc08459f9f692fd60b33bcbd5fa2a8ccf40f54d23a2bbf3c349f366c5",
-      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes.",
+      "activeRevisionId": "royal-supper.cake.cohesion-v1"
     },
     {
       "id": "royal-supper.plate",
@@ -1304,6 +1308,118 @@
       ],
       "runtimeSha256": "cd4b09e6dbe8cb077049d14e79cb1f231ecac9bbd41b90471aef641c0f2b7915",
       "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
+    },
+    {
+      "id": "royal-supper.bread.cohesion-v1",
+      "status": "integrated",
+      "world": "royal-supper",
+      "purpose": "Selective visual-cohesion texture preparation",
+      "provider": "DreamLayer",
+      "operation": "local_texture_preparation",
+      "referenceIds": [
+        "royal-supper.bread"
+      ],
+      "sourcePath": "public/assets/supper/bread.png",
+      "sourceSha256": "ad3b465110d8fb04f53ba0e2874a2428a8bc2986b5dd0152190387b59bc3d0c0",
+      "runtimePath": "public/assets/supper/cohesion-v1/bread.png",
+      "runtimeSha256": "f5c98f27eacc617991c4b45f75cae921c6a9d23db7cafdb20bcef7892acdaf68",
+      "preparedPixelSize": {
+        "width": 640,
+        "height": 256
+      },
+      "executionId": null,
+      "promptPath": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "creditEvidence": "Offline pixel preparation only. No DreamLayer or ImageGen operation/billing in this pass; upstream unknown costs remain unchanged.",
+      "preparationNotes": "Edge-preserving Kuwahara radius 5, blend 0.88. Original prepared pixels/source preserved. Exact size and alpha retained; no invented pores/holes, palette substitution, shape or geometry changes. Reproduce with scripts/prepare-cohesion.py.",
+      "preparedAt": "2026-10-06",
+      "cameraValidatedAt": "2026-10-06",
+      "cameraValidation": "Real-control pilot/production state inspection at 1280x720 and 960x540; docs/validation/art-cohesion/README.md. Agent QA, not renewed user reference approval."
+    },
+    {
+      "id": "royal-supper.basket.cohesion-v1",
+      "status": "integrated",
+      "world": "royal-supper",
+      "purpose": "Selective visual-cohesion texture preparation",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_texture_preparation",
+      "referenceIds": [
+        "royal-supper.basket"
+      ],
+      "sourcePath": "public/assets/supper/props/basket.png",
+      "sourceSha256": "82d75198f65bc0a81eaa14d3260f34c2add96d30dff1b08ccc536ea2968d2913",
+      "runtimePath": "public/assets/supper/cohesion-v1/basket.png",
+      "runtimeSha256": "bf7e924bd06a6320e03e5149b0f610278c7cd7c1bb8e3a2ecb14dadc3a0c6c0d",
+      "preparedPixelSize": {
+        "width": 640,
+        "height": 160
+      },
+      "executionId": null,
+      "promptPath": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "creditEvidence": "Offline pixel preparation only. No DreamLayer or ImageGen operation/billing in this pass; upstream unknown costs remain unchanged.",
+      "preparationNotes": "Edge-preserving Kuwahara radius 3, blend 0.75. Original prepared pixels/source preserved. Exact size and alpha retained; no invented pores/holes, palette substitution, shape or geometry changes. Reproduce with scripts/prepare-cohesion.py.",
+      "preparedAt": "2026-10-06",
+      "cameraValidatedAt": "2026-10-06",
+      "cameraValidation": "Real-control pilot/production state inspection at 1280x720 and 960x540; docs/validation/art-cohesion/README.md. Agent QA, not renewed user reference approval."
+    },
+    {
+      "id": "royal-supper.crumb.cohesion-v1",
+      "status": "integrated",
+      "world": "royal-supper",
+      "purpose": "Selective visual-cohesion texture preparation",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_texture_preparation",
+      "referenceIds": [
+        "royal-supper.crumb"
+      ],
+      "sourcePath": "public/assets/supper/props/crumb.png",
+      "sourceSha256": "5663ddebf12ddcd83c7b93b4351078e3d7480f37152392db77b62d5218b0cf0e",
+      "runtimePath": "public/assets/supper/cohesion-v1/crumb.png",
+      "runtimeSha256": "6c237ff0ccef7d0cd1ddef5248b1a24cbcbf42783914109b39305612604dd3c4",
+      "preparedPixelSize": {
+        "width": 192,
+        "height": 175
+      },
+      "executionId": null,
+      "promptPath": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "creditEvidence": "Offline pixel preparation only. No DreamLayer or ImageGen operation/billing in this pass; upstream unknown costs remain unchanged.",
+      "preparationNotes": "Edge-preserving Kuwahara radius 4, blend 0.85. Original prepared pixels/source preserved. Exact size and alpha retained; no invented pores/holes, palette substitution, shape or geometry changes. Reproduce with scripts/prepare-cohesion.py.",
+      "preparedAt": "2026-10-06",
+      "cameraValidatedAt": "2026-10-06",
+      "cameraValidation": "Real-control pilot/production state inspection at 1280x720 and 960x540; docs/validation/art-cohesion/README.md. Agent QA, not renewed user reference approval."
+    },
+    {
+      "id": "royal-supper.cake.cohesion-v1",
+      "status": "integrated",
+      "world": "royal-supper",
+      "purpose": "Selective visual-cohesion texture preparation",
+      "provider": "OpenAI ImageGen",
+      "operation": "local_texture_preparation",
+      "referenceIds": [
+        "royal-supper.cake"
+      ],
+      "sourcePath": "public/assets/supper/props/cake.png",
+      "sourceSha256": "d42d8cccc08459f9f692fd60b33bcbd5fa2a8ccf40f54d23a2bbf3c349f366c5",
+      "runtimePath": "public/assets/supper/cohesion-v1/cake.png",
+      "runtimeSha256": "d7b60974776d87a76bb2342d76b8173c9c7d32a89defe7d873899368e783a3f4",
+      "preparedPixelSize": {
+        "width": 640,
+        "height": 200
+      },
+      "executionId": null,
+      "promptPath": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "creditEvidence": "Offline pixel preparation only. No DreamLayer or ImageGen operation/billing in this pass; upstream unknown costs remain unchanged.",
+      "preparationNotes": "Edge-preserving Kuwahara radius 4, blend 0.85. Original prepared pixels/source preserved. Exact size and alpha retained; no invented pores/holes, palette substitution, shape or geometry changes. Reproduce with scripts/prepare-cohesion.py.",
+      "preparedAt": "2026-10-06",
+      "cameraValidatedAt": "2026-10-06",
+      "cameraValidation": "Real-control pilot/production state inspection at 1280x720 and 960x540; docs/validation/art-cohesion/README.md. Agent QA, not renewed user reference approval."
     }
   ],
   "balanceAfterReferences": {
@@ -1935,7 +2051,7 @@
     "focusedTestsPassed": 40,
     "browserScenariosPassed": 9,
     "browserElapsedMinutes": 11.7,
-    "evidence": "PLAN.md: M3 completion and watcher light rays; NEXT_SESSION.md",
+    "evidence": "docs/planning/PLAN.md: M3 completion and watcher light rays; docs/planning/NEXT_SESSION.md",
     "blocker": null,
     "commitPush": "Completed code snapshot 1750ed3. Subsequent art-direction documentation/metadata handoff requested for commit/push; verify its snapshot with git log/status.",
     "visualFollowUp": "Scoped art-cohesion follow-up documented, not started; does not reopen completed M3."
@@ -2055,13 +2171,20 @@
     "status": "written_direction_accepted",
     "priorReferencesStillApproved": true,
     "comparison": "asset-sources/style-previews/bread-comparison-cartoon.png",
-    "productionAssetsUnchanged": true,
-    "note": "Selective visual-cohesion follow-up to completed M3. Preserve original sources and gameplay; not blanket regeneration.",
+    "productionAssetsUnchanged": false,
+    "note": "Completed selective offline texture preparation only. Approved player/background/other props, original files and gameplay are preserved. No comparison-board replacement or new provider generation.",
     "direction": "Stylised, leaning animated: clear player/prop shapes, simplified shading, light painted texture; softer richer painterly backgrounds.",
     "authority": "User accepted the recommendation and requested documentation plus a scoped fix prompt.",
     "comparisonBoardsApprovedAsRuntime": false,
-    "followUp": "ART_DIRECTION.md",
-    "runtimeFollowUpStatus": "not_started"
+    "followUp": "docs/art/ART_DIRECTION.md",
+    "runtimeFollowUpStatus": "complete_verified",
+    "originalSourcesPreserved": true,
+    "runtimeRevisionIds": [
+      "royal-supper.bread.cohesion-v1",
+      "royal-supper.basket.cohesion-v1",
+      "royal-supper.crumb.cohesion-v1",
+      "royal-supper.cake.cohesion-v1"
+    ]
   },
   "keyUpdateChecks": [
     {
@@ -2148,7 +2271,7 @@
       "docs/validation/m3-props/candle-exit.png"
     ],
     "completeProductionRevalidationPending": false,
-    "viewportNote": "Final 1280x720/960x540 camera QA and production revalidation completed; see PLAN.md final M3 completion entry and docs/validation/m3-props.",
+    "viewportNote": "Final 1280x720/960x540 camera QA and production revalidation completed; see docs/planning/PLAN.md final M3 completion entry and docs/validation/m3-props.",
     "publicBytes": 7190042,
     "distBytes": 7835994,
     "credentialAuditMatches": 0,
@@ -2160,7 +2283,7 @@
       "fullChromiumScenariosPassed": 9,
       "elapsedMinutes": 11.7,
       "postBackdropProductionRegressionPassed": true,
-      "evidence": "PLAN.md: M3 completion and watcher light rays."
+      "evidence": "docs/planning/PLAN.md: M3 completion and watcher light rays."
     }
   },
   "historicalHandoffs": [
@@ -2174,5 +2297,34 @@
       "commitPush": "Deferred until completed M3; current work uncommitted.",
       "label": "Earlier partial M3 handoff, superseded by completion at 1750ed3."
     }
-  ]
+  ],
+  "cohesionValidation": {
+    "date": "2026-10-06",
+    "baseline": "1750ed3",
+    "preservedDocumentationSnapshot": "df49623",
+    "focusedTestsPassed": 40,
+    "typecheck": true,
+    "build": true,
+    "browserScenariosPassed": 9,
+    "browserElapsedMinutes": 11.4,
+    "trace": "off",
+    "controlsViewports": [
+      "1280x720",
+      "960x540"
+    ],
+    "evidence": "docs/validation/art-cohesion/README.md",
+    "providerOperations": 0,
+    "localPreparationCreditsSpent": 0,
+    "upstreamUnknownBillingUnchanged": true,
+    "retiredRequestsRetried": false,
+    "originalSourceAndPreparedFilesPreserved": true,
+    "dimensionsAndAlphaPreserved": true,
+    "gameplayAndSceneCodeUnchanged": true,
+    "imageHashChecksPassed": 49,
+    "audioHashChecksPassed": 12,
+    "credentialAuditMatches": 0,
+    "publicBytes": 7881765,
+    "distBytes": 8527937,
+    "notes": "Automated real controls and agent visual inspection; no measured human pacing or representative-machine profile. Art follow-up is uncommitted; M4 not started."
+  }
 }

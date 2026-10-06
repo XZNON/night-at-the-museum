@@ -1,5 +1,6 @@
 // Prepared art uses logical IDs independently of collision/layout.
 // ImageGen props are the user-authorized M3 exception to DreamLayer sourcing.
+// cohesion-v1 is selective offline preparation; original M3 textures remain.
 export const placeholderArt = {
   basket: { color: 0x9f613d, accent: 0xd79b58 },
   bread: { color: 0xcb8a47, accent: 0xffcf86 },
@@ -20,14 +21,14 @@ export const runtimeAssets = {
   'player.walk-b': { path: 'assets/player/walk-b.png', provider: 'DreamLayer' },
   'player.jump': { path: 'assets/player/jump.png', provider: 'DreamLayer' },
   'royal-supper.background': { path: 'assets/supper/background.webp', provider: 'DreamLayer' },
-  'royal-supper.bread': { path: 'assets/supper/bread.png', provider: 'DreamLayer' },
+  'royal-supper.bread': { path: 'assets/supper/cohesion-v1/bread.png', provider: 'DreamLayer' },
   'royal-supper.entrance': { path: 'assets/supper/entrance.webp', provider: 'DreamLayer' },
-  'royal-supper.basket': { path: 'assets/supper/props/basket.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.basket': { path: 'assets/supper/cohesion-v1/basket.png', provider: 'OpenAI ImageGen' },
   'royal-supper.butter': { path: 'assets/supper/props/butter.png', provider: 'OpenAI ImageGen' },
-  'royal-supper.crumb': { path: 'assets/supper/props/crumb.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.crumb': { path: 'assets/supper/cohesion-v1/crumb.png', provider: 'OpenAI ImageGen' },
   'royal-supper.grape': { path: 'assets/supper/props/grape.png', provider: 'OpenAI ImageGen' },
   'royal-supper.jelly': { path: 'assets/supper/props/jelly.png', provider: 'OpenAI ImageGen' },
-  'royal-supper.cake': { path: 'assets/supper/props/cake.png', provider: 'OpenAI ImageGen' },
+  'royal-supper.cake': { path: 'assets/supper/cohesion-v1/cake.png', provider: 'OpenAI ImageGen' },
   'royal-supper.plate': { path: 'assets/supper/props/plate.png', provider: 'OpenAI ImageGen' },
   'royal-supper.goblet': { path: 'assets/supper/props/goblet.png', provider: 'OpenAI ImageGen' },
   'royal-supper.cover': { path: 'assets/supper/props/cover.png', provider: 'OpenAI ImageGen' },

@@ -1,0 +1,116 @@
+{
+  "date": "2026-10-06",
+  "scope": "S3A explicitly requested difficulty revision only",
+  "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-2",
+  "environment": {
+    "branch": "main",
+    "head": "df496232fbbf738e5247f4bf7c9bc60dae00dbcf",
+    "node": "v22.14.0",
+    "npm": "10.9.2",
+    "allChangesRemainUncommitted": true
+  },
+  "commands": [
+    {
+      "command": "npm run test",
+      "result": "passed",
+      "tests": 125,
+      "files": 11,
+      "reportedDuration": "2.68s",
+      "startedLocal": "22:08:44"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "passed"
+    },
+    {
+      "command": "npm run build",
+      "result": "passed",
+      "javascriptKB": 705.69,
+      "gzipKB": 184.34,
+      "warning": "existing nonfatal >500kB chunk warning"
+    },
+    {
+      "command": "node node_modules/@playwright/test/cli.js test tests/browser/sketch-layer2.spec.ts --trace off",
+      "result": "passed",
+      "cases": 8,
+      "reportedDuration": "1.3m",
+      "viewports": [
+        "1280x720",
+        "960x540"
+      ],
+      "browser": "headed Chromium"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "note": "existing CRLF normalization warnings"
+    }
+  ],
+  "browserCases": [
+    {
+      "title": "affected S1 pins, active axe and FIFO retain real controls at both review sizes",
+      "status": "passed"
+    },
+    {
+      "title": "affected S2 route and centered nail heads retain real traversal with new evidence",
+      "status": "passed"
+    },
+    {
+      "title": "S3A moving outlines cannot be ridden without nails at either size",
+      "status": "passed"
+    },
+    {
+      "title": "S3A pause/resize, support recall, fall/R and traversal re-entry stay local",
+      "status": "passed"
+    },
+    {
+      "title": "S3A production ignores entry, denied storage works, joined study remains unavailable",
+      "status": "passed"
+    },
+    {
+      "title": "S3A real FIFO route, captures and exit lifecycle at 1280x720",
+      "status": "passed"
+    },
+    {
+      "title": "S3A real FIFO route, captures and exit lifecycle at 960x540",
+      "status": "passed"
+    },
+    {
+      "title": "S3A unsafe blade crossing recovers locally; blur clears held controls and phase time",
+      "status": "passed"
+    }
+  ],
+  "intermediateFailures": [
+    "initial lower axe B mount produced a tiny measured crossing window, widened by raising it 0.3u",
+    "high A pin and old slow-axe phase driver failed fast-axis crossing; useful pin poses/fast launch windows now observed",
+    "first full revision run: 7 passes / 1 wrong no-nail cue assertion; final rerun all 8 pass",
+    "added browser diagnostic target x/y typing initially failed typecheck; fixed before passing build"
+  ],
+  "captures": [
+    "entrance-1280.png",
+    "entrance-960.png",
+    "exit-1280.png",
+    "exit-960.png",
+    "fifo-c-pinned-1280.png",
+    "fifo-c-pinned-960.png",
+    "no-nail-retry-1280.png",
+    "no-nail-retry-960.png",
+    "on-board-a-1280.png",
+    "on-board-a-960.png",
+    "on-board-b-1280.png",
+    "on-board-b-960.png",
+    "on-board-c-1280.png",
+    "on-board-c-960.png",
+    "recalled-support-960.png",
+    "s1-pins-regression-1280.png",
+    "s1-pins-regression-960.png",
+    "s2-exit-regression-1280.png",
+    "s2-exit-regression-960.png"
+  ],
+  "limitations": [
+    "automated completion, not human difficulty/pacing approval",
+    "no representative-machine performance profile",
+    "no full campaign rerun in this bounded revision: only Layer 2 data, intro copy, a type comment and tests changed; production isolation and affected S1/S2 real controls pass",
+    "skip margins must be remeasured if movement/geometry changes"
+  ]
+}

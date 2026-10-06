@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-06",
+  "branch": "main",
+  "head": "df496232fbbf738e5247f4bf7c9bc60dae00dbcf",
+  "node": "v22.14.0",
+  "npm": "10.9.2",
+  "commands": [
+    {
+      "command": "npm run test",
+      "result": "passed",
+      "files": 11,
+      "tests": 125
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "passed"
+    },
+    {
+      "command": "npm run build",
+      "result": "passed",
+      "jsKb": 705.64,
+      "gzipKb": 184.33,
+      "warning": "Existing >500 kB chunk warning"
+    },
+    {
+      "command": "node node_modules/@playwright/test/cli.js test tests/browser/sketch-layer2.spec.ts tests/browser/sketch-layer1.spec.ts tests/browser/sketch-layer1-motion.spec.ts tests/browser/sketch-mechanics.spec.ts tests/browser/campaign.spec.ts --trace off",
+      "result": "36 passed, 1 failed",
+      "reportedDuration": "10.4m",
+      "failure": "Blur assertion: Playwright forced-focus emulation suppresses focus-loss events; hazard and local retry passed."
+    },
+    {
+      "command": "node node_modules/@playwright/test/cli.js test tests/browser/sketch-layer2.spec.ts --grep 'unsafe blade' --trace off",
+      "result": "1 passed after driver correction",
+      "reportedDuration": "10.1s",
+      "correction": "Headed Chromium; disable Emulation.setFocusEmulationEnabled, then switch actual foreground tabs. No synthetic blur or gameplay state mutation."
+    },
+    {
+      "command": "node node_modules/@playwright/test/cli.js test tests/browser/sketch-layer2.spec.ts --trace off",
+      "result": "7 passed",
+      "reportedDuration": "1.1m",
+      "viewports": [
+        "1280x720",
+        "960x540"
+      ],
+      "browser": "Headed Chromium"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "scope": "tracked diff; pre-existing CRLF normalization notices remain"
+    },
+    {
+      "command": "node node_modules/@playwright/test/cli.js test tests/browser/sketch-layer2.spec.ts --grep 'affected S2' --trace off",
+      "result": "1 passed",
+      "reportedDuration": "16.3s",
+      "purpose": "Final S2 post-clear own-target placement preservation; refreshed both-size S2 captures. Focused tests and build were rerun and pass."
+    }
+  ],
+  "coverage": "30 existing campaign/S1/S2 scenarios passed in the broad run; all seven S3A/additional-regression scenarios passed in the final run. 37 distinct scenarios verified across runs, not a claim of a single 37/37 run.",
+  "limits": [
+    "Automated real-control verification and agent image inspection; human approval/pacing and representative-machine performance remain unmeasured.",
+    "Solid moving boards admit an unpinned route in simulation; intended pinned FIFO browser route is verified.",
+    "UI encoding incident and reconstruction are documented in README."
+  ]
+}

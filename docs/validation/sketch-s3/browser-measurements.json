@@ -1,0 +1,281 @@
+{
+  "cases": [
+    {
+      "file": "observations-affected-S1-pins-active-axe-and-FIFO-retain-real-controls-at-both-review-sizes.json",
+      "title": "affected S1 pins, active axe and FIFO retain real controls at both review sizes",
+      "status": "passed"
+    },
+    {
+      "file": "observations-affected-S2-route-and-centered-nail-heads-retain-real-traversal-with-new-evidence.json",
+      "title": "affected S2 route and centered nail heads retain real traversal with new evidence",
+      "status": "passed"
+    },
+    {
+      "file": "observations-S3A-pause-resize-support-recall-fall-R-and-traversal-re-entry-stay-local.json",
+      "title": "S3A pause/resize, support recall, fall/R and traversal re-entry stay local",
+      "status": "passed"
+    },
+    {
+      "file": "observations-S3A-production-ignores-entry-denied-storage-works-joined-study-remains-unavailable.json",
+      "title": "S3A production ignores entry, denied storage works, joined study remains unavailable",
+      "status": "passed"
+    },
+    {
+      "file": "observations-S3A-real-FIFO-route-captures-and-exit-lifecycle-at-1280x720.json",
+      "title": "S3A real FIFO route, captures and exit lifecycle at 1280x720",
+      "status": "passed"
+    },
+    {
+      "file": "observations-S3A-real-FIFO-route-captures-and-exit-lifecycle-at-960x540.json",
+      "title": "S3A real FIFO route, captures and exit lifecycle at 960x540",
+      "status": "passed"
+    },
+    {
+      "file": "observations-S3A-unsafe-blade-crossing-recovers-locally-blur-clears-held-controls-and-phase-time.json",
+      "title": "S3A unsafe blade crossing recovers locally; blur clears held controls and phase time",
+      "status": "passed"
+    }
+  ],
+  "placements": [
+    {
+      "id": "l2-freeze-a",
+      "width": 1280,
+      "distance": 7.575461146463086,
+      "world": {
+        "x": 56,
+        "y": 16.046499884550244
+      },
+      "screen": {
+        "x": 621.7234983697833,
+        "y": 447.1400046179902,
+        "visible": true
+      },
+      "reason": ""
+    },
+    {
+      "id": "l2-freeze-a",
+      "width": 960,
+      "distance": 7.469610983763229,
+      "world": {
+        "x": 56,
+        "y": 16.225080981760193
+      },
+      "screen": {
+        "x": 468.47201647540595,
+        "y": 329.6862275063097,
+        "visible": true
+      },
+      "reason": ""
+    },
+    {
+      "id": "l2-freeze-a",
+      "width": 1280,
+      "distance": 7.352741762074403,
+      "world": {
+        "x": 56,
+        "y": 16.15
+      },
+      "screen": {
+        "x": 627.4040176015851,
+        "y": 442.99999999999994,
+        "visible": true
+      },
+      "reason": ""
+    },
+    {
+      "id": "l2-freeze-b",
+      "width": 1280,
+      "distance": 8.312808413471652,
+      "world": {
+        "x": 45.87479134378892,
+        "y": 16.674999999999997
+      },
+      "screen": {
+        "x": 580.2717486334541,
+        "y": 444.9988505955643,
+        "visible": true
+      },
+      "reason": ""
+    },
+    {
+      "id": "l2-freeze-c",
+      "width": 1280,
+      "distance": 7.034811631336118,
+      "world": {
+        "x": 37.22929943527083,
+        "y": 16.65461787378409
+      },
+      "screen": {
+        "x": 642.0195305617062,
+        "y": 445.8152850486356,
+        "visible": true
+      },
+      "reason": ""
+    },
+    {
+      "id": "l2-freeze-a",
+      "width": 960,
+      "distance": 7.35124522490811,
+      "world": {
+        "x": 56,
+        "y": 16.114171120586597
+      },
+      "screen": {
+        "x": 469.82953919792044,
+        "y": 333.324866382402,
+        "visible": true
+      },
+      "reason": ""
+    },
+    {
+      "id": "l2-freeze-b",
+      "width": 960,
+      "distance": 8.188205948029452,
+      "world": {
+        "x": 45.99893275128211,
+        "y": 16.674999999999997
+      },
+      "screen": {
+        "x": 439.52139038765864,
+        "y": 333.7490990355729,
+        "visible": true
+      },
+      "reason": ""
+    },
+    {
+      "id": "l2-freeze-c",
+      "width": 960,
+      "distance": 7.125809147079915,
+      "world": {
+        "x": 37.15769310673943,
+        "y": 16.615559876403324
+      },
+      "screen": {
+        "x": 478.1202213636943,
+        "y": 335.53320370789964,
+        "visible": true
+      },
+      "reason": ""
+    },
+    {
+      "id": "l2-freeze-a",
+      "width": 1280,
+      "distance": 7.461866625555968,
+      "world": {
+        "x": 56,
+        "y": 16.03578444154141
+      },
+      "screen": {
+        "x": 622.5273942926415,
+        "y": 447.5686223383436,
+        "visible": true
+      },
+      "reason": ""
+    },
+    {
+      "id": "l2-freeze-b",
+      "width": 1280,
+      "distance": 7.614602933098348,
+      "world": {
+        "x": 46.685400645782266,
+        "y": 16.674999999999997
+      },
+      "screen": {
+        "x": 601.9648265317682,
+        "y": 444.9828946357699,
+        "visible": true
+      },
+      "reason": ""
+    }
+  ],
+  "flights": [
+    {
+      "id": "l2-board-a",
+      "width": 1280,
+      "samples": 40,
+      "elapsedTicks": 72,
+      "maxFeetY": 19.404177777777782,
+      "landedFeetY": 16.06842892824346
+    },
+    {
+      "id": "l2-board-a",
+      "width": 960,
+      "samples": 39,
+      "elapsedTicks": 71,
+      "maxFeetY": 19.361133333333335,
+      "landedFeetY": 16.250994231725205
+    },
+    {
+      "id": "l2-board-a",
+      "width": 1280,
+      "samples": 40,
+      "elapsedTicks": 72,
+      "maxFeetY": 19.253933333333336,
+      "landedFeetY": 16.174548528795203
+    },
+    {
+      "id": "l2-board-b",
+      "width": 1280,
+      "samples": 42,
+      "elapsedTicks": 76,
+      "maxFeetY": 20.35987075101743,
+      "landedFeetY": 16.675
+    },
+    {
+      "id": "l2-board-c",
+      "width": 1280,
+      "samples": 42,
+      "elapsedTicks": 76,
+      "maxFeetY": 20.879177777777784,
+      "landedFeetY": 16.67385054093126
+    },
+    {
+      "id": "l2-exit",
+      "width": 1280,
+      "samples": 43,
+      "elapsedTicks": 78,
+      "maxFeetY": 20.76581720759793,
+      "landedFeetY": 16.3
+    },
+    {
+      "id": "l2-board-a",
+      "width": 960,
+      "samples": 39,
+      "elapsedTicks": 71,
+      "maxFeetY": 19.361133333333335,
+      "landedFeetY": 16.13792029464437
+    },
+    {
+      "id": "l2-board-b",
+      "width": 960,
+      "samples": 40,
+      "elapsedTicks": 73,
+      "maxFeetY": 20.299053627977706,
+      "landedFeetY": 16.675
+    },
+    {
+      "id": "l2-board-c",
+      "width": 960,
+      "samples": 42,
+      "elapsedTicks": 76,
+      "maxFeetY": 20.879177777777784,
+      "landedFeetY": 16.62539151935531
+    },
+    {
+      "id": "l2-exit",
+      "width": 960,
+      "samples": 43,
+      "elapsedTicks": 78,
+      "maxFeetY": 20.717913741577537,
+      "landedFeetY": 16.3
+    },
+    {
+      "id": "l2-board-a",
+      "width": 1280,
+      "samples": 40,
+      "elapsedTicks": 73,
+      "maxFeetY": 19.376700000000003,
+      "landedFeetY": 16.057382648605948
+    }
+  ]
+}
