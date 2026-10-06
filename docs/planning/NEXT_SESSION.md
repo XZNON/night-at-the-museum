@@ -1,26 +1,32 @@
-# Next session — Implement Sketch S3B
+# Next session — Sketch S4 planning and implementation
 
-**Latest user steering, 2026-10-06:** S3A was rejected as too easy because nails were optional. The user explicitly requested a hard, short route with faster axes/platforms and required nails. The revised Layer 2 boards are fast moving outlines without support until pinned. Their widths are 3.4/3.0/2.6u, periods 2.4/2.0/1.7s; axes rotate in 2.6/2.2s with lower mounts. All three board pins and FIFO reuse are required by collision/geometry; A/B/recall-A/C is the verified standard solution. S1/S2 tuning and control contracts are preserved. [Play Layer 2](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-2); [current evidence](../validation/sketch-s3/hard-v1/README.md).
+**Latest user direction, 2026-10-06:** the user confirmed Slice 3 is made and explicitly requested committing/pushing its completed checkpoint to origin/main. S3 (S3A + S3B) is complete for this checkpoint. The next named slice is S4, requiring a separate implementation request; no S4 code was added here. The S3B review instructions below are retained as historical review guidance, not the current next task.
 
-**Current verification:** all 125 focused tests, typecheck/build and 8 headed Chromium cases pass (1.3m), including full FIFO completion and no-nail failures at both sizes, support recall/local recovery, blur, save isolation and S1/S2 real-control regressions. Nineteen current captures were visually inspected. Exact commands/results and limitations are in the hard-v1 evidence. Initial S3A results below remain historical.
+S4 builds Layer 3's criss-cross wall climb and glue crossing with the proven S1 wall-slide/kick, foothold and direct fixed-pivot nail swing mechanics. Preserve two nails, strict FIFO, all reviewed earlier challenges, save isolation and the connected cartoon 2.5D world. Add safe introductions and checkpoints at the layer entrance, after the climb and after glue; provide individual section review entries. Verify both sections individually and consecutively with real controls at 1280x720 and 960x540, including recall-current-support, falls/R and camera targeting. Stop on safe ground before the moving-socket finale. S5 owns the finale, sun and campaign ending; art is a separate follow-up. See [S4 scope](../gameplay/UNFINISHED_SKETCH.md#s4--layer-3-wall-climb-and-glue-crossing).
 
-**Next action:** S3B implementation on the next explicitly requested session. Preserve the reviewed hard S3A baseline; complete continuous Layers 1/2 plus both rides and stop at safe Layer 3 arrival. The current session prepares [the detailed S3B implementation plan](../gameplay/SKETCH_S3B_PLAN.md) and checkpoints all existing work to origin/main at the user's request; it does not implement S3B. Verify the resulting Git HEAD/remote and any newer local edits before starting. Historical uncommitted/review-only notes below describe earlier sessions.
+Checkpoint verification: Node v22.14.0/npm v10.9.2 rechecked; fresh fetch found main/origin/main synchronized at bd9cab7 before committing. All 132 focused tests, typecheck and production build pass again. Existing browser evidence is preserved; browser playtests were not repeated for this commit-only request. The existing >500kB chunk warning remains.
 
-## Paste-ready S3B implementation prompt
+## Historical S3B review handoff
+
+**Current state, 2026-10-06:** S3B is implemented for its playable review gate. Joined `study=layers-1-2` starts on Layer 1, clears the four reviewed pendulums, rides to the unchanged hard Layer 2 challenge, then rides to fixed safe Layer 3 ground. Direct `study=layer-2` reaches the same endpoint. `study=layer-1` retains its original Layer 2 endpoint; accepted S1 is preserved. No Layer 3 challenge, sun, campaign/ending, generated art or publication was added. All current changes are uncommitted on main over `bd9cab7`.
+
+Play: [Joined Layers 1/2](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layers-1-2), [Direct Layer 2](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-2). Run `npm run dev` if the server is stopped. [Fresh S3B evidence](../validation/sketch-s3/s3b/README.md) records commands, captures, recovery and limits. [Implementation plan](../gameplay/SKETCH_S3B_PLAN.md) retains the scope and state contracts. Earlier records below are historical and superseded by this gate.
+
+Preserve S2's four faster pendulums, two FIFO recalls and centered nail heads; preserve hard S3A's outlined boards (widths 3.4/3.0/2.6, periods 2.4/2.0/1.7s) and active axes (2.6/2.2s at 51.5,20.9 and 41.8,21.5). Two nails, strict FIFO, 10u reach, save isolation, cartoon depth and stacked 18u camera context remain. The new landing is x0..10/top24.4; second ride lasts 4s. R/fall retries the active leg or committed safe ground, leaving mid-ride restores its departure, and Restart resets the selected entry.
+
+## Paste-ready S3B review prompt
 
 ```text
-Continue The Last Curator in C:\Users\XZNON\DreamLayer. Implement Unfinished Sketch S3B only, following docs/gameplay/SKETCH_S3B_PLAN.md and the S3 scope in docs/gameplay/SKETCH_S3_PLAN.md. Complete the joined Layer 1/2 route and second escalator to fixed safe Layer 3 ground, then stop for my review.
+Continue The Last Curator in C:\Users\XZNON\DreamLayer. Review implemented Unfinished Sketch S3B only and fix material problems found in that review. Read AGENTS.md, docs/README.md, current PLAN/NEXT_SESSION, DECISIONS/REQUIREMENTS, SKETCH_S3B_PLAN.md and docs/validation/sketch-s3/s3b/README.md. Verify checkout/runtime/server ownership and preserve newer local changes over bd9cab7.
 
-Read AGENTS.md, docs/README.md, PLAN/NEXT_SESSION, DECISIONS/REQUIREMENTS, UNFINISHED_SKETCH and both S3 plans. Inspect the current branch/HEAD/origin, worktree, Node/npm, dependencies and server ownership; preserve all newer local changes and the committed M3/S1/S2/S3A baseline.
+Play study=layers-1-2 and study=layer-2. Check both rides, the first-arrival handoff with no endpoint, unchanged mandatory-pin challenge difficulty, layer-local falls/R/re-entry, terminal Layer 3 recovery and Restart Adventure. Inspect boarding/ride/landing framing at 1280x720 and 960x540, reduced motion, actual blur and input clearing. Preserve accepted S1 and isolated S2's original endpoint, four faster pendulums/FIFO/centered nail heads, hard S3A geometry/axes, two nails, strict FIFO, save isolation and cartoon 2.5D stacked context.
 
-Preserve accepted S1, S2's four faster outlined pendulums/two FIFO recalls/centered circular heads, and hard S3A exactly: outlined boards are solid only while pinned; widths 3.4/3.0/2.6, periods 2.4/2.0/1.7s; axe periods 2.6/2.2s and pivots (51.5,20.9)/(41.8,21.5). Keep two nails, strict FIFO, captured-phase resume, active axes, movement/reach, skip prevention, cartoon 2.5D and stacked 18u context. Read docs/validation/sketch-s3/hard-v1/README.md; its passing results are historical baseline evidence, not fresh S3B verification.
-
-Add save-isolated study=layers-1-2 from Layer 1. In that preset only, first-ride arrival advances once into Layer 2 with clean nails/input/phases and no completion. Keep study=layer-1's original endpoint. Extend study=layer-2 through the second ride to the same Layer 3 arrival. Use preset/entry/active-leg separation and the plan's labelled ride/landing defaults; retain leg-local retries, safe re-entry, independent sessions and both keyed escalator rigs. Layer 2 retry must never replay Layer 1; Restart Adventure resets the selected entry.
-
-Run focused transition/restore/FIFO/recovery tests, typecheck/build and real-control direct/joined traversal at 1280x720 and 960x540. Verify pause, actual blur, resize, ride retry/re-entry, input suppression, reduced motion, arrival recovery, S1/S2/hard-S3A regressions and production/save isolation. Record actual URLs, captures, measurements, commands, failures and limitations in docs/validation/sketch-s3/s3b/ and update authoritative status/handoff docs. Preserve older evidence; no teleport/model-mutator browser traversal.
-
-Finish S3B's playable gate and stop before S4. Do not add Layer 3 challenges, sun/campaign/ending, generated art, dependencies, commits/pushes, publishing or sub-agents. Make routine choices autonomously; do not reopen reviewed difficulty rules.
+After any material correction rerun relevant focused tests/typecheck/build and real-control browser checks, save fresh evidence separately and update the handoff. Automated feasibility is not human difficulty approval. Finish at the S3B playable gate and stop. Do not start S4, Layer 3 challenges, sun/campaign/ending, asset generation, dependencies, commits/pushes, publishing or sub-agents.
 ```
+
+<a id="paste-ready-s3b-implementation-prompt"></a>
+
+The former implementation handoff has now been executed under the user's explicit S3B-only request. The next action is user review, not another implementation slice.
 
 <a id="paste-ready-s3a-review-prompt"></a>
 

@@ -69,7 +69,8 @@ export class UnfinishedSketchScene implements GameScene {
   private readonly previousCamera = new THREE.Vector2();
   private goalMesh: THREE.Mesh | null = null;
   private readonly chevrons: THREE.Mesh[] = [];
-  private escalatorStep: THREE.Group | null = null;
+  private readonly escalatorSteps = new Map<string, THREE.Group>();
+  private readonly boardingPads = new Map<string, THREE.Mesh>();
   private readonly scratchFocus = new THREE.Vector3();
   private hovered: string | null = null;
   private elapsed = 0;
@@ -305,16 +306,17 @@ export class UnfinishedSketchScene implements GameScene {
     }
     this.goalMesh = this.slab(this.field.goalBounds.width, 0.32, 2.2, C.goal);
     this.center(this.goalMesh, { ...this.field.goalBounds, y: this.field.goalBounds.y, height: 0.32 }, 0.6);
-    if (this.mode.kind === 'route' && this.mode.field.legs[0].escalator) {
+    if (this.mode.kind === 'route') for (const route of this.mode.field.legs) if (route.escalator) {
       // The Layer 2 endpoint marker: a chevron column beside the boarding pad.
-      const route = this.mode.field.legs[0];
       const pad = this.slab(route.escalator!.boarding.width, 0.24, 2.4, C.escalatorTop, this.world, 0.9);
+      this.boardingPads.set(route.escalator!.id, pad);
       this.center(pad, { ...route.escalator!.boarding, y: route.escalator!.boarding.y, height: 0.24 }, 0.5);
       for (let i = 0; i < 3; i++) {
         const chevron = this.slab(1.5, 0.34, 0.3, C.escalatorTop, this.world, 0.85, false);
         chevron.position.set(route.escalator!.boarding.x + route.escalator!.boarding.width / 2,
           route.escalator!.boarding.y + 0.9 + i * 0.72, 0.8);
         chevron.rotation.z = Math.PI / 4;
+        chevron.userData.escalatorId = route.escalator!.id;
         chevron.userData.phase = i * 0.9;
         chevron.userData.baseY = chevron.position.y;
         this.chevrons.push(chevron);
@@ -499,15 +501,16 @@ export class UnfinishedSketchScene implements GameScene {
       }
     }
     // The single travelling tread that makes the ride visibly running.
-    this.escalatorStep = new THREE.Group();
-    const tread = this.slab(1.1, 0.34, 2.8, 0xfff0c2, this.escalatorStep);
+    const step = new THREE.Group();
+    this.escalatorSteps.set(escalator.id, step);
+    const tread = this.slab(1.1, 0.34, 2.8, 0xfff0c2, step);
     tread.position.y = 0.2;
-    this.escalatorStep.add(tread);
-    const chevron = this.slab(0.5, 0.34, 2.9, C.escalator, this.escalatorStep, 1, false);
+    step.add(tread);
+    const chevron = this.slab(0.5, 0.34, 2.9, C.escalator, step, 1, false);
     chevron.position.set(0.1, 0.36, 0);
-    this.escalatorStep.add(chevron);
-    this.escalatorStep.position.set(path[0].x, path[0].y, 0.3);
-    this.world.add(this.escalatorStep);
+    step.add(chevron);
+    step.position.set(path[0].x, path[0].y, 0.3);
+    this.world.add(step);
   }
 
   // --- input --------------------------------------------------------------
@@ -617,9 +620,11 @@ export class UnfinishedSketchScene implements GameScene {
     this.previous.set(b.x, b.y);
     this.previousCamera.copy(this.cameraPosition);
     if (input.recallPressed) this.model.enqueue({ type: 'recall' });
-    const stage = this.routeModel?.stage;
+    const boundary = `${this.routeModel?.legId}/${this.routeModel?.stage}`;
+    const recovering = this.model.recoveryRemaining > 0;
     this.model.update(dt, input);
-    if (this.field.id === 'layer-2' && stage !== this.routeModel?.stage) this.clearBoundaryInput();
+    if (this.routeModel && (boundary !== `${this.routeModel.legId}/${this.routeModel.stage}` ||
+      input.restartPressed || recovering !== (this.model.recoveryRemaining > 0))) this.clearBoundaryInput();
     this.elapsed += dt;
     const focus = this.focusTarget();
     // Pause stops the fixed step entirely, so camera progression and the
@@ -708,16 +713,22 @@ export class UnfinishedSketchScene implements GameScene {
   }
 
   private animateEscalator(): void {
-    if (!this.escalatorStep) return;
     const model = this.model as SketchRouteModel;
-    const progress = model.inTransit ? model.transitProgress : 0;
-    // The visible tread loops along the authored path whether or not it is
-    // carrying the player, so the escalator reads as a running mechanism.
-    const loop = (progress + this.elapsed * 0.25) % 1;
-    const at = model.escalatorPosition(loop);
-    const before = model.escalatorPosition(Math.max(0, loop - 0.01));
-    this.escalatorStep.position.set(at.x, at.y, 0.2);
-    this.escalatorStep.rotation.z = Math.atan2(at.y - before.y, at.x - before.x);
+    for (const leg of model.route.legs) {
+      const escalator = leg.escalator;
+      if (!escalator) continue;
+      const step = this.escalatorSteps.get(escalator.id)!;
+      const active = model.legId === leg.id;
+      const loop = active && model.inTransit ? model.transitProgress : (this.elapsed / escalator.duration) % 1;
+      const at = model.escalatorPosition(loop, escalator);
+      // Treads stay level underfoot, including the leftward second incline.
+      step.position.set(at.x, at.y - 0.34, 0.2);
+      const pad = this.boardingPads.get(escalator.id)!;
+      (pad.material as THREE.MeshStandardMaterial).color.setHex(active && model.stage === 'exit' ? C.goal : C.escalatorTop);
+    }
+    for (const chevron of this.chevrons) {
+      chevron.visible = chevron.userData.escalatorId === model.leg.escalator?.id && model.stage === 'exit';
+    }
   }
 
   // --- active-layer framing ----------------------------------------------
@@ -738,6 +749,7 @@ export class UnfinishedSketchScene implements GameScene {
     }
     const model = this.model as SketchRouteModel;
     let centreY: number; let viewHeight: number;
+    let direction: number = model.section.travelDirection ?? 1;
     if (model.inTransit) {
       // Smooth reframe through the escalator; linear under reduced motion.
       const lower = model.route.sections[model.leg.sectionId].focus;
@@ -745,6 +757,8 @@ export class UnfinishedSketchScene implements GameScene {
       const k = this.reducedMotion ? model.transitProgress : smooth(model.transitProgress);
       centreY = lerp(lower.centreY.max, upper.centreY.min, k);
       viewHeight = lerp(lower.viewHeight, upper.viewHeight, k);
+      direction = lerp(model.route.sections[model.leg.sectionId].travelDirection ?? 1,
+        model.route.sections[model.leg.arrivalSectionId!].travelDirection ?? 1, k);
     } else {
       const section = model.section;
       centreY = clamp(cy + 2.4, section.focus.centreY.min, section.focus.centreY.max);
@@ -753,7 +767,7 @@ export class UnfinishedSketchScene implements GameScene {
     const viewWidth = this.viewWidthFor(viewHeight);
     const minX = this.field.bounds.x + viewWidth / 2 - 4;
     const maxX = this.field.bounds.x + this.field.bounds.width - viewWidth / 2 + 4;
-    const x = clamp(cx + camera.lookAhead * (model.section.travelDirection ?? 1), Math.min(minX, maxX), Math.max(minX, maxX));
+    const x = clamp(cx + camera.lookAhead * direction, Math.min(minX, maxX), Math.max(minX, maxX));
     return this.scratchFocus.set(x, centreY, viewHeight);
   }
 
@@ -789,6 +803,7 @@ export class UnfinishedSketchScene implements GameScene {
     this.resources.clear();
     this.rigs.clear(); this.rings.clear(); this.heads.clear(); this.rods.clear();
     this.inkPlatforms.clear();
+    this.escalatorSteps.clear(); this.boardingPads.clear(); this.chevrons.length = 0;
     this.glueBubbles.length = 0;
     this.world.clear();
   }

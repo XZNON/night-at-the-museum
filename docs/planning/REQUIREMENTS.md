@@ -1,5 +1,7 @@
 # The Last Curator — Product and implementation requirements
 
+Checkpoint status, 2026-10-06: S3A + S3B satisfy the implemented Slice 3 gate and the user requested their origin/main checkpoint. S4's Layer 3 climb/glue sections are next and remain unimplemented; the sun/campaign/ending remain S5 scope. This status supersedes prior review-only notes without changing gameplay contracts.
+
 ## 1. Feature overview
 
 A desktop browser adventure in which the player explores a small museum and enters paintings to recover pieces of one damaged masterpiece. Each recovered piece is carried back and placed into the masterpiece, restoring colour and unlocking the next adventure. The committed release contains Royal Supper and Unfinished Sketch; Drowned Garden remains a gated optional third stage. The user replaced unimplemented Sleeping Mountain on 2026-10-06. DreamLayer creates the major illustrated assets, and Three.js turns them into playable scenes. The objective is a complete, enjoyable, visually coherent jam submission rather than a broad unfinished campaign.
@@ -85,7 +87,7 @@ Primary player: a jam voter or hiring reviewer opening the itch.io game with key
 
 - FR28 (S3A difficulty review): save-isolated `study=layer-2` starts at the existing Layer 2 landing, traverses three faster, narrower non-climbable moving outlines that ink solid only while pinned, and two faster independent active axes to fixed left exit ground. Freeze current board transform; FIFO recall resumes its captured phase. Refuse targets belonging to another leg. Falls/axes/R reset Layer 2 entrance with two nails and deterministic motion; grounded exit landing clears temporary state/input and commits the endpoint. Traversal re-entry resets the Layer 2 attempt; exit re-entry stays at its checkpoint. Keep 18-unit framing, authored leftward look-ahead and adjacent rows. All three boards require pins to provide collision support; all three board pins and at least one FIFO recall are required by the two-nail budget and measured skip geometry, including edge overlap/coyote grace. The standard verified solution is A/B/recall-A/C; midair recall/repinning remains valid advanced play. Recall removes support immediately. The user explicitly rejected the earlier optional-nail solid-board default. Tune challenging but repeatable timing; do not add hidden completion flags. No joined entry or second escalator in S3A. Whole S3 remains incomplete until S3B.
 
-- FR29 (S3B planned/unimplemented): compose joined Layers 1/2 and a second scripted ride to safe Layer 3 arrival, preserving hard S3A and isolated S2. Only joined first arrival advances into Layer 2; direct Layer 2 also extends through the second ride. Restore/retry uses the active leg/checkpoint; Restart Adventure uses the selected entry leg. No Layer 3 challenge/campaign content. See [S3B implementation plan](../gameplay/SKETCH_S3B_PLAN.md) for the state table, code changes and verification gate.
+- FR29 (S3B implemented at playable review gate): compose joined Layers 1/2 and a second scripted ride to safe Layer 3 arrival, preserving hard S3A and isolated S2. Only joined first arrival advances into Layer 2; direct Layer 2 also extends through the second ride. Restore/retry uses the active leg/checkpoint; Restart Adventure uses the selected entry leg. No Layer 3 challenge/campaign content. See [S3B implementation plan](../gameplay/SKETCH_S3B_PLAN.md) for the state table, code changes and verification gate.
 
 ### State transitions
 
@@ -271,4 +273,7 @@ preserved original sources/registration/alpha, reused player/background/other
 props and no mechanics/provider-generation change. All 40 focused tests,
 typecheck/build and nine Chromium scenarios pass; actual-camera evidence and
 limits are in docs/validation/art-cohesion and docs/planning/PLAN.md. Preserve the uncommitted
-art result. M4 S1 is accepted; S2 and S3A are implemented at their review gates. S3B onward and the ending remain unimplemented.
+art result. M4 S1 is accepted; S2 and S3A are implemented at their review gates. S3B is implemented at its review gate; S4 onward and the ending remain unimplemented.
+
+
+Current S3B contract result (2026-10-06): joined first arrival advances exactly once into clean Layer 2 traversal; direct and joined second arrival commit safe Layer 3 ground. Retry/re-entry is leg-local, mid-transit re-entry downgrades to that departure, and restart uses entryLegId. Two keyed rides/pads, stage/leg/recovery input boundaries and unchanged hard challenge data are verified in docs/validation/sketch-s3/s3b. Stop for user review before S4.

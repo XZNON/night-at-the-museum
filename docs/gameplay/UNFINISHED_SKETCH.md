@@ -110,9 +110,9 @@ Technical implementation order, current-code integration points, checkpoint/tran
 
 ### S3 — Layer 2 and second escalator
 
-Implementation planning: [SKETCH_S3_PLAN.md](SKETCH_S3_PLAN.md). S3A implemented on 2026-10-06 at its playable review gate; S3B remains planned/unimplemented. The later user difficulty review requires pins and faster, narrower mechanisms; see [current S3A validation](../validation/sketch-s3/hard-v1/README.md). The initial solid-board shortcut is superseded. Deliver in two separately requested work blocks: S3A proves the isolated Layer 2 board/axe route through fixed exit ground; S3B joins Layers 1/2 and adds the second escalator to a safe Layer 3 endpoint. Each stops at a playable review gate. The whole S3 milestone stays incomplete until S3B passes. Object counts, return-path direction and exact placement are explicitly labelled layout defaults; S1/S2 and their current nail/solidity rules remain the preserved baseline.
+Implementation planning: [SKETCH_S3_PLAN.md](SKETCH_S3_PLAN.md). S3A implemented on 2026-10-06 at its playable review gate; S3B is now implemented at its playable review gate; see [fresh S3B evidence](../validation/sketch-s3/s3b/README.md). The later user difficulty review requires pins and faster, narrower mechanisms; see [current S3A validation](../validation/sketch-s3/hard-v1/README.md). The initial solid-board shortcut is superseded. Deliver in two separately requested work blocks: S3A proves the isolated Layer 2 board/axe route through fixed exit ground; S3B joins Layers 1/2 and adds the second escalator to a safe Layer 3 endpoint. Each stops at a playable review gate. The whole S3 milestone stays incomplete until S3B passes. Object counts, return-path direction and exact placement are explicitly labelled layout defaults; S1/S2 and their current nail/solidity rules remain the preserved baseline.
 
-The next-session code-specific plan and preserved difficulty baseline are in [SKETCH_S3B_PLAN](SKETCH_S3B_PLAN.md); the user requested planning and an origin/main checkpoint after hard S3A review. S3B remains unimplemented.
+The next-session code-specific plan and preserved difficulty baseline are in [SKETCH_S3B_PLAN](SKETCH_S3B_PLAN.md); the user requested planning and an origin/main checkpoint after hard S3A review. The later explicit S3B-only request implemented this plan; stop for review before S4.
 
 **Build:** Compact board/axe sequence, Layer 2 checkpoint and escalator to fixed Layer 3 ground. Join Layers 1/2; provide isolated Layer 2 entry.
 
@@ -121,6 +121,8 @@ The next-session code-specific plan and preserved difficulty baseline are in [SK
 **Gate:** Axe contact at relevant swing phases reliably retries Layer 2; nailed boards remain still while axes move; targets and sweep cues are readable; pin/retrieval cannot create a softlock. Real-control Layer 2 and joined Layers 1/2 traversals pass; pause and section recovery remain correct. No additional movement system.
 
 ### S4 — Layer 3 wall climb and glue crossing
+
+Current next slice after the user's 2026-10-06 completed-S3 checkpoint request. Requires a separate implementation request; no S4 work is included in that checkpoint.
 
 **Build:** Layer 3 sections 1/2 using S1's proven wall and fixed-pivot swing mechanics. Add safe introductions and checkpoints at the layer entrance, after the wall climb and after glue. Provide individual section entry for review.
 
@@ -170,3 +172,6 @@ Fully animated/cartoon appearance is selected; exact reference composition, pale
 The user has declared S1 complete. The template below records its original bounded request; S2 is now next on a separate request, with the refined moderate active-layer camera. Do not treat this historical template as a request to redo S1.
 
 Continue The Last Curator in C:\Users\XZNON\DreamLayer. Read AGENTS.md, docs/planning/PLAN.md, docs/planning/DECISIONS.md, docs/planning/REQUIREMENTS.md, docs/gameplay/UNFINISHED_SKETCH.md, docs/gameplay/SKETCH_S1_PLAN.md and docs/planning/NEXT_SESSION.md. Verify and preserve the current checkout, including the completed uncommitted M3 cohesion work. Implement only Sketch slice S1, the save-isolated mechanics playground, and satisfy its playable gate. Two nails, marked targets, button-driven FIFO recall; freeze boards/pendulums, leave axes active, carry nails on moving swing sockets. The player swings directly on the nail with A/D momentum; no rope. Preserve Royal Supper, audio, saves and restoration. Provide the exact review entry, real-control validation, relevant focused/build results and a handoff; stop before S2. No asset generation/credits, commits/pushes, publishing or sub-agents.
+
+
+S3B gate update, 2026-10-06: both development presets now reach the safe Layer 3 arrival after the second ride; joined first arrival continues into Layer 2 without completion. All reviewed S1/S2/hard-S3A mechanics remain. The next action is user review, not S4. See docs/validation/sketch-s3/s3b and current NEXT_SESSION.

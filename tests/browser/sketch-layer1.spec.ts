@@ -170,6 +170,9 @@ test.describe('Sketch slice 2 Layer 1 route', () => {
     await expect.poll(async () => (await observe(page)).sketch!.stage).toBe('arrival');
     await page.keyboard.press('KeyR');
     await expect.poll(async () => (await body(page))!.y).toBeCloseTo(15.2, 1);
+    // y was already 15.2 before R. Wait for the retry tick to consume R and
+    // clear its boundary input before issuing the next movement.
+    await page.waitForTimeout(100);
     await page.keyboard.down('KeyA');
     await page.waitForTimeout(550);
     await page.keyboard.up('KeyA');

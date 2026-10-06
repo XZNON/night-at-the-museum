@@ -8,7 +8,7 @@ import { sketchRoute } from '../src/levels/unfinished-sketch-route';
 import { sketchMovement, sketchTuning, isSketchStudy } from '../src/levels/unfinished-sketch';
 import { bladeContact, sweptBladeContact } from '../src/gameplay/sketch-blade';
 
-const DIR = 'docs/validation/sketch-s3/hard-v1';
+const DIR = 'docs/validation/sketch-s3/s3b';
 mkdirSync(DIR, { recursive: true });
 const record = (name: string, value: unknown) => writeFileSync(`${DIR}/${name}.json`, JSON.stringify(value, null, 2));
 const dt = 1 / 60;
@@ -52,11 +52,11 @@ function throughA(wait = 0, airAt = 16) {
 
 describe('S3A moving-board route', () => {
   it('adds only a validated Layer 2 study, grounded existing landing and a local leg', () => {
-    expect(isSketchStudy('layer-2')).toBe(true); expect(isSketchStudy('layers-1-2')).toBe(false);
+    expect(isSketchStudy('layer-2')).toBe(true); expect(isSketchStudy('layers-1-2')).toBe(true);
     const m = build(); tick(m, 2);
     expect(m.legId).toBe('layer-2'); expect(m.section.travelDirection).toBe(-1);
     expect(m.controller.body).toMatchObject({ x: 64.2, y: 15.2, grounded: true });
-    expect(m.availableNails).toBe(2); expect(m.leg.escalator).toBeNull();
+    expect(m.availableNails).toBe(2); expect(m.leg.escalator?.id).toBe('l2-escalator');
     expect(sketchLayerTwo.solids.filter(s => s.id.startsWith('l1-'))).toEqual(sketchRoute.solids.filter(s => s.id.startsWith('l1-')));
     expect(sketchLayerTwo.mechanisms.filter(s => s.id.startsWith('l1-'))).toEqual(sketchRoute.mechanisms);
   });
@@ -191,10 +191,10 @@ describe('S3A moving-board route', () => {
     expect(m.controller.body.x).toBe(64.2); expect(m.session.queue).toEqual([]); expect(m.routeTime).toBe(0);
     // Unit checkpoint boundary proof, separate from control traversal.
     m.controller.respawn(27.5, 16.7); tick(m); expect(m.stage).toBe('traversal');
-    tick(m, 40); expect(m.stage).toBe('exit'); expect(m.completed).toBe(true); expect(m.availableNails).toBe(2);
+    tick(m, 40); expect(m.stage).toBe('exit'); expect(m.completed).toBe(false); expect(m.availableNails).toBe(2);
     m.controller.respawn(20, 12); tick(m); expect(m.recoveryRemaining).toBeGreaterThan(0); tick(m, 30);
     expect(m.stage).toBe('exit'); expect(m.controller.body.x).toBe(27.5);
-    const n = build(); n.restoreSession(m.session); expect(n.stage).toBe('exit'); expect(n.completed).toBe(true);
+    const n = build(); n.restoreSession(m.session); expect(n.stage).toBe('exit'); expect(n.completed).toBe(false);
     n.restartAdventure(); expect(n.stage).toBe('traversal'); expect(n.controller.body.x).toBe(64.2);
     expect(createRouteSession('layer-2').legId).toBe('layer-2');
     const p = throughA()!; const fresh = build(); fresh.restoreSession(p.session);

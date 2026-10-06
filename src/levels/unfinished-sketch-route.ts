@@ -28,6 +28,7 @@ const guide = (id: string, kind: SketchGuideKind, layer: 1 | 2 | 3,
 
 export const sketchRoute = {
   id: 'layer-1',
+  entryLegId: 'layer-1',
   name: 'Layer 1 · Four pendulum transfers',
   hint: 'Moving outlines cannot hold you. Pin A, land, then pin B and land. Q recalls A for C; from C, Q recalls B for D. Time the faster sweeps before pinning.',
   goal: 'Reach the escalator on the right-hand ground and press E to ride it to Layer 2.',

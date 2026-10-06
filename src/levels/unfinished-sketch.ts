@@ -109,9 +109,10 @@ export interface SketchBay extends SketchPlayfieldData {
 }
 
 /** Development entry values for the save-isolated Sketch scene. */
-export type SketchStudy = 'mechanics' | 'layer-1' | 'layer-2';
+export type SketchRouteId = 'layer-1' | 'layer-2' | 'layers-1-2';
+export type SketchStudy = 'mechanics' | SketchRouteId;
 
-export const sketchStudies: readonly SketchStudy[] = ['mechanics', 'layer-1', 'layer-2'];
+export const sketchStudies: readonly SketchStudy[] = ['mechanics', 'layer-1', 'layer-2', 'layers-1-2'];
 
 export const isSketchStudy = (value: string | null | undefined): value is SketchStudy =>
   !!value && (sketchStudies as readonly string[]).includes(value);
@@ -170,6 +171,7 @@ export type SketchRouteLegId = 'layer-1' | 'layer-2';
 
 export interface SketchRouteLeg {
   id: SketchRouteLegId;
+  nextLegId?: SketchRouteLegId;
   sectionId: string;
   targetIds: string[];
   exitBounds: Rect;
@@ -180,7 +182,8 @@ export interface SketchRouteLeg {
 }
 
 export interface SketchRoute extends SketchPlayfieldData {
-  id: SketchRouteLegId;
+  id: SketchRouteId;
+  entryLegId: SketchRouteLegId;
   layers: SketchLayerRegion[];
   guides: SketchGuide[];
   sections: Record<string, SketchRouteSection>;

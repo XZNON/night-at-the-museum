@@ -11,7 +11,7 @@ import { movementLane, royalSupper } from './levels/royal-supper';
 import { isSketchBayId, isSketchStudy, sketchBayIds, sketchBays, sketchTuning } from './levels/unfinished-sketch';
 import type { SketchBayId, SketchStudy } from './levels/unfinished-sketch';
 import { sketchRoute } from './levels/unfinished-sketch-route';
-import { sketchLayerTwo } from './levels/unfinished-sketch-layer2';
+import { sketchJoinedRoute, sketchLayerTwo } from './levels/unfinished-sketch-layer2';
 import { museum, type MuseumPose } from './levels/museum';
 import { RoyalSupperScene } from './scenes/royal-supper';
 import { UnfinishedSketchScene } from './scenes/unfinished-sketch';
@@ -216,7 +216,7 @@ async function startSketch(restart: boolean, bayId?: SketchBayId): Promise<void>
       // cartoon placeholders; no new asset is generated or loaded here.
       const art = await loadArtSet(['player.idle']);
       const mode: SketchSceneMode = sketchMode !== 'mechanics'
-        ? { kind: 'route', field: sketchMode === 'layer-2' ? sketchLayerTwo : sketchRoute,
+        ? { kind: 'route', field: sketchMode === 'layers-1-2' ? sketchJoinedRoute : sketchMode === 'layer-2' ? sketchLayerTwo : sketchRoute,
           session: restart ? null : routeSessions.get(sketchMode) ?? null }
         : { kind: 'bay', field: sketchBays[sketchBay],
           session: restart ? null : sketchSessions.get(sketchBay) ?? null };
@@ -320,7 +320,10 @@ if (import.meta.env.DEV) {
       sketch: sketch ? {
         mode: sketch.mode.kind, field: sketch.field.id,
         bay: sketch.mode.kind === 'bay' ? sketch.field.id : null,
-        study: sketchMode, leg: sketch.routeModel?.legId ?? null,
+        study: sketchMode, entryLeg: sketch.routeModel?.route.entryLegId ?? null,
+        transitId: sketch.routeModel?.leg.escalator?.id ?? null,
+        escalators: sketch.routeModel?.route.legs.flatMap(l => l.escalator ? [l.escalator.id] : []) ?? [],
+        leg: sketch.routeModel?.legId ?? null,
         stage: sketch.routeModel?.stage ?? null,
         section: sketch.routeModel?.sectionId ?? null,
         transit: sketch.routeModel?.transitProgress ?? null,

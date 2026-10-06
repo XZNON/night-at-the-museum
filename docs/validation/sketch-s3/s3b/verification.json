@@ -1,0 +1,229 @@
+{
+  "date": "2026-10-06",
+  "scope": "Unfinished Sketch S3B playable gate; stop for user review before S4",
+  "checkout": {
+    "branch": "main",
+    "head": "bd9cab7ba476733ce83bcf86ff6e7bbf49513799",
+    "startingWorktree": "clean",
+    "origin": "https://github.com/XZNON/night-at-the-museum.git",
+    "originMainTracking": "bd9cab7ba476733ce83bcf86ff6e7bbf49513799",
+    "liveLsRemote": "bd9cab7ba476733ce83bcf86ff6e7bbf49513799 refs/heads/main",
+    "finalWork": "uncommitted, unpushed"
+  },
+  "environment": {
+    "node": "v22.14.0",
+    "npm": "10.9.2",
+    "dependencyVerification": "npm ls --depth=0; installed versions match package.json exactly; no installs",
+    "dev": "127.0.0.1:5173 existing workspace Vite process2320",
+    "preview": "127.0.0.1:4173 managed by Playwright via npm run preview"
+  },
+  "focused": {
+    "commands": [
+      "npm run typecheck",
+      "npm run test",
+      "npm run build"
+    ],
+    "status": "passed",
+    "testFiles": 12,
+    "tests": 132,
+    "buildJsKB": 709.9,
+    "buildGzipKB": 185.47,
+    "warning": "existing minified chunk >500 kB"
+  },
+  "browserRuns": [
+    {
+      "command": "node node_modules/@playwright/test/cli.js test tests/browser/sketch-layer2.spec.ts --trace off",
+      "tests": 14,
+      "passed": 12,
+      "failed": 2,
+      "duration": "4.0m",
+      "failures": [
+        "direct1280 high A pin/axe A failure",
+        "reduced960 execution context destroyed by agent source edit/hot reload during run"
+      ]
+    },
+    {
+      "command": "node node_modules/@playwright/test/cli.js test tests/browser/sketch-layer2.spec.ts tests/browser/sketch-mechanics.spec.ts tests/browser/sketch-layer1.spec.ts tests/browser/sketch-layer1-motion.spec.ts --trace off",
+      "tests": 39,
+      "passed": 37,
+      "failed": 2,
+      "duration": "6.5m",
+      "failures": [
+        "S2 recovery driver pressed A before pending R consumed; added retry-tick wait",
+        "direct1280 shifted B pin changed axe B clearance; ordinary failed attempt recorded, real R retry permitted"
+      ]
+    },
+    {
+      "command": "node node_modules/@playwright/test/cli.js test tests/browser/sketch-layer2.spec.ts tests/browser/sketch-layer1.spec.ts --trace off --grep \"direct second ride.*1280|exit retry, mid-ride\"",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "duration": "46.7s"
+    },
+    {
+      "command": "npm run typecheck; npm run test; npm run build; node node_modules/@playwright/test/cli.js test tests/browser/sketch-layer2.spec.ts --trace off --grep \"direct second ride.*1280|joined both rides.*1280\"",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "duration": "1.1m",
+      "purpose": "new resource assertions"
+    },
+    {
+      "command": "npm run typecheck; npm run test; npm run build; node node_modules/@playwright/test/cli.js test tests/browser/sketch-layer2.spec.ts --trace off --grep \"joined both rides\"",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "duration": "1.4m",
+      "purpose": "final HUD wording and both-size joined captures"
+    },
+    {
+      "command": "node node_modules/@playwright/test/cli.js test tests/browser/sketch-layer2.spec.ts --trace off --grep \"direct second ride\"",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "duration": "45.1s",
+      "purpose": "final direct HUD/resource/captures at both sizes"
+    }
+  ],
+  "aggregate": {
+    "distinctCases": 39,
+    "latestStatus": "all have fresh passing results across runs, not one clean39-case run",
+    "s3bCases": 14,
+    "s1MechanicsCases": 12,
+    "s2RouteCases": 12,
+    "s2ReducedMotionCases": 1,
+    "browser": "headed Chromium",
+    "viewports": [
+      "1280x720",
+      "960x540"
+    ],
+    "controls": "real keyboard, pointer, menu actions and foreground tab switching; observations read-only; no browser teleport/model mutators"
+  },
+  "diagnostics": [
+    "Pilot queue check ran before consuming simulation tick; corrected poll.",
+    "Pilot R check ran before consuming simulation tick; corrected poll.",
+    "Pause camera check sampled before final render interpolation; waits for paused rendered settling.",
+    "Terminal fall with held A moved after respawn; fixed route recovery/retry input clearing.",
+    "Early high A/shifted B pins and hard blade timing failed; retained authored challenge and actual attempt records.",
+    "Agent edited source during one run, causing navigation/reload and invalidating reduced960 attempt; rerun on stable runtime passed.",
+    "Unused import and direction union type caused intermediate typecheck failures; corrected before final132/build.",
+    "S2 recovery test y predicate was already true before R consumed; explicit tick wait fixes driver race."
+  ],
+  "measurements": {
+    "layer3Support": {
+      "left": 0,
+      "right": 10,
+      "top": 24.4,
+      "thickness": 2,
+      "spawn": {
+        "x": 4.2,
+        "y": 24.4
+      },
+      "fallY": 22,
+      "viewHeight": 18
+    },
+    "highestL2BoardTop": 17.275,
+    "newGroundSeparation": 7.125,
+    "doubleJumpCeiling": 4.479,
+    "omitSupportMargins": {
+      "A": 0.61,
+      "B": 1.2033333333,
+      "C": 0.1833333333
+    },
+    "secondRideSeconds": 4,
+    "firstRideSeconds": 3.2
+  },
+  "limits": [
+    "Human difficulty/pacing approval and measured first-time duration pending",
+    "No representative-machine profiling or performance-target claim",
+    "No cross-browser/fullscreen/itch.io or actual OS/context-loss verification",
+    "No full Royal Supper campaign rerun; shared core/save/campaign unchanged",
+    "No S4/Layer3 challenges, sun/campaign/ending, new assets/dependencies, commits/pushes, publishing or sub-agents"
+  ],
+  "perCaseLatest": [
+    {
+      "file": "observations-affected-S1-pins-active-axe-and-FIFO-retain-real-controls-at-both-review-sizes.json",
+      "title": "affected S1 pins, active axe and FIFO retain real controls at both review sizes",
+      "status": "passed",
+      "ordinaryChallengeRetries": 0
+    },
+    {
+      "file": "observations-affected-S2-route-and-centered-nail-heads-retain-real-traversal-with-new-evidence.json",
+      "title": "affected S2 route and centered nail heads retain real traversal with new evidence",
+      "status": "passed",
+      "ordinaryChallengeRetries": 0
+    },
+    {
+      "file": "observations-S3B-direct-second-ride-and-safe-recovery-1280x720.json",
+      "title": "S3B direct second ride and safe recovery 1280x720",
+      "status": "passed",
+      "ordinaryChallengeRetries": 0
+    },
+    {
+      "file": "observations-S3B-direct-second-ride-and-safe-recovery-960x540.json",
+      "title": "S3B direct second ride and safe recovery 960x540",
+      "status": "passed",
+      "ordinaryChallengeRetries": 0
+    },
+    {
+      "file": "observations-S3B-joined-both-rides-and-safe-recovery-1280x720.json",
+      "title": "S3B joined both rides and safe recovery 1280x720",
+      "status": "passed",
+      "ordinaryChallengeRetries": 0
+    },
+    {
+      "file": "observations-S3B-joined-both-rides-and-safe-recovery-960x540.json",
+      "title": "S3B joined both rides and safe recovery 960x540",
+      "status": "passed",
+      "ordinaryChallengeRetries": 0
+    },
+    {
+      "file": "observations-S3B-moving-outlines-cannot-be-ridden-without-nails-at-either-size.json",
+      "title": "S3B moving outlines cannot be ridden without nails at either size",
+      "status": "passed",
+      "ordinaryChallengeRetries": 0
+    },
+    {
+      "file": "observations-S3B-pause-resize-support-recall-fall-R-and-traversal-re-entry-stay-local.json",
+      "title": "S3B pause/resize, support recall, fall/R and traversal re-entry stay local",
+      "status": "passed",
+      "ordinaryChallengeRetries": 0
+    },
+    {
+      "file": "observations-S3B-production-ignores-entry-denied-storage-works-joined-study-works-without-campaign-storage.json",
+      "title": "S3B production ignores entry, denied storage works, joined study works without campaign storage",
+      "status": "passed",
+      "ordinaryChallengeRetries": 0
+    },
+    {
+      "file": "observations-S3B-real-FIFO-route-captures-and-exit-lifecycle-at-1280x720.json",
+      "title": "S3B real FIFO route, captures and exit lifecycle at 1280x720",
+      "status": "passed",
+      "ordinaryChallengeRetries": 0
+    },
+    {
+      "file": "observations-S3B-real-FIFO-route-captures-and-exit-lifecycle-at-960x540.json",
+      "title": "S3B real FIFO route, captures and exit lifecycle at 960x540",
+      "status": "passed",
+      "ordinaryChallengeRetries": 0
+    },
+    {
+      "file": "observations-S3B-reduced-motion-complete-joined-traversal-1280x720.json",
+      "title": "S3B reduced motion complete joined traversal 1280x720",
+      "status": "passed",
+      "ordinaryChallengeRetries": 0
+    },
+    {
+      "file": "observations-S3B-reduced-motion-complete-joined-traversal-960x540.json",
+      "title": "S3B reduced motion complete joined traversal 960x540",
+      "status": "passed",
+      "ordinaryChallengeRetries": 0
+    },
+    {
+      "file": "observations-S3B-unsafe-blade-crossing-recovers-locally-blur-clears-held-controls-and-phase-time.json",
+      "title": "S3B unsafe blade crossing recovers locally; blur clears held controls and phase time",
+      "status": "passed",
+      "ordinaryChallengeRetries": 0
+    }
+  ]
+}

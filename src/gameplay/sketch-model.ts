@@ -482,7 +482,7 @@ export class SketchModel extends SketchPlayfield {
  * authored escalator to a fixed Layer 2 landing.
  */
 export class SketchRouteModel extends SketchPlayfield {
-  constructor(readonly route: SketchRoute, tuning: SketchTuning) { super(route, tuning); this.legId = route.id; }
+  constructor(readonly route: SketchRoute, tuning: SketchTuning) { super(route, tuning); this.legId = route.entryLegId; }
 
   legId: SketchRouteLegId;
   get leg() { return this.route.legs.find(l => l.id === this.legId)!; }
@@ -498,7 +498,7 @@ export class SketchRouteModel extends SketchPlayfield {
   // --- route session (memory only, never a campaign save) -----------------
   get session(): SketchRouteSession {
     return {
-      entryLegId: this.route.id, legId: this.legId, stage: this.stage, elapsed: this.elapsed, sequence: this.sequence,
+      entryLegId: this.route.entryLegId, legId: this.legId, stage: this.stage, elapsed: this.elapsed, sequence: this.sequence,
       queue: this.queue.map(p => ({ ...p })), frozen: this.frozenPhases,
     };
   }
@@ -511,19 +511,38 @@ export class SketchRouteModel extends SketchPlayfield {
   restoreSession(session: SketchRouteSession): void {
     // S3A traversal re-entry is a deterministic entrance retry. Preserve the
     // reviewed S2 snapshot behavior while rejecting cross-study ownership.
-    if ((session.entryLegId ?? 'layer-1') !== this.route.id ||
-      (session.legId ?? 'layer-1') !== this.legId) { this.restartAdventure(); return; }
+    let reachable = this.route.entryLegId;
+    const visited = new Set<SketchRouteLegId>();
+    while (reachable !== session.legId && !visited.has(reachable)) {
+      visited.add(reachable);
+      const next = this.route.legs.find(l => l.id === reachable)?.nextLegId;
+      if (!next) break;
+      reachable = next;
+    }
+    if (session.entryLegId !== this.route.entryLegId || reachable !== session.legId ||
+      !this.route.legs.some(l => l.id === reachable) ||
+      !['traversal', 'exit', 'transit', 'arrival'].includes(session.stage)) { this.restartAdventure(); return; }
+    this.legId = reachable;
+    this.restartLeg();
     const stage = session.stage === 'transit' ? 'exit' : session.stage;
     if (stage === 'arrival' && this.leg.escalator) { this.arrive(); return; }
     if (stage === 'exit') { this.enterExitCheckpoint(); return; }
     if (this.route.id === 'layer-1') {
-      this.placements = session.queue.filter(p => this.leg.targetIds.includes(p.targetId)).slice(0, this.tuning.nailBudget).map(p => ({ ...p }));
-      this.sequence = session.sequence; this.elapsed = session.elapsed;
-      this.pinnedAt = new Map(Object.entries(session.frozen).filter(([id]) =>
-        this.placements.some(p => this.target(p.targetId)?.mechanismId === id)));
+      const targets = new Set<string>(); const nails = new Set<string>();
+      this.placements = (Array.isArray(session.queue) ? session.queue : []).filter(p => {
+        if (!this.leg.targetIds.includes(p.targetId) || targets.has(p.targetId) || nails.has(p.nailId) ||
+          typeof p.nailId !== 'string' || !p.nailId || !Number.isFinite(p.sequence) ||
+          !Number.isFinite(session.frozen?.[this.target(p.targetId)!.mechanismId])) return false;
+        targets.add(p.targetId); nails.add(p.nailId); return true;
+      }).slice(0, this.tuning.nailBudget).map(p => ({ ...p }));
+      this.sequence = Math.max(0, Number.isFinite(session.sequence) ? session.sequence : 0,
+        ...this.placements.map(p => p.sequence + 1));
+      this.elapsed = Number.isFinite(session.elapsed) && session.elapsed >= 0 ? session.elapsed : 0;
+      this.pinnedAt = new Map(Object.entries(session.frozen ?? {}).filter(([id]) =>
+        this.placements.some(p => this.target(p.targetId)?.mechanismId === id)).filter(([, time]) => Number.isFinite(time)));
       const spawn = this.route.sections[this.leg.sectionId].spawn;
       this.controller.respawn(spawn.x, spawn.y); this.movement.reset();
-    } else this.restartAdventure();
+    }
   }
 
   get sectionId(): string {
@@ -568,7 +587,7 @@ export class SketchRouteModel extends SketchPlayfield {
   }
 
   /** Restart adventure: back to the study entrance with no route completion kept. */
-  restartAdventure(): void { this.legId = this.route.id; this.restartLeg(); }
+  restartAdventure(): void { this.legId = this.route.entryLegId; this.restartLeg(); }
 
   /**
    * The Layer 1-clear checkpoint. Reaching fixed exit ground ends the
@@ -583,6 +602,7 @@ export class SketchRouteModel extends SketchPlayfield {
     this.transitElapsed = 0;
     const spawn = this.leg.exitSpawn;
     this.controller.respawn(spawn.x, spawn.y);
+    if (this.route.id !== 'layer-1') this.elapsed = 0;
     if (!this.leg.escalator) { this.completed = true; this.elapsed = 0; }
   }
 
@@ -594,14 +614,21 @@ export class SketchRouteModel extends SketchPlayfield {
     const b = this.controller.body;
     b.vx = 0; b.vy = 0; b.grounded = false;
     this.controller.contacts.length = 0;
-    this.notify('Boarding the escalator to Layer 2…');
+    this.notify(`Boarding the escalator to Layer ${this.route.sections[this.leg.arrivalSectionId!].layer}…`);
   }
 
   private arrive(): void {
+    if (this.leg.nextLegId) {
+      this.legId = this.leg.nextLegId;
+      this.restartLeg();
+      this.notify(`Layer ${this.section.layer} reached. Three boards, two nails; the axes stay active.`);
+      return;
+    }
     this.stage = 'arrival';
     this.transitElapsed = 0;
     this.movement.reset();
     this.clearCommandQueue();
+    if (this.route.id !== 'layer-1') { this.resetLedger(); this.elapsed = 0; }
     const arrival = this.leg.escalator!.arrival;
     // A respawn clears coyote time, the jump buffer and every held allowance,
     // so no held key or buffered press can launch the player on arrival.
@@ -611,8 +638,8 @@ export class SketchRouteModel extends SketchPlayfield {
   }
 
   /** Position along the authored escalator path, eased by ride progress. */
-  escalatorPosition(progress: number): { x: number; y: number } {
-    const path = this.leg.escalator!.path;
+  escalatorPosition(progress: number, escalator = this.leg.escalator!): { x: number; y: number } {
+    const path = escalator.path;
     const clamped = clamp(progress, 0, 1);
     // Equal per-segment time keeps the drawn stairs moving with the rider.
     const scaled = clamped * (path.length - 1);
@@ -634,7 +661,6 @@ export class SketchRouteModel extends SketchPlayfield {
       this.controller.contacts.length = 0;
       if (this.transitElapsed >= this.leg.escalator!.duration) {
         this.arrive();
-        this.notify('Layer 2 landing reached. Slice 2 ends here.');
       }
       return false;
     }
@@ -654,12 +680,12 @@ export class SketchRouteModel extends SketchPlayfield {
     if (this.stage === 'traversal' && b.grounded &&
       Math.abs(b.y - this.leg.exitBounds.y) < 0.00001 && overlaps(b, this.leg.exitBounds)) {
       this.enterExitCheckpoint();
-      this.notify(this.leg.escalator ? 'Layer 1 clear. Safe checkpoint reached — walk onto the escalator and press E.' :
+      this.notify(this.leg.escalator ? `Layer ${this.section.layer} clear. Safe checkpoint reached — walk onto the escalator and press E.` :
         'Layer 2 clear. S3A endpoint reached on fixed ground.');
     }
     if (!this.completed && this.stage === 'arrival' && overlaps(this.controller.body, this.route.goalBounds)) {
       this.completed = true;
-      this.notify('Slice 2 endpoint. Layer 2 content arrives in the next slice.');
+      this.notify(this.section.layer === 3 ? 'S3 endpoint. Safe Layer 3 ground reached.' : 'Slice 2 endpoint. Layer 2 content arrives in the next slice.');
     }
   }
 
@@ -679,11 +705,12 @@ export class SketchRouteModel extends SketchPlayfield {
     const spawn = this.section.spawn;
     this.controller.respawn(spawn.x, spawn.y);
     this.movement.reset();
-    this.notify(this.stage === 'arrival' ? 'Back on the Layer 2 landing.' : 'Back at the safe exit checkpoint.');
+    if (this.route.id !== 'layer-1') { this.resetLedger(); this.elapsed = 0; }
+    this.notify(this.stage === 'arrival' ? `Back on the Layer ${this.section.layer} landing.` : 'Back at the safe exit checkpoint.');
   }
 
   protected override onRecovered(): void {
-    if (this.stage === 'arrival') { this.arrive(); this.notify('Back on the Layer 2 landing.'); return; }
+    if (this.stage === 'arrival') { this.arrive(); this.notify(`Back on the Layer ${this.section.layer} landing.`); return; }
     if (this.stage === 'exit') { this.enterExitCheckpoint(); return; }
     this.restartLeg();
   }
@@ -695,16 +722,21 @@ export class SketchRouteModel extends SketchPlayfield {
   }
 
   hud(): SketchHud {
-    const hud = this.baseHud(this.route.id, this.route.name, this.route.hint, this.route.goal);
-    const checkpoint = this.stage === 'arrival' ? 'layer-2 landing'
+    const hint = this.stage === 'arrival' && this.section.layer === 3
+      ? 'Safe ground reached. Explore the landing or press R to return here.'
+      : this.stage === 'transit' ? `Riding to Layer ${this.route.sections[this.leg.arrivalSectionId!].layer}.`
+      : this.legId === 'layer-2' ? 'Pin A, then B. From B, Q recalls A for C. Time both active axes.' : this.route.hint;
+    const hud = this.baseHud(this.route.id, this.route.id === 'layer-1' ? this.route.name : this.section.name, hint, this.route.goal);
+    const checkpoint = this.stage === 'arrival' ? this.section.name.toLowerCase()
       : this.stage === 'traversal' ? `${this.legId} start` : `${this.legId} clear`;
     return {
       ...hud,
-      motion: this.route.id === 'layer-2' ? (this.controller.body.grounded ? 'Grounded' : 'In the air') : hud.motion,
+      motion: this.route.id === 'layer-1' ? hud.motion : this.inTransit ? 'Riding escalator'
+        : this.controller.body.grounded ? 'Grounded' : 'In the air',
       layer: `${this.section.layer} / 3 · ${this.section.name}`,
       checkpoint: `Checkpoint / ${checkpoint}`,
       prompt: this.boardingReady() ? 'Press E to board the escalator' : '',
-      endpoint: this.completed ? (this.leg.escalator ? 'Slice 2 endpoint reached · Layer 2 content follows in S3' :
+      endpoint: this.completed ? (this.section.layer === 3 ? 'S3 endpoint reached · Safe Layer 3 ground · Stop for review' : this.leg.escalator ? 'Slice 2 endpoint reached · Layer 2 content follows in S3' :
         'S3A endpoint reached · Layer 2 clear') : '',
     };
   }

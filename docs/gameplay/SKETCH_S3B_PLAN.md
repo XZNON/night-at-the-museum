@@ -1,6 +1,8 @@
 # Sketch S3B — Joined layers and second escalator
 
-Planning date: 2026-10-06. **Planning only; S3B remains unimplemented.** The user requested this next-session plan and a commit/push checkpoint after the hard S3A revision. This document specializes [SKETCH_S3_PLAN](SKETCH_S3_PLAN.md) against the actual S3A code; it does not authorize starting implementation in this planning session. Preserve [hard-v1](../validation/sketch-s3/hard-v1/README.md), accepted S1 and the latest four-pendulum S2.
+Checkpoint update, 2026-10-06: the user confirmed Slice 3 is made and explicitly requested committing/pushing completed S3A/S3B to origin/main. Next is S4 on a separate implementation request. Earlier review-only/authorization notes below record the implementation session's boundary.
+
+Planning date: 2026-10-06. **Implemented 2026-10-06 under the later explicit S3B-only request; stop at its playable gate for user review.** [Fresh evidence](../validation/sketch-s3/s3b/README.md) records actual results; the original planning context below is historical. The user requested this next-session plan and a commit/push checkpoint after the hard S3A revision. This document specializes [SKETCH_S3_PLAN](SKETCH_S3_PLAN.md) against the actual S3A code; it does not authorize starting implementation in this planning session. Preserve [hard-v1](../validation/sketch-s3/hard-v1/README.md), accepted S1 and the latest four-pendulum S2.
 
 ## 1. Feature overview
 
@@ -24,7 +26,7 @@ Desktop keyboard/mouse player; existing A/D or arrows, Space, click, Q, E, R, Es
 6. Second ride reaches generous fixed Layer 3 ground, clears input/temporary state and shows one S3 endpoint.
 7. Isolated `study=layer-2` starts directly at step3 and reaches the same final endpoint. Existing `study=layer-1` still ends at its original Layer 2 landing; mechanics bays remain unchanged.
 
-Both new/extended presets stay development-only. The proposed joined URL is currently unavailable; production ignores shortcuts. Unknown study values keep the mechanics fallback.
+Both new/extended presets stay development-only. The joined URL is now implemented in development; production ignores shortcuts. Unknown study values keep the mechanics fallback.
 
 ## 4. Functional requirements
 
@@ -173,16 +175,16 @@ Local development only: implement typed state/route composition, then second rid
 
 ## 13. Success metrics and acceptance criteria
 
-- [ ] Real joined traversal completes both reviewed challenges and both rides at 1280×720 and 960×540.
-- [ ] Direct Layer 2 completes unchanged hard challenge and second ride at both sizes.
-- [ ] Joined first arrival advances to leg 2 once, keeps completed=false and clears temporary/input state.
-- [ ] Fail/R/re-entry on Layer 2 never replays Layer 1; ride retry restores that departure; terminal retry restores Layer 3 ground.
-- [ ] Restart Adventure resets the selected study's entry, and session maps do not contaminate each other.
-- [ ] Pause/actual blur/resize/transit command spam/reduced motion preserve phase, camera and ownership.
-- [ ] Required nails, fast periods/narrow widths, no-nail failure and skip margins remain verified.
-- [ ] S1 and isolated S2 retain their reviewed behavior and endpoints; one canvas/resources survive repeated entries.
-- [ ] Typecheck, focused tests, build, appropriate browser regressions and production/save isolation pass.
-- [ ] Fresh captures show both boarding pads, first handoff, active Layer 2 decisions, second mid-ride and final arrival with adjacent-row context.
+- [x] Real joined traversal completes both reviewed challenges and both rides at 1280×720 and 960×540.
+- [x] Direct Layer 2 completes unchanged hard challenge and second ride at both sizes.
+- [x] Joined first arrival advances to leg 2 once, keeps completed=false and clears temporary/input state.
+- [x] Fail/R/re-entry on Layer 2 never replays Layer 1; ride retry restores that departure; terminal retry restores Layer 3 ground.
+- [x] Restart Adventure resets the selected study's entry, and session maps do not contaminate each other.
+- [x] Pause/actual blur/resize/transit command spam/reduced motion preserve phase, camera and ownership.
+- [x] Required nails, fast periods/narrow widths, no-nail failure and skip margins remain verified.
+- [x] S1 and isolated S2 retain their reviewed behavior and endpoints; one canvas/resources survive repeated entries.
+- [x] Typecheck, focused tests, build, appropriate browser regressions and production/save isolation pass.
+- [x] Fresh captures show both boarding pads, first handoff, active Layer 2 decisions, second mid-ride and final arrival with adjacent-row context.
 
 Whole S3 becomes implemented only when this joined/second-ride gate passes; stop for human review before S4. Do not equate automated completion with difficulty approval or performance profiling.
 
@@ -201,4 +203,4 @@ Assumptions: second-ride coordinates/duration and generous landing above are tun
 5. Render both pads and keyed treads/rigs; animate their own paths. Update camera bands/leg+stage boundary clearing, reduced motion and UI/diagnostics.
 6. Adapt S3A tests to assert unchanged hard challenge through its Layer 2 exit before testing the added ride; redirect fresh evidence to s3b. Add joined full route and lifecycle cases. Run actual keys/clicks, not teleport/mutators, at both sizes; drive actual blur and reduced-motion full traversal. Run S1/S2 regressions and production/save isolation. Broaden campaign only if shared core/input/save changes or failures warrant it.
 7. Run `npm run typecheck`, `npm run test`, `npm run build`, `npm run dev` and `npm run preview` as appropriate. Use `node node_modules/@playwright/test/cli.js test <actual specs> --trace off`. Record actual commands/pass counts/failures/URLs/captures/measurements and limits; update PLAN/NEXT_SESSION and acceptance status honestly.
-8. Finish at fixed Layer 3 safe ground, deliver review URL/evidence and stop. Do not start S4 or campaign/art work. Current next-session prompt: [NEXT_SESSION](../planning/NEXT_SESSION.md#paste-ready-s3b-implementation-prompt).
+8. Finish at fixed Layer 3 safe ground, deliver review URL/evidence and stop. Do not start S4 or campaign/art work. Current review handoff: [NEXT_SESSION](../planning/NEXT_SESSION.md#paste-ready-s3b-implementation-prompt).

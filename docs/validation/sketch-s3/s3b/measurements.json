@@ -1,0 +1,808 @@
+{
+  "route": {
+    "layer3Support": {
+      "left": 0,
+      "right": 10,
+      "top": 24.4,
+      "thickness": 2,
+      "spawn": {
+        "x": 4.2,
+        "y": 24.4
+      },
+      "fallY": 22,
+      "viewHeight": 18
+    },
+    "highestL2BoardTop": 17.275,
+    "newGroundSeparation": 7.125,
+    "doubleJumpCeiling": 4.479,
+    "omitSupportMargins": {
+      "A": 0.61,
+      "B": 1.2033333333,
+      "C": 0.1833333333
+    },
+    "secondRideSeconds": 4,
+    "firstRideSeconds": 3.2
+  },
+  "probes": {
+    "hazard-contact-probes.json": [
+      {
+        "phase": 0,
+        "approach": "stationary"
+      },
+      {
+        "phase": 0,
+        "approach": "side"
+      },
+      {
+        "phase": 0,
+        "approach": "underside"
+      },
+      {
+        "phase": 0,
+        "approach": "jump"
+      },
+      {
+        "phase": 0.125,
+        "approach": "stationary"
+      },
+      {
+        "phase": 0.125,
+        "approach": "side"
+      },
+      {
+        "phase": 0.125,
+        "approach": "underside"
+      },
+      {
+        "phase": 0.125,
+        "approach": "jump"
+      },
+      {
+        "phase": 0.25,
+        "approach": "stationary"
+      },
+      {
+        "phase": 0.25,
+        "approach": "side"
+      },
+      {
+        "phase": 0.25,
+        "approach": "underside"
+      },
+      {
+        "phase": 0.25,
+        "approach": "jump"
+      },
+      {
+        "phase": 0.375,
+        "approach": "stationary"
+      },
+      {
+        "phase": 0.375,
+        "approach": "side"
+      },
+      {
+        "phase": 0.375,
+        "approach": "underside"
+      },
+      {
+        "phase": 0.375,
+        "approach": "jump"
+      },
+      {
+        "phase": 0.5,
+        "approach": "stationary"
+      },
+      {
+        "phase": 0.5,
+        "approach": "side"
+      },
+      {
+        "phase": 0.5,
+        "approach": "underside"
+      },
+      {
+        "phase": 0.5,
+        "approach": "jump"
+      },
+      {
+        "phase": 0.75,
+        "approach": "stationary"
+      },
+      {
+        "phase": 0.75,
+        "approach": "side"
+      },
+      {
+        "phase": 0.75,
+        "approach": "underside"
+      },
+      {
+        "phase": 0.75,
+        "approach": "jump"
+      }
+    ],
+    "jump-envelope.json": {
+      "jumps": [
+        {
+          "axis": -1,
+          "airAt": null,
+          "high": 2.2430555555555567,
+          "distance": 5.779999999999998,
+          "duration": 0.85
+        },
+        {
+          "axis": -1,
+          "airAt": 10,
+          "high": 3.6000111111111117,
+          "distance": 7.706666666666664,
+          "duration": 1.1333333333333333
+        },
+        {
+          "axis": -1,
+          "airAt": 16,
+          "high": 4.139177777777779,
+          "distance": 8.613333333333332,
+          "duration": 1.2666666666666666
+        },
+        {
+          "axis": -1,
+          "airAt": 25,
+          "high": 4.479177777777779,
+          "distance": 9.859999999999998,
+          "duration": 1.45
+        },
+        {
+          "axis": -1,
+          "airAt": 32,
+          "high": 4.336388888888891,
+          "distance": 10.539999999999997,
+          "duration": 1.55
+        },
+        {
+          "axis": -1,
+          "airAt": 38,
+          "high": 3.937222222222224,
+          "distance": 11.106666666666664,
+          "duration": 1.6333333333333333
+        },
+        {
+          "axis": -1,
+          "airAt": 44,
+          "high": 3.288055555555558,
+          "distance": 11.446666666666664,
+          "duration": 1.6833333333333333
+        },
+        {
+          "axis": -1,
+          "airAt": 48,
+          "high": 2.7163888888888907,
+          "distance": 11.559999999999997,
+          "duration": 1.7
+        },
+        {
+          "axis": 1,
+          "airAt": null,
+          "high": 2.2430555555555567,
+          "distance": 5.779999999999998,
+          "duration": 0.85
+        },
+        {
+          "axis": 1,
+          "airAt": 10,
+          "high": 3.6000111111111117,
+          "distance": 7.706666666666664,
+          "duration": 1.1333333333333333
+        },
+        {
+          "axis": 1,
+          "airAt": 16,
+          "high": 4.139177777777779,
+          "distance": 8.613333333333332,
+          "duration": 1.2666666666666666
+        },
+        {
+          "axis": 1,
+          "airAt": 25,
+          "high": 4.479177777777779,
+          "distance": 9.859999999999998,
+          "duration": 1.45
+        },
+        {
+          "axis": 1,
+          "airAt": 32,
+          "high": 4.336388888888891,
+          "distance": 10.539999999999997,
+          "duration": 1.55
+        },
+        {
+          "axis": 1,
+          "airAt": 38,
+          "high": 3.937222222222224,
+          "distance": 11.106666666666664,
+          "duration": 1.6333333333333333
+        },
+        {
+          "axis": 1,
+          "airAt": 44,
+          "high": 3.288055555555558,
+          "distance": 11.446666666666664,
+          "duration": 1.6833333333333333
+        },
+        {
+          "axis": 1,
+          "airAt": 48,
+          "high": 2.7163888888888907,
+          "distance": 11.559999999999997,
+          "duration": 1.7
+        }
+      ]
+    },
+    "mandatory-pin-probes.json": {
+      "unpinnedMovingLandings": 0,
+      "skips": [
+        {
+          "skip": "A",
+          "gap": 13.5,
+          "drop": 0,
+          "generousReach": 12.889999999999997
+        },
+        {
+          "skip": "B",
+          "gap": 15,
+          "drop": 1.4000000000000004,
+          "generousReach": 13.796666666666663
+        },
+        {
+          "skip": "C",
+          "gap": 13.299999999999997,
+          "drop": 0.37499999999999645,
+          "generousReach": 13.116666666666664
+        }
+      ]
+    },
+    "safe-standing-clearance.json": {
+      "l2-board-a": 1.25,
+      "l2-board-b": 0.24999999999999994,
+      "l2-board-c": 0.6499999999999972
+    },
+    "timing-windows.json": {
+      "aSchedules": [
+        10,
+        13,
+        16,
+        19,
+        22,
+        25,
+        28
+      ],
+      "windowsB": [
+        76,
+        78,
+        80,
+        82,
+        84,
+        86,
+        88,
+        90,
+        92,
+        94
+      ],
+      "windowsC": [
+        88,
+        86,
+        84,
+        82,
+        80,
+        78,
+        76,
+        74,
+        72,
+        70
+      ],
+      "launchPhases": [
+        {
+          "delay": 76,
+          "cDelay": 88,
+          "launchB": 1.4499658401183497,
+          "launchC": 1.1043174176254524,
+          "boards": [
+            {
+              "id": "l2-board-a",
+              "kind": "board",
+              "x": 56,
+              "y": 16.5370125742738,
+              "angle": 0,
+              "vx": 0,
+              "vy": 1.8139972446421382,
+              "width": 3.4,
+              "height": 0.55,
+              "pinned": false,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-b",
+              "kind": "board",
+              "x": 46.67129714010046,
+              "y": 16.4,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 3,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-c",
+              "kind": "board",
+              "x": 37.201029289079244,
+              "y": 16.364197794043225,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 2.6,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            }
+          ]
+        },
+        {
+          "delay": 78,
+          "cDelay": 86,
+          "launchB": 1.530519497902703,
+          "launchC": 1.1043174176254524,
+          "boards": [
+            {
+              "id": "l2-board-a",
+              "kind": "board",
+              "x": 56,
+              "y": 16.44411428382687,
+              "angle": 0,
+              "vx": 0,
+              "vy": 1.896553312156044,
+              "width": 3.4,
+              "height": 0.55,
+              "pinned": false,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-b",
+              "kind": "board",
+              "x": 46.67129714010046,
+              "y": 16.4,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 3,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-c",
+              "kind": "board",
+              "x": 37.3287644606219,
+              "y": 16.433871523975583,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 2.6,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            }
+          ]
+        },
+        {
+          "delay": 80,
+          "cDelay": 84,
+          "launchB": 1.6110731556870563,
+          "launchC": 1.1043174176254524,
+          "boards": [
+            {
+              "id": "l2-board-a",
+              "kind": "board",
+              "x": 56,
+              "y": 16.38023613325018,
+              "angle": 0,
+              "vx": 0,
+              "vy": 1.9336271533268246,
+              "width": 3.4,
+              "height": 0.55,
+              "pinned": false,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-b",
+              "kind": "board",
+              "x": 46.67129714010046,
+              "y": 16.4,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 3,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-c",
+              "kind": "board",
+              "x": 37.44999999999995,
+              "y": 16.499999999999975,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 2.6,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            }
+          ]
+        },
+        {
+          "delay": 82,
+          "cDelay": 82,
+          "launchB": 1.6916268134714096,
+          "launchC": 1.1043174176254524,
+          "boards": [
+            {
+              "id": "l2-board-a",
+              "kind": "board",
+              "x": 56,
+              "y": 16.315366807060723,
+              "angle": 0,
+              "vx": 0,
+              "vy": 1.9559849243047722,
+              "width": 3.4,
+              "height": 0.55,
+              "pinned": false,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-b",
+              "kind": "board",
+              "x": 46.67129714010046,
+              "y": 16.4,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 3,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-c",
+              "kind": "board",
+              "x": 37.56289810001714,
+              "y": 16.56158078182753,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 2.6,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            }
+          ]
+        },
+        {
+          "delay": 84,
+          "cDelay": 80,
+          "launchB": 1.7721804712557638,
+          "launchC": 1.1043174176254524,
+          "boards": [
+            {
+              "id": "l2-board-a",
+              "kind": "board",
+              "x": 56,
+              "y": 16.249999999999982,
+              "angle": 0,
+              "vx": 0,
+              "vy": 1.9634564689528133,
+              "width": 3.4,
+              "height": 0.55,
+              "pinned": false,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-b",
+              "kind": "board",
+              "x": 46.67129714010046,
+              "y": 16.4,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 3,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-c",
+              "kind": "board",
+              "x": 37.66574734055918,
+              "y": 16.617680367577737,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 2.6,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            }
+          ]
+        },
+        {
+          "delay": 86,
+          "cDelay": 78,
+          "launchB": 1.8527341290401171,
+          "launchC": 1.1043174176254524,
+          "boards": [
+            {
+              "id": "l2-board-a",
+              "kind": "board",
+              "x": 56,
+              "y": 16.152105355834944,
+              "angle": 0,
+              "vx": 0,
+              "vy": 1.9466588266745077,
+              "width": 3.4,
+              "height": 0.55,
+              "pinned": false,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-b",
+              "kind": "board",
+              "x": 46.67129714010046,
+              "y": 16.4,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 3,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-c",
+              "kind": "board",
+              "x": 37.7569886319782,
+              "y": 16.667448344715385,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 2.6,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            }
+          ]
+        },
+        {
+          "delay": 88,
+          "cDelay": 76,
+          "launchB": 1.9332877868244704,
+          "launchC": 1.1043174176254524,
+          "boards": [
+            {
+              "id": "l2-board-a",
+              "kind": "board",
+              "x": 56,
+              "y": 16.087670289546406,
+              "angle": 0,
+              "vx": 0,
+              "vy": 1.9169147107925255,
+              "width": 3.4,
+              "height": 0.55,
+              "pinned": false,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-b",
+              "kind": "board",
+              "x": 46.67129714010046,
+              "y": 16.4,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 3,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-c",
+              "kind": "board",
+              "x": 37.83523884930255,
+              "y": 16.710130281437753,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 2.6,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            }
+          ]
+        },
+        {
+          "delay": 90,
+          "cDelay": 74,
+          "launchB": 2.0138414446088237,
+          "launchC": 1.1043174176254524,
+          "boards": [
+            {
+              "id": "l2-board-a",
+              "kind": "board",
+              "x": 56,
+              "y": 16.02447065037178,
+              "angle": 0,
+              "vx": 0,
+              "vy": 1.8725817164967395,
+              "width": 3.4,
+              "height": 0.55,
+              "pinned": false,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-b",
+              "kind": "board",
+              "x": 46.67129714010046,
+              "y": 16.4,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 3,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-c",
+              "kind": "board",
+              "x": 37.89931179900145,
+              "y": 16.745079163091702,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 2.6,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            }
+          ]
+        },
+        {
+          "delay": 92,
+          "cDelay": 72,
+          "launchB": 2.094395102393177,
+          "launchC": 1.1043174176254524,
+          "boards": [
+            {
+              "id": "l2-board-a",
+              "kind": "board",
+              "x": 56,
+              "y": 15.962987425726165,
+              "angle": 0,
+              "vx": 0,
+              "vy": 1.8139972446425645,
+              "width": 3.4,
+              "height": 0.55,
+              "pinned": false,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-b",
+              "kind": "board",
+              "x": 46.67129714010046,
+              "y": 16.4,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 3,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-c",
+              "kind": "board",
+              "x": 37.94823620046985,
+              "y": 16.771765200256286,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 2.6,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            }
+          ]
+        },
+        {
+          "delay": 94,
+          "cDelay": 70,
+          "launchB": 2.1749487601775304,
+          "launchC": 1.1043174176254524,
+          "boards": [
+            {
+              "id": "l2-board-a",
+              "kind": "board",
+              "x": 56,
+              "y": 15.90368854007371,
+              "angle": 0,
+              "vx": 0,
+              "vy": 1.7416071584349169,
+              "width": 3.4,
+              "height": 0.55,
+              "pinned": false,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-b",
+              "kind": "board",
+              "x": 46.67129714010046,
+              "y": 16.4,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 3,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            },
+            {
+              "id": "l2-board-c",
+              "kind": "board",
+              "x": 37.98127040965228,
+              "y": 16.789783859810335,
+              "angle": 0,
+              "vx": 0,
+              "vy": 0,
+              "width": 2.6,
+              "height": 0.55,
+              "pinned": true,
+              "hazard": false
+            }
+          ]
+        }
+      ],
+      "cWindows": [
+        {
+          "delay": 80,
+          "phase": 1.1043174176254524
+        },
+        {
+          "delay": 82,
+          "phase": 1.1995171950069619
+        },
+        {
+          "delay": 84,
+          "phase": 1.2947169723884713
+        },
+        {
+          "delay": 86,
+          "phase": 1.3899167497699807
+        },
+        {
+          "delay": 88,
+          "phase": 1.4851165271514866
+        },
+        {
+          "delay": 90,
+          "phase": 1.580316304532996
+        },
+        {
+          "delay": 92,
+          "phase": 1.6755160819145054
+        }
+      ],
+      "sampleStepFrames": 2
+    }
+  }
+}

@@ -1,0 +1,98 @@
+[
+  {
+    "phase": 0,
+    "approach": "stationary"
+  },
+  {
+    "phase": 0,
+    "approach": "side"
+  },
+  {
+    "phase": 0,
+    "approach": "underside"
+  },
+  {
+    "phase": 0,
+    "approach": "jump"
+  },
+  {
+    "phase": 0.125,
+    "approach": "stationary"
+  },
+  {
+    "phase": 0.125,
+    "approach": "side"
+  },
+  {
+    "phase": 0.125,
+    "approach": "underside"
+  },
+  {
+    "phase": 0.125,
+    "approach": "jump"
+  },
+  {
+    "phase": 0.25,
+    "approach": "stationary"
+  },
+  {
+    "phase": 0.25,
+    "approach": "side"
+  },
+  {
+    "phase": 0.25,
+    "approach": "underside"
+  },
+  {
+    "phase": 0.25,
+    "approach": "jump"
+  },
+  {
+    "phase": 0.375,
+    "approach": "stationary"
+  },
+  {
+    "phase": 0.375,
+    "approach": "side"
+  },
+  {
+    "phase": 0.375,
+    "approach": "underside"
+  },
+  {
+    "phase": 0.375,
+    "approach": "jump"
+  },
+  {
+    "phase": 0.5,
+    "approach": "stationary"
+  },
+  {
+    "phase": 0.5,
+    "approach": "side"
+  },
+  {
+    "phase": 0.5,
+    "approach": "underside"
+  },
+  {
+    "phase": 0.5,
+    "approach": "jump"
+  },
+  {
+    "phase": 0.75,
+    "approach": "stationary"
+  },
+  {
+    "phase": 0.75,
+    "approach": "side"
+  },
+  {
+    "phase": 0.75,
+    "approach": "underside"
+  },
+  {
+    "phase": 0.75,
+    "approach": "jump"
+  }
+]
