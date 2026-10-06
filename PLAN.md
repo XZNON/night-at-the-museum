@@ -8,6 +8,8 @@ The deadline is not a reason to include unfinished systems. Verify the live jam 
 
 ## Current status
 
+Latest decision (2026-10-06): the user accepted **stylised, leaning animated**: simplified readable player/props with light hand-painted texture; softer, richer painterly backgrounds. Documented a scoped visual-cohesion follow-up in ART_DIRECTION.md, starting with a small bread/player/prop pilot against completed M3 at `1750ed3`. Preserve the verified milestone and approved gameplay; do not regenerate its whole asset set. The new art-only follow-up is pending. M4 remains the next feature milestone afterward.
+
 Latest steering (2026-10-06): after persistent DreamLayer 503 failures the user explicitly directed generating and using the remaining props here. Three ImageGen atlases now supply 14 prepared/integrated props under the already-approved painterly references, with separate provider provenance. Camera/full-loop verification has passed. Watcher LOOK rays and the high-ascent backdrop are verified; M3 is complete. Sleeping Mountain/ending follow in M4. The separate cartoon bread comparison remains preserved outside runtime; it does not replace approved assets or reopen reference approval.
 
 - [x] Game concept, technical stack and build sequence documented.
@@ -24,6 +26,7 @@ Latest steering (2026-10-06): after persistent DreamLayer 503 failures the user 
 - [x] Small player/background/bread art slice integrated and camera-validated; pear/restoration art aligned.
 - [x] Original Howler audio integrated with saved volume, pause and lifecycle handling.
 - [x] Remaining required production props and complete M3 art verification.
+- [ ] Scoped stylised/animation-inspired visual-cohesion follow-up (separate from completed M3).
 
 M0–M3 are implemented, including the expanded museum → supper → pear restoration loop, approved DreamLayer slice/restoration art, 14 user-authorized ImageGen props and original Howler audio. Node v22.14.0/npm v10.9.2 were re-verified on 2026-10-06. Main/origin were synchronized at baseline 605bee4 before the completed-M3 snapshot. Known delivered DreamLayer costs remain 7 reference + 3 production credits; latest successful balance was 90, with failed-job costs unknown. Provider provenance remains separate. No mountain or ending exists yet. Representative-machine profiling and measured human duration remain release follow-ups. See the latest log and NEXT_SESSION.md.
 
@@ -38,6 +41,7 @@ The user accepted the revised butter, hiding and dessert layout and final triden
 - REQUIREMENTS.md: behavior and shared contracts.
 - ROYAL_SUPPER.md: first-adventure mechanics and verification specification.
 - ASSETS.md: DreamLayer asset pipeline.
+- ART_DIRECTION.md: accepted stylised direction, scoped M3 follow-up and its continuation prompt.
 - OPENING.md: deferred nighttime character-emergence sequence for M6.
 - tech stack.md: technology and performance rationale.
 - masterpiece.md: composition and restoration story.
@@ -134,7 +138,9 @@ The user accepted the revised butter, hiding and dessert layout and final triden
 
 M3 final prop-camera and production-loop verification has passed. Preserve approved Royal Supper gameplay, existing DreamLayer art, distinct ImageGen provenance and original audio. Watchers now cast golden rays only during LOOK; the distant backdrop follows upward camera movement to fill the dessert ascent.
 
-Next is M4: build Sleeping Mountain with placeholder wind/bridge traversal, award `sun-disc` through shared progression, connect restoration and implement the two-stage ending. Validate the complete new-game-to-ending loop before producing required mountain art. The ImageGen exception covers M3 only; recheck DreamLayer access, credits and costs before any mountain generation. No final museum, optional garden, broad catalogue, publication/submission/email or sub-agents.
+Immediate follow-up: use ART_DIRECTION.md for the accepted stylised, animation-inspired visual-cohesion pass. Inspect the completed prop set, pilot a small bread/player/nearby-prop improvement in both camera sizes, then selectively address mismatches and verify the complete loop. Preserve original sources and gameplay; no broad regeneration. This does not undo completed M3.
+
+After that, M4 builds Sleeping Mountain with placeholder wind/bridge traversal, awards `sun-disc` through shared progression, connects restoration and implements the two-stage ending. Validate the new-game-to-ending loop before mountain art. The ImageGen exception covers M3 props only; recheck DreamLayer access/credits/costs before mountain generation. No final museum, optional garden, catalogue, publication/submission/email or sub-agents.
 
 See [NEXT_SESSION.md](NEXT_SESSION.md) for evidence, remaining release checks and continuation commands. A local preview remains on port 5175; tests use 5173/4173.
 
@@ -362,3 +368,15 @@ Three OpenAI ImageGen reference-guided atlases now supply 14 required props. Sou
 **Audit:** All 41 image/source/runtime hashes and 12 original-audio hashes match. Private source/public/build scans found no current local credential-value matches. Public assets total 7,190,042 bytes; dist 7,836,184 bytes. JS is 638.86 kB / 165.00 kB gzip; the existing nonfatal >500 kB warning remains for later loading/performance work. M3 camera/art/audio/full-loop gate is complete. Commit/push is authorized; verify the completed snapshot using git log/status.
 
 **Next:** M4 Sleeping Mountain and the two-stage ending, beginning with placeholders. Human pacing, representative-machine profiling, cross-browser/fullscreen/itch.io iframe, actual OS focus/hidden-tab and context restoration remain M6/release checks. No final museum, extra catalogue, mountain generation, publication/submission/email or sub-agents occurred.
+
+### 2026-10-06 — Accepted stylised direction; scoped visual follow-up documented
+
+The user accepted the recommendation to use stylised, animation-inspired player/prop shapes with light hand-painted texture, alongside richer, softer painterly backgrounds, and requested documentation plus a prompt for a follow-up fix. ART_DIRECTION.md defines the target, a small bread/player/nearby-prop pilot, selective expansion, provider boundaries and actual-camera/full-loop checks. Existing comparison boards are exploratory; neither is approved as a runtime replacement. Preserve original sources, compositions, matching restoration and all approved gameplay; avoid photographic food microtexture and cheese-like cartoon bread holes.
+
+Verified a clean main at completed M3 commit 1750ed3, matching tracked origin/main, Node 22.14.0/npm 10.9.2 before editing. Updated decisions/instructions/assets/requirements/supper/reference notes and next-session handoff consistently. Corrected stale partial-M3 manifest/handoff flags using the recorded final completion evidence, retaining the earlier partial handoff as history. M3 remains complete; this separate art-cohesion follow-up is not started. M4 is the next feature milestone afterward.
+
+This pass changes documentation/provenance metadata only. No generation, credits, runtime/source/assets/audio changes, publication, commit or push. JSON/whitespace checks pass; focused/browser tests were not repeated for documentation-only changes. Previous final 40-focused/nine-browser and post-backdrop production evidence remains attached to the completed snapshot. New documentation edits are uncommitted and must be preserved by the next session.
+
+### 2026-10-06 — Art-direction handoff commit requested
+
+The user requested committing and pushing the documentation/provenance snapshot. Re-verified main at 1750ed3, fetched origin and confirmed no divergence; Node 22.14.0/npm 10.9.2 remain available. Updated current handoff/metadata wording for the requested snapshot and rechecked JSON/whitespace. Runtime and assets remain unchanged, so gameplay tests were not repeated. The scoped art-cohesion pilot remains the next task; no generation or implementation started during this commit pass.

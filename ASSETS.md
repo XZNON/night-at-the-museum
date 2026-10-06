@@ -52,6 +52,8 @@ Generate mountain assets after its route is validated. Produce Drowned Garden on
 
 ## Asset preparation rules
 
+Accepted visual direction (2026-10-06): stylised, leaning animated. Player/props use clear silhouettes, simplified shading and restrained painted texture; backgrounds retain richer, softer painterly detail. A targeted cohesion follow-up starts with a small actual-camera pilot against the completed M3 set. Preserve sources/reference approvals, revise only demonstrated mismatches, and do not regenerate delivered atlases automatically. Comparison boards are exploratory, not approved runtime replacements. See ART_DIRECTION.md for scope, provider boundaries and verification.
+
 - Keep source images and exported runtime images separate.
 - Specify side view for gameplay props, clear silhouette, required orientation and intended scale.
 - Inspect background removal, edges and seams; output may need local preparation. Layered export is not assumed.

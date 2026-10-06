@@ -2,6 +2,8 @@
 
 All three DreamLayer direction references were explicitly approved on 2026-10-05: the user replied “Looks good to me” after the three images were presented. Their source hashes match the manifest. They remain preserved outside the runtime build; production preparation uses their recorded lineage.
 
+Later visual refinement (2026-10-06): the user accepted stylised, leaning animated for a targeted cohesion follow-up to completed M3. Keep the approved compositions and identity; simplify photographic player/prop detail with light painted texture. This does not revoke reference approval or approve the comparison boards as runtime assets. See ART_DIRECTION.md; do not repeat the original approval request.
+
 **Approved supper direction:** references/banquet-v5.png, revised for the user's fuller whole-table direction. The original banquet and unsuccessful revisions remain preserved with inspection notes in the manifest. Masterpiece and player references were approved unchanged. Do not request this same approval again.
 
 ## References to approve

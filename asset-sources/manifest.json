@@ -1930,12 +1930,15 @@
   },
   "m3Handoff": {
     "date": "2026-10-06",
-    "complete": false,
+    "complete": true,
+    "completedSnapshot": "1750ed3",
     "focusedTestsPassed": 40,
     "browserScenariosPassed": 9,
-    "browserElapsedMinutes": 12.4,
-    "blocker": "Required props not delivered after repeated DreamLayer upstream 503 responses.",
-    "commitPush": "Deferred until completed M3; current work uncommitted."
+    "browserElapsedMinutes": 11.7,
+    "evidence": "PLAN.md: M3 completion and watcher light rays; NEXT_SESSION.md",
+    "blocker": null,
+    "commitPush": "Completed code snapshot 1750ed3. Subsequent art-direction documentation/metadata handoff requested for commit/push; verify its snapshot with git log/status.",
+    "visualFollowUp": "Scoped art-cohesion follow-up documented, not started; does not reopen completed M3."
   },
   "continuationChecks": [
     {
@@ -2049,11 +2052,16 @@
   ],
   "visualDirectionReview": {
     "date": "2026-10-06",
-    "status": "awaiting_user_choice",
+    "status": "written_direction_accepted",
     "priorReferencesStillApproved": true,
     "comparison": "asset-sources/style-previews/bread-comparison-cartoon.png",
     "productionAssetsUnchanged": true,
-    "note": "User requested animation-style comparison after observing realistic props. No change of production direction approved yet."
+    "note": "Selective visual-cohesion follow-up to completed M3. Preserve original sources and gameplay; not blanket regeneration.",
+    "direction": "Stylised, leaning animated: clear player/prop shapes, simplified shading, light painted texture; softer richer painterly backgrounds.",
+    "authority": "User accepted the recommendation and requested documentation plus a scoped fix prompt.",
+    "comparisonBoardsApprovedAsRuntime": false,
+    "followUp": "ART_DIRECTION.md",
+    "runtimeFollowUpStatus": "not_started"
   },
   "keyUpdateChecks": [
     {
@@ -2139,10 +2147,32 @@
       "docs/validation/m3-props/jelly-approach.png",
       "docs/validation/m3-props/candle-exit.png"
     ],
-    "completeProductionRevalidationPending": true,
-    "viewportNote": "Recheck player visibility in the 960px paused LOOK capture, where it is not clearly visible despite visible player in the 1280px capture. Do not claim final visual QA until repeated.",
+    "completeProductionRevalidationPending": false,
+    "viewportNote": "Final 1280x720/960x540 camera QA and production revalidation completed; see PLAN.md final M3 completion entry and docs/validation/m3-props.",
     "publicBytes": 7190042,
     "distBytes": 7835994,
-    "credentialAuditMatches": 0
-  }
+    "credentialAuditMatches": 0,
+    "initialViewportNote": "Recheck player visibility in the 960px paused LOOK capture, where it is not clearly visible despite visible player in the 1280px capture. Do not claim final visual QA until repeated.",
+    "finalValidation": {
+      "date": "2026-10-06",
+      "completedSnapshot": "1750ed3",
+      "focusedTestsPassed": 40,
+      "fullChromiumScenariosPassed": 9,
+      "elapsedMinutes": 11.7,
+      "postBackdropProductionRegressionPassed": true,
+      "evidence": "PLAN.md: M3 completion and watcher light rays."
+    }
+  },
+  "historicalHandoffs": [
+    {
+      "date": "2026-10-06",
+      "complete": false,
+      "focusedTestsPassed": 40,
+      "browserScenariosPassed": 9,
+      "browserElapsedMinutes": 12.4,
+      "blocker": "Required props not delivered after repeated DreamLayer upstream 503 responses.",
+      "commitPush": "Deferred until completed M3; current work uncommitted.",
+      "label": "Earlier partial M3 handoff, superseded by completion at 1750ed3."
+    }
+  ]
 }

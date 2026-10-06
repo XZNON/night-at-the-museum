@@ -101,6 +101,8 @@ Checkpoint spacing follows completed hard sections, not every platform. Tune sec
 
 A warm painterly whole-table banquet: many diners eating/drinking, rich red/gold fabric, bread, dishes, wine/glasses/goblets/cutlery/fruit and three-candle brass candelabra. Keep gameplay silhouettes and landings stronger than background detail. Banquet-v5 is a direction reference, not a geometry map; derive layers/props for the side-view camera.
 
+The user accepted a stylised, animation-inspired cohesion follow-up on 2026-10-06: simplify photographic prop detail while retaining light painted texture and the softer banquet background. Inspect the completed M3 props first and start with a small bread/player/prop pilot. Preserve all mechanics, visible state cues, LOOK rays, high-dessert backdrop and approved compositions. The completed M3 gate stays recorded; this follow-up is tracked separately in ART_DIRECTION.md.
+
 Validate the expanded blockout and camera before production generation. Then prepare only required background layers, reusable platform/food/crockery art, butter/crumbs, grapes, fork, fan/candelabrum, cover props, jelly, pear and player frames. Record DreamLayer provenance, executions and actual credits; inspect edges, transparency and animation alignment. Keep source and runtime assets separate.
 
 Essential Howler audio includes ambience, jump/bounce, interaction, slide/hazard/attention cues, collection, return and restoration. Use original/licensed sources and record provenance. Respect saved master volume, explicit activation, pause and scene disposal. Audio cues supplement visible timing rather than making sound mandatory.

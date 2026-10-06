@@ -1,4 +1,8 @@
-# Next session — M4 Sleeping Mountain and ending
+# Next session — scoped art-cohesion follow-up, then M4
+
+Latest user decision, 2026-10-06: **stylised, leaning animated**. Player/props should use clear animation-inspired shapes, simplified shading and light hand-painted texture; backgrounds remain richer and softly painterly. ART_DIRECTION.md records the accepted target and a paste-ready prompt. This is a selective art-only follow-up to completed M3, not gameplay rework or blanket regeneration. No runtime changes have been made for this new direction yet.
+
+Verified starting point for this documentation pass: clean main at `1750ed3` (Complete M3 Royal Supper art, audio and watcher lighting), matching the tracked origin/main; Node 22.14.0/npm 10.9.2. The user requested committing/pushing this subsequent documentation/metadata handoff; verify its snapshot with git log/status and preserve any later edits. M3 stays complete; its existing test evidence is below. Start by inspecting the completed props, then pilot bread/player/one nearby prop at both camera sizes before selectively expanding. Preserve LOOK rays, high-dessert backdrop, restoration/saves/audio and all approved mechanics. Follow ART_DIRECTION.md provider rules; don't retry retired jobs or broaden the ImageGen exception. M4 follows the art-only pass.
 
 Updated 2026-10-06. M3 final prop-camera/art/audio/full-loop gate has passed. This handoff belongs to the completed-M3 snapshot; verify git status/log and origin before implementation. The user authorized committing/pushing completed M3. No mountain or campaign ending exists yet. No publication/submission/email or sub-agents.
 
@@ -19,7 +23,7 @@ DreamLayer food recovery failed seven same-key rounds / 21 attempts before the u
 - All 41 recorded image/source/runtime and 12 original-audio hashes match. Private scans found no current local credential-value matches in source/public/build. Public assets: 7,190,042 bytes; dist: 7,836,184 bytes. JS: 638.86 kB / 165.00 kB gzip. Existing nonfatal >500 kB warning remains for loading/performance polish.
 - These are automated controls/captures and agent visual inspection. No measured human first-time duration or representative-machine performance claim. Cross-browser/fullscreen/itch.io iframe, actual OS focus/hidden-tab, context restoration and representative profiling remain release checks.
 
-## Next task
+## M4 task after the art-only follow-up
 
 1. Read PLAN, DECISIONS, REQUIREMENTS and the Sleeping Mountain idea in mini games.md. Preserve this completed M3 snapshot and approved assets/gameplay.
 2. Build a compact Sleeping Mountain placeholder route with authored wind currents and stone-bridge interaction using the established controller, explicit geometry, typed level data and scene lifecycle. Extract shared behavior only when this second use requires it.
@@ -30,3 +34,7 @@ DreamLayer food recovery failed seven same-key rounds / 21 attempts before the u
 M5 final museum and the optional garden scope gate follow a completed M4. Opening presentation stays M6. No broad catalogue, publishing/submission/email or sub-agents without authorization.
 
 Commands: npm run dev; npm run typecheck; npm run test; npm run build; npm run preview. Browser checks: node node_modules/@playwright/test/cli.js test --trace off. Dev entry http://127.0.0.1:5173/?scene=royal-supper is save-isolated; production http://127.0.0.1:4173 ignores debug hooks. The persistent local preview on http://127.0.0.1:5175/?scene=royal-supper returned HTTP 200 this session; recheck rather than assuming it survives.
+
+## Prompt for the immediate follow-up
+
+Use the paste-ready prompt in ART_DIRECTION.md. Its scope is the accepted stylised/animation-inspired M3 art-cohesion pass only. Do not start M4 in that pass.

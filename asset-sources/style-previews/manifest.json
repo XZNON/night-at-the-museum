@@ -23,5 +23,11 @@
       "referencePath": "asset-sources/style-previews/bread-comparison-painterly.png",
       "status": "direction_preview"
     }
-  ]
+  ],
+  "writtenDirectionAccepted": {
+    "date": "2026-10-06",
+    "reference": "ART_DIRECTION.md",
+    "direction": "Stylised, leaning animated",
+    "comparisonBoardsApprovedAsRuntime": false
+  }
 }
