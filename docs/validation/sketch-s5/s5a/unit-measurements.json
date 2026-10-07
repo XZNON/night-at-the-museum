@@ -1,0 +1,65 @@
+{
+  "sun": {
+    "rect": {
+      "x": 62,
+      "y": 54,
+      "width": 1.4,
+      "height": 1.6
+    },
+    "ledge": "x57..65, top 54",
+    "spawn": {
+      "x": 59,
+      "y": 54
+    }
+  },
+  "fullRoute": {
+    "replayFrames": 912,
+    "replaySeconds": 15.2,
+    "takenInFlight": {
+      "frame": 907,
+      "x": 61.58,
+      "y": 54.532,
+      "grounded": false,
+      "stage": "exit"
+    },
+    "climbLog": [
+      "pickup",
+      "pinc",
+      "a26.6",
+      "b30.7",
+      "c34.8",
+      "Q",
+      "pind",
+      "d38.9",
+      "Q",
+      "pine",
+      "e43.0",
+      "Q",
+      "pinf",
+      "f47.1",
+      "Q",
+      "handoff"
+    ],
+    "crossParams": {
+      "wait": 4,
+      "second": 16,
+      "pump": 0,
+      "angle": 15,
+      "jump": 18,
+      "p2": 0,
+      "a2": 0,
+      "j2": 6
+    }
+  },
+  "settle": {
+    "settledAt": 1.1833,
+    "mechanisms": 18,
+    "movingAfter": 0
+  },
+  "walkFromLedgeSpawn": {
+    "frames": 24,
+    "seconds": 0.4,
+    "takenAtX": 61.378
+  },
+  "refusedSnapshots": 10
+}

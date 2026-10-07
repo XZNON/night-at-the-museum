@@ -123,6 +123,7 @@ export class GameUi {
 
   private tagLabel(): string {
     const base = this.study !== 'sketch' ? 'ROYAL SUPPER STUDY'
+      : this.sketchMode === 'adventure' ? 'UNFINISHED SKETCH / S5A / THE SUN'
       : this.sketchMode === 'layers-1-3' ? 'UNFINISHED SKETCH / S4D / LAYERS 1–3'
       : this.sketchMode === 'layer-3' ? 'UNFINISHED SKETCH / S4C / JOINED LAYER 3'
       : this.sketchMode === 'layer-3-swings' ? 'UNFINISHED SKETCH / S4B / MOVING SWINGS'
@@ -153,6 +154,16 @@ export class GameUi {
       return;
     }
     if (this.study === 'sketch') {
+      if (this.sketchMode === 'adventure') {
+        this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S5A / Unfinished Sketch</p>
+        <h2>Take back<br><em>the sun.</em></h2><p class="intro">An unfinished picture.<br>Three layers to climb.<br>The sun waits at the top.</p>
+        <p class="menu-description">Pin the swinging pendulums and ride the lift. Cross the boards past the axes and ride up again. Pick up a third nail, climb the criss-cross walls, then nail wood and swing over the glue. On the end ledge, walk to the sun and take it. A fall only sends you back to the start of the part you are in.</p>
+        <button class="primary" data-action="start">Enter the picture</button>
+        ${remembered ? '<button class="quiet" data-action="replay">Restart the Sketch</button>' : ''}
+        <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move / pump · <kbd>Space</kbd> Jump ×2 / kick / release · <kbd>E</kbd> Grip · Click pin or wood · <kbd>Q</kbd> Recall · <kbd>R</kbd> Retry</div>
+        <p class="small-note">Isolated study · Campaign saves are untouched.</p>`);
+        return;
+      }
       if (this.sketchMode === 'layers-1-3') {
         this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S4D / Layers 1–3</p>
         <h2>The whole<br><em>picture.</em></h2><p class="intro">Four pendulums. Boards and axes.<br>Two lifts. Six walls.<br>Two moving swings.</p>
@@ -255,7 +266,7 @@ export class GameUi {
   markSketch(mode: SketchStudy, bayId: SketchBayId): void {
     this.sketchMode = mode;
     document.getElementById('sketch-hud')!.dataset.study = mode;
-    document.getElementById('sketch-eyebrow')!.textContent = mode === 'layers-1-3' ? 'Unfinished Sketch / S4D / Layers 1–3' : mode === 'layer-3' ? 'Unfinished Sketch / S4C / Joined Layer 3' : mode === 'layer-3-swings' ? 'Unfinished Sketch / S4B / Layer 3 swings' : mode === 'layer-3-walls' ? 'Unfinished Sketch / S4A / Layer 3 walls' : mode === 'layers-1-2' ? 'Unfinished Sketch / S3 / Joined layers' : mode === 'layer-2' ? 'Unfinished Sketch / S3 · Layer 2' : mode === 'layer-1'
+    document.getElementById('sketch-eyebrow')!.textContent = mode === 'adventure' ? 'Unfinished Sketch / S5A / The sun' : mode === 'layers-1-3' ? 'Unfinished Sketch / S4D / Layers 1–3' : mode === 'layer-3' ? 'Unfinished Sketch / S4C / Joined Layer 3' : mode === 'layer-3-swings' ? 'Unfinished Sketch / S4B / Layer 3 swings' : mode === 'layer-3-walls' ? 'Unfinished Sketch / S4A / Layer 3 walls' : mode === 'layers-1-2' ? 'Unfinished Sketch / S3 / Joined layers' : mode === 'layer-2' ? 'Unfinished Sketch / S3 · Layer 2' : mode === 'layer-1'
       ? 'The Last Curator · Slice 2 · Layer 1 of the unfinished picture' : 'The Last Curator · Slice 1 mechanics playground';
     document.getElementById('sketch-bays')!.hidden = mode !== 'mechanics';
     const tag = document.querySelector<HTMLElement>('.build-tag');
@@ -291,7 +302,7 @@ export class GameUi {
     this.show('pause', `<p class="eyebrow">A moment between brushstrokes</p><h2 class="compact">Paused.</h2>
       <p class="menu-description">${reason}</p><button class="primary" data-action="resume">Resume <span>→</span></button>
       ${adventure ? `<button class="secondary" data-action="checkpoint">${route ? 'Back to the last safe checkpoint' : sketch ? 'Restart bay' : 'Restart from checkpoint'}</button>
-      <button class="quiet" data-action="replay">${route ? `Restart ${this.sketchMode === 'layers-1-3' ? 'Layers 1–3' : this.sketchMode === 'layer-3' ? 'Layer 3' : this.sketchMode === 'layer-3-swings' ? 'swing crossing' : this.sketchMode === 'layer-3-walls' ? 'wall climb' : this.sketchMode === 'layers-1-2' ? 'Layers 1 &amp; 2' : this.sketchMode === 'layer-2' ? 'Layer 2' : 'Layer 1'}` : 'Restart adventure'}</button><button class="quiet" data-action="leave">${this.direct ? 'Leave painting' : 'Return to Museum'}</button>` : ''}
+      <button class="quiet" data-action="replay">${route ? this.sketchMode === 'adventure' ? 'Restart the Sketch' : `Restart ${this.sketchMode === 'layers-1-3' ? 'Layers 1–3' : this.sketchMode === 'layer-3' ? 'Layer 3' : this.sketchMode === 'layer-3-swings' ? 'swing crossing' : this.sketchMode === 'layer-3-walls' ? 'wall climb' : this.sketchMode === 'layers-1-2' ? 'Layers 1 &amp; 2' : this.sketchMode === 'layer-2' ? 'Layer 2' : 'Layer 1'}` : 'Restart adventure'}</button><button class="quiet" data-action="leave">${this.direct ? 'Leave painting' : 'Return to Museum'}</button>` : ''}
       <label class="setting"><input type="checkbox" id="low-quality" ${lowQuality ? 'checked' : ''}> Low rendering quality</label>
       <label class="setting">Master volume <input id="master-volume" type="range" min="0" max="1" step="0.05" value="${settings?.masterVolume ?? 0.7}"></label>
       ${!this.direct ? '<button class="quiet" data-action="reset">Reset progress</button>' : ''}
@@ -304,6 +315,13 @@ export class GameUi {
       <p class="menu-description">${result.changed ? 'The king’s dessert belongs in the masterpiece. The golden pear is now in your inventory.' : 'A lovely return visit. The golden pear is already yours; replay adds no duplicate.'}</p>
       <button class="primary" data-action="leave" aria-label="${this.direct ? 'Finish blockout' : 'Return to Museum'}">${this.direct ? 'Finish blockout' : 'Return to Museum'} <span>→</span></button>
       <button class="secondary" data-action="resume">Continue exploring</button><p class="small-note">${this.direct ? 'Isolated development session. Campaign saves are untouched.' : 'Your pear is in inventory. Walk to the masterpiece to place it.'}</p>`);
+  }
+  /** S5A: the sun is taken. The isolated study has no campaign award to report. */
+  sketchSuccess(): void {
+    this.show('success', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">A piece recovered</p><h2 class="compact">The<br><em>sun.</em></h2>
+      <p class="menu-description">The unfinished picture settles. The sun is yours.</p>
+      <button class="primary" data-action="leave" aria-label="Return">Return <span>→</span></button>
+      <button class="secondary" data-action="resume">Keep exploring</button><p class="small-note">Isolated study · Campaign saves are untouched.</p>`);
   }
   finished(): void {
     this.hud.hidden = true;

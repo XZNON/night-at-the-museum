@@ -4,6 +4,10 @@ Start with the [current handoff](planning/NEXT_SESSION.md), then the [build plan
 
 ## Current work
 
+Latest, 2026-10-07: **S5A (the sun on the end ledge) is implemented at its playable review gate** ([evidence](validation/sketch-s5/s5a/README.md), [play](http://127.0.0.1:5173/?scene=unfinished-sketch&study=adventure)). Stop for user review; S5B needs its own request.
+
+Earlier, 2026-10-07: **all Sketch sections and layers are done** (user decision; S4D pushed at `715770d`). The planned moving-socket finale is dropped; S5 (sun and campaign ending only) is planned as three blocks: [S5 plan](gameplay/SKETCH_S5_PLAN.md), [prompts](gameplay/SKETCH_S5_PROMPTS.md). Next: S5A on its own request.
+
 Latest, 2026-10-07: **S4D Layers 1–3 (final S4 gate) is implemented at its playable review gate** — the whole route so far in one study ([evidence](validation/sketch-s4/s4d/README.md), [play](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layers-1-3)). Stop for user review; S5 needs its own request.
 
 Earlier, 2026-10-07: **S4L vertical lifts were implemented at their playable review gate** — both escalators replaced by step-on lifts ([evidence](validation/sketch-s4/s4l/README.md), [play](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layers-1-2)). Stop for user review; S4D needs its own request.
@@ -46,6 +50,7 @@ S3A's reviewed hard challenge is preserved. **S3B is implemented at its playable
 | [Sketch S4B plan](gameplay/SKETCH_S4B_PLAN.md) | Free-placement moving-swing crossing (implemented; [evidence](validation/sketch-s4/s4b/README.md)) |
 | [Sketch S4C plan](gameplay/SKETCH_S4C_PLAN.md) | Joined Layer 3 and grounded section recovery (accepted; [evidence](validation/sketch-s4/s4c/README.md)) |
 | [Sketch S4L plan](gameplay/SKETCH_S4L_PLAN.md) | Vertical lifts replace both escalators (user decision; implemented at review, [evidence](validation/sketch-s4/s4l/README.md)) |
+| [Sketch S5 plan](gameplay/SKETCH_S5_PLAN.md) | Sun on the end ledge, Sketch in the museum, placement and ending (S5A/B/C); [prompts](gameplay/SKETCH_S5_PROMPTS.md) |
 | [Sketch S4D plan](gameplay/SKETCH_S4D_PLAN.md) | Both rides into Layer 3 and final S4 gate (implemented at review, [evidence](validation/sketch-s4/s4d/README.md)) |
 | [Sketch S4 prompts](gameplay/SKETCH_S4_PROMPTS.md) | Four paste-ready future requests; do not execute together |
 | [Opening sequence](gameplay/OPENING.md) | Deferred M6 presentation; not the current task |

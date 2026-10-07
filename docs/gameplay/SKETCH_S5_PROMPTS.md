@@ -1,0 +1,35 @@
+# Sketch S5 — paste-ready prompts
+
+Use one prompt per session, in order, each only after the previous block's review. Plan: [SKETCH_S5_PLAN.md](SKETCH_S5_PLAN.md).
+
+## S5A — The sun on the end ledge
+
+```text
+Continue The Last Curator in C:\Users\XZNON\DreamLayer. Implement Unfinished Sketch S5A only: the sun on the end ledge of the existing full route, in a save-isolated dev study (proposed study=adventure). The user decided on 2026-10-07 that Layer 3 has no third section: every Sketch section and layer is done, so build no new traversal, section or mechanic and do not retune any accepted layer.
+
+Read AGENTS.md, docs/README.md, PLAN/NEXT_SESSION, DECISIONS/REQUIREMENTS, UNFINISHED_SKETCH.md, docs/gameplay/SKETCH_S5_PLAN.md (sections 1-3 and S5A) and the S4D evidence (docs/validation/sketch-s4/s4d/README.md). Recheck checkout/HEAD (expected 715770d or newer), origin, Node/npm and dev-server ownership. An art reference pass is in progress in asset-sources/, docs/art/SKETCH_ASSETS.md and scripts/sketch-references.mjs: do not edit or commit those files.
+
+Compose a new adventure preset from sketchLayersOneToThree (clone, never mutate) with player-facing texts and a sun rect on the end ledge (plan default x62..63.4, y54..55.6). Landing on the ledge is a safe checkpoint; touching the sun collects it once, hides it, settles (freezes) every moving mechanism, clears commands/attachments, marks completion and shows a success screen. The model reports the touch through a scene callback and never touches progression; the study's callback only shows the screen. R/fall/re-entry after collection stay on the ledge with the sun taken; foreign snapshots are refused. Draw the sun as a cartoon placeholder (no pulse under reduced motion). Wire the study (menu card, eyebrow, tag, pause label). Older studies keep their behavior, endpoints and texts.
+
+Run typecheck, all unit tests and build. Add unit tests (clone, reachable by walking, collected once, settle, retries after collection, no second callback, older studies unchanged) and tests/browser/sketch-adventure.spec.ts with real keys/clicks at 1280x720 and 960x540 reusing the shared Layer 1/2/3 helpers (full route to the sun, success screen, terminal retries, reduced motion, production ignores the study). Rerun the S4D full spec and S4C joined spec. Unit runs rewrite accepted S3/S4A/S4B/S4C measurement JSON: restore them from git unless values legitimately changed. Do not edit src during a browser run. Record bot retries/flakes honestly. Save evidence in docs/validation/sketch-s5/s5a, update PLAN/NEXT_SESSION/status docs, and stop for my review. No museum/campaign changes (S5B), no art generation, new dependencies, commits/pushes, publishing or sub-agents.
+```
+
+## S5B — The Sketch in the museum
+
+```text
+Continue The Last Curator in C:\Users\XZNON\DreamLayer. Implement Unfinished Sketch S5B only: the Sketch as the campaign's second adventure. Read AGENTS.md, docs/README.md, PLAN/NEXT_SESSION, DECISIONS/REQUIREMENTS, docs/gameplay/SKETCH_S5_PLAN.md (sections 1-3 and S5B) and the S5A evidence. Recheck checkout/origin/runtime/dev-server ownership; preserve the concurrent art files.
+
+Rename campaign stage 2 from sleeping-mountain to unfinished-sketch (artwork and scene IDs) keeping garden-before-dawn, golden-pear, sun-disc, pear-tree, dawn-sky, the save key and schema; remove every Mountain text/door from code and UI. Add the Sketch frame on the museum's left wall with a code-drawn cartoon placeholder picture, locked until the pear is restored (no scene ever opens while locked). When open, it enters the S5A adventure preset in campaign mode: touching the sun applies progression collect once and persists; success offers Return to Museum (landing in front of the Sketch frame) or Continue exploring. Same-session leave/re-entry resumes the Sketch checkpoint; reload restarts it at Layer 1 with campaign pieces intact; replay after collection awards nothing new. Update museum objectives and inventory (sun cutout derived locally from complete.webp + sun-mask.png, no generation). Sun placement and the ending are S5C.
+
+Run typecheck, all unit tests and build. Unit-test the renamed stage with pear-only, pear-restored and sun-collected saves. Browser: dev campaign entry with seeded saves and real controls (locked frame, open after pear restore, full route to the sun, persisted sun-disc, return pose, re-entry, reload during the Sketch, replay without duplicates, denied storage, transition spam); production checks with seeded saves (frame state, objective, inventory, study= ignored). Rerun campaign.spec.ts and the S5A spec; restore accepted evidence JSON rewritten by unit runs. Do not edit src during a browser run. Save evidence in docs/validation/sketch-s5/s5b, update PLAN/NEXT_SESSION/status docs and stop for my review. No placement/ending, art generation, new dependencies, commits/pushes, publishing or sub-agents.
+```
+
+## S5C — Sun placement and the ending
+
+```text
+Continue The Last Curator in C:\Users\XZNON\DreamLayer. Implement Unfinished Sketch S5C only: placing the sun in the masterpiece, the complete picture and the two-stage ending. Read AGENTS.md, docs/README.md, PLAN/NEXT_SESSION, DECISIONS/REQUIREMENTS, docs/gameplay/SKETCH_S5_PLAN.md (sections 1-3 and S5C) and the S5B evidence. Recheck checkout/origin/runtime/dev-server ownership; preserve the concurrent art files.
+
+Integrate masterpiece.complete and restoration.sun into the runtime manifest and museum art set; the masterpiece shows damaged / pear-restored / complete from the restored count. The sun piece and target behave like the pear's (drag, click-then-target, Tab/Enter; wrong drops keep the piece). Generalize place() to the next stage's piece through progression restore, persist, reuse the restore cue and animation, then show the ending overlay (Stay in the museum / New game through the existing reset confirmation). Completion is derived from progression, never stored. After completion the museum objective says the masterpiece is complete and inspection shows the full picture with the ending available again; Supper and the Sketch stay replayable without awards.
+
+Run typecheck, all unit tests and build. Browser: production with seeded saves (place by drag, click and keyboard; reload shows complete; reload during the restore animation keeps it; replay adds nothing; reset gives a fresh museum) and one dev-entry full campaign with real controls from New Game through Royal Supper, pear placement, the Sketch and sun placement to the ending at 1280x720, plus a 960x540 spot check. Rerun campaign.spec.ts, the S5A/S5B specs and any touched art/audio/blockout specs; restore accepted evidence JSON. Do not edit src during a browser run. Save evidence in docs/validation/sketch-s5/s5c, update PLAN/NEXT_SESSION/status docs, mark S5 complete only if the full gate passes, and stop for my review before S6. No new traversal, art generation, new dependencies, commits/pushes, publishing or sub-agents.
+```

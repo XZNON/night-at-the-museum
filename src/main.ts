@@ -12,7 +12,7 @@ import { isSketchBayId, isSketchStudy, sketchBayIds, sketchBays, sketchTuning } 
 import type { SketchBayId, SketchStudy } from './levels/unfinished-sketch';
 import { sketchRoute } from './levels/unfinished-sketch-route';
 import { sketchJoinedRoute, sketchLayerTwo } from './levels/unfinished-sketch-layer2';
-import { sketchLayerThree, sketchLayerThreeSwings, sketchLayerThreeWalls, sketchLayersOneToThree } from './levels/unfinished-sketch-layer3';
+import { sketchAdventure, sketchLayerThree, sketchLayerThreeSwings, sketchLayerThreeWalls, sketchLayersOneToThree } from './levels/unfinished-sketch-layer3';
 import { museum, type MuseumPose } from './levels/museum';
 import { RoyalSupperScene } from './scenes/royal-supper';
 import { UnfinishedSketchScene } from './scenes/unfinished-sketch';
@@ -217,7 +217,7 @@ async function startSketch(restart: boolean, bayId?: SketchBayId): Promise<void>
       // cartoon placeholders; no new asset is generated or loaded here.
       const art = await loadArtSet(['player.idle']);
       const mode: SketchSceneMode = sketchMode !== 'mechanics'
-        ? { kind: 'route', field: sketchMode === 'layers-1-3' ? sketchLayersOneToThree : sketchMode === 'layer-3' ? sketchLayerThree : sketchMode === 'layer-3-swings' ? sketchLayerThreeSwings : sketchMode === 'layer-3-walls' ? sketchLayerThreeWalls : sketchMode === 'layers-1-2' ? sketchJoinedRoute : sketchMode === 'layer-2' ? sketchLayerTwo : sketchRoute,
+        ? { kind: 'route', field: sketchMode === 'adventure' ? sketchAdventure : sketchMode === 'layers-1-3' ? sketchLayersOneToThree : sketchMode === 'layer-3' ? sketchLayerThree : sketchMode === 'layer-3-swings' ? sketchLayerThreeSwings : sketchMode === 'layer-3-walls' ? sketchLayerThreeWalls : sketchMode === 'layers-1-2' ? sketchJoinedRoute : sketchMode === 'layer-2' ? sketchLayerTwo : sketchRoute,
           session: restart ? null : routeSessions.get(sketchMode) ?? null }
         : { kind: 'bay', field: sketchBays[sketchBay],
           session: restart ? null : sketchSessions.get(sketchBay) ?? null };
@@ -225,7 +225,10 @@ async function startSketch(restart: boolean, bayId?: SketchBayId): Promise<void>
         snapshot => {
           if (mode.kind === 'route') routeSessions.set(mode.field.id, snapshot as SketchRouteSession);
           else sketchSessions.set(sketchBay, snapshot as SketchSession);
-        }, ui.canvas, () => input.clear());
+        }, ui.canvas, () => input.clear(),
+        // S5A: the isolated study only shows the success screen; the campaign
+        // award belongs to S5B and never runs from a dev study.
+        () => { setPaused(true); audio.play('collect', true); overlay = 'success'; ui.sketchSuccess(); });
       created.scene = scene;
       scene.attachPointer(ui.canvas);
       scene.setReducedMotion(reducedMotion);
@@ -340,6 +343,9 @@ if (import.meta.env.DEV) {
         queue: sketch.model.session.queue, oldest: sketch.model.oldestPlacement?.targetId ?? null,
         motion: { ...sketch.model.move },
         completed: sketch.model.completed, elapsed: sketch.model.session.elapsed,
+        sun: sketch.routeModel?.route.sun ? { x: sketch.routeModel.route.sun.x, y: sketch.routeModel.route.sun.y,
+          width: sketch.routeModel.route.sun.width, height: sketch.routeModel.route.sun.height,
+          collected: sketch.routeModel.sunCollected, settled: sketch.routeModel.isSettled, view: sketch.sunView() } : null,
         recovering: sketch.model.recoveryRemaining > 0,
         targets: sketch.model.targetViews().map(t => ({ ...t, screen: sketch.targetScreen(t.id) })),
         grips: sketch.model.grips.map(g => ({ ...g })),

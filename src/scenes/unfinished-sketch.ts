@@ -28,6 +28,8 @@ const C = {
   suspension: 0x8b7cae, bracket: 0x6d5f96,
   // S4B nailable wood and the free-placement ghost.
   wood: 0xd99a5b, woodGrain: 0xa86a3a, track: 0x7d6aa8, ghostOk: 0x5fd38d, ghostBad: 0xf25f5c,
+  // S5A placeholder sun.
+  sunCore: 0xffd23f, sunRay: 0xffa83a, sunGlow: 0xfff3b8,
 } as const;
 
 const KIND_COLORS: Record<string, number> = {
@@ -58,6 +60,8 @@ export class UnfinishedSketchScene implements GameScene {
   readonly field: SketchPlayfieldData;
   readonly debug = new THREE.Group();
   private readonly player = new THREE.Group();
+  /** Last horizontal travel direction; the player picture faces it. */
+  private facing: 1 | -1 = 1;
   private readonly hand = new THREE.Group();
   private readonly rigs = new Map<string, THREE.Group>();
   private readonly inkPlatforms = new Map<string, { solid: THREE.Group; outline: THREE.Group }>();
@@ -74,6 +78,9 @@ export class UnfinishedSketchScene implements GameScene {
   private pickup: THREE.Group | null = null;
   /** The pickup this scene draws: the field's, or a joined route section's. */
   private pickupRect: SketchPlayfieldData['nailPickup'];
+  /** S5A: the sun on the end ledge, and its rays (they turn unless reduced motion). */
+  private sun: THREE.Group | null = null;
+  private sunRays: THREE.Group | null = null;
   /** S4L lifts: the moving deck, its lamp and the faint cab outline. */
   private readonly lifts = new Map<string, { deck: THREE.Group; lamp: THREE.MeshBasicMaterial; cab: THREE.Group; cue: THREE.Group; was: string; flashUntil: number }>();
   private readonly scratchFocus = new THREE.Vector3();
@@ -97,7 +104,9 @@ export class UnfinishedSketchScene implements GameScene {
     private readonly onHud: (hud: SketchHud) => void,
     private readonly onExit: (session: SketchSession | SketchRouteSession) => void,
     private readonly canvas?: HTMLCanvasElement,
-    private readonly clearBoundaryInput: () => void = () => {}) {
+    private readonly clearBoundaryInput: () => void = () => {},
+    /** S5A: told once when the sun is taken. The owner decides what it means. */
+    private readonly onSunCollected: () => void = () => {}) {
     this.field = mode.field;
     this.model = mode.kind === 'bay'
       ? new SketchModel(mode.field, tuning)
@@ -129,6 +138,7 @@ export class UnfinishedSketchScene implements GameScene {
     this.buildTargets();
     this.buildSurfaces();
     this.buildPickup();
+    if (mode.kind === 'route') this.buildSun(mode.field);
     this.buildPlayer(playerImage);
     if (mode.kind === 'route') {
       for (const lift of [...mode.field.parkedLifts ?? [], ...mode.field.legs.flatMap(l => l.lift ? [l.lift] : [])]) this.buildLift(lift);
@@ -565,6 +575,34 @@ export class UnfinishedSketchScene implements GameScene {
     this.pickup = rig;
   }
 
+  /**
+   * S5A: a cartoon placeholder sun resting on the end ledge: a warm disc with
+   * an ink rim, a soft highlight and a ring of short rays. Faceless, like
+   * every Sketch gameplay asset. Final art is a later task; nothing is loaded
+   * or generated here.
+   */
+  private buildSun(route: SketchRoute): void {
+    const sun = route.sun;
+    if (!sun) return;
+    const rig = new THREE.Group();
+    rig.position.set(sun.x + sun.width / 2, sun.y + sun.height / 2, 1.3);
+    const rays = new THREE.Group(); rig.add(rays);
+    for (let i = 0; i < 10; i++) {
+      const ray = this.slab(0.14, 0.34, 0.12, C.sunRay, rays);
+      const a = i / 10 * Math.PI * 2;
+      ray.position.set(Math.sin(a) * 0.82, Math.cos(a) * 0.82, -0.1);
+      ray.rotation.z = -a;
+    }
+    const face = new THREE.CircleGeometry(0.6, 32); this.resources.add(face);
+    rig.add(new THREE.Mesh(face, this.flat(C.sunCore)));
+    this.disc(0.6, 0.06, 32, C.ink, rig).position.z = 0.02;
+    const glow = new THREE.CircleGeometry(0.26, 24); this.resources.add(glow);
+    const highlight = new THREE.Mesh(glow, this.flat(C.sunGlow)); highlight.position.set(-0.17, 0.17, 0.04); rig.add(highlight);
+    rig.visible = !(this.model as SketchRouteModel).sunCollected;
+    this.world.add(rig);
+    this.sun = rig; this.sunRays = rays;
+  }
+
   private buildPlayer(playerImage: HTMLImageElement): void {
     const texture = new THREE.Texture(playerImage);
     texture.colorSpace = THREE.SRGBColorSpace; texture.needsUpdate = true;
@@ -786,6 +824,11 @@ export class UnfinishedSketchScene implements GameScene {
     return { x: rect.left + (nx + 1) / 2 * rect.width, y: rect.top + (1 - ny) / 2 * rect.height, visible: Math.abs(nx) <= 1 && Math.abs(ny) <= 1 };
   }
 
+  /** Read-only S5A sun readback (visibility, pulse scale, ray turn) for the review evidence. */
+  sunView(): { visible: boolean; scale: number; rays: number } | null {
+    return this.sun ? { visible: this.sun.visible, scale: this.sun.scale.x, rays: this.sunRays?.rotation.z ?? 0 } : null;
+  }
+
   /** Read-only camera readback used by the review evidence. */
   cameraView(): { x: number; y: number; width: number; height: number } {
     const cam = this.camera as THREE.OrthographicCamera;
@@ -828,6 +871,8 @@ export class UnfinishedSketchScene implements GameScene {
     this.model.update(dt, input);
     if (this.routeModel && (boundary !== `${this.routeModel.legId}/${this.routeModel.stage}` ||
       input.restartPressed || recovering !== (this.model.recoveryRemaining > 0))) this.clearBoundaryInput();
+    // The sun is reported once per scene life; a restored snapshot never reports.
+    if (this.routeModel?.consumeSunTouch()) this.onSunCollected();
     this.elapsed += dt;
     const focus = this.focusTarget();
     // Pause stops the fixed step entirely, so camera progression and the
@@ -853,6 +898,10 @@ export class UnfinishedSketchScene implements GameScene {
     const b = this.model.controller.body;
     this.player.position.set(THREE.MathUtils.lerp(this.previous.x, b.x, alpha) + b.width / 2,
       THREE.MathUtils.lerp(this.previous.y, b.y, alpha), 0);
+    // Presentation only: mirror the picture toward travel so moving left never
+    // reads as walking backwards. Collision and the outline are symmetric.
+    if (Math.abs(b.vx) > 0.25) this.facing = b.vx > 0 ? 1 : -1;
+    this.player.scale.x = this.facing;
     this.player.visible = this.model.recoveryRemaining <= 0;
 
     this.hand.visible = this.model.move.state === 'swing';
@@ -915,6 +964,12 @@ export class UnfinishedSketchScene implements GameScene {
       this.pickup.visible = this.model.nailPickup === this.pickupRect && !this.model.pickupCollected;
       const p = this.pickupRect;
       this.pickup.position.y = p.y + p.height / 2 + (this.reducedMotion ? 0 : Math.sin(this.elapsed * 2.6) * 0.12);
+    }
+    if (this.sun) {
+      this.sun.visible = !(this.model as SketchRouteModel).sunCollected;
+      // A gentle pulse and turning rays; reduced motion keeps it still.
+      this.sun.scale.setScalar(this.reducedMotion ? 1 : 1 + Math.sin(this.elapsed * 3) * 0.06);
+      if (this.sunRays) this.sunRays.rotation.z = this.reducedMotion ? 0 : -this.elapsed * 0.6;
     }
     for (const bubble of this.glueBubbles) {
       bubble.position.y = 0.12 + Math.sin(this.elapsed * 2.4 + Number(bubble.userData.phase)) * 0.09;
@@ -1072,6 +1127,7 @@ export class UnfinishedSketchScene implements GameScene {
     this.lifts.clear();
     this.glueBubbles.length = 0;
     this.pickup = null;
+    this.sun = null; this.sunRays = null;
     this.world.clear();
   }
 }

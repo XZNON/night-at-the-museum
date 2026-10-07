@@ -1,6 +1,20 @@
-# Next session — review Sketch S4D (Layers 1–3, final S4 gate), then S5
+# Next session — Sketch S5: sun and campaign ending (no more sections)
 
-**Current handoff, 2026-10-07 (S4D implemented):** S4D is at its playable review gate and S4's automated gate has passed. Stop for user review; S5 (moving-socket finale, sun, campaign/ending) needs its own request and plan/prompt. All S4D changes are uncommitted over the accepted S4L checkpoint `d0856d1`; commit/push only if the user authorizes it. No generation, dependencies, publishing or sub-agents are authorized.
+**Current handoff, 2026-10-07 (S5A implemented):** S5A is at its playable review gate. The user played `study=adventure` this session and completed it. Stop for user review; S5B (Sketch frame in the museum, campaign sun collection, return) needs its own request with the [S5B prompt](../gameplay/SKETCH_S5_PROMPTS.md). All S5A changes are uncommitted over `715770d`; commit/push only if the user authorizes it. No generation, dependencies, museum/campaign changes, publishing or sub-agents are authorized.
+
+Play after `npm run dev`: [The sun](http://127.0.0.1:5173/?scene=unfinished-sketch&study=adventure). The full S4D route, then the end ledge is a safe checkpoint; walk right to the sun (or fly through it from a strong release). Taking it settles every mechanism and shows the success screen (Return to the study menu / Keep exploring); R, falls and re-entry afterwards keep the ledge with the sun taken. [S5A evidence](../validation/sketch-s5/s5a/README.md) has the contracts, run history and results.
+
+Implemented: `SketchSun`/`route.sun`, study `adventure` (`sketchAdventure`, legs cloned from `layers-1-3`), model `settled`/`sunCollected`/`consumeSunTouch()`, scene `onSunCollected` callback and faceless placeholder sun, `GameUi.sketchSuccess()`, menu/eyebrow/tag/pause wiring, optional `done` predicate on the shared crossing helpers. Tests: `tests/sketch-adventure.test.ts` 10/10; `tests/browser/sketch-adventure.spec.ts` 4/4 (run 3). Regressions: S4D 3/4, S4C 5/7 (1280 passed on rerun). Known: one accepted S4B unit test exceeds the 5 s default on this machine (also on HEAD); the S4C/S4D reduced-motion bot runs fail on crossing/climb timing today, also on unchanged HEAD for S4C, so they are bot flakes, not S5A defects.
+
+Review questions: the sun can be taken in mid-air when a release coasts through it (Layer 3 air momentum); keep that, or move the sun so the player always lands first? Is the settle (everything freezes in place) enough of a "picture settles" cue for now? The success screen's Return goes to the study menu here; in S5B it becomes Return to Museum.
+
+Next after acceptance: [S5B prompt](../gameplay/SKETCH_S5_PROMPTS.md) with the [S5 plan](../gameplay/SKETCH_S5_PLAN.md) (S5B section), reusing `sketchAdventure`, its `onSunCollected` callback and the S5A browser helpers.
+
+## S5A request handoff (executed)
+
+**User decision, 2026-10-07:** the user played S4D; it is committed and pushed (`715770d`). Layer 3 gets **no third section**: the moving-socket finale is dropped and all sections and layers are done. S5 is now only the sun (default: collected on the swing crossing's end ledge) and the campaign ending (Sketch museum frame replacing Mountain, return, sun placement, two-stage ending). S5 is planned (2026-10-07, planning only) as three separately requested blocks in the [S5 plan](../gameplay/SKETCH_S5_PLAN.md): **S5A** sun on the end ledge (save-isolated `study=adventure`), **S5B** the Sketch frame in the museum (locked until the pear is restored) with campaign sun collection and return, **S5C** sun placement, the complete masterpiece and the ending. Next: paste the [S5A prompt](../gameplay/SKETCH_S5_PROMPTS.md#s5a--the-sun-on-the-end-ledge) in a new session. No S5 code exists. Planning defaults (sun position, frame wall, locked frame, settle by freezing, ending buttons) are listed in the plan's section 2 for the user to override at any gate.
+
+**Current handoff, 2026-10-07 (S4D implemented):** S4D is at its playable review gate and S4's automated gate has passed. Stop for user review; S5 (sun, campaign/ending; no finale section) needs its own request and plan/prompt. All S4D changes are uncommitted over the accepted S4L checkpoint `d0856d1`; commit/push only if the user authorizes it. No generation, dependencies, publishing or sub-agents are authorized.
 
 Play after `npm run dev`: [Layers 1–3](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layers-1-3). Route: Layer 1 pendulums (A, B; Q for C; Q for D) → step onto the lift → Layer 2 boards/axes leftward (A, B; Q for C) → walk onto the second lift → on arrival walk right over the third-nail pickup and climb the six walls → the ledge takes the third nail back → nail strip F, bars M1/M2 and swing onto the end ledge. Each section retries at its own entrance; Restart Layers 1–3 returns to the Layer 1 start. [S4D evidence](../validation/sketch-s4/s4d/README.md) has the data-keyed fixes, recovery table, results and captures.
 
@@ -8,7 +22,7 @@ Implemented: `sketchLayersOneToThree` (`layers-1-3`) composing the accepted `lay
 
 Review questions: does the full run (about 1.5 min for the bot, longer for a person) feel like one picture, and is the arrival cue enough to send you right over the pickup? Other sections' nail rings are hidden in this study (outlines stay visible as context), unlike `layers-1-2` where they show small; keep that? A fall during Layer 1/2 retries only that layer; a Layer 3 fall restarts the climb (not Layer 2). Anything to tune before S5 should go back to its owning block (no silent retune here).
 
-Next after acceptance: plan S5 (moving-socket finale differentiated from the S4B bars, sun, campaign/museum entry and ending) on its own request.
+Next after acceptance: plan S5 (sun and campaign/museum entry and ending; no finale section, per the user decision above) on its own request.
 
 ## S4D request handoff (executed)
 

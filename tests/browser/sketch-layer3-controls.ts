@@ -204,7 +204,10 @@ export async function leapTo(page: Page, surface: string) {
   }
   await release(page); return true;
 }
-export async function swingOff(page: Page, theta: number, target?: string) {
+/** When the crossing's last swing counts as done; S5A's ledge is a checkpoint, not a completion. */
+export type Done = (s: State) => boolean;
+const completedRun: Done = s => s.sketch.completed;
+export async function swingOff(page: Page, theta: number, target?: string, done: Done = completedRun) {
   let prev = (await state(page)).sketch.motion.swingAngle; let dir = 1; let held = '';
   for (;;) {
     const s = await state(page);
@@ -221,8 +224,8 @@ export async function swingOff(page: Page, theta: number, target?: string) {
   for (;;) {
     const s = await state(page); const g = target ? nail(s, target) : null;
     if (target && s.sketch.motion.state === 'swing' && g && s.sketch.motion.swingTarget === g.id) break;
-    if (!target && s.sketch.completed) break;
-    if (s.sketch.recovering || (s.body.grounded && !s.sketch.completed)) { await release(page); return false; }
+    if (!target && done(s)) break;
+    if (s.sketch.recovering || (s.body.grounded && !done(s))) { await release(page); return false; }
     if (!second && s.updateCount > start + 3 && s.body.vy <= 1 && (!g || centre(s).y < g.y - 1.4)) { second = true; await page.keyboard.down('Space'); }
     if (g && s.updateCount >= nextE && Math.hypot(centre(s).x - g.x, centre(s).y - g.y) <= 1.9) { await page.keyboard.press('KeyE'); nextE = s.updateCount + 3; }
     await page.waitForTimeout(4);
@@ -235,7 +238,7 @@ export async function toStart(page: Page) {
   await page.keyboard.down('KeyD'); await until(page, s => s.body.x >= 16.8, 'toward the crossing start'); await page.keyboard.up('KeyD');
   await page.waitForTimeout(150);
 }
-export async function attempt(page: Page, captures: boolean) {
+export async function attempt(page: Page, captures: boolean, done: Done = completedRun) {
   await toStart(page);
   await nailAt(page, 'l3-strip-f', 1);
   await toHead(page);
@@ -255,13 +258,13 @@ export async function attempt(page: Page, captures: boolean) {
   await record(page, 'gripped M2');
   await page.keyboard.press('KeyQ');
   await until(page, s => s.sketch.queue.length === 1 && s.sketch.queue[0].surfaceId === 'l3-bar-m2', 'Q frees M1');
-  if (!await swingOff(page, 40)) return false;
+  if (!await swingOff(page, 40, undefined, done)) return false;
   return true;
 }
 /** Retries stay in the crossing: each glue retry is checked on the way. */
-export async function cross(page: Page, captures = false) {
+export async function cross(page: Page, captures = false, done: Done = completedRun) {
   for (let tries = 1; tries <= 4; tries++) {
-    if (await attempt(page, captures)) { events.push({ event: 'crossed', tries }); return tries; }
+    if (await attempt(page, captures, done)) { events.push({ event: 'crossed', tries }); return tries; }
     await record(page, `glue retry ${tries}`);
     const s = await until(page, s => !s.sketch.recovering && s.body.grounded && s.body.x === 17.2, 'crossing retry');
     expect([s.sketch.leg, s.sketch.budget, s.sketch.pickupOffered]).toEqual(['l3-swings', 2, false]);

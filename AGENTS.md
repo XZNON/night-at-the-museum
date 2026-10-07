@@ -2,6 +2,10 @@
 
 ## Purpose and current state
 
+S5A implemented at its playable review gate, 2026-10-07: save-isolated `study=adventure` plays the full route; the end ledge is a safe checkpoint and touching the sun (on foot or in the air) takes it once, settles every mechanism and shows a success screen; R/fall/re-entry afterwards stay on the ledge with no second report. The user completed it in their own play. See docs/validation/sketch-s5/s5a/README.md and NEXT_SESSION. Uncommitted over `715770d`; stop for user review; S5B needs its own request. No commit/push, generation, museum/campaign change or sub-agents authorized.
+
+Layer 3 complete (user, 2026-10-07): S4D was played and committed/pushed at `715770d` on the user's request. There is no third Layer 3 section: the moving-socket finale is dropped and all sections and layers are done. S5 is only the sun (default: on the swing crossing's end ledge) and the campaign ending, planned as three separately requested blocks (S5A sun, S5B museum/campaign collection, S5C placement/ending) in docs/gameplay/SKETCH_S5_PLAN.md with prompts in SKETCH_S5_PROMPTS.md. Next is S5A on its own request; planning authorizes no code. See DECISIONS.
+
 S4D implemented at its playable review gate, 2026-10-07: `study=layers-1-3` runs Layer 1 → lift → Layer 2 → lift → joined Layer 3 (climb, handoff, crossing) to one endpoint; the second arrival starts the climb; each section retries at its own entrance; Restart returns to Layer 1. S4's automated gate passed (see docs/validation/sketch-s4/s4d/README.md and NEXT_SESSION). Uncommitted over `d0856d1`; stop for user review; S5 needs its own request. No commit/push, generation or sub-agents authorized.
 
 S4L accepted by the user on 2026-10-07 and committed/pushed at their request; next is S4D (Layers 1-3, final S4 gate) on its own request. No S4D code, generation or sub-agents are authorized by the acceptance.

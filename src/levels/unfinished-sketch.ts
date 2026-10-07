@@ -142,10 +142,10 @@ export interface SketchBay extends SketchPlayfieldData {
 }
 
 /** Development entry values for the save-isolated Sketch scene. */
-export type SketchRouteId = 'layer-1' | 'layer-2' | 'layers-1-2' | 'layer-3-walls' | 'layer-3-swings' | 'layer-3' | 'layers-1-3';
+export type SketchRouteId = 'layer-1' | 'layer-2' | 'layers-1-2' | 'layer-3-walls' | 'layer-3-swings' | 'layer-3' | 'layers-1-3' | 'adventure';
 export type SketchStudy = 'mechanics' | SketchRouteId;
 
-export const sketchStudies: readonly SketchStudy[] = ['mechanics', 'layer-1', 'layer-2', 'layers-1-2', 'layer-3-walls', 'layer-3-swings', 'layer-3', 'layers-1-3'];
+export const sketchStudies: readonly SketchStudy[] = ['mechanics', 'layer-1', 'layer-2', 'layers-1-2', 'layer-3-walls', 'layer-3-swings', 'layer-3', 'layers-1-3', 'adventure'];
 
 export const isSketchStudy = (value: string | null | undefined): value is SketchStudy =>
   !!value && (sketchStudies as readonly string[]).includes(value);
@@ -248,6 +248,25 @@ export interface SketchRouteLeg {
   arrivalSectionId: string | null;
 }
 
+/**
+ * The sun at the end of the full route (S5A). Touching it once ends the
+ * adventure; the texts are player-facing. Data only: the model reports the
+ * touch and never touches campaign progression.
+ */
+export interface SketchSun extends Rect {
+  id: string;
+  /** Cue when the player lands on the end ledge before taking the sun. */
+  ledgeCue: string;
+  /** HUD hint on the end ledge before the sun is taken. */
+  ledgeHint: string;
+  /** Cue at the moment the sun is taken. */
+  cue: string;
+  /** HUD hint once the sun is taken. */
+  doneHint: string;
+  /** HUD endpoint banner once the sun is taken. */
+  endpoint: string;
+}
+
 export interface SketchRoute extends SketchPlayfieldData {
   id: SketchRouteId;
   entryLegId: SketchRouteLegId;
@@ -266,6 +285,8 @@ export interface SketchRoute extends SketchPlayfieldData {
    * parked at the top as fixed ground (S4L context).
    */
   parkedLifts?: SketchLift[];
+  /** On the terminal leg's exit ground; touching it is the endpoint (S5A). */
+  sun?: SketchSun;
 }
 
 const solid = (id: string, x: number, top: number, width: number, height = 1): Collider =>

@@ -24,9 +24,9 @@ The distinguishing decision is where and when to spend two nails, then when to r
 | Retrieval | User-selected: one button recalls nails in FIFO order, oldest placed first. No selecting a newer nail or automatic eviction when the budget is full. |
 | Platform effects | User-selected: pinning freezes pendulums and boards in place. S2 and later S3A difficulty reviews require reuse: Layer 1 pendulums and Layer 2 boards are moving outlines that become solid only while pinned; recall removes support. S1 is unchanged. |
 | Hazards | User-selected: axes keep swinging; nails cannot stop them. |
-| Finale mounts | User-selected: swing sockets move back and forth and carry the nail with them. These mounts are not frozen by pinning. |
+| Finale mounts | Dropped 2026-10-07 (user): there is no moving-socket finale. (Moving bars that carry a nail exist only in the S4B swing crossing.) |
 | Swing | User-corrected: the player swings directly on/around the nail; there is no rope. A/D builds momentum. |
-| Route | User-selected: three layers, with three specified sections in Layer 3. See sequence below. |
+| Route | User-selected: three layers. Layer 3 has two sections, the wall climb and the swing crossing (user, 2026-10-07: no third section; all sections and layers are done). See sequence below. |
 | Final camera/layout | User-refined: one stacked world, moderate active-layer focus/zoom with neighboring layers still visible for context. No full isolation of a row or separate screen. Resize preserves geometry; tune framing in S2. S1 bay cameras are development-only. |
 | Input defaults | Mouse points at a reachable marked target; fresh left click places a nail. Q recalls the oldest remotely. A/D or arrows move/pump; Space jumps, wall-jumps or releases a swing; R retries. Key bindings are working defaults. |
 | Attachment rule (S1 review revision) | Explicit fresh E grabs a placed swing nail within its grip zone. E or Space releases with current momentum. Passing a socket does not auto-grip; no distant grapple or rope. Preserve the completed S1 revision. |
@@ -74,7 +74,9 @@ Three boards move up/down. Freeze the first; slide down its side while preparing
 
 Place a foothold nail at a marked ground site above the glue and jump onto it. Place a fixed wall swing nail, grip it, recall the older foothold, place that nail ahead, build momentum and release onto the new foothold. Recall the older swing nail and jump onto safe ground. Teach the first direct nail swing over dry ground; glue contact gives a short stuck cue and quick retry, not a long escape animation.
 
-### Layer 3, section 3 — Moving nail swings to the sun
+### Layer 3, section 3 — Moving nail swings to the sun (dropped)
+
+> **Dropped 2026-10-07 (user):** Layer 3 ends with the swing crossing; no third section is built. The sun is collected on the crossing's end ledge by default (decided in the S5 plan). The text below is historical, except the collection/settling paragraph, which still applies to the sun.
 
 Pin a moving swing socket, grip and build momentum, then place the second nail on another moving socket and time the transfer. Continue the agreed FIFO reuse where needed, with visible travel endpoints and a visible destination. The placement moment and release moment both matter. Reach generous fixed ground at the sun; the reward platform adds no new hazard.
 
@@ -136,13 +138,17 @@ Current next slice after the completed-S3 checkpoint. The user subsequently requ
 
 **Stop:** End at safe ground before the moving-socket finale. Do not invent another wall or rope system here.
 
-### S5 — Moving-socket finale, sun and campaign ending
+### S5 — Sun and campaign ending
 
-**Build:** Section 3 from the proven moving-pivot mechanic; full three-layer traversal; sun collection and safe settling cue. Register the playable Sketch scene, replace the campaign's Mountain entry/clue with Sketch, add its museum frame, and connect collection/return/placement/completion through existing progression operations. Provide a minimal complete two-stage ending using existing masterpiece/restoration material and placeholder presentation where needed.
+> **Revised 2026-10-07 (user):** no finale section; every section and layer is done. S5 builds no new traversal. Planned as S5A/S5B/S5C in [SKETCH_S5_PLAN](SKETCH_S5_PLAN.md) ([prompts](SKETCH_S5_PROMPTS.md)).
+>
+> **S5A implemented, 2026-10-07:** the sun sits on the end ledge of the full route in the save-isolated `study=adventure`; taking it settles the picture and shows a success screen. Awaiting user review; S5B (museum/campaign) needs its own request. [Evidence](../validation/sketch-s5/s5a/README.md).
+
+**Build:** Sun collection at the end of the existing full route (default: the swing crossing's end ledge) and a safe settling cue. Register the playable Sketch scene, replace the campaign's Mountain entry/clue with Sketch, add its museum frame, and connect collection/return/placement/completion through existing progression operations. Provide a minimal complete two-stage ending using existing masterpiece/restoration material and placeholder presentation where needed.
 
 **Player sees:** The whole adventure and new game -> pear -> Sketch -> sun -> complete masterpiece/ending. No unavailable Mountain door.
 
-**Gate:** Moving targets remain predictable; a transfer can be planned without an off-screen reaction; full Sketch route and full campaign work. Test existing pear saves, sun-owned-before-placement reload, reload during final restoration, replay without duplicate awards/ending mutation, unfinished exit/re-entry, denied storage, reset and repeated transitions. Retain `garden-before-dawn`, `golden-pear`, `sun-disc`, restoration region identities and save key/schema unless a demonstrated incompatibility requires a deliberate change; artwork IDs are not currently stored in SaveV1. Verify this against current code before implementation.
+**Gate:** Full Sketch route and full campaign work. Test existing pear saves, sun-owned-before-placement reload, reload during final restoration, replay without duplicate awards/ending mutation, unfinished exit/re-entry, denied storage, reset and repeated transitions. Retain `garden-before-dawn`, `golden-pear`, `sun-disc`, restoration region identities and save key/schema unless a demonstrated incompatibility requires a deliberate change; artwork IDs are not currently stored in SaveV1. Verify this against current code before implementation.
 
 **Stop:** No final museum rebuild, garden, opening cinematic or final asset batch. Gameplay/campaign completion is not final art completion.
 

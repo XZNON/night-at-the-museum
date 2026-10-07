@@ -107,6 +107,8 @@ export interface SketchRouteSession {
   sequence: number;
   queue: NailPlacement[];
   frozen: Record<string, number>;
+  /** S5A: the sun was taken in this route's session (adventure only). */
+  sunCollected?: boolean;
 }
 
 export const createRouteSession = (entryLegId: SketchRouteLegId = 'layer-1'): SketchRouteSession =>
@@ -133,6 +135,11 @@ export abstract class SketchPlayfield {
   protected placements: NailPlacement[] = [];
   protected pinnedAt = new Map<string, number>();
   protected elapsed = 0;
+  /**
+   * S5A: the picture has settled. Mechanism time stops where it is, so every
+   * board, pendulum, axe and bar holds its pose with zero velocity.
+   */
+  protected settled = false;
   private phaseOffsets = new Map<string, number>();
   protected sequence = 0;
   protected readonly solidsCache: Collider[] = [];
@@ -244,11 +251,12 @@ export abstract class SketchPlayfield {
       const t = this.mechanismTime(m);
       const now = this.centreAt(m, t);
       // A frozen mechanism holds one captured transform, so its authored
-      // velocity is zero no matter how the phase is probed.
-      if (this.pinnedAt.has(m.id)) {
+      // velocity is zero no matter how the phase is probed. A settled picture
+      // holds every mechanism the same way without pinning it.
+      if (this.pinnedAt.has(m.id) || this.settled) {
         return {
           id: m.id, kind: m.kind, x: now.x, y: now.y, angle: now.angle,
-          vx: 0, vy: 0, width: m.size.width, height: m.size.height, pinned: true, hazard: m.hazard,
+          vx: 0, vy: 0, width: m.size.width, height: m.size.height, pinned: this.pinnedAt.has(m.id), hazard: m.hazard,
         };
       }
       const before = this.centreAt(m, t - VELOCITY_STEP);
@@ -459,7 +467,7 @@ export abstract class SketchPlayfield {
     // A route boundary (a lift's arrival) may own the whole tick.
     if (!this.beforeStep(dt, input)) return;
     const beforeBody = { ...this.controller.body };
-    this.elapsed += dt;
+    if (!this.settled) this.elapsed += dt;
     this.drainCommands();
     const views = this.mechanismView();
     this.move = this.movement.update(dt, this.motionInput(input), this.buildWorld(views));
@@ -473,7 +481,8 @@ export abstract class SketchPlayfield {
     if (glued || views.some(view => {
       const m = this.mechanism(view.id)!;
       if (!m.hazard) return false;
-      return m.sweptBlade ? sweptBladeContact(beforeBody, b, this.elapsed - dt, dt, m.period, m.length, m.size.height,
+      // A settled blade no longer sweeps; only its resting pose can touch.
+      return m.sweptBlade && !this.settled ? sweptBladeContact(beforeBody, b, this.elapsed - dt, dt, m.period, m.length, m.size.height,
         time => this.centreAt(m, time)) : overlaps(b, m.kind === 'axe' ? this.axeHazard(m, view) :
           { x: view.x - view.width / 2, y: view.y - view.height / 2, width: view.width, height: view.height });
     })) {
@@ -661,6 +670,19 @@ export class SketchRouteModel extends SketchPlayfield {
   private get continuesOnGround(): boolean { return !this.leg.lift && !!this.leg.nextLegId; }
   /** True in a section entered by a grounded handoff: the crossing after the climb. */
   private get laterSection(): boolean { return this.route.legs.some(l => l.nextLegId === this.legId && !l.lift); }
+  /** The last leg: no lift and no next leg, so its exit ground ends the route. */
+  private get onTerminalLeg(): boolean { return !this.leg.lift && !this.leg.nextLegId; }
+  /** Standing on the terminal leg's committed exit ground (the end ledge). */
+  private get onEndLedge(): boolean { return this.stage === 'exit' && this.onTerminalLeg; }
+
+  /** S5A: the sun has been taken. Never reset by R, a fall or re-entry. */
+  sunCollected = false;
+  /** Set on the tick the sun is taken; the scene consumes it once. */
+  private sunTouched = false;
+  /** True once, on the first read after the sun was taken this scene life. */
+  consumeSunTouch(): boolean { const touched = this.sunTouched; this.sunTouched = false; return touched; }
+  /** Whether mechanism time has stopped for good (the sun was taken). */
+  get isSettled(): boolean { return this.settled; }
 
   stage: SketchRouteStage = 'traversal';
   private transitElapsed = 0;
@@ -670,6 +692,7 @@ export class SketchRouteModel extends SketchPlayfield {
     return {
       routeId: this.route.id, entryLegId: this.route.entryLegId, legId: this.legId, stage: this.stage, elapsed: this.elapsed, sequence: this.sequence,
       queue: this.queue.map(p => ({ ...p })), frozen: this.frozenPhases,
+      ...(this.route.sun ? { sunCollected: this.sunCollected } : {}),
     };
   }
 
@@ -682,8 +705,13 @@ export class SketchRouteModel extends SketchPlayfield {
     // Layer 3 studies, and a Layer 3 leg of the full route, restore only their
     // own entrance-or-exit snapshots; the full route never had legacy ones.
     const strict = this.legOnLayerThree(this.route.entryLegId) || this.legOnLayerThree(session.legId);
-    if ((session.routeId !== undefined && session.routeId !== this.route.id) ||
-      (this.route.id === 'layers-1-3' && session.routeId !== this.route.id) ||
+    // The sun is only ever taken on the end ledge of a route that has one.
+    const terminal = this.route.legs.find(l => l.id === session.legId);
+    const sunClaim = session.sunCollected;
+    const badSun = sunClaim !== undefined && (typeof sunClaim !== 'boolean' ||
+      (sunClaim && (!this.route.sun || session.stage !== 'exit' || !terminal || !!terminal.lift || !!terminal.nextLegId)));
+    if ((session.routeId !== undefined && session.routeId !== this.route.id) || badSun ||
+      ((this.route.id === 'layers-1-3' || !!this.route.sun) && session.routeId !== this.route.id) ||
       (strict && (session.routeId !== this.route.id ||
         !['traversal', 'exit'].includes(session.stage) || !Number.isFinite(session.elapsed) ||
         session.elapsed < 0 || !Number.isFinite(session.sequence)))) { this.restartAdventure(); return; }
@@ -711,7 +739,13 @@ export class SketchRouteModel extends SketchPlayfield {
       if (this.leg.nextLegId) { this.legId = this.leg.nextLegId; this.restartLeg(); return; }
       this.settleArrival(); return;
     }
-    if (stage === 'exit') { this.enterExitCheckpoint(); return; }
+    if (stage === 'exit') {
+      this.enterExitCheckpoint();
+      // Re-entry after the sun: still on the ledge, the sun taken, the picture
+      // settled where it stopped. No second report reaches the scene.
+      if (sunClaim === true) { this.elapsed = session.elapsed; this.markSunTaken(); }
+      return;
+    }
     if (this.route.id === 'layer-1') {
       const targets = new Set<string>(); const nails = new Set<string>();
       this.placements = (Array.isArray(session.queue) ? session.queue : []).filter(p => {
@@ -844,6 +878,7 @@ export class SketchRouteModel extends SketchPlayfield {
     this.elapsed = 0;
     this.transitElapsed = 0;
     this.recoveryRemaining = 0; this.completed = false; this.stage = 'traversal';
+    this.sunCollected = false; this.sunTouched = false; this.settled = false;
     if (this.layerThree) this.move = { state: 'normal', wall: '', wallTransfer: true, swingTarget: '', swingAngle: 0 };
     this.movement.retune(this.movementTuning(this.fieldSettings.wall));
     this.controller.airCoast = this.fieldSettings.airCoast === true;
@@ -887,9 +922,31 @@ export class SketchRouteModel extends SketchPlayfield {
     this.transitElapsed = 0;
     const spawn = this.leg.exitSpawn;
     this.controller.respawn(spawn.x, spawn.y);
-    if (this.route.id !== 'layer-1') this.elapsed = 0;
-    if (!this.leg.lift) { this.completed = true; this.elapsed = 0; }
+    // A settled picture keeps its pose through every later retry.
+    if (this.route.id !== 'layer-1' && !this.settled) this.elapsed = 0;
+    // With a sun, the end ledge is a safe checkpoint; the sun is the endpoint.
+    if (!this.leg.lift) { this.completed = !this.route.sun || this.sunCollected; if (!this.settled) this.elapsed = 0; }
   }
+
+  /**
+   * S5A: the sun is taken, once. Everything moving settles where it is,
+   * attachments and commands clear and the adventure is complete. The model
+   * only raises a one-shot flag for the scene; it never touches progression.
+   * Taken from the air, the end ledge's rules apply at once, so no later
+   * fall or retry can leave it.
+   */
+  private collectSun(): void {
+    this.markSunTaken();
+    this.sunTouched = true;
+    this.movement.reset();
+    this.move = { state: 'normal', wall: '', wallTransfer: true, swingTarget: '', swingAngle: 0 };
+    this.resetLedger();
+    this.clearCommandQueue();
+    if (this.stage === 'traversal') this.stage = 'exit';
+    this.notify(this.route.sun!.cue);
+  }
+
+  private markSunTaken(): void { this.sunCollected = true; this.settled = true; this.completed = true; }
 
   /**
    * Standing fully on the waiting deck in the exit stage starts the ride: the
@@ -963,6 +1020,8 @@ export class SketchRouteModel extends SketchPlayfield {
 
   protected override afterStep(): void {
     const b = this.controller.body;
+    const sun = this.route.sun;
+    if (sun && !this.sunCollected && this.onTerminalLeg && this.recoveryRemaining <= 0 && overlaps(b, sun)) { this.collectSun(); return; }
     // Commit an actual landing on fixed exit ground, rather than catching an
     // airborne body as soon as it overlaps the checkpoint volume.
     if (this.stage === 'traversal' && b.grounded &&
@@ -970,7 +1029,7 @@ export class SketchRouteModel extends SketchPlayfield {
       if (this.continuesOnGround) { this.continueOnGround(); return; }
       this.enterExitCheckpoint();
       this.notify(this.leg.lift ? `Layer ${this.section.layer} clear. Safe checkpoint reached — step onto the lift to ride up.` :
-        this.route.id === 'layer-3-walls' ? 'S4A endpoint. Fixed post-climb ground reached.'
+        sun ? sun.ledgeCue : this.route.id === 'layer-3-walls' ? 'S4A endpoint. Fixed post-climb ground reached.'
           : this.route.id === 'layer-3-swings' ? 'S4B endpoint. Landed on the fixed end ledge.'
           : this.route.id === 'layer-3' ? 'S4C endpoint. Layer 3 crossed: landed on the fixed end ledge.'
           : this.route.id === 'layers-1-3' ? 'S4D endpoint. Layers 1–3 complete: landed on the fixed end ledge.' : 'Layer 2 clear. S3A endpoint reached on fixed ground.');
@@ -992,7 +1051,7 @@ export class SketchRouteModel extends SketchPlayfield {
       this.stage = 'exit';
       this.transitElapsed = 0;
       this.enterExitCheckpoint();
-      this.notify('Back at the safe exit checkpoint.');
+      this.notify(this.route.sun && this.onEndLedge ? 'Back on the end ledge.' : 'Back at the safe exit checkpoint.');
       return;
     }
     // At a committed checkpoint there is nothing left to retry: re-anchor on
@@ -1013,7 +1072,7 @@ export class SketchRouteModel extends SketchPlayfield {
   protected override onFall(): void {
     if (this.stage === 'arrival') { this.recover(`Off the landing. Back onto Layer ${this.section.layer}…`); return; }
     // Impossible inside the cab walls, but defended: back to the departure exit.
-    if (this.stage === 'exit' || this.stage === 'transit') { this.recover('Back to the safe exit checkpoint…'); return; }
+    if (this.stage === 'exit' || this.stage === 'transit') { this.recover(this.route.sun && this.onEndLedge ? 'Off the ledge. Back onto the end ledge…' : 'Back to the safe exit checkpoint…'); return; }
     this.recover(this.nailPickup ? `Nothing under you. Layer ${this.section.layer} restarts; pick up the third nail again…`
       : this.laterSection ? 'Nothing under you. The swing crossing restarts with two nails; the climb stays clear…'
       : `Nothing under you. Layer ${this.section.layer} restarts with two nails…`);
@@ -1035,12 +1094,16 @@ export class SketchRouteModel extends SketchPlayfield {
   }
 
   hud(): SketchHud {
-    const hint = this.stage === 'arrival' && this.section.layer === 3
+    const sun = this.route.sun;
+    const hint = sun && this.onEndLedge ? (this.sunCollected ? sun.doneHint : sun.ledgeHint)
+      : this.stage === 'arrival' && this.section.layer === 3
       ? 'Safe ground reached. Explore the landing or press R to return here.'
       : this.stage === 'transit' ? `Riding the lift to Layer ${this.route.sections[this.leg.arrivalSectionId!].layer}. Walk and jump freely; the cab holds you on.`
       : this.legId === 'layer-2' ? 'Pin A, then B. From B, Q recalls A for C. Time both active axes.' : this.leg.hint ?? this.route.hint;
     const hud = this.baseHud(this.route.id, this.route.id === 'layer-1' ? this.route.name : this.section.name, hint, this.route.goal);
     const checkpoint = this.stage === 'arrival' ? this.section.name.toLowerCase()
+      // The adventure names places, never leg IDs.
+      : sun ? (this.onEndLedge ? 'the end ledge' : this.stage === 'traversal' ? `${this.section.name} start` : `${this.section.name} clear`)
       : this.stage === 'traversal' ? `${this.legId} start` : `${this.legId} clear`;
     return {
       ...hud,
@@ -1049,7 +1112,7 @@ export class SketchRouteModel extends SketchPlayfield {
       layer: `${this.section.layer} / 3 · ${this.section.name}`,
       checkpoint: `Checkpoint / ${checkpoint}`,
       prompt: this.liftPrompt(),
-      endpoint: this.completed ? (this.route.id === 'layer-3-walls' ? 'S4A endpoint reached · Wall climb clear · Stop for review'
+      endpoint: this.completed ? (sun ? sun.endpoint : this.route.id === 'layer-3-walls' ? 'S4A endpoint reached · Wall climb clear · Stop for review'
         : this.route.id === 'layer-3-swings' ? 'S4B endpoint reached · Swing crossing clear · Stop for review'
         : this.route.id === 'layer-3' ? 'S4C endpoint reached · Wall climb and swing crossing clear · Stop for review'
         : this.route.id === 'layers-1-3' ? 'S4D endpoint reached · Layers 1–3 complete · Stop for review' : this.section.layer === 3 ? 'S3 endpoint reached · Safe Layer 3 ground · Stop for review' : this.leg.lift ? 'Slice 2 endpoint reached · Layer 2 content follows in S3' :
