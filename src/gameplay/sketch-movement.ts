@@ -65,7 +65,10 @@ export class SketchMovement {
   /** One-off gameplay cue raised by the movement layer, drained by the model. */
   cue = '';
 
-  constructor(readonly controller: CharacterController, private readonly tuning: SketchTuning) {}
+  constructor(readonly controller: CharacterController, private tuning: SketchTuning) {}
+
+  /** A joined preset swaps section feel at a leg boundary, after a reset. */
+  retune(tuning: SketchTuning): void { this.tuning = tuning; }
 
   get swingTarget(): string { return this.swing?.targetId ?? ''; }
   get wallTransferAvailable(): boolean { return this.wallTransfer; }

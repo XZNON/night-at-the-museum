@@ -1,0 +1,165 @@
+{
+  "recallCurrentHead": {
+    "framesToGlue": 27,
+    "recoveryFrames": 22
+  },
+  "standardRoute": {
+    "params": {
+      "wait": 132,
+      "second": 16,
+      "pump": 0,
+      "angle": 15,
+      "jump": 18,
+      "p2": 0,
+      "a2": 0,
+      "j2": 6
+    },
+    "frames": 550,
+    "seconds": 9.17,
+    "order": [
+      "F",
+      "M1",
+      "Q",
+      "M2",
+      "Q"
+    ]
+  },
+  "placementChoices": {
+    "F1/M1 0/M2 0": "done",
+    "F1/M1 0/M2 0.5": "done",
+    "F1/M1 0.25/M2 1": "done",
+    "F1/M1 0.5/M2 0.5": "done",
+    "F0.5/M1 0/M2 1": "done",
+    "F0.75/M1 0/M2 0.25": "done",
+    "F0/M1 any": "M1 out of reach from that head"
+  },
+  "m1GripWaitFrames": {
+    "note": "wait frames after M1 is nailed (bar period 300 frames) that lead to a grip",
+    "windows": {
+      "F1/M1 0": [
+        72,
+        80,
+        88,
+        96,
+        104,
+        112,
+        120,
+        128,
+        136,
+        144,
+        152,
+        160,
+        168,
+        176,
+        184,
+        192,
+        200,
+        208,
+        216
+      ],
+      "F1/M1 0.25": [
+        0,
+        8,
+        16,
+        24,
+        32,
+        40,
+        48,
+        56,
+        248,
+        256,
+        264,
+        272,
+        280,
+        288,
+        296,
+        304,
+        312
+      ],
+      "F1/M1 0.5": [
+        0,
+        8,
+        16,
+        256,
+        264,
+        272,
+        280,
+        288,
+        296,
+        304,
+        312
+      ],
+      "F1/M1 0.75": [],
+      "F0.5/M1 0": [
+        0,
+        8,
+        16,
+        24,
+        32,
+        40,
+        256,
+        264,
+        272,
+        280,
+        288,
+        296,
+        304,
+        312
+      ]
+    }
+  },
+  "m2": {
+    "framesInReachDuringFirst5sOfSwing": {
+      "0": 86,
+      "1": 30,
+      "0.25": 53,
+      "0.5": 42,
+      "0.75": 36
+    },
+    "releaseToGripOptions": {
+      "0": 220,
+      "1": 20,
+      "0.5": 101
+    },
+    "releaseToLedgeOptions": {
+      "0": 201,
+      "1": 315,
+      "0.5": 273
+    },
+    "gridSize": 378
+  },
+  "groundToM1": {
+    "closestCentre": 3.41,
+    "gripRadius": 2,
+    "at": "wait 36 second 34 hold 30 at 30.33,52.89"
+  },
+  "fToM2": {
+    "closestCentre": {
+      "F0": 11.8,
+      "F0.5": 9.48,
+      "F1": 8.59
+    },
+    "stripRightEnd": 26.6,
+    "ledgeLeft": 57
+  },
+  "m1ToLedge": {
+    "attempts": 4800,
+    "furthestRightEdgeAtLedgeHeight": 53.78,
+    "ledgeLeft": 57,
+    "margin": 3.22
+  },
+  "releaseCoast": {
+    "vxAtRelease": 8.12,
+    "vxHalfSecondLaterLetGo": 8.12,
+    "furthestLetGo": 51.07,
+    "furthestHeldRight": 51.07
+  },
+  "regrip": {
+    "regrips": 5,
+    "furthestRightEdge": 48.4
+  },
+  "missedTransferRetry": {
+    "framesFromDetachToControl": 46,
+    "seconds": 0.77
+  }
+}

@@ -34,6 +34,8 @@ export const sketchLayerThreeWalls: SketchRoute = {
   wall: { slideMaxFall: 2, kickVertical: 14.5, kickLock: 0.8, kickBuffer: 0.3, grip: 0.9 },
   // Lets the board after the next one be inked from the current wall.
   placementReach: 11,
+  // Layer 3 only: letting go of A/D in the air keeps the jump's momentum.
+  airCoast: true,
   // On the arrival ground, between the spawn and the edge toward A.
   nailPickup: { id: 'l3-nail-pickup', x: 7, y: 24.4, width: 0.8, height: 1.2 },
   // Earlier layers remain physical context, below the local fall line.
@@ -126,4 +128,29 @@ export const sketchLayerThreeSwings: SketchRoute = {
     exitSpawn: { x: 59, y: 54 }, exitDeathY: 49,
     escalator: null, arrivalSectionId: null,
   }],
+};
+
+/**
+ * S4C: the accepted climb and crossing as one Layer 3. The climb's exit ledge
+ * is the crossing's start ground, so nothing new is built between them: a
+ * grounded landing there hands over in place, takes the third nail back and
+ * starts the crossing with two. Each section keeps its own accepted feel.
+ */
+export const sketchLayerThree: SketchRoute = {
+  ...sketchLayerThreeSwings, id: 'layer-3', entryLegId: 'l3-walls',
+  name: 'Layer 3 · Walls and swings',
+  hint: sketchLayerThreeWalls.hint,
+  goal: 'Climb six walls, then cross the glue on the moving swings and land on the end ledge. Stop for S4C review.',
+  spawn: sketchLayerThreeWalls.spawn, deathY: sketchLayerThreeWalls.deathY,
+  // Section-owned below; nothing is field-wide in the joined preset.
+  wall: undefined, placementReach: undefined, nailPickup: undefined, airCoast: undefined,
+  sectionOrder: ['l3-walls', 'l3-swings'],
+  legs: [
+    { ...sketchLayerThreeWalls.legs[0], nextLegId: 'l3-swings',
+      hint: `${sketchLayerThreeWalls.hint} The swing crossing starts on that ledge.`,
+      settings: { wall: sketchLayerThreeWalls.wall, placementReach: sketchLayerThreeWalls.placementReach, nailPickup: sketchLayerThreeWalls.nailPickup, airCoast: true } },
+    { ...sketchLayerThreeSwings.legs[0], hint: sketchLayerThreeSwings.hint, settings: { airCoast: true } },
+  ],
+  // From the ledge's left edge to the crossing's start spot.
+  sectionBlend: { from: 'l3-walls', to: 'l3-swings', x0: START.x, x1: sketchLayerThreeSwings.spawn.x },
 };

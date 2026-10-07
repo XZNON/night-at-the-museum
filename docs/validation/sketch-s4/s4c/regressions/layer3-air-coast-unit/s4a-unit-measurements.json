@@ -1,0 +1,418 @@
+[
+  {
+    "dwell": 0,
+    "complete": true,
+    "budget": 2,
+    "log": [
+      "pickup",
+      "pinc",
+      "a26.6",
+      "b30.7",
+      "c34.8",
+      "Q",
+      "pind",
+      "d38.9",
+      "Q",
+      "pine",
+      "e43.0",
+      "Q",
+      "pinf",
+      "f47.1",
+      "Q",
+      "done"
+    ]
+  },
+  {
+    "dwell": 10,
+    "complete": true,
+    "budget": 2,
+    "log": [
+      "pickup",
+      "pinc",
+      "a26.6",
+      "b30.7",
+      "c34.8",
+      "Q",
+      "pind",
+      "d38.9",
+      "Q",
+      "pine",
+      "e43.0",
+      "Q",
+      "pinf",
+      "f47.1",
+      "Q",
+      "done"
+    ]
+  },
+  {
+    "dwell": 20,
+    "complete": true,
+    "budget": 2,
+    "log": [
+      "pickup",
+      "pinc",
+      "a26.6",
+      "b30.7",
+      "c34.8",
+      "Q",
+      "pind",
+      "d38.9",
+      "Q",
+      "pine",
+      "e43.0",
+      "Q",
+      "pinf",
+      "f47.1",
+      "Q",
+      "done"
+    ]
+  },
+  {
+    "dwell": 30,
+    "complete": true,
+    "budget": 2,
+    "log": [
+      "pickup",
+      "pinc",
+      "a26.6",
+      "b30.7",
+      "c34.8",
+      "Q",
+      "pind",
+      "d38.9",
+      "Q",
+      "pine",
+      "e43.0",
+      "Q",
+      "pinf",
+      "f47.1",
+      "Q",
+      "done"
+    ]
+  },
+  {
+    "dwell": 40,
+    "complete": true,
+    "budget": 2,
+    "log": [
+      "pickup",
+      "pinc",
+      "a26.6",
+      "b30.7",
+      "c34.8",
+      "Q",
+      "pind",
+      "d38.9",
+      "Q",
+      "pine",
+      "e43.0",
+      "Q",
+      "pinf",
+      "f47.1",
+      "Q",
+      "done"
+    ]
+  },
+  {
+    "dwell": 50,
+    "complete": true,
+    "budget": 2,
+    "log": [
+      "pickup",
+      "pinc",
+      "a26.6",
+      "b30.7",
+      "c34.8",
+      "Q",
+      "pind",
+      "d38.9",
+      "Q",
+      "pine",
+      "e43.0",
+      "Q",
+      "pinf",
+      "f47.1",
+      "Q",
+      "done"
+    ]
+  },
+  {
+    "dwell": 60,
+    "complete": true,
+    "budget": 2,
+    "log": [
+      "pickup",
+      "pinc",
+      "a26.6",
+      "b30.6",
+      "c34.5",
+      "Q",
+      "pind",
+      "d38.4",
+      "Q",
+      "pine",
+      "e42.3",
+      "Q",
+      "pinf",
+      "f46.2",
+      "Q",
+      "top49.7",
+      "done"
+    ]
+  },
+  {
+    "dwell": 70,
+    "complete": true,
+    "budget": 2,
+    "log": [
+      "pickup",
+      "pinc",
+      "a26.6",
+      "b30.2",
+      "c33.8",
+      "Q",
+      "pind",
+      "d37.4",
+      "Q",
+      "pine",
+      "e41.0",
+      "Q",
+      "pinf",
+      "f44.5",
+      "Q",
+      "e48.1",
+      "f51.7",
+      "done"
+    ]
+  },
+  {
+    "beyondWindow": [
+      {
+        "dwell": 80,
+        "complete": false
+      },
+      {
+        "dwell": 90,
+        "complete": false
+      }
+    ]
+  },
+  {
+    "doubleEntry": [
+      {
+        "dwell": 0,
+        "complete": true
+      },
+      {
+        "dwell": 30,
+        "complete": true
+      },
+      {
+        "dwell": 50,
+        "complete": true
+      },
+      {
+        "dwell": 60,
+        "complete": true
+      }
+    ]
+  },
+  {
+    "holdInto": [
+      {
+        "dwell": 0,
+        "complete": true
+      },
+      {
+        "dwell": 30,
+        "complete": true
+      },
+      {
+        "dwell": 60,
+        "complete": true
+      },
+      {
+        "dwell": 80,
+        "complete": false
+      }
+    ]
+  },
+  {
+    "grip": {
+      "caught": 26.642500000000002,
+      "afterGrip": 25.139722222222154,
+      "fell": 1.5027777777778475
+    }
+  },
+  {
+    "kickBuffer": {
+      "buffered": {
+        "pressed": true,
+        "kicks": [
+          "kick at 34",
+          "kick at 35",
+          "kick at 36",
+          "kick at 37",
+          "kick at 38",
+          "kick at 39",
+          "kick at 40",
+          "kick at 41",
+          "kick at 42",
+          "kick at 43",
+          "kick at 44"
+        ],
+        "end": {
+          "x": 10.458333333333332,
+          "y": 34.51055555555557,
+          "width": 0.65,
+          "height": 1.25,
+          "vx": 6.8,
+          "vy": 4.083333333333339,
+          "grounded": false
+        },
+        "state": "normal"
+      },
+      "without": {
+        "pressed": true,
+        "kicks": [],
+        "end": {
+          "x": 7.6000000000000005,
+          "y": 30.725833333333338,
+          "width": 0.65,
+          "height": 1.25,
+          "vx": 0,
+          "vy": 0,
+          "grounded": false
+        },
+        "state": "wall-slide"
+      }
+    }
+  },
+  {
+    "reachFromA": 10.178382403049302
+  },
+  {
+    "withoutPickup": {
+      "complete": false,
+      "budget": 2,
+      "log": [
+        "a28.6",
+        "b32.7",
+        "fall"
+      ]
+    }
+  },
+  {
+    "kickRise": 4.205,
+    "conservativeSkipMargins": {
+      "groundToB": 0.3100000000000023,
+      "sameColumnGaps": [
+        0.3500000000000014,
+        0.20000000000000284,
+        0.20000000000000284,
+        0.20000000000000284
+      ],
+      "topToTopTwoAbove": 2.01,
+      "dKickToETop": 1.0450000000000017,
+      "dJumpToLedge": 0.759999999999998
+    }
+  },
+  {
+    "noNailJumpDelay": 16,
+    "peak": 28.578611111111112,
+    "end": {
+      "x": 13.491111111111108,
+      "y": 21.984722222222228,
+      "width": 0.65,
+      "height": 1.25,
+      "vx": 6.8,
+      "vy": -17.949999999999996,
+      "grounded": false
+    }
+  },
+  {
+    "noNailJumpDelay": 22,
+    "peak": 28.846111111111114,
+    "end": {
+      "x": 14.284444444444441,
+      "y": 21.94611111111112,
+      "width": 0.65,
+      "height": 1.25,
+      "vx": 6.8,
+      "vy": -18.366666666666664,
+      "grounded": false
+    }
+  },
+  {
+    "noNailJumpDelay": 26,
+    "peak": 28.88555555555556,
+    "end": {
+      "x": 14.737777777777774,
+      "y": 21.985555555555564,
+      "width": 0.65,
+      "height": 1.25,
+      "vx": 6.8,
+      "vy": -18.366666666666664,
+      "grounded": false
+    }
+  },
+  {
+    "noNailJumpDelay": 30,
+    "peak": 28.813888888888894,
+    "end": {
+      "x": 15.191111111111107,
+      "y": 21.9138888888889,
+      "width": 0.65,
+      "height": 1.25,
+      "vx": 6.8,
+      "vy": -18.366666666666664,
+      "grounded": false
+    }
+  },
+  {
+    "noNailJumpDelay": 36,
+    "peak": 28.49805555555556,
+    "end": {
+      "x": 15.757777777777774,
+      "y": 21.904166666666676,
+      "width": 0.65,
+      "height": 1.25,
+      "vx": 6.8,
+      "vy": -17.949999999999996,
+      "grounded": false
+    }
+  },
+  {
+    "measuredDoubleJumpCeiling": 4.48555555555556
+  },
+  {
+    "sameWallRecontact": {
+      "before": {
+        "x": 10.216666666666667,
+        "y": 24.735000000000028,
+        "width": 0.65,
+        "height": 1.25,
+        "vx": 0,
+        "vy": -2,
+        "grounded": false
+      },
+      "after": {
+        "x": 10.216666666666667,
+        "y": 24.735000000000028,
+        "width": 0.65,
+        "height": 1.25,
+        "vx": 0,
+        "vy": -2,
+        "grounded": false
+      },
+      "motion": {
+        "state": "normal",
+        "wall": "",
+        "wallTransfer": false,
+        "swingTarget": "",
+        "swingAngle": 0
+      }
+    }
+  }
+]

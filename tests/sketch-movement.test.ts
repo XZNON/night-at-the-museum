@@ -7,6 +7,11 @@ import type { SketchWorld } from '../src/gameplay/sketch-movement';
 import { sketchBays, sketchMovement, sketchTuning } from '../src/levels/unfinished-sketch';
 import type { SketchBayId, SketchTuning } from '../src/levels/unfinished-sketch';
 import type { Collider } from '../src/gameplay/collision';
+import { royalSupper } from '../src/levels/royal-supper';
+import { SketchRouteModel } from '../src/gameplay/sketch-model';
+import { sketchRoute } from '../src/levels/unfinished-sketch-route';
+import { sketchJoinedRoute, sketchLayerTwo } from '../src/levels/unfinished-sketch-layer2';
+import { sketchLayerThree, sketchLayerThreeSwings, sketchLayerThreeWalls } from '../src/levels/unfinished-sketch-layer3';
 
 // Normal / wall-slide / nail-grip state transitions, anti-stacking and the
 // measured movement envelopes. Royal Supper tuning is checked alongside so a
@@ -556,5 +561,40 @@ describe('measured envelopes', () => {
     // A forward release lands well past the pit but inside the authored ledge.
     expect(reach).toBeGreaterThan(24);
     expect(reach).toBeLessThanOrEqual(35);
+  });
+});
+
+describe('Layer 3 air momentum when A/D is let go (user request 2026-10-07)', () => {
+  const floor: Collider[] = [{ id: 'floor', x: -50, y: -1, width: 200, height: 1 }];
+  /** Run right, jump, let go of D after `held` airborne ticks; report vx and distance at landing. */
+  const flight = (tuning: typeof sketchMovement, held: number, coast: boolean) => {
+    const c = new CharacterController(tuning, 0, 0); c.airCoast = coast;
+    for (let f = 0; f < 40; f++) c.update(dt, { ...idleControls(), axis: 1 }, floor);
+    const x0 = c.body.x;
+    c.update(dt, { ...idleControls(), axis: 1, jumpPressed: true, jumpHeld: true }, floor);
+    let vxAfterRelease = NaN;
+    for (let f = 0; f < 200 && !c.body.grounded; f++) {
+      c.update(dt, { ...idleControls(), axis: f < held ? 1 : 0, jumpHeld: true }, floor);
+      if (f === held + 6) vxAfterRelease = c.body.vx;
+    }
+    return { vx: vxAfterRelease, distance: c.body.x - x0 };
+  };
+
+  it('with air coast a jump keeps its speed after letting go, never further than holding', () => {
+    const letGo = flight(sketchMovement, 5, true); const holding = flight(sketchMovement, 999, true);
+    expect(letGo.vx).toBeCloseTo(sketchMovement.speed, 5);
+    expect(letGo.distance).toBeGreaterThan(holding.distance * 0.95);
+    expect(letGo.distance).toBeLessThanOrEqual(holding.distance + 1e-9);
+  });
+
+  it('only Layer 3 presets coast; earlier Sketch layers, S1 bays and Royal Supper keep air braking', () => {
+    expect(flight(sketchMovement, 5, false).vx).toBe(0);
+    expect(flight(royalSupper.tuning, 5, false).vx).toBe(0);
+    expect(new CharacterController(royalSupper.tuning, 0, 0).airCoast).toBe(false);
+    for (const bay of Object.values(sketchBays)) expect(new SketchModel(bay, sketchTuning).controller.airCoast).toBe(false);
+    expect([sketchLayerThreeWalls, sketchLayerThreeSwings].map(f => new SketchRouteModel(f, sketchTuning).controller.airCoast)).toEqual([true, true]);
+    const joined = new SketchRouteModel(sketchLayerThree, sketchTuning); expect(joined.controller.airCoast).toBe(true);
+    joined.controller.respawn(16, 49.5); joined.update(dt, idleControls()); expect(joined.legId).toBe('l3-swings'); expect(joined.controller.airCoast).toBe(true);
+    for (const f of [sketchRoute, sketchLayerTwo, sketchJoinedRoute]) expect(new SketchRouteModel(f, sketchTuning).controller.airCoast).toBe(false);
   });
 });

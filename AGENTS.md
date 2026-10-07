@@ -2,6 +2,12 @@
 
 ## Purpose and current state
 
+S4C accepted by the user on 2026-10-07 (after the Layer 3 air-momentum fix) and committed/pushed at their request; next is S4D (Layers 1/2 joined to this Layer 3, the final S4 gate) on its own request, using the revised S4D plan/prompt. No S4D code, generation or sub-agents are authorized by the acceptance.
+
+Layer 3 air momentum (user, 2026-10-07): letting go of A/D in the air keeps a jump's momentum on Layer 3 only (`airCoast`); Layers 1/2, S1 and Supper keep air braking.
+
+S4C implemented at its playable review gate, 2026-10-07: `study=layer-3` joins the accepted S4A climb and S4B crossing; the grounded landing on the shared ledge hands over once in place (third nail taken back); crossing retries keep the climb; Restart returns to the Layer 3 entrance. See docs/validation/sketch-s4/s4c/README.md and NEXT_SESSION. Uncommitted over `68e7785`; stop for user review; S4D needs its own request; S4 is not complete. No commit/push, generation or sub-agents authorized.
+
 S4B accepted by the user on 2026-10-07 and committed/pushed at their request; next is S4C on its own request. Earlier: S4B was implemented at its playable review gate: `study=layer-3-swings`, free placement on strip F and moving bars M1/M2 (never empty air), two nails, F → M1 → Q → M2 → Q → fixed end ledge over glue; a shared forced-detach fling was fixed. See docs/validation/sketch-s4/s4b/README.md and NEXT_SESSION. Uncommitted over `ce66df9`; stop for user review; S4C needs its own request. No commit/push, generation or sub-agents authorized.
 
 Earlier direction, 2026-10-07: the user accepted the three-nail S4A and redesigned S4B: make a platform → moving swing → second moving swing → fixed end ledge, with free nail placement along nailable surfaces (not empty air) in that section only; the third nail is taken back after the climb (two nails in S4B). Plan: docs/gameplay/SKETCH_S4B_PLAN.md. S4B needs its own implementation request. The user authorized committing/pushing this accepted S4A + S4 planning checkpoint to origin/main; later commits need new authorization.

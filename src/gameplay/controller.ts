@@ -32,6 +32,11 @@ export class CharacterController {
   private coasting = false;
   readonly contacts: Collider[] = [];
   get airJumpAvailable(): boolean { return this.airborneJump; }
+  /**
+   * Letting go of the direction in the air keeps the flight's momentum instead
+   * of braking (Sketch Layer 3, user request 2026-10-07). Off by default.
+   */
+  airCoast = false;
   get slidingActive(): boolean { return this.sliding; }
   /** Remaining seconds of carried release momentum, for observable state. */
   get momentumCarry(): number { return this.carry; }
@@ -94,7 +99,7 @@ export class CharacterController {
     // slows only the way holding that direction would, never stops dead, and
     // so never reaches further than holding it. Opposite input still steers.
     if (b.grounded) this.coasting = false;
-    const coast = this.coasting && input.axis === 0 && b.vx !== 0;
+    const coast = (this.coasting || (this.airCoast && !b.grounded)) && input.axis === 0 && b.vx !== 0;
     const target = coast ? Math.sign(b.vx) * Math.min(Math.abs(b.vx), cap)
       : input.axis * (this.sliding ? t.slideSpeed : cap);
     // A butter takeoff carries its momentum until the next landing. Releasing

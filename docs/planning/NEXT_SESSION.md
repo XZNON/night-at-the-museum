@@ -1,6 +1,26 @@
-# Next session — Sketch S4C (joined Layer 3)
+# Next session — Sketch S4D (Layers 1–3, final S4 gate)
 
-**S4B accepted, 2026-10-07:** the user played S4B after the momentum fix, declared it done and authorized committing/pushing this checkpoint to origin/main. Next is S4C (join the wall climb and the swing crossing in one Layer 3) on its own request; the user may also request the early Sketch art reference pass discussed in-session (not authorized yet, no credits spent).
+**S4C accepted, 2026-10-07:** the user accepted S4C after the Layer 3 air-momentum fix and authorized committing/pushing this checkpoint to origin/main. Next is S4D (Layers 1/2 joined to this Layer 3, the final S4 gate) on its own request: paste the [S4D prompt](../gameplay/SKETCH_S4_PROMPTS.md#s4d--full-route-through-s4) and read the [S4D plan](../gameplay/SKETCH_S4D_PLAN.md) first (revised for the delivered S4A–C facts after this checkpoint). No S4D code exists yet.
+
+## S4C review handoff (accepted)
+
+
+**Review fix, 2026-10-07 (Layer 3 air momentum):** the user reported that letting go of A/D in a jump dropped the player. On their choice, Layer 3 only (climb and crossing, joined and isolated) now keeps the jump's horizontal momentum when let go; Layers 1/2, S1 and Supper are unchanged. F's kick now lands straight on the ledge. 182/182 unit tests; browser joined 7/7, S4A 8/8, S4B 8/8, S1 12/12, S3 14/14 after one rerun. Details in the [S4C evidence](../validation/sketch-s4/s4c/README.md). Still at the S4C review gate.
+
+**Current handoff, 2026-10-07 (S4C implemented):** S4C is at its playable review gate. Stop for user review; S4D (joining Layers 1/2 to this Layer 3, the final S4 gate) needs its own request. All S4C changes are uncommitted over the pushed S4B checkpoint `68e7785`; commit/push only if the user authorizes it. No generation, dependencies, publishing or sub-agents are authorized. S4 is not complete.
+
+Play [joined Layer 3](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-3) after `npm run dev`. [S4C evidence](../validation/sketch-s4/s4c/README.md) has the handoff observations, retry ownership table, unit/browser results, captures and regressions. Route: pick up the third nail and climb the six walls as in S4A; the grounded landing on the high ledge takes the third nail back and starts the swing crossing in place (two nails, free placement), as in S4B; land on the end ledge for the S4C endpoint. During the crossing, glue/fall/`R`/re-entry return to the swing start (17.2, 49.5) with the climb kept; Restart Layer 3 returns to the entrance (4.2, 24.4) with the pickup back.
+
+Implemented: `layer-3` preset/study composed from the accepted presets (one shared ledge collider, no new geometry); `nextLegId` without an escalator hands over on the grounded exit commit (`continueOnGround`: once only, in place, ledger/pickup/attachment/jump/phase/commands reset, `completed=false`); optional leg `settings` (wall feel, reach, pickup) and `hint` so the joined preset is section-aware while isolated presets keep their field values; `freePlacement` follows the active leg; pickup drawn/collected only on the climb; section-specific retry/fall text; Layer 3 restore rules extended to `layer-3` (a claimed climb-exit snapshot is refused); camera `sectionBlend` over the ledge x13.2→17.2; menu/eyebrow/tag/pause/CSS wiring. Tests: `tests/sketch-layer3-joined.test.ts` (11; all unit 180/180) and `tests/browser/sketch-layer3-joined.spec.ts` (7/7 in the last two full runs). Regressions S4A 8/8, S4B 8/8, S1 12/12, S3 14/14.
+
+Review questions: is the handoff readable (cue, HUD section switch, walls returning to outlines, camera easing right)? Landings from the hop over E often end near the ledge's right edge (≈21.5 of 22); held D stops at the boundary but re-engages on key repeat and can walk into the glue (a crossing retry). Acceptable as is? The bars restart at phase zero on the handoff (as on every S4B retry).
+
+Next after acceptance: [S4D prompt](../gameplay/SKETCH_S4_PROMPTS.md#s4d--full-route-through-s4) with the [S4D plan](../gameplay/SKETCH_S4D_PLAN.md), read with the delivered S4A/S4B/S4C facts (the joined preset is `sketchLayerThree`; the hand-over helper and leg settings exist). If the user finds a restore/lifecycle problem in C, fix it in a separately requested C continuation before D.
+
+## S4C implementation request handoff (executed)
+
+
+**S4B accepted, 2026-10-07:** the user played S4B after the momentum fix, declared it done and authorized committing/pushing this checkpoint to origin/main. Next is S4C (join the wall climb and the swing crossing in one Layer 3) on its own request, using the revised [S4C prompt](../gameplay/SKETCH_S4_PROMPTS.md#s4c--joined-layer-3) and the revision section of the [S4C plan](../gameplay/SKETCH_S4C_PLAN.md); the user may also request the early Sketch art reference pass discussed in-session (not authorized yet, no credits spent).
 
 **Current handoff, 2026-10-07 (S4B implemented):** S4B is at its playable review gate. Stop for user review; S4C (joining the wall climb to this crossing) needs its own request. All S4B changes are uncommitted over the pushed S4A checkpoint `ce66df9`; commit/push only if the user authorizes it. No generation, dependencies, publishing or sub-agents are authorized.
 

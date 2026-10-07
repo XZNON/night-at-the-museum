@@ -71,6 +71,8 @@ export class UnfinishedSketchScene implements GameScene {
   private readonly previousCamera = new THREE.Vector2();
   private goalMesh: THREE.Mesh | null = null;
   private pickup: THREE.Group | null = null;
+  /** The pickup this scene draws: the field's, or a joined route section's. */
+  private pickupRect: SketchPlayfieldData['nailPickup'];
   private readonly chevrons: THREE.Mesh[] = [];
   private readonly escalatorSteps = new Map<string, THREE.Group>();
   private readonly boardingPads = new Map<string, THREE.Mesh>();
@@ -389,7 +391,7 @@ export class UnfinishedSketchScene implements GameScene {
         }
       }
       if (m.kind === 'pendulum') this.buildSuspension(m);
-      if (this.field.id === 'layer-3-walls' && m.id.startsWith('l3-wall-')) {
+      if ((this.field.id === 'layer-3-walls' || this.field.id === 'layer-3') && m.id.startsWith('l3-wall-')) {
         this.letter(m.id.slice(-1).toUpperCase(), rig).position.set(0, 1.05, 1.5);
       }
     }
@@ -562,7 +564,9 @@ export class UnfinishedSketchScene implements GameScene {
 
   /** A loose cartoon nail lying in wait, side-on: shaft, head and a soft halo. */
   private buildPickup(): void {
-    const p = this.field.nailPickup;
+    const p = this.field.nailPickup ??
+      (this.mode.kind === 'route' ? this.mode.field.legs.find(l => l.settings?.nailPickup)?.settings?.nailPickup : undefined);
+    this.pickupRect = p;
     if (!p) return;
     const rig = new THREE.Group();
     rig.position.set(p.x + p.width / 2, p.y + p.height / 2, 1.3);
@@ -570,7 +574,7 @@ export class UnfinishedSketchScene implements GameScene {
     const shaft = this.slab(0.16, 0.8, 0.16, C.nailShaft, rig); shaft.position.y = -0.1;
     const head = this.slab(0.62, 0.18, 0.3, C.nailCap, rig); head.position.y = 0.36;
     rig.rotation.z = -0.35;
-    rig.visible = !this.model.pickupCollected;
+    rig.visible = this.model.nailPickup === p && !this.model.pickupCollected;
     this.world.add(rig);
     this.pickup = rig;
   }
@@ -652,7 +656,7 @@ export class UnfinishedSketchScene implements GameScene {
     const onDown = (event: PointerEvent): void => {
       if (!this.interactive || event.button !== 0) return;
       const marked = this.pick(event.clientX, event.clientY, canvas);
-      if (marked || !this.field.surfaces?.length) { this.model.enqueue({ type: 'place', targetId: marked ?? '' }); return; }
+      if (marked || !this.model.freePlacement) { this.model.enqueue({ type: 'place', targetId: marked ?? '' }); return; }
       // Free placement: the projected spot, or empty air (refused, queue unchanged).
       const spot = this.pickSurface(event.clientX, event.clientY, canvas);
       this.model.enqueue({ type: 'place-at', surfaceId: spot?.surfaceId ?? '', offset: spot?.offset ?? 0 });
@@ -807,7 +811,7 @@ export class UnfinishedSketchScene implements GameScene {
   /** The model HUD, with the S4B hover preview naming the spot or the refusal. */
   private hud(): SketchHud {
     const hud = this.model.hud();
-    if (!this.field.surfaces?.length || !this.pointer || !this.interactive) return hud;
+    if (!this.model.freePlacement || !this.pointer || !this.interactive) return hud;
     const spot = this.surfaceHover;
     if (!spot) return { ...hud, nearest: 'Empty air · nails only go into wood' };
     const label = this.model.surface(spot.surfaceId)!.label;
@@ -841,7 +845,7 @@ export class UnfinishedSketchScene implements GameScene {
     this.onHud(this.hud());
   }
   private refreshSurfaceHover(): void {
-    this.surfaceHover = this.pointer && this.canvas && this.interactive && this.field.surfaces?.length
+    this.surfaceHover = this.pointer && this.canvas && this.interactive && this.model.freePlacement
       ? this.pickSurface(this.pointer.x, this.pointer.y, this.canvas) : null;
   }
   render(alpha: number): void {
@@ -906,9 +910,10 @@ export class UnfinishedSketchScene implements GameScene {
 
     this.renderFreeNails();
 
-    if (this.pickup && this.field.nailPickup) {
-      this.pickup.visible = !this.model.pickupCollected;
-      const p = this.field.nailPickup;
+    if (this.pickup && this.pickupRect) {
+      // A joined route offers it only in its own section (the climb).
+      this.pickup.visible = this.model.nailPickup === this.pickupRect && !this.model.pickupCollected;
+      const p = this.pickupRect;
       this.pickup.position.y = p.y + p.height / 2 + (this.reducedMotion ? 0 : Math.sin(this.elapsed * 2.6) * 0.12);
     }
     for (const bubble of this.glueBubbles) {
@@ -954,7 +959,8 @@ export class UnfinishedSketchScene implements GameScene {
       for (const material of this.ghostMaterials) material.color.setHex(ok ? C.ghostOk : C.ghostBad);
     }
     if (this.airMark) {
-      const at = !spot && this.pointer && this.canvas && this.interactive ? this.toWorld(this.pointer.x, this.pointer.y, this.canvas) : null;
+      const at = !spot && this.pointer && this.canvas && this.interactive && this.model.freePlacement
+        ? this.toWorld(this.pointer.x, this.pointer.y, this.canvas) : null;
       this.airMark.visible = !!at;
       if (at) this.airMark.position.set(at.x, at.y, 1.6);
     }
@@ -1012,10 +1018,22 @@ export class UnfinishedSketchScene implements GameScene {
       centreY = clamp(cy + 2.4, section.focus.centreY.min, section.focus.centreY.max);
       viewHeight = section.focus.viewHeight;
     }
+    let lookAhead = model.section.focus.lookAhead ?? camera.lookAhead;
+    const blend = model.route.sectionBlend;
+    if (!model.inTransit && blend && (model.sectionId === blend.from || model.sectionId === blend.to)) {
+      // Joined Layer 3: the climb's band eases into the crossing's band as the
+      // player walks the shared ledge. Position only; it never moves progress.
+      const a = model.route.sections[blend.from]; const z = model.route.sections[blend.to];
+      const k = smooth(clamp((cx - blend.x0) / (blend.x1 - blend.x0), 0, 1));
+      centreY = lerp(clamp(cy + 2.4, a.focus.centreY.min, a.focus.centreY.max), clamp(cy + 2.4, z.focus.centreY.min, z.focus.centreY.max), k);
+      viewHeight = lerp(a.focus.viewHeight, z.focus.viewHeight, k);
+      lookAhead = lerp(a.focus.lookAhead ?? camera.lookAhead, z.focus.lookAhead ?? camera.lookAhead, k);
+      direction = lerp(a.travelDirection ?? 1, z.travelDirection ?? 1, k);
+    }
     const viewWidth = this.viewWidthFor(viewHeight);
     const minX = this.field.bounds.x + viewWidth / 2 - 4;
     const maxX = this.field.bounds.x + this.field.bounds.width - viewWidth / 2 + 4;
-    const x = clamp(cx + (model.section.focus.lookAhead ?? camera.lookAhead) * direction, Math.min(minX, maxX), Math.max(minX, maxX));
+    const x = clamp(cx + lookAhead * direction, Math.min(minX, maxX), Math.max(minX, maxX));
     return this.scratchFocus.set(x, centreY, viewHeight);
   }
 

@@ -6,8 +6,8 @@ import { sweptBladeContact } from './sketch-blade';
 import { SketchMovement } from './sketch-movement';
 import type { GripSite, SketchMoveHud, SketchWorld } from './sketch-movement';
 import type {
-  SketchBay, SketchBayId, SketchMechanism, SketchNailSurface, SketchPlayfieldData, SketchRoute, SketchRouteSection,
-  SketchTarget, SketchTuning, TargetKind, SketchRouteLegId, SketchRouteId,
+  SketchBay, SketchBayId, SketchLegSettings, SketchMechanism, SketchNailSurface, SketchPlayfieldData, SketchRoute,
+  SketchRouteSection, SketchTarget, SketchTuning, TargetKind, SketchRouteLegId, SketchRouteId,
 } from '../levels/unfinished-sketch';
 import { sketchMovement } from '../levels/unfinished-sketch';
 
@@ -127,9 +127,21 @@ export abstract class SketchPlayfield {
 
   constructor(readonly field: SketchPlayfieldData, protected readonly tuning: SketchTuning) {
     this.controller = new CharacterController(sketchMovement, field.spawn.x, field.spawn.y);
-    this.movement = new SketchMovement(this.controller, field.wall ? { ...tuning, wall: { ...tuning.wall, ...field.wall } } : tuning);
+    this.movement = new SketchMovement(this.controller, this.movementTuning(field.wall));
+    this.controller.airCoast = field.airCoast === true;
     this.notify(field.hint);
   }
+
+  /** Shared tuning with a field's (or section's) own wall feel merged in. */
+  protected movementTuning(wall: SketchLegSettings['wall']): SketchTuning {
+    return wall ? { ...this.tuning, wall: { ...this.tuning.wall, ...wall } } : this.tuning;
+  }
+  /** Wall feel, reach and pickup in force now. A joined route's leg overrides. */
+  protected get fieldSettings(): SketchLegSettings { return this.field; }
+  /** The extra nail on offer in the current section, if any. */
+  get nailPickup(): SketchPlayfieldData['nailPickup'] { return this.fieldSettings.nailPickup; }
+  /** Whether clicks in the current section drive free nails into wood (S4B). */
+  get freePlacement(): boolean { return !!this.field.surfaces?.length; }
 
   // --- ledger -------------------------------------------------------------
   get availableNails(): number { return Math.max(0, this.nailBudget - this.placements.length); }
@@ -139,7 +151,7 @@ export abstract class SketchPlayfield {
   protected get allNailsText(): string { return this.nailBudget === 2 ? 'Both nails' : `All ${this.nailBudget} nails`; }
   /** Leg/bay reset wording for the base budget. */
   protected get resetNailsText(): string {
-    return this.field.nailPickup ? 'Two nails; pick up the third at the start.' : 'Two nails available.';
+    return this.nailPickup ? 'Two nails; pick up the third at the start.' : 'Two nails available.';
   }
   get oldestPlacement(): NailPlacement | null { return this.placements[0] ?? null; }
   get placedCount(): number { return this.placements.length; }
@@ -403,7 +415,7 @@ export abstract class SketchPlayfield {
   get walls(): readonly Collider[] { return this.wallsCache; }
   get grips(): readonly GripSite[] { return this.gripsCache; }
   get nailBudget(): number { return this.tuning.nailBudget + (this.pickupCollected ? 1 : 0); }
-  get placementReach(): number { return this.field.placementReach ?? this.tuning.placementReach; }
+  get placementReach(): number { return this.fieldSettings.placementReach ?? this.tuning.placementReach; }
   get targetHitPixels(): number { return this.tuning.targetHitPixels; }
   /** Seconds of authored mechanism time; deterministic on every retry. */
   get routeTime(): number { return this.elapsed; }
@@ -441,7 +453,7 @@ export abstract class SketchPlayfield {
     })) {
       this.recover(this.field.hazards.length ? 'Glue! Quick retry.' : 'Caught by the axe. Watch its sweep.'); return;
     }
-    const pickup = this.field.nailPickup;
+    const pickup = this.nailPickup;
     if (pickup && !this.pickupCollected && overlaps(b, pickup)) {
       this.pickupCollected = true;
       this.notify(`Third nail picked up. ${this.nailBudget} nails now; Q still recalls the oldest.`);
@@ -526,7 +538,7 @@ export abstract class SketchPlayfield {
       nails: `${this.placements.length}/${this.nailBudget} placed · ${this.availableNails} available`,
       oldest: oldestTarget ? `Q recalls: ${oldestTarget.label}` : 'Q recalls: nothing yet',
       nearest: nearest ? `Click target: ${nearest.label} (${nearest.distance.toFixed(1)}u)`
-        : this.field.surfaces?.length ? 'Click wood (strip or bar) to drive a nail' : 'No target in reach',
+        : this.freePlacement ? 'Click wood (strip or bar) to drive a nail' : 'No target in reach',
       cue: this.cueRemaining > 0 ? this.cue : '',
       motion: this.motionText(),
       swing: this.move.state === 'swing'
@@ -590,7 +602,12 @@ export class SketchModel extends SketchPlayfield {
  * authored escalator to a fixed Layer 2 landing.
  */
 export class SketchRouteModel extends SketchPlayfield {
-  constructor(readonly route: SketchRoute, tuning: SketchTuning) { super(route, tuning); this.legId = route.entryLegId; }
+  constructor(readonly route: SketchRoute, tuning: SketchTuning) {
+    super(route, tuning); this.legId = route.entryLegId;
+    // The entry leg's own feel, when a joined preset gives one.
+    this.movement.retune(this.movementTuning(this.fieldSettings.wall));
+    this.controller.airCoast = this.fieldSettings.airCoast === true;
+  }
 
   legId: SketchRouteLegId;
   get leg() { return this.route.legs.find(l => l.id === this.legId)!; }
@@ -603,8 +620,17 @@ export class SketchRouteModel extends SketchPlayfield {
   protected override surfaceEligible(id: string): boolean {
     return !!this.leg.surfaceIds?.includes(id) && this.stage === 'traversal';
   }
-  /** Layer 3 sections (S4A walls, S4B swings) share entrance-only re-entry. */
-  private get layerThree(): boolean { return this.route.id === 'layer-3-walls' || this.route.id === 'layer-3-swings'; }
+  /** A joined preset's leg owns its feel; isolated presets keep the field's. */
+  protected override get fieldSettings(): SketchLegSettings { return this.leg.settings ?? this.field; }
+  override get freePlacement(): boolean { return !!this.leg.surfaceIds?.length; }
+  /** Layer 3 sections (S4A walls, S4B swings, S4C joined) share entrance-only re-entry. */
+  private get layerThree(): boolean {
+    return this.route.id === 'layer-3-walls' || this.route.id === 'layer-3-swings' || this.route.id === 'layer-3';
+  }
+  /** A same-layer leg that hands over on its exit ground instead of ending (S4C). */
+  private get continuesOnGround(): boolean { return !this.leg.escalator && !!this.leg.nextLegId; }
+  /** True once the joined Layer 3 has moved past its entry leg. */
+  private get laterSection(): boolean { return this.route.id === 'layer-3' && this.legId !== this.route.entryLegId; }
 
   stage: SketchRouteStage = 'traversal';
   private transitElapsed = 0;
@@ -640,6 +666,9 @@ export class SketchRouteModel extends SketchPlayfield {
     if (session.entryLegId !== this.route.entryLegId || reachable !== session.legId ||
       !this.route.legs.some(l => l.id === reachable) ||
       !['traversal', 'exit', 'transit', 'arrival'].includes(session.stage)) { this.restartAdventure(); return; }
+    // A leg that hands over on its own ground never rests at its exit.
+    const owner = this.route.legs.find(l => l.id === reachable)!;
+    if (!owner.escalator && owner.nextLegId && session.stage !== 'traversal') { this.restartAdventure(); return; }
     this.legId = reachable;
     this.restartLeg();
     const stage = session.stage === 'transit' ? 'exit' : session.stage;
@@ -701,8 +730,29 @@ export class SketchRouteModel extends SketchPlayfield {
     this.transitElapsed = 0;
     this.recoveryRemaining = 0; this.completed = false; this.stage = 'traversal';
     if (this.layerThree) this.move = { state: 'normal', wall: '', wallTransfer: true, swingTarget: '', swingAngle: 0 };
+    this.movement.retune(this.movementTuning(this.fieldSettings.wall));
+    this.controller.airCoast = this.fieldSettings.airCoast === true;
     this.clearCommandQueue();
-    this.notify(`Layer ${this.section.layer} reset. ${this.resetNailsText}`);
+    this.notify(this.laterSection ? `Swing crossing reset. ${this.resetNailsText} The climb stays clear.`
+      : `Layer ${this.section.layer} reset. ${this.resetNailsText}`);
+  }
+
+  /**
+   * S4C's same-layer handoff. The grounded landing on the climb's exit ledge,
+   * which is also the crossing's start ground, starts the next leg where the
+   * player stands: no ride, no teleport. The third nail is taken back with
+   * the rest of the ledger; attachment, jump allowances, mechanism phases and
+   * queued commands reset; nothing completes.
+   */
+  private continueOnGround(): void {
+    const b = this.controller.body;
+    const at = { x: b.x, y: b.y };
+    this.legId = this.leg.nextLegId!;
+    this.restartLeg();
+    // Anchor in place on the shared ground; respawn clears coyote time, the
+    // jump buffer and held allowances, so no press carries across.
+    this.controller.respawn(at.x, at.y);
+    this.notify('Wall climb clear. The third nail is taken back: two nails for the swing crossing.');
   }
 
   /** Restart adventure: back to the study entrance with no route completion kept. */
@@ -799,10 +849,12 @@ export class SketchRouteModel extends SketchPlayfield {
     // airborne body as soon as it overlaps the checkpoint volume.
     if (this.stage === 'traversal' && b.grounded &&
       Math.abs(b.y - this.leg.exitBounds.y) < 0.00001 && overlaps(b, this.leg.exitBounds)) {
+      if (this.continuesOnGround) { this.continueOnGround(); return; }
       this.enterExitCheckpoint();
       this.notify(this.leg.escalator ? `Layer ${this.section.layer} clear. Safe checkpoint reached — walk onto the escalator and press E.` :
         this.route.id === 'layer-3-walls' ? 'S4A endpoint. Fixed post-climb ground reached.'
-          : this.route.id === 'layer-3-swings' ? 'S4B endpoint. Landed on the fixed end ledge.' : 'Layer 2 clear. S3A endpoint reached on fixed ground.');
+          : this.route.id === 'layer-3-swings' ? 'S4B endpoint. Landed on the fixed end ledge.'
+          : this.route.id === 'layer-3' ? 'S4C endpoint. Layer 3 crossed: landed on the fixed end ledge.' : 'Layer 2 clear. S3A endpoint reached on fixed ground.');
     }
     if (!this.completed && this.stage === 'arrival' && overlaps(this.controller.body, this.route.goalBounds)) {
       this.completed = true;
@@ -839,7 +891,8 @@ export class SketchRouteModel extends SketchPlayfield {
   protected override onFall(): void {
     if (this.stage === 'arrival') { this.recover('Off the landing. Back to the top of the escalator…'); return; }
     if (this.stage === 'exit') { this.recover('Back to the safe exit checkpoint…'); return; }
-    this.recover(this.field.nailPickup ? `Nothing under you. Layer ${this.section.layer} restarts; pick up the third nail again…`
+    this.recover(this.nailPickup ? `Nothing under you. Layer ${this.section.layer} restarts; pick up the third nail again…`
+      : this.laterSection ? 'Nothing under you. The swing crossing restarts with two nails; the climb stays clear…'
       : `Nothing under you. Layer ${this.section.layer} restarts with two nails…`);
   }
 
@@ -847,7 +900,7 @@ export class SketchRouteModel extends SketchPlayfield {
     const hint = this.stage === 'arrival' && this.section.layer === 3
       ? 'Safe ground reached. Explore the landing or press R to return here.'
       : this.stage === 'transit' ? `Riding to Layer ${this.route.sections[this.leg.arrivalSectionId!].layer}.`
-      : this.legId === 'layer-2' ? 'Pin A, then B. From B, Q recalls A for C. Time both active axes.' : this.route.hint;
+      : this.legId === 'layer-2' ? 'Pin A, then B. From B, Q recalls A for C. Time both active axes.' : this.leg.hint ?? this.route.hint;
     const hud = this.baseHud(this.route.id, this.route.id === 'layer-1' ? this.route.name : this.section.name, hint, this.route.goal);
     const checkpoint = this.stage === 'arrival' ? this.section.name.toLowerCase()
       : this.stage === 'traversal' ? `${this.legId} start` : `${this.legId} clear`;
@@ -859,7 +912,8 @@ export class SketchRouteModel extends SketchPlayfield {
       checkpoint: `Checkpoint / ${checkpoint}`,
       prompt: this.boardingReady() ? 'Press E to board the escalator' : '',
       endpoint: this.completed ? (this.route.id === 'layer-3-walls' ? 'S4A endpoint reached · Wall climb clear · Stop for review'
-        : this.route.id === 'layer-3-swings' ? 'S4B endpoint reached · Swing crossing clear · Stop for review' : this.section.layer === 3 ? 'S3 endpoint reached · Safe Layer 3 ground · Stop for review' : this.leg.escalator ? 'Slice 2 endpoint reached · Layer 2 content follows in S3' :
+        : this.route.id === 'layer-3-swings' ? 'S4B endpoint reached · Swing crossing clear · Stop for review'
+        : this.route.id === 'layer-3' ? 'S4C endpoint reached · Wall climb and swing crossing clear · Stop for review' : this.section.layer === 3 ? 'S3 endpoint reached · Safe Layer 3 ground · Stop for review' : this.leg.escalator ? 'Slice 2 endpoint reached · Layer 2 content follows in S3' :
         'S3A endpoint reached · Layer 2 clear') : '',
     };
   }

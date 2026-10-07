@@ -143,8 +143,9 @@ export const grid3 = <A, B, C>(a: A[], b: B[], c: C[]) => a.flatMap(x => b.flatM
  * Q frees F, M2 while swinging, release/grip M2, Q frees M1, release to the
  * ledge. Returns the first complete route or the stage it stopped at.
  */
-export function cross(o: { f: number; m1: number; m2: number; first?: boolean }) {
-  const start = Run.start();
+export function cross(o: { f: number; m1: number; m2: number; first?: boolean }, from?: Run) {
+  // S4C passes a joined run that has just handed over on the start ground.
+  const start = from ?? Run.start();
   start.go();
   const onF = toFoothold(start, o.f);
   if (!onF) return { stage: 'F', run: null };

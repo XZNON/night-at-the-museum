@@ -133,6 +133,8 @@ export interface SketchPlayfieldData {
   nailPickup?: Rect & { id: string };
   /** Free-placement surfaces; absent everywhere marked targets are used. */
   surfaces?: SketchNailSurface[];
+  /** Jumps keep their momentum when A/D is let go in the air (Layer 3). */
+  airCoast?: boolean;
 }
 
 export interface SketchBay extends SketchPlayfieldData {
@@ -140,10 +142,10 @@ export interface SketchBay extends SketchPlayfieldData {
 }
 
 /** Development entry values for the save-isolated Sketch scene. */
-export type SketchRouteId = 'layer-1' | 'layer-2' | 'layers-1-2' | 'layer-3-walls' | 'layer-3-swings';
+export type SketchRouteId = 'layer-1' | 'layer-2' | 'layers-1-2' | 'layer-3-walls' | 'layer-3-swings' | 'layer-3';
 export type SketchStudy = 'mechanics' | SketchRouteId;
 
-export const sketchStudies: readonly SketchStudy[] = ['mechanics', 'layer-1', 'layer-2', 'layers-1-2', 'layer-3-walls', 'layer-3-swings'];
+export const sketchStudies: readonly SketchStudy[] = ['mechanics', 'layer-1', 'layer-2', 'layers-1-2', 'layer-3-walls', 'layer-3-swings', 'layer-3'];
 
 export const isSketchStudy = (value: string | null | undefined): value is SketchStudy =>
   !!value && (sketchStudies as readonly string[]).includes(value);
@@ -200,9 +202,23 @@ export interface SketchRouteSection {
 
 export type SketchRouteLegId = 'layer-1' | 'layer-2' | 'l3-walls' | 'l3-swings';
 
+/**
+ * Field feel a leg may own in a joined preset (S4C). When a leg carries this,
+ * it replaces the field-level values for that leg; absent keeps the field's.
+ */
+export type SketchLegSettings = Pick<SketchPlayfieldData, 'wall' | 'placementReach' | 'nailPickup' | 'airCoast'>;
+
 export interface SketchRouteLeg {
   id: SketchRouteLegId;
+  /**
+   * The leg that follows. With an escalator it starts on arrival; with none,
+   * a grounded landing on the exit ground hands over in place (S4C).
+   */
   nextLegId?: SketchRouteLegId;
+  /** Section-owned wall feel, reach and pickup in a joined preset. */
+  settings?: SketchLegSettings;
+  /** Section hint in a joined preset; absent keeps the route hint. */
+  hint?: string;
   sectionId: string;
   targetIds: string[];
   /** Nailable surfaces this leg owns (S4B); absent means none. */
@@ -222,6 +238,11 @@ export interface SketchRoute extends SketchPlayfieldData {
   sections: Record<string, SketchRouteSection>;
   sectionOrder: string[];
   legs: SketchRouteLeg[];
+  /**
+   * Joined Layer 3 (S4C): framing blends from one section's band to the next
+   * as the player walks the shared ground between x0 and x1. Camera only.
+   */
+  sectionBlend?: { from: string; to: string; x0: number; x1: number };
 }
 
 const solid = (id: string, x: number, top: number, width: number, height = 1): Collider =>

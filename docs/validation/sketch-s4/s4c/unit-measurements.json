@@ -1,0 +1,94 @@
+{
+  "sections": {
+    "walls": {
+      "reach": 11,
+      "wall": {
+        "slideMaxFall": 2,
+        "kickHorizontal": 9,
+        "kickVertical": 14.5,
+        "kickLock": 0.8,
+        "kickBuffer": 0.3,
+        "grip": 0.9
+      },
+      "pickup": {
+        "id": "l3-nail-pickup",
+        "x": 7,
+        "y": 24.4,
+        "width": 0.8,
+        "height": 1.2
+      }
+    },
+    "swings": {
+      "reach": 10,
+      "wall": {
+        "slideMaxFall": 4.2,
+        "kickHorizontal": 9,
+        "kickVertical": 11
+      },
+      "pickup": null
+    }
+  },
+  "handoff": {
+    "log": [
+      "pickup",
+      "pinc",
+      "a26.6",
+      "b30.7",
+      "c34.8",
+      "Q",
+      "pind",
+      "d38.9",
+      "Q",
+      "pine",
+      "e43.0",
+      "Q",
+      "pinf",
+      "f47.1",
+      "Q",
+      "handoff"
+    ],
+    "frames": 312,
+    "seconds": 5.2,
+    "landing": {
+      "x": 14.084999999999997,
+      "y": 49.5
+    }
+  },
+  "fullRoute": {
+    "frames": 858,
+    "seconds": 14.3,
+    "climbFrames": 312,
+    "crossParams": {
+      "wait": 4,
+      "second": 16,
+      "pump": 0,
+      "angle": 15,
+      "jump": 18,
+      "p2": 0,
+      "a2": 0,
+      "j2": 6
+    },
+    "climbOrder": [
+      "A",
+      "B",
+      "C",
+      "Q",
+      "D",
+      "Q",
+      "E",
+      "Q",
+      "F",
+      "Q"
+    ],
+    "crossOrder": [
+      "F",
+      "M1",
+      "Q",
+      "M2",
+      "Q"
+    ]
+  },
+  "glueRetry": {
+    "framesToGlue": 74
+  }
+}

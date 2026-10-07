@@ -68,6 +68,8 @@ export function climb(o: ClimbOptions = {}) {
     const held = press || (top >= 4 && top < 16) || (top >= 18 && top < 30);
     go({ input: { axis, jumpHeld: held, jumpPressed: press, jumpReleased: press }, cmds });
     if (m.recoveryRemaining) { log.push('fall'); break; } if (m.completed) { log.push('done'); break; }
+    // Joined Layer 3 (S4C): the landing hands over to the next section instead.
+    if (m.legId !== field.entryLegId) { log.push('handoff'); break; }
   }
   return { m, log, frames };
 }
