@@ -6,7 +6,7 @@ import { sweptBladeContact } from './sketch-blade';
 import { SketchMovement } from './sketch-movement';
 import type { GripSite, SketchMoveHud, SketchWorld } from './sketch-movement';
 import type {
-  SketchBay, SketchBayId, SketchMechanism, SketchPlayfieldData, SketchRoute, SketchRouteSection,
+  SketchBay, SketchBayId, SketchMechanism, SketchNailSurface, SketchPlayfieldData, SketchRoute, SketchRouteSection,
   SketchTarget, SketchTuning, TargetKind, SketchRouteLegId, SketchRouteId,
 } from '../levels/unfinished-sketch';
 import { sketchMovement } from '../levels/unfinished-sketch';
@@ -15,11 +15,28 @@ import { sketchMovement } from '../levels/unfinished-sketch';
 // pointer coordinates into a target ID; this model revalidates everything
 // against the current transforms at the consuming simulation tick.
 
-export interface NailPlacement { nailId: string; targetId: string; sequence: number }
+/**
+ * One FIFO entry. A free placement on a nailable surface also records that
+ * surface and its 0..1 offset; its target ID is unique to the placement.
+ */
+export interface NailPlacement { nailId: string; targetId: string; sequence: number; surfaceId?: string; offset?: number }
 
 export type SketchCommand =
   | { type: 'place'; targetId: string }
+  /** Free placement: the scene projects the cursor; the model revalidates. */
+  | { type: 'place-at'; surfaceId: string; offset: number }
   | { type: 'recall' };
+
+/** A nailable segment's live world ends, for drawing, picking and checks. */
+export interface SurfaceView {
+  id: string; kind: SketchNailSurface['kind']; label: string;
+  from: { x: number; y: number }; to: { x: number; y: number };
+}
+
+/** Free placement head sizes, matching the reviewed S1 foothold and swing nails. */
+const SURFACE_NAIL_SIZE = { foothold: { width: 1.9, height: 0.35 }, 'moving-swing': { width: 0.8, height: 0.8 } } as const;
+/** Two free nails on one surface keep this much world distance apart. */
+const SURFACE_SPACING = 1;
 
 export interface MechanismView {
   id: string; kind: SketchMechanism['kind'];
@@ -144,7 +161,22 @@ export abstract class SketchPlayfield {
   }
 
   // --- authored geometry --------------------------------------------------
-  target(id: string): SketchTarget | null { return this.field.targets.find(t => t.id === id) ?? null; }
+  target(id: string): SketchTarget | null {
+    const marked = this.field.targets.find(t => t.id === id);
+    if (marked) return marked;
+    // A placed free nail behaves exactly like a marked target while it exists.
+    const placement = this.placements.find(p => p.targetId === id && p.surfaceId !== undefined);
+    const surface = placement ? this.surface(placement.surfaceId!) : null;
+    return surface ? this.surfaceTarget(surface, placement!.offset ?? 0, id) : null;
+  }
+  surface(id: string): SketchNailSurface | null { return this.field.surfaces?.find(s => s.id === id) ?? null; }
+  private surfaceTarget(surface: SketchNailSurface, offset: number, id: string): SketchTarget {
+    return {
+      id, kind: surface.kind, mechanismId: surface.mechanismId,
+      offset: { x: surface.from.x + (surface.to.x - surface.from.x) * offset, y: surface.from.y + (surface.to.y - surface.from.y) * offset },
+      size: SURFACE_NAIL_SIZE[surface.kind], label: surface.label,
+    };
+  }
   mechanism(id: string): SketchMechanism | null { return this.field.mechanisms.find(m => m.id === id) ?? null; }
   isPinned(mechanismId: string): boolean { return this.pinnedAt.has(mechanismId); }
   mechanismTime(mechanism: SketchMechanism): number {
@@ -207,12 +239,17 @@ export abstract class SketchPlayfield {
 
   /** Every marked site, with its current validity and the reason it is refused. */
   protected targetEligible(_id: string): boolean { return true; }
+  /** Read-only: whether the current section owns this target. */
+  ownsTarget(id: string): boolean { return this.targetEligible(id); }
 
   targetViews(): TargetView[] {
     const b = this.controller.body;
     const cx = b.x + b.width / 2; const cy = b.y + b.height / 2;
     const oldest = this.placements[0]?.targetId ?? '';
-    return this.field.targets.map(t => {
+    // Placed free nails join the marked sites so heads, the oldest marker and
+    // the HUD treat them alike.
+    const free = this.placements.flatMap(p => { const t = p.surfaceId === undefined ? null : this.target(p.targetId); return t ? [t] : []; });
+    return [...this.field.targets, ...free].map(t => {
       const position = this.targetPosition(t.id)!;
       const distance = Math.hypot(cx - position.x, cy - position.y);
       const occupiedBy = this.placements.find(p => p.targetId === t.id)?.nailId ?? null;
@@ -227,6 +264,58 @@ export abstract class SketchPlayfield {
         occupiedBy, oldest: oldest === t.id, distance, reason,
       };
     });
+  }
+
+  // --- free placement on nailable surfaces (S4B) -------------------------
+  protected surfaceEligible(_id: string): boolean { return true; }
+
+  surfaceViews(): SurfaceView[] {
+    return (this.field.surfaces ?? []).map(surface => {
+      const m = this.mechanism(surface.mechanismId)!;
+      const c = this.centreAt(m, this.mechanismTime(m));
+      return { id: surface.id, kind: surface.kind, label: surface.label,
+        from: { x: c.x + surface.from.x, y: c.y + surface.from.y }, to: { x: c.x + surface.to.x, y: c.y + surface.to.y } };
+    });
+  }
+
+  /** Live world point at a 0..1 offset along a surface, or null if invalid. */
+  surfacePoint(surfaceId: string, offset: number): { x: number; y: number } | null {
+    const view = this.surfaceViews().find(v => v.id === surfaceId);
+    if (!view || !Number.isFinite(offset) || offset < 0 || offset > 1) return null;
+    return { x: view.from.x + (view.to.x - view.from.x) * offset, y: view.from.y + (view.to.y - view.from.y) * offset };
+  }
+
+  /** Why a free nail cannot go here right now; '' means it can. */
+  surfaceRefusal(surfaceId: string, offset: number): string {
+    const surface = this.surface(surfaceId);
+    const point = this.surfacePoint(surfaceId, offset);
+    if (!surface || !point) return 'Empty air. Nails only go into wood.';
+    if (!this.surfaceEligible(surfaceId)) return 'Not part of this section.';
+    if (this.availableNails <= 0) return `${this.allNailsText} are placed. Press Q.`;
+    const b = this.controller.body;
+    if (Math.hypot(b.x + b.width / 2 - point.x, b.y + b.height / 2 - point.y) > this.placementReach) return 'Out of reach.';
+    if (this.placements.some(p => {
+      if (p.surfaceId !== surfaceId) return false;
+      const other = this.targetPosition(p.targetId);
+      return !!other && Math.hypot(other.x - point.x, other.y - point.y) < SURFACE_SPACING;
+    })) return 'Too close to another nail.';
+    if (surface.kind === 'foothold') {
+      const size = SURFACE_NAIL_SIZE.foothold;
+      if (overlaps(b, { x: point.x - size.width / 2, y: point.y - size.height / 2, width: size.width, height: size.height })) return 'The head would hit you.';
+    }
+    return '';
+  }
+
+  /** Drive a free nail at the surface offset, revalidated at the consuming tick. */
+  placeAt(surfaceId: string, offset: number): boolean {
+    const reason = this.surfaceRefusal(surfaceId, offset);
+    const surface = this.surface(surfaceId);
+    if (reason) { this.notify(surface ? `${surface.label}: ${reason.toLowerCase()}` : reason); return false; }
+    const nailId = `nail-${this.placements.length + 1}-${this.sequence}`;
+    this.placements.push({ nailId, targetId: `${surfaceId}#${this.sequence}`, sequence: this.sequence++, surfaceId, offset });
+    this.notify(surface!.kind === 'foothold' ? `Nail driven into ${surface!.label}. Its head is a step.`
+      : `Nail driven into ${surface!.label}. Jump close and press E to grip; the bar carries it.`);
+    return true;
   }
 
   nearestValidTarget(): TargetView | null {
@@ -373,7 +462,10 @@ export abstract class SketchPlayfield {
     if (this.commands.length === 0) return;
     const pending = this.commands.splice(0, this.commands.length);
     for (const command of pending) if (command.type === 'recall') this.recall();
-    for (const command of pending) if (command.type === 'place') this.place(command.targetId);
+    for (const command of pending) {
+      if (command.type === 'place') this.place(command.targetId);
+      else if (command.type === 'place-at') this.placeAt(command.surfaceId, command.offset);
+    }
   }
 
   place(targetId: string): boolean {
@@ -433,11 +525,12 @@ export abstract class SketchPlayfield {
       bay: id, bayName: name, hint, goal,
       nails: `${this.placements.length}/${this.nailBudget} placed · ${this.availableNails} available`,
       oldest: oldestTarget ? `Q recalls: ${oldestTarget.label}` : 'Q recalls: nothing yet',
-      nearest: nearest ? `Click target: ${nearest.label} (${nearest.distance.toFixed(1)}u)` : 'No target in reach',
+      nearest: nearest ? `Click target: ${nearest.label} (${nearest.distance.toFixed(1)}u)`
+        : this.field.surfaces?.length ? 'Click wood (strip or bar) to drive a nail' : 'No target in reach',
       cue: this.cueRemaining > 0 ? this.cue : '',
       motion: this.motionText(),
       swing: this.move.state === 'swing'
-        ? `${this.field.targets.find(t => t.id === this.move.swingTarget)?.label ?? 'nail'} · ${this.move.swingAngle.toFixed(0)}°` : '',
+        ? `${this.target(this.move.swingTarget)?.label ?? 'nail'} · ${this.move.swingAngle.toFixed(0)}°` : '',
       completed: this.completed, recovering: this.recoveryRemaining > 0, elapsed: this.elapsed,
     };
   }
@@ -504,8 +597,14 @@ export class SketchRouteModel extends SketchPlayfield {
   protected override targetEligible(id: string): boolean {
     // Preserve S2's post-clear exploration; only the new S3A gate closes its
     // temporary targets. Visibility never grants another leg's ownership.
+    if (this.placements.some(p => p.targetId === id && p.surfaceId !== undefined)) return true;
     return this.leg.targetIds.includes(id) && (this.route.id === 'layer-1' || this.stage === 'traversal');
   }
+  protected override surfaceEligible(id: string): boolean {
+    return !!this.leg.surfaceIds?.includes(id) && this.stage === 'traversal';
+  }
+  /** Layer 3 sections (S4A walls, S4B swings) share entrance-only re-entry. */
+  private get layerThree(): boolean { return this.route.id === 'layer-3-walls' || this.route.id === 'layer-3-swings'; }
 
   stage: SketchRouteStage = 'traversal';
   private transitElapsed = 0;
@@ -525,7 +624,7 @@ export class SketchRouteModel extends SketchPlayfield {
    */
   restoreSession(session: SketchRouteSession): void {
     if ((session.routeId !== undefined && session.routeId !== this.route.id) ||
-      (this.route.id === 'layer-3-walls' && (session.routeId !== this.route.id ||
+      (this.layerThree && (session.routeId !== this.route.id ||
         !['traversal', 'exit'].includes(session.stage) || !Number.isFinite(session.elapsed) ||
         session.elapsed < 0 || !Number.isFinite(session.sequence)))) { this.restartAdventure(); return; }
     // S3A traversal re-entry is a deterministic entrance retry. Preserve the
@@ -601,7 +700,7 @@ export class SketchRouteModel extends SketchPlayfield {
     this.elapsed = 0;
     this.transitElapsed = 0;
     this.recoveryRemaining = 0; this.completed = false; this.stage = 'traversal';
-    if (this.route.id === 'layer-3-walls') this.move = { state: 'normal', wall: '', wallTransfer: true, swingTarget: '', swingAngle: 0 };
+    if (this.layerThree) this.move = { state: 'normal', wall: '', wallTransfer: true, swingTarget: '', swingAngle: 0 };
     this.clearCommandQueue();
     this.notify(`Layer ${this.section.layer} reset. ${this.resetNailsText}`);
   }
@@ -617,7 +716,7 @@ export class SketchRouteModel extends SketchPlayfield {
   private enterExitCheckpoint(): void {
     this.stage = 'exit';
     this.movement.reset();
-    if (this.route.id === 'layer-3-walls') this.move = { state: 'normal', wall: '', wallTransfer: true, swingTarget: '', swingAngle: 0 };
+    if (this.layerThree) this.move = { state: 'normal', wall: '', wallTransfer: true, swingTarget: '', swingAngle: 0 };
     this.resetLedger();
     this.clearCommandQueue();
     this.transitElapsed = 0;
@@ -702,7 +801,8 @@ export class SketchRouteModel extends SketchPlayfield {
       Math.abs(b.y - this.leg.exitBounds.y) < 0.00001 && overlaps(b, this.leg.exitBounds)) {
       this.enterExitCheckpoint();
       this.notify(this.leg.escalator ? `Layer ${this.section.layer} clear. Safe checkpoint reached — walk onto the escalator and press E.` :
-        this.route.id === 'layer-3-walls' ? 'S4A endpoint. Fixed post-climb ground reached.' : 'Layer 2 clear. S3A endpoint reached on fixed ground.');
+        this.route.id === 'layer-3-walls' ? 'S4A endpoint. Fixed post-climb ground reached.'
+          : this.route.id === 'layer-3-swings' ? 'S4B endpoint. Landed on the fixed end ledge.' : 'Layer 2 clear. S3A endpoint reached on fixed ground.');
     }
     if (!this.completed && this.stage === 'arrival' && overlaps(this.controller.body, this.route.goalBounds)) {
       this.completed = true;
@@ -753,12 +853,13 @@ export class SketchRouteModel extends SketchPlayfield {
       : this.stage === 'traversal' ? `${this.legId} start` : `${this.legId} clear`;
     return {
       ...hud,
-      motion: this.route.id === 'layer-1' || (this.route.id === 'layer-3-walls' && this.move.state !== 'normal') ? hud.motion : this.inTransit ? 'Riding escalator'
+      motion: this.route.id === 'layer-1' || (this.layerThree && this.move.state !== 'normal') ? hud.motion : this.inTransit ? 'Riding escalator'
         : this.controller.body.grounded ? 'Grounded' : 'In the air',
       layer: `${this.section.layer} / 3 · ${this.section.name}`,
       checkpoint: `Checkpoint / ${checkpoint}`,
       prompt: this.boardingReady() ? 'Press E to board the escalator' : '',
-      endpoint: this.completed ? (this.route.id === 'layer-3-walls' ? 'S4A endpoint reached · Wall climb clear · Stop for review' : this.section.layer === 3 ? 'S3 endpoint reached · Safe Layer 3 ground · Stop for review' : this.leg.escalator ? 'Slice 2 endpoint reached · Layer 2 content follows in S3' :
+      endpoint: this.completed ? (this.route.id === 'layer-3-walls' ? 'S4A endpoint reached · Wall climb clear · Stop for review'
+        : this.route.id === 'layer-3-swings' ? 'S4B endpoint reached · Swing crossing clear · Stop for review' : this.section.layer === 3 ? 'S3 endpoint reached · Safe Layer 3 ground · Stop for review' : this.leg.escalator ? 'Slice 2 endpoint reached · Layer 2 content follows in S3' :
         'S3A endpoint reached · Layer 2 clear') : '',
     };
   }

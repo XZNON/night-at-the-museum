@@ -28,6 +28,21 @@ export interface SketchTarget {
   label: string;
 }
 
+/**
+ * A nailable segment in its mechanism's local frame (S4B free placement). A
+ * nail may go anywhere along it, never into empty air. The surface decides the
+ * nail's role: a foothold strip grows a landable head, a swing bar a grip pivot
+ * carried by the bar.
+ */
+export interface SketchNailSurface {
+  id: string;
+  kind: 'foothold' | 'moving-swing';
+  mechanismId: string;
+  from: { x: number; y: number };
+  to: { x: number; y: number };
+  label: string;
+}
+
 export type MechanismKind = 'site' | 'board' | 'mount' | 'pendulum' | 'axe';
 
 export interface SketchMechanism {
@@ -116,6 +131,8 @@ export interface SketchPlayfieldData {
   placementReach?: number;
   /** One collectible extra nail; it raises the budget until the field restarts. */
   nailPickup?: Rect & { id: string };
+  /** Free-placement surfaces; absent everywhere marked targets are used. */
+  surfaces?: SketchNailSurface[];
 }
 
 export interface SketchBay extends SketchPlayfieldData {
@@ -123,10 +140,10 @@ export interface SketchBay extends SketchPlayfieldData {
 }
 
 /** Development entry values for the save-isolated Sketch scene. */
-export type SketchRouteId = 'layer-1' | 'layer-2' | 'layers-1-2' | 'layer-3-walls';
+export type SketchRouteId = 'layer-1' | 'layer-2' | 'layers-1-2' | 'layer-3-walls' | 'layer-3-swings';
 export type SketchStudy = 'mechanics' | SketchRouteId;
 
-export const sketchStudies: readonly SketchStudy[] = ['mechanics', 'layer-1', 'layer-2', 'layers-1-2', 'layer-3-walls'];
+export const sketchStudies: readonly SketchStudy[] = ['mechanics', 'layer-1', 'layer-2', 'layers-1-2', 'layer-3-walls', 'layer-3-swings'];
 
 export const isSketchStudy = (value: string | null | undefined): value is SketchStudy =>
   !!value && (sketchStudies as readonly string[]).includes(value);
@@ -181,13 +198,15 @@ export interface SketchRouteSection {
   travelDirection?: 1 | -1;
 }
 
-export type SketchRouteLegId = 'layer-1' | 'layer-2' | 'l3-walls';
+export type SketchRouteLegId = 'layer-1' | 'layer-2' | 'l3-walls' | 'l3-swings';
 
 export interface SketchRouteLeg {
   id: SketchRouteLegId;
   nextLegId?: SketchRouteLegId;
   sectionId: string;
   targetIds: string[];
+  /** Nailable surfaces this leg owns (S4B); absent means none. */
+  surfaceIds?: string[];
   exitBounds: Rect;
   exitSpawn: { x: number; y: number };
   exitDeathY: number;

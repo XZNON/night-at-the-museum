@@ -278,17 +278,15 @@ export class SketchMovement {
     const swing = this.swing;
     if (!swing) return;
     const t = this.tuning.swing;
-    const b = this.controller.body;
     this.state = 'normal';
     this.swing = null;
     this.gripBlockId = swing.targetId;
     this.gripBlockUntil = this.elapsed + t.reattachCooldown;
     // Tangential release velocity plus the mount's own motion. A forced detach
-    // (the nail was recalled, or the arc was obstructed) keeps whatever
-    // momentum the body already had but grants no new jump.
-    const tangent = withMomentum
-      ? { vx: t.arm * Math.cos(swing.angle) * swing.omega + swing.pivotVx, vy: t.arm * Math.sin(swing.angle) * swing.omega + swing.pivotVy }
-      : { vx: b.vx, vy: b.vy };
+    // (the nail was recalled) keeps that arc momentum but grants no new jump.
+    // It never uses the body's last per-tick displacement: on the tick after a
+    // grip that still includes settling onto the arc, which flung the player.
+    const tangent = { vx: t.arm * Math.cos(swing.angle) * swing.omega + swing.pivotVx, vy: t.arm * Math.sin(swing.angle) * swing.omega + swing.pivotVy };
     this.controller.launch(tangent.vx, tangent.vy, {
       airJump: withMomentum,
       carrySpeed: withMomentum ? Math.abs(tangent.vx) : 0,

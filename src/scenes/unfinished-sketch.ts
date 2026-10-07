@@ -25,6 +25,8 @@ const C = {
   guide: 0xb9aed6, guideEdge: 0x8d80b5, guideGlue: 0x9fd8cd,
   escalator: 0x8f9fd6, escalatorTop: 0xbcc9ec, rail: 0x6f7bb0,
   suspension: 0x8b7cae, bracket: 0x6d5f96,
+  // S4B nailable wood and the free-placement ghost.
+  wood: 0xd99a5b, woodGrain: 0xa86a3a, track: 0x7d6aa8, ghostOk: 0x5fd38d, ghostBad: 0xf25f5c,
 } as const;
 
 const KIND_COLORS: Record<string, number> = {
@@ -74,6 +76,14 @@ export class UnfinishedSketchScene implements GameScene {
   private readonly boardingPads = new Map<string, THREE.Mesh>();
   private readonly scratchFocus = new THREE.Vector3();
   private hovered: string | null = null;
+  /** S4B: last cursor position, re-projected each frame because bars move. */
+  private pointer: { x: number; y: number } | null = null;
+  private surfaceHover: { surfaceId: string; offset: number; x: number; y: number } | null = null;
+  private readonly ghosts = new Map<string, THREE.Group>();
+  private ghostMaterials: THREE.MeshBasicMaterial[] = [];
+  private airMark: THREE.Group | null = null;
+  /** Placed free nails, drawn from a small pool per surface kind. */
+  private readonly freeHeads: { kind: string; rig: THREE.Group }[] = [];
   private elapsed = 0;
   private interactive = false;
   private interactFrom = 0;
@@ -115,6 +125,7 @@ export class UnfinishedSketchScene implements GameScene {
     this.buildGround();
     this.buildMechanisms();
     this.buildTargets();
+    this.buildSurfaces();
     this.buildPickup();
     this.buildPlayer(playerImage);
     if (mode.kind === 'route') {
@@ -327,8 +338,11 @@ export class UnfinishedSketchScene implements GameScene {
   }
 
   private buildMechanisms(): void {
+    const surfaceParents = new Set((this.field.surfaces ?? []).map(s => s.mechanismId));
     for (const m of this.field.mechanisms) {
       const rig = new THREE.Group(); this.world.add(rig); this.rigs.set(m.id, rig);
+      // Nailable wood is drawn by buildSurfaces on this same moving rig.
+      if (surfaceParents.has(m.id)) continue;
       if (m.kind === 'axe') {
         if (m.sweptBlade) {
           const mount = new THREE.Group(); mount.position.set(m.pivot.x, m.pivot.y, -0.6); this.world.add(mount);
@@ -376,15 +390,86 @@ export class UnfinishedSketchScene implements GameScene {
       }
       if (m.kind === 'pendulum') this.buildSuspension(m);
       if (this.field.id === 'layer-3-walls' && m.id.startsWith('l3-wall-')) {
-        const label = document.createElement('canvas'); label.width = 128; label.height = 64;
-        const ctx = label.getContext('2d')!;
-        ctx.fillStyle = '#2b2440'; ctx.font = 'bold 46px sans-serif'; ctx.textAlign = 'center';
-        ctx.fillText(m.id.slice(-1).toUpperCase(), 64, 50);
-        const texture = new THREE.CanvasTexture(label); this.resources.add(texture);
-        const material = new THREE.SpriteMaterial({ map: texture, depthTest: false }); this.resources.add(material);
-        const text = new THREE.Sprite(material); text.scale.set(1.6, 0.8, 1); text.position.set(0, 1.05, 1.5); rig.add(text);
+        this.letter(m.id.slice(-1).toUpperCase(), rig).position.set(0, 1.05, 1.5);
       }
     }
+  }
+
+  /** A small inked letter sprite that follows its rig. */
+  private letter(text: string, parent: THREE.Object3D): THREE.Sprite {
+    const label = document.createElement('canvas'); label.width = 128; label.height = 64;
+    const ctx = label.getContext('2d')!;
+    ctx.fillStyle = '#2b2440'; ctx.font = 'bold 46px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(text, 64, 50);
+    const texture = new THREE.CanvasTexture(label); this.resources.add(texture);
+    const material = new THREE.SpriteMaterial({ map: texture, depthTest: false }); this.resources.add(material);
+    const sprite = new THREE.Sprite(material); sprite.scale.set(1.6, 0.8, 1); parent.add(sprite);
+    return sprite;
+  }
+
+  /**
+   * S4B nailable wood. A strip or bar is drawn as a wooden batten set just
+   * behind the play plane with no landing lip: it never holds the player, only
+   * a nail driven into it does. A moving bar hangs from a trolley on a ceiling
+   * track that shows its whole back-and-forth travel.
+   */
+  private buildSurfaces(): void {
+    for (const surface of this.field.surfaces ?? []) {
+      const m = this.model.mechanism(surface.mechanismId);
+      const rig = this.rigs.get(surface.mechanismId);
+      if (!m || !rig) continue;
+      const length = Math.hypot(surface.to.x - surface.from.x, surface.to.y - surface.from.y);
+      const angle = Math.atan2(surface.to.y - surface.from.y, surface.to.x - surface.from.x);
+      const mid = { x: (surface.from.x + surface.to.x) / 2, y: (surface.from.y + surface.to.y) / 2 };
+      const plank = this.slab(length, 0.32, 0.7, C.wood, rig);
+      plank.position.set(mid.x, mid.y, -0.45); plank.rotation.z = angle;
+      const grains = Math.max(2, Math.round(length / 0.9));
+      for (let i = 1; i < grains; i++) {
+        const grain = this.slab(0.06, 0.2, 0.72, C.woodGrain, plank, 1, false);
+        grain.position.set(-length / 2 + i * (length / grains), 0, 0.02);
+      }
+      if (surface.kind === 'moving-swing') {
+        // Hangers to a ceiling trolley; the track spans the full travel.
+        for (const end of [surface.from, surface.to]) {
+          const hanger = this.slab(0.12, 1.1, 0.12, C.suspension, rig);
+          hanger.position.set(end.x, end.y + 0.7, -0.6);
+        }
+        const trolley = this.slab(Math.abs(surface.to.x - surface.from.x) + 0.6, 0.36, 0.5, C.track, rig);
+        trolley.position.set(mid.x, mid.y + 1.35, -0.6);
+        const y = m.centre.y + mid.y + 1.55;
+        const x0 = m.centre.x + Math.min(0, m.travel.x) + Math.min(surface.from.x, surface.to.x) - 0.5;
+        const x1 = m.centre.x + Math.max(0, m.travel.x) + Math.max(surface.from.x, surface.to.x) + 0.5;
+        const track = this.slab(x1 - x0, 0.16, 0.4, C.track, this.world, 0.85, false);
+        track.position.set((x0 + x1) / 2, y, -0.7);
+        for (const x of [x0, x1]) { const stop = this.slab(0.22, 0.6, 0.4, C.track, this.world, 0.85, false); stop.position.set(x, y, -0.7); }
+      } else {
+        // The strip is braced into the ledge edge it grows out of.
+        const brace = this.slab(0.22, 1.4, 0.5, C.woodGrain, rig);
+        brace.position.set(surface.from.x + 0.3, surface.from.y - 0.75, -0.55);
+      }
+      this.letter(surface.label.split(' ').pop()!, rig).position.set(mid.x, mid.y + (surface.kind === 'foothold' ? -0.85 : -0.7), 1.5);
+    }
+    if (!this.field.surfaces?.length) return;
+    // Ghost nails: one per surface kind, tinted by validity at the cursor.
+    for (const kind of ['foothold', 'moving-swing'] as const) {
+      const ghost = new THREE.Group();
+      const material = this.flat(C.ghostOk, 0.55); this.ghostMaterials.push(material);
+      const g = kind === 'foothold' ? new THREE.BoxGeometry(1.9, 0.35, 1.6) : new THREE.SphereGeometry(0.34, 16, 12);
+      this.resources.add(g);
+      ghost.add(new THREE.Mesh(g, material));
+      if (kind === 'foothold') {
+        const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.22, 1.2, 0.22), material); this.resources.add(shaft.geometry);
+        shaft.position.y = -0.6; ghost.add(shaft);
+      }
+      ghost.visible = false; this.world.add(ghost); this.ghosts.set(kind, ghost);
+    }
+    const air = new THREE.Group();
+    const cross = this.flat(C.ghostBad, 0.75);
+    for (const r of [Math.PI / 4, -Math.PI / 4]) {
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.16, 0.1), cross); this.resources.add(bar.geometry);
+      bar.rotation.z = r; air.add(bar);
+    }
+    air.visible = false; this.world.add(air); this.airMark = air;
   }
 
   /**
@@ -449,6 +534,29 @@ export class UnfinishedSketchScene implements GameScene {
       inset.position.z = 0.105;
       rig.add(inset);
     }
+    return rig;
+  }
+
+  /**
+   * S4B free nails. A strip nail is driven down: its wide head is the step and
+   * the shaft runs down into the wood. A bar nail is driven into the bar toward
+   * the back, so only its round grip head faces the camera.
+   */
+  private freeNailRig(kind: string, size: { width: number; height: number }): THREE.Group {
+    const rig = new THREE.Group();
+    if (kind === 'foothold') {
+      const head = this.slab(size.width, size.height, 1.6, C.nailHead, rig);
+      head.position.y = -size.height / 2;
+      const shaft = this.slab(0.22, 0.9, 0.22, C.nailShaft, rig);
+      shaft.position.y = -size.height - 0.45;
+      return rig;
+    }
+    const geometry = new THREE.CylinderGeometry(0.36, 0.36, 0.2, 28); this.resources.add(geometry);
+    const head = new THREE.Mesh(geometry, this.flat(C.nailCap));
+    head.rotation.x = Math.PI / 2; rig.add(head);
+    this.disc(0.36, 0.05, 28, C.ink, rig).position.z = 0.11;
+    const face = new THREE.CircleGeometry(0.24, 28); this.resources.add(face);
+    const inset = new THREE.Mesh(face, this.flat(C.nailHead)); inset.position.z = 0.115; rig.add(inset);
     return rig;
   }
 
@@ -543,13 +651,18 @@ export class UnfinishedSketchScene implements GameScene {
   attachPointer(canvas: HTMLCanvasElement): void {
     const onDown = (event: PointerEvent): void => {
       if (!this.interactive || event.button !== 0) return;
-      this.model.enqueue({ type: 'place', targetId: this.pick(event.clientX, event.clientY, canvas) ?? '' });
+      const marked = this.pick(event.clientX, event.clientY, canvas);
+      if (marked || !this.field.surfaces?.length) { this.model.enqueue({ type: 'place', targetId: marked ?? '' }); return; }
+      // Free placement: the projected spot, or empty air (refused, queue unchanged).
+      const spot = this.pickSurface(event.clientX, event.clientY, canvas);
+      this.model.enqueue({ type: 'place-at', surfaceId: spot?.surfaceId ?? '', offset: spot?.offset ?? 0 });
     };
     const onMove = (event: PointerEvent): void => {
       if (!this.interactive) return;
       this.hovered = this.pick(event.clientX, event.clientY, canvas);
+      this.pointer = { x: event.clientX, y: event.clientY };
     };
-    const onLeave = (): void => { this.hovered = null; };
+    const onLeave = (): void => { this.hovered = null; this.pointer = null; };
     canvas.addEventListener('pointerdown', onDown, { signal: this.listeners.signal });
     canvas.addEventListener('pointermove', onMove, { signal: this.listeners.signal });
     canvas.addEventListener('pointerleave', onLeave, { signal: this.listeners.signal });
@@ -583,9 +696,43 @@ export class UnfinishedSketchScene implements GameScene {
     return best;
   }
 
+  /** Cursor in world units for the live camera, or null with no canvas size. */
+  private toWorld(clientX: number, clientY: number, canvas: HTMLCanvasElement): { x: number; y: number; perPixel: number } | null {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return null;
+    const cam = this.camera as THREE.OrthographicCamera;
+    return {
+      x: cam.position.x + ((((clientX - rect.left) / rect.width) * 2) - 1) * (cam.right - cam.left) / 2,
+      y: cam.position.y + ((-((clientY - rect.top) / rect.height) * 2) + 1) * (cam.top - cam.bottom) / 2,
+      perPixel: (cam.right - cam.left) / rect.width,
+    };
+  }
+
+  /**
+   * Project the cursor onto the nearest nailable surface within the generous
+   * hit distance. The 0..1 offset is computed now; the model revalidates reach,
+   * spacing and budget at the consuming tick, with the nail kept at that local
+   * spot as its bar moves. Off-screen wood is never picked.
+   */
+  private pickSurface(clientX: number, clientY: number, canvas: HTMLCanvasElement): { surfaceId: string; offset: number; x: number; y: number } | null {
+    const at = this.toWorld(clientX, clientY, canvas);
+    if (!at) return null;
+    const hit = this.model.targetHitPixels * at.perPixel;
+    let best: { surfaceId: string; offset: number; x: number; y: number } | null = null; let bestDistance = Infinity;
+    for (const view of this.model.surfaceViews()) {
+      const dx = view.to.x - view.from.x; const dy = view.to.y - view.from.y;
+      const offset = clamp(((at.x - view.from.x) * dx + (at.y - view.from.y) * dy) / Math.max(1e-6, dx * dx + dy * dy), 0, 1);
+      const x = view.from.x + dx * offset; const y = view.from.y + dy * offset;
+      const d = Math.hypot(at.x - x, at.y - y);
+      if (d > hit || d >= bestDistance || !this.worldScreen(x, y).visible) continue;
+      bestDistance = d; best = { surfaceId: view.id, offset, x, y };
+    }
+    return best;
+  }
+
   setInteractive(value: boolean): void {
     this.interactive = value;
-    if (!value) this.hovered = null;
+    if (!value) { this.hovered = null; this.pointer = null; }
   }
 
   /** Reduced motion removes nonessential camera easing and zoom drift. */
@@ -619,6 +766,22 @@ export class UnfinishedSketchScene implements GameScene {
     };
   }
 
+  /** Read-only projection of a surface offset to CSS pixels, for browser checks. */
+  surfaceScreen(surfaceId: string, offset: number): { x: number; y: number; visible: boolean } | null {
+    const point = this.model.surfacePoint(surfaceId, offset);
+    return point ? this.worldScreen(point.x, point.y) : null;
+  }
+
+  /** Read-only world-to-CSS-pixel projection for the live camera. */
+  worldScreen(x: number, y: number): { x: number; y: number; visible: boolean } {
+    const cam = this.camera as THREE.OrthographicCamera;
+    const rect = this.canvas?.getBoundingClientRect();
+    if (!rect || rect.width <= 0 || rect.height <= 0) return { x: 0, y: 0, visible: false };
+    const nx = (x - cam.position.x) / ((cam.right - cam.left) / 2);
+    const ny = (y - cam.position.y) / ((cam.top - cam.bottom) / 2);
+    return { x: rect.left + (nx + 1) / 2 * rect.width, y: rect.top + (1 - ny) / 2 * rect.height, visible: Math.abs(nx) <= 1 && Math.abs(ny) <= 1 };
+  }
+
   /** Read-only camera readback used by the review evidence. */
   cameraView(): { x: number; y: number; width: number; height: number } {
     const cam = this.camera as THREE.OrthographicCamera;
@@ -639,7 +802,17 @@ export class UnfinishedSketchScene implements GameScene {
     this.applyProjection();
     this.cameraPosition.set(focus.x, focus.y);
     this.previousCamera.copy(this.cameraPosition);
-    this.onHud(this.model.hud());
+    this.onHud(this.hud());
+  }
+  /** The model HUD, with the S4B hover preview naming the spot or the refusal. */
+  private hud(): SketchHud {
+    const hud = this.model.hud();
+    if (!this.field.surfaces?.length || !this.pointer || !this.interactive) return hud;
+    const spot = this.surfaceHover;
+    if (!spot) return { ...hud, nearest: 'Empty air · nails only go into wood' };
+    const label = this.model.surface(spot.surfaceId)!.label;
+    const reason = this.model.surfaceRefusal(spot.surfaceId, spot.offset);
+    return { ...hud, nearest: reason ? `${label} · ${reason}` : `Click: nail ${label} here` };
   }
   fixedUpdate(dt: number, input: Controls): void {
     const b = this.model.controller.body;
@@ -664,7 +837,12 @@ export class UnfinishedSketchScene implements GameScene {
       this.viewHeight = this.reducedMotion ? focus.z : lerp(this.viewHeight, focus.z, blend);
       this.applyProjection();
     }
-    this.onHud(this.model.hud());
+    this.refreshSurfaceHover();
+    this.onHud(this.hud());
+  }
+  private refreshSurfaceHover(): void {
+    this.surfaceHover = this.pointer && this.canvas && this.interactive && this.field.surfaces?.length
+      ? this.pickSurface(this.pointer.x, this.pointer.y, this.canvas) : null;
   }
   render(alpha: number): void {
     if (!this.interactive && this.interactFrom > 0 && performance.now() >= this.interactFrom) this.setInteractive(true);
@@ -712,7 +890,8 @@ export class UnfinishedSketchScene implements GameScene {
         const scale = view.oldest ? 1.5 : view.reason ? 0.7 : this.hovered === view.id ? 1.25 : 1;
         ring.scale.setScalar(THREE.MathUtils.lerp(ring.scale.x, scale, 0.25));
         ring.rotation.z = this.elapsed * (view.oldest ? 1.8 : 0.5);
-        ring.visible = !view.occupiedBy;
+        // The free-placement section shows no rings for other sections' marks.
+        ring.visible = !view.occupiedBy && !(this.field.surfaces?.length && !this.model.ownsTarget(view.id));
       }
       if (head) {
         head.visible = !!view.occupiedBy;
@@ -724,6 +903,8 @@ export class UnfinishedSketchScene implements GameScene {
         head.scale.setScalar(view.oldest ? 1.3 : 1);
       }
     }
+
+    this.renderFreeNails();
 
     if (this.pickup && this.field.nailPickup) {
       this.pickup.visible = !this.model.pickupCollected;
@@ -741,6 +922,42 @@ export class UnfinishedSketchScene implements GameScene {
 
     this.camera.position.x = THREE.MathUtils.lerp(this.previousCamera.x, this.cameraPosition.x, alpha);
     this.camera.position.y = THREE.MathUtils.lerp(this.previousCamera.y, this.cameraPosition.y, alpha);
+  }
+
+  /** Placed free nails and the hover ghost (S4B only). */
+  private renderFreeNails(): void {
+    if (!this.field.surfaces?.length) return;
+    const used = new Map<string, number>();
+    for (const view of this.model.targetViews()) {
+      const t = this.model.target(view.id);
+      if (!t || this.field.targets.includes(t)) continue;
+      const index = used.get(t.kind) ?? 0; used.set(t.kind, index + 1);
+      let slot = this.freeHeads.filter(h => h.kind === t.kind)[index];
+      if (!slot) { slot = { kind: t.kind, rig: this.freeNailRig(t.kind, t.size) }; this.world.add(slot.rig); this.freeHeads.push(slot); }
+      slot.rig.visible = true;
+      // A foothold head's top is the standing surface; a grip nail sits on its spot.
+      slot.rig.position.set(view.x, t.kind === 'foothold' ? view.y + view.height / 2 : view.y, 1.15);
+      slot.rig.scale.setScalar(view.oldest ? 1.3 : 1);
+    }
+    for (const kind of new Set(this.freeHeads.map(h => h.kind))) {
+      this.freeHeads.filter(h => h.kind === kind).slice(used.get(kind) ?? 0).forEach(h => { h.rig.visible = false; });
+    }
+    this.refreshSurfaceHover();
+    const spot = this.surfaceHover;
+    const surface = spot ? this.model.surface(spot.surfaceId) : null;
+    for (const [kind, ghost] of this.ghosts) {
+      ghost.visible = !!surface && surface.kind === kind;
+      if (ghost.visible) ghost.position.set(spot!.x, spot!.y, 1.3);
+    }
+    if (spot) {
+      const ok = this.model.surfaceRefusal(spot.surfaceId, spot.offset) === '';
+      for (const material of this.ghostMaterials) material.color.setHex(ok ? C.ghostOk : C.ghostBad);
+    }
+    if (this.airMark) {
+      const at = !spot && this.pointer && this.canvas && this.interactive ? this.toWorld(this.pointer.x, this.pointer.y, this.canvas) : null;
+      this.airMark.visible = !!at;
+      if (at) this.airMark.position.set(at.x, at.y, 1.6);
+    }
   }
 
   private animateEscalator(): void {
@@ -834,6 +1051,7 @@ export class UnfinishedSketchScene implements GameScene {
     this.resources.clear();
     this.rigs.clear(); this.rings.clear(); this.heads.clear(); this.rods.clear();
     this.inkPlatforms.clear();
+    this.ghosts.clear(); this.ghostMaterials = []; this.freeHeads.length = 0; this.airMark = null;
     this.escalatorSteps.clear(); this.boardingPads.clear(); this.chevrons.length = 0;
     this.glueBubbles.length = 0;
     this.pickup = null;

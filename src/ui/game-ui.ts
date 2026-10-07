@@ -123,6 +123,7 @@ export class GameUi {
 
   private tagLabel(): string {
     const base = this.study !== 'sketch' ? 'ROYAL SUPPER STUDY'
+      : this.sketchMode === 'layer-3-swings' ? 'UNFINISHED SKETCH / S4B / MOVING SWINGS'
       : this.sketchMode === 'layer-3-walls' ? 'UNFINISHED SKETCH / S4A / WALL CLIMB'
       : this.sketchMode === 'layers-1-2' ? 'UNFINISHED SKETCH / JOINED LAYERS (S3)'
       : this.sketchMode === 'layer-2' ? 'UNFINISHED SKETCH · LAYER 2 (S3)'
@@ -150,6 +151,16 @@ export class GameUi {
       return;
     }
     if (this.study === 'sketch') {
+      if (this.sketchMode === 'layer-3-swings') {
+        this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S4B / Layer 3 swings</p>
+        <h2>Moving<br><em>swings.</em></h2><p class="intro">Glue below.<br>Two sliding bars.<br>Two nails, anywhere on wood.</p>
+        <p class="menu-description">No marked rings here: click anywhere along a wooden strip or bar to drive a nail, never into air. A nail in strip F grows a step. A nail in a bar is a grip the bar carries. Nail F and stand on it, nail M1, jump close and press E. While swinging, Q frees F so you can nail M2. Release, grip M2, then swing onto the end ledge. Where you nail decides what you can reach.</p>
+        <button class="primary" data-action="start">Enter the swing crossing</button>
+        ${remembered ? '<button class="quiet" data-action="replay">Restart swing crossing</button>' : ''}
+        <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move / pump · <kbd>Space</kbd> Jump / release · <kbd>E</kbd> Grip / release · Click wood · <kbd>Q</kbd> Recall</div>
+        <p class="small-note">Campaign saves are untouched. Stop at the fixed S4B end ledge for review.</p>`);
+        return;
+      }
       if (this.sketchMode === 'layer-3-walls') {
         this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S4A / Layer 3 walls</p>
         <h2>Criss-cross<br><em>walls.</em></h2><p class="intro">Six moving outlines.<br>A third nail on the way.<br>Kick from wall to wall.</p>
@@ -222,7 +233,7 @@ export class GameUi {
   markSketch(mode: SketchStudy, bayId: SketchBayId): void {
     this.sketchMode = mode;
     document.getElementById('sketch-hud')!.dataset.study = mode;
-    document.getElementById('sketch-eyebrow')!.textContent = mode === 'layer-3-walls' ? 'Unfinished Sketch / S4A / Layer 3 walls' : mode === 'layers-1-2' ? 'Unfinished Sketch / S3 / Joined layers' : mode === 'layer-2' ? 'Unfinished Sketch / S3 · Layer 2' : mode === 'layer-1'
+    document.getElementById('sketch-eyebrow')!.textContent = mode === 'layer-3-swings' ? 'Unfinished Sketch / S4B / Layer 3 swings' : mode === 'layer-3-walls' ? 'Unfinished Sketch / S4A / Layer 3 walls' : mode === 'layers-1-2' ? 'Unfinished Sketch / S3 / Joined layers' : mode === 'layer-2' ? 'Unfinished Sketch / S3 · Layer 2' : mode === 'layer-1'
       ? 'The Last Curator · Slice 2 · Layer 1 of the unfinished picture' : 'The Last Curator · Slice 1 mechanics playground';
     document.getElementById('sketch-bays')!.hidden = mode !== 'mechanics';
     const tag = document.querySelector<HTMLElement>('.build-tag');
@@ -256,7 +267,7 @@ export class GameUi {
     this.show('pause', `<p class="eyebrow">A moment between brushstrokes</p><h2 class="compact">Paused.</h2>
       <p class="menu-description">${reason}</p><button class="primary" data-action="resume">Resume <span>→</span></button>
       ${adventure ? `<button class="secondary" data-action="checkpoint">${route ? 'Back to the last safe checkpoint' : sketch ? 'Restart bay' : 'Restart from checkpoint'}</button>
-      <button class="quiet" data-action="replay">${route ? `Restart ${this.sketchMode === 'layer-3-walls' ? 'wall climb' : this.sketchMode === 'layers-1-2' ? 'Layers 1 &amp; 2' : this.sketchMode === 'layer-2' ? 'Layer 2' : 'Layer 1'}` : 'Restart adventure'}</button><button class="quiet" data-action="leave">${this.direct ? 'Leave painting' : 'Return to Museum'}</button>` : ''}
+      <button class="quiet" data-action="replay">${route ? `Restart ${this.sketchMode === 'layer-3-swings' ? 'swing crossing' : this.sketchMode === 'layer-3-walls' ? 'wall climb' : this.sketchMode === 'layers-1-2' ? 'Layers 1 &amp; 2' : this.sketchMode === 'layer-2' ? 'Layer 2' : 'Layer 1'}` : 'Restart adventure'}</button><button class="quiet" data-action="leave">${this.direct ? 'Leave painting' : 'Return to Museum'}</button>` : ''}
       <label class="setting"><input type="checkbox" id="low-quality" ${lowQuality ? 'checked' : ''}> Low rendering quality</label>
       <label class="setting">Master volume <input id="master-volume" type="range" min="0" max="1" step="0.05" value="${settings?.masterVolume ?? 0.7}"></label>
       ${!this.direct ? '<button class="quiet" data-action="reset">Reset progress</button>' : ''}

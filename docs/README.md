@@ -4,7 +4,9 @@ Start with the [current handoff](planning/NEXT_SESSION.md), then the [build plan
 
 ## Current work
 
-Latest, 2026-10-07: **S4A wall climb is revised again (three nails on Layer 3) and at its playable review gate** — [evidence](validation/sketch-s4/s4a/README.md), [play](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-3-walls). The user accepted it and redesigned S4B as a free-placement moving-swing crossing ([plan](gameplay/SKETCH_S4B_PLAN.md)); S4B needs a separate request.
+Latest, 2026-10-07: **S4B free-placement moving-swing crossing is at its playable review gate** — [evidence](validation/sketch-s4/s4b/README.md), [play](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-3-swings). S4C needs a separate request.
+
+Earlier, 2026-10-07: **S4A wall climb is revised again (three nails on Layer 3) and at its playable review gate** — [evidence](validation/sketch-s4/s4a/README.md), [play](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-3-walls). The user accepted it and redesigned S4B as a free-placement moving-swing crossing ([plan](gameplay/SKETCH_S4B_PLAN.md)); S4B needs a separate request.
 
 Latest user direction, 2026-10-06: Slice 3 is complete and pushed at `77acf03`. S4 implementation planning is now complete, split into four separately requested/reviewed blocks: wall climb, glue crossing, joined Layer 3 and full-route integration. Read [S4 overview](gameplay/SKETCH_S4_PLAN.md), [S4A plan](gameplay/SKETCH_S4A_PLAN.md), [all four prompts](gameplay/SKETCH_S4_PROMPTS.md) and [NEXT_SESSION](planning/NEXT_SESSION.md). No S4 gameplay is implemented; proposed studies are not working entries. Earlier review-only/uncommitted statements below are historical.
 
@@ -35,7 +37,7 @@ S3A's reviewed hard challenge is preserved. **S3B is implemented at its playable
 | [Sketch S3 technical plan](gameplay/SKETCH_S3_PLAN.md) | S3A/S3B implemented; user review before S4 |
 | [Sketch S4 overview](gameplay/SKETCH_S4_PLAN.md) | Four-block delivery, inspected code, state/data contracts and final gate |
 | [Sketch S4A plan](gameplay/SKETCH_S4A_PLAN.md) | First future implementation: isolated wall climb |
-| [Sketch S4B plan](gameplay/SKETCH_S4B_PLAN.md) | Dry practice and isolated glue crossing after A review |
+| [Sketch S4B plan](gameplay/SKETCH_S4B_PLAN.md) | Free-placement moving-swing crossing (implemented; [evidence](validation/sketch-s4/s4b/README.md)) |
 | [Sketch S4C plan](gameplay/SKETCH_S4C_PLAN.md) | Joined Layer 3 and grounded section recovery after B review |
 | [Sketch S4D plan](gameplay/SKETCH_S4D_PLAN.md) | Both rides into Layer 3 and final S4 gate after C review |
 | [Sketch S4 prompts](gameplay/SKETCH_S4_PROMPTS.md) | Four paste-ready future requests; do not execute together |

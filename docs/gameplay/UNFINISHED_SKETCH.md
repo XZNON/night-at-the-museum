@@ -2,7 +2,7 @@
 
 Updated: 2026-10-06. S1 was implemented/revised in another session and the user has now declared it complete; see NEXT_SESSION/PLAN for evidence. S2 is implemented and awaiting user review at its playable gate. The complete three-layer adventure, new art and ending remain unimplemented. Sketch replaces Mountain as adventure two, retaining `sun-disc` and the existing two-stage restoration. Explicitly labelled working defaults are not additional user approvals.
 
-Latest status, 2026-10-07: S4A wall climb is implemented at its review gate after a second user review that added a Layer 3 third-nail pickup ([evidence](../validation/sketch-s4/s4a/README.md)); B/C/D remain unimplemented. Earlier: S3 is complete and pushed at `77acf03`. S4 is planned only as A wall climb, B glue, C joined Layer 3 and D full-route integration, each with a separate request/playable review. See [S4 plan](SKETCH_S4_PLAN.md) and [prompts](SKETCH_S4_PROMPTS.md); this supersedes older review/unimplemented status for S3.
+Latest status, 2026-10-07: S4A is accepted; S4B (free-placement moving-swing crossing) is implemented at its review gate ([evidence](../validation/sketch-s4/s4b/README.md)); C/D remain unimplemented. Earlier: S4A wall climb was implemented after a second user review that added a Layer 3 third-nail pickup ([evidence](../validation/sketch-s4/s4a/README.md)). Earlier: S3 is complete and pushed at `77acf03`. S4 is planned only as A wall climb, B glue, C joined Layer 3 and D full-route integration, each with a separate request/playable review. See [S4 plan](SKETCH_S4_PLAN.md) and [prompts](SKETCH_S4_PROMPTS.md); this supersedes older review/unimplemented status for S3.
 
 ## Selected experience
 

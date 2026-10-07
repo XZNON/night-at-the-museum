@@ -12,7 +12,7 @@ import { isSketchBayId, isSketchStudy, sketchBayIds, sketchBays, sketchTuning } 
 import type { SketchBayId, SketchStudy } from './levels/unfinished-sketch';
 import { sketchRoute } from './levels/unfinished-sketch-route';
 import { sketchJoinedRoute, sketchLayerTwo } from './levels/unfinished-sketch-layer2';
-import { sketchLayerThreeWalls } from './levels/unfinished-sketch-layer3';
+import { sketchLayerThreeSwings, sketchLayerThreeWalls } from './levels/unfinished-sketch-layer3';
 import { museum, type MuseumPose } from './levels/museum';
 import { RoyalSupperScene } from './scenes/royal-supper';
 import { UnfinishedSketchScene } from './scenes/unfinished-sketch';
@@ -217,7 +217,7 @@ async function startSketch(restart: boolean, bayId?: SketchBayId): Promise<void>
       // cartoon placeholders; no new asset is generated or loaded here.
       const art = await loadArtSet(['player.idle']);
       const mode: SketchSceneMode = sketchMode !== 'mechanics'
-        ? { kind: 'route', field: sketchMode === 'layer-3-walls' ? sketchLayerThreeWalls : sketchMode === 'layers-1-2' ? sketchJoinedRoute : sketchMode === 'layer-2' ? sketchLayerTwo : sketchRoute,
+        ? { kind: 'route', field: sketchMode === 'layer-3-swings' ? sketchLayerThreeSwings : sketchMode === 'layer-3-walls' ? sketchLayerThreeWalls : sketchMode === 'layers-1-2' ? sketchJoinedRoute : sketchMode === 'layer-2' ? sketchLayerTwo : sketchRoute,
           session: restart ? null : routeSessions.get(sketchMode) ?? null }
         : { kind: 'bay', field: sketchBays[sketchBay],
           session: restart ? null : sketchSessions.get(sketchBay) ?? null };
@@ -337,6 +337,10 @@ if (import.meta.env.DEV) {
         completed: sketch.model.completed, elapsed: sketch.model.session.elapsed,
         recovering: sketch.model.recoveryRemaining > 0,
         targets: sketch.model.targetViews().map(t => ({ ...t, screen: sketch.targetScreen(t.id) })),
+        grips: sketch.model.grips.map(g => ({ ...g })),
+        nailSurfaces: sketch.model.surfaceViews().map(v => ({ ...v,
+          screen: [0, 0.25, 0.5, 0.75, 1].map(offset => ({ offset, ...sketch.surfaceScreen(v.id, offset)!,
+            reason: sketch.model.surfaceRefusal(v.id, offset) })) })),
         boards: sketch.model.mechanismView()
           .filter(v => v.kind === 'pendulum' || v.kind === 'board')
           .map(v => ({ id: v.id, x: v.x, left: v.x - v.width / 2, right: v.x + v.width / 2, top: v.y + v.height / 2, bottom: v.y - v.height / 2, pinned: v.pinned })),

@@ -28,6 +28,8 @@ export class CharacterController {
   private sliding = false;
   private carry = 0;
   private carrySpeed = 0;
+  /** A released swing coasts with no input until it lands (Sketch only). */
+  private coasting = false;
   readonly contacts: Collider[] = [];
   get airJumpAvailable(): boolean { return this.airborneJump; }
   get slidingActive(): boolean { return this.sliding; }
@@ -46,6 +48,7 @@ export class CharacterController {
     this.automaticLaunch = false;
     this.sliding = false;
     this.carry = this.carrySpeed = 0;
+    this.coasting = false;
     this.contacts.length = 0;
   }
 
@@ -74,6 +77,7 @@ export class CharacterController {
     this.sliding = false;
     this.carrySpeed = Math.max(0, options.carrySpeed ?? 0);
     this.carry = this.carrySpeed > 0 ? (options.carrySeconds ?? 0.9) : 0;
+    this.coasting = this.carrySpeed > 0;
     this.contacts.length = 0;
   }
 
@@ -85,10 +89,17 @@ export class CharacterController {
     this.buffer = freshPress ? t.jumpBuffer : Math.max(0, this.buffer - dt);
     if (b.grounded) this.sliding = solids.some(p => surfaces.butterIds?.includes(p.id) &&
       Math.abs(b.y - p.y - p.height) < 0.001 && b.x + b.width > p.x && b.x < p.x + p.width);
-    const target = input.axis * (this.sliding ? t.slideSpeed : Math.max(t.speed, this.carry > 0 ? this.carrySpeed : 0));
+    const cap = Math.max(t.speed, this.carry > 0 ? this.carrySpeed : 0);
+    // Letting go of the direction after a released swing keeps its flight: it
+    // slows only the way holding that direction would, never stops dead, and
+    // so never reaches further than holding it. Opposite input still steers.
+    if (b.grounded) this.coasting = false;
+    const coast = this.coasting && input.axis === 0 && b.vx !== 0;
+    const target = coast ? Math.sign(b.vx) * Math.min(Math.abs(b.vx), cap)
+      : input.axis * (this.sliding ? t.slideSpeed : cap);
     // A butter takeoff carries its momentum until the next landing. Releasing
     // direction in the air must not silently apply dry-ground braking.
-    const rate = (input.axis === 0 ? (this.sliding ? (b.grounded ? t.slideBraking : 0) : t.braking) : (this.sliding ? t.slideAcceleration : t.acceleration)) * dt;
+    const rate = (coast ? t.acceleration : input.axis === 0 ? (this.sliding ? (b.grounded ? t.slideBraking : 0) : t.braking) : (this.sliding ? t.slideAcceleration : t.acceleration)) * dt;
     b.vx += Math.max(-rate, Math.min(rate, target - b.vx));
     this.carry = Math.max(0, this.carry - dt);
     if (this.buffer > 0 && this.coyote > 0) {
@@ -108,6 +119,7 @@ export class CharacterController {
     this.contacts.length = 0;
     const landing = moveBody(b, solids, dt, this.contacts);
     if (landing) {
+      this.coasting = false;
       this.sliding = surfaces.butterIds?.includes(landing.id) ?? false;
       this.airborneJump = true;
       if (surfaces.bounceIds?.includes(landing.id)) {

@@ -1,6 +1,8 @@
 # Sketch S4B — Free-placement moving-swing crossing
 
-Revised 2026-10-07 after the user accepted S4A and redesigned this section. It replaces the earlier foothold A → fixed swing S → foothold B glue plan. Planning only; S4B is unimplemented and needs its own request. It is the second of four S4 blocks; read the [S4 contracts](SKETCH_S4_PLAN.md) and the [B prompt](SKETCH_S4_PROMPTS.md#s4b--moving-swing-crossing).
+**Status, 2026-10-07: implemented at its playable review gate** (single session, no B1/B2 split). Final coordinates, measurements and checks: [S4B evidence](../validation/sketch-s4/s4b/README.md). Stop for user review before S4C.
+
+Revised 2026-10-07 after the user accepted S4A and redesigned this section. It replaces the earlier foothold A → fixed swing S → foothold B glue plan. It is the second of four S4 blocks; read the [S4 contracts](SKETCH_S4_PLAN.md) and the [B prompt](SKETCH_S4_PROMPTS.md#s4b--moving-swing-crossing).
 
 ## User decisions (2026-10-07)
 

@@ -321,6 +321,24 @@ describe('direct nail swing', () => {
     expect(m.placedCount).toBe(0);
   });
 
+  it('recalling the nail on the tick after a side grip does not fling the player', () => {
+    const m = build('fixed-swing');
+    stand(m, 11, 2.2);
+    place(m, 'fixed-nail');
+    // A side approach: the swing starts near horizontal while the body settles beneath.
+    standUnder(m, 'fixed-nail', 1.4, -0.6);
+    m.update(dt, keys({ interactPressed: true }));
+    expect(m.move.state).toBe('swing');
+    // The first swing tick moves the body from beneath the nail onto its arc.
+    m.update(dt, keys({}));
+    m.enqueue({ type: 'recall' });
+    m.update(dt, keys({}));
+    expect(m.move.state).toBe('normal');
+    const arcLimit = sketchTuning.swing.arm * sketchTuning.swing.maxOmega;
+    expect(Math.hypot(m.controller.body.vx, m.controller.body.vy)).toBeLessThanOrEqual(arcLimit + 1e-6);
+    expect(m.controller.airJumpAvailable).toBe(false);
+  });
+
   it('an obstructed arc detaches instead of passing through geometry', () => {
     const controller = new CharacterController(sketchMovement, 0, 0);
     const movement = new SketchMovement(controller, sketchTuning);

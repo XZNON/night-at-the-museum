@@ -71,3 +71,59 @@ export const sketchLayerThreeWalls: SketchRoute = {
     escalator: null, arrivalSectionId: null,
   }],
 };
+
+const bar = (id: string, x: number, y: number, travel: number, period: number, phase: number, width: number): SketchMechanism => ({
+  id, kind: 'mount', centre: { x, y }, travel: { x: travel, y: 0 }, pivot: { x, y }, length: 0, arc: 0,
+  period, phase, size: { width, height: 0.3 }, freezable: false, climbable: false, hazard: false,
+});
+
+/** S4A's fixed post-climb ledge is this section's start ground (top 49.5). */
+const START = { x: RIGHT + 1.2, right: RIGHT + 10, top: 49.5 };
+
+/**
+ * S4B: free placement over a glue pool. No marked rings here: a nail goes
+ * anywhere along wood. Strip F grows a step, bars M1 and M2 slide back and
+ * forth and carry a grip nail. Two nails (the climb's third is taken back);
+ * Q still frees the oldest. Every gap is measured so each support is needed.
+ */
+export const sketchLayerThreeSwings: SketchRoute = {
+  ...sketchLayerThreeWalls, id: 'layer-3-swings', entryLegId: 'l3-swings',
+  name: 'Layer 3 · Moving swings',
+  hint: 'Nails go anywhere along wood, never into air. Nail strip F and stand on the head. Nail bar M1, jump close and press E. Q frees F; nail M2 while swinging, release and grip it. Swing onto the end ledge.',
+  goal: 'Cross the glue on a step and two moving bars and land on the end ledge. Stop for S4B review.',
+  spawn: { x: START.x + 4, y: START.top }, deathY: 46,
+  bounds: { x: -6, y: -6, width: 86, height: 68 },
+  goalBounds: { x: 57, y: 54, width: 8, height: 2.4 },
+  wall: undefined, placementReach: undefined, nailPickup: undefined,
+  solids: [...sketchLayerThreeWalls.solids,
+    { id: 'l3-swings-ledge', x: 57, y: 52, width: 8, height: 2 },
+  ],
+  // Top 48.3: just under the start ground, so the pool stays in frame.
+  hazards: [{ id: 'l3-swings-glue', x: START.right, y: 46.8, width: 57 - START.right, height: 1.5 }],
+  mechanisms: [...sketchLayerThreeWalls.mechanisms,
+    { id: 'l3-strip-f', kind: 'site', centre: { x: 25, y: 50.4 }, travel: { x: 0, y: 0 }, pivot: { x: 25, y: 50.4 },
+      length: 0, arc: 0, period: 1, phase: 0, size: { width: 3.4, height: 0.3 }, freezable: false, climbable: false, hazard: false },
+    bar('l3-bar-m1', 34.5, 55, 4, 5, 0, 3),
+    bar('l3-bar-m2', 45.5, 56, 4, 4.4, 0.5, 3),
+  ],
+  surfaces: [
+    { id: 'l3-strip-f', kind: 'foothold', mechanismId: 'l3-strip-f', from: { x: -1.6, y: -0.5 }, to: { x: 1.6, y: 0.5 }, label: 'Strip F' },
+    { id: 'l3-bar-m1', kind: 'moving-swing', mechanismId: 'l3-bar-m1', from: { x: -1.5, y: 0 }, to: { x: 1.5, y: 0 }, label: 'Bar M1' },
+    { id: 'l3-bar-m2', kind: 'moving-swing', mechanismId: 'l3-bar-m2', from: { x: -1.5, y: 0 }, to: { x: 1.5, y: 0 }, label: 'Bar M2' },
+  ],
+  // The bars hang near the top of Layer 3; its band grows to frame them.
+  layers: sketchLayerThreeWalls.layers.map(l => l.layer === 3 ? { ...l, bounds: { ...l.bounds, height: 40 } } : l),
+  sections: { ...sketchLayerThreeWalls.sections,
+    'l3-swings': { id: 'l3-swings', layer: 3, name: 'Layer 3 swings',
+      spawn: { x: START.x + 4, y: START.top }, deathY: 46, travelDirection: 1,
+      focus: { viewHeight: 20, centreY: { min: 53, max: 54.5 }, lookAhead: 6 },
+    },
+  },
+  sectionOrder: ['l3-swings'],
+  legs: [{ id: 'l3-swings', sectionId: 'l3-swings', targetIds: [],
+    surfaceIds: ['l3-strip-f', 'l3-bar-m1', 'l3-bar-m2'],
+    exitBounds: { x: 57, y: 54, width: 8, height: 2.4 },
+    exitSpawn: { x: 59, y: 54 }, exitDeathY: 49,
+    escalator: null, arrivalSectionId: null,
+  }],
+};
