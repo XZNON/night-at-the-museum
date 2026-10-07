@@ -1,4 +1,17 @@
-# Next session — Sketch S4L (vertical lifts), then S4D
+# Next session — review Sketch S4L (vertical lifts), then S4D
+
+**S4L accepted, 2026-10-07:** the user accepted S4L and authorized committing/pushing this checkpoint to origin/main. Next is **S4D** on its own request: paste the [S4D prompt](../gameplay/SKETCH_S4_PROMPTS.md#s4d--full-route-through-s4) and read the [S4D plan](../gameplay/SKETCH_S4D_PLAN.md) (its S4L note lists the delivered lift facts).
+
+**Current handoff, 2026-10-07 (S4L implemented):** S4L is at its playable review gate. Stop for user review; S4D (Layers 1–3, the final S4 gate) needs its own request with the [S4D prompt](../gameplay/SKETCH_S4_PROMPTS.md#s4d--full-route-through-s4) and [plan](../gameplay/SKETCH_S4D_PLAN.md) (its note lists the delivered lift facts). All S4L changes are uncommitted over `98a213c`; commit/push only if the user authorizes it. No generation, dependencies, publishing or sub-agents are authorized.
+
+Play after `npm run dev`: [Layer 1 → lift](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-1), [Layer 2 → walkway → lift](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-2), [both lifts](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layers-1-2). Clear the layer, walk onto the deck (no E), ride (walk/jump freely; you cannot leave), step off right. [S4L evidence](../validation/sketch-s4/s4l/README.md) has geometry, timings, results and captures.
+
+Implemented: `SketchLift` on `leg.lift` (`l1-lift` x63..66.5 under an opening in the Layer 2 landing; `l2-lift` x-2.6..0 at the end of a plain walkway x0..23, rising beside `l3-arrival`), 0.4 s wind-up, 7u invisible cab walls, refused nail commands, one in-place arrival commit, parked decks (`route.parkedLifts` in the Layer 2/3 studies), recovery to the departure exit on R/fall/snapshot/re-entry/actual blur, Escape freeze, debug `lifts`/`onDeck`/`ride`. Accepted challenge data and unit measurements unchanged (byte-identical to HEAD). Tests: 201/201 unit; browser S4L 8/8, S3 14/14, S2 13/13 after a test-timing fix, S1 12/12, S4A 8/8, S4B 8/8, S4C 7/7.
+
+Review questions: is stepping off to trigger the endpoint readable (arrival commits in place, the Layer 1/Layer 2 study endpoints fire on the landing ground)? Should an actual blur mid-ride send you back to the exit (current, per plan) or only freeze like Escape? Are the placeholder shaft/deck/cab cues clear? The Layer 2 walkway is 27u of plain walking to the second lift.
+
+## S4L request handoff (executed)
+
 
 **Order change, 2026-10-07 (user):** every layer transition becomes a vertical lift built into the exit ground: step onto the deck and it rises (no E); invisible walls keep the player on it while it rides; it goes straight up onto the next layer's ground. Next is **S4L** on its own request: paste the [S4L prompt](../gameplay/SKETCH_S4_PROMPTS.md#s4l--vertical-lifts) and read the [S4L plan](../gameplay/SKETCH_S4L_PLAN.md). S4D (Layers 1–3, final S4 gate) follows after S4L review, using its revised prompt. Planning only; no lift code exists yet.
 

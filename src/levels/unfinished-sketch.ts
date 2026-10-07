@@ -108,7 +108,7 @@ export interface SketchCamera {
 /**
  * The authored shape every playable field shares. A Slice 1 bay and the S2
  * route differ only outside the nail ledger: a bay has one goal pad, the route
- * adds sections, checkpoints and a scripted escalator on top of this shape.
+ * adds sections, checkpoints and vertical lifts on top of this shape.
  */
 export interface SketchPlayfieldData {
   id: string;
@@ -175,17 +175,33 @@ export interface SketchGuide {
   rect: Rect;
 }
 
-/** The scripted escalator between two layers. No physics, no scene change. */
-export interface SketchEscalator {
+/**
+ * A vertical lift built into a layer's exit ground (S4L). Stepping fully onto
+ * the deck in the leg's exit stage starts it: invisible walls close on both
+ * sides, a short wind-up plays, then the deck rises straight up on a fixed
+ * schedule and parks flush with the next layer's ground. Data only; the deck
+ * is a kinematic solid, never a physics body.
+ */
+export interface SketchLift {
   id: string;
-  /** Standing volume on the lower ground where E starts the ride. */
-  boarding: Rect;
-  /** Authored world-space path; traversed once over `duration` seconds. */
-  path: { x: number; y: number }[];
+  /** Deck at the bottom. Its top is flush with the departure ground. */
+  deck: Rect;
+  /** Arrival top minus departure top. */
+  rise: number;
+  /** Seconds of rising after the wind-up. */
   duration: number;
-  /** Fixed safe ground at the top of the ride. */
+  /** Seconds the closed cab shudders before it rises. */
+  windUp: number;
+  /** The side the player steps off at the top. */
+  exitSide: 1 | -1;
+  /** Safe spawn on the next layer's ground, used by retries there. */
   arrival: { x: number; y: number };
 }
+
+/** Invisible cab walls reach this far above the deck: higher than any double jump. */
+export const LIFT_WALL_HEIGHT = 7;
+/** Thickness of each invisible cab wall, just outside the deck. */
+export const LIFT_WALL_THICKNESS = 0.5;
 
 /** One authored section of the route with its own fall line and camera band. */
 export interface SketchRouteSection {
@@ -211,7 +227,7 @@ export type SketchLegSettings = Pick<SketchPlayfieldData, 'wall' | 'placementRea
 export interface SketchRouteLeg {
   id: SketchRouteLegId;
   /**
-   * The leg that follows. With an escalator it starts on arrival; with none,
+   * The leg that follows. With a lift it starts on arrival; with none,
    * a grounded landing on the exit ground hands over in place (S4C).
    */
   nextLegId?: SketchRouteLegId;
@@ -226,7 +242,7 @@ export interface SketchRouteLeg {
   exitBounds: Rect;
   exitSpawn: { x: number; y: number };
   exitDeathY: number;
-  escalator: SketchEscalator | null;
+  lift: SketchLift | null;
   arrivalSectionId: string | null;
 }
 
@@ -243,6 +259,11 @@ export interface SketchRoute extends SketchPlayfieldData {
    * as the player walks the shared ground between x0 and x1. Camera only.
    */
   sectionBlend?: { from: string; to: string; x0: number; x1: number };
+  /**
+   * Lifts of earlier layers this study does not play: drawn and solid,
+   * parked at the top as fixed ground (S4L context).
+   */
+  parkedLifts?: SketchLift[];
 }
 
 const solid = (id: string, x: number, top: number, width: number, height = 1): Collider =>

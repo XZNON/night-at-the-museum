@@ -285,8 +285,10 @@ function resize(): void {
   renderer?.setPixelRatio(Math.min(window.devicePixelRatio || 1, settings.quality === 'low' ? 1 : 1.5)); manager?.resize(window.innerWidth, window.innerHeight);
 }
 window.addEventListener('resize', resize, { signal: lifetime.signal });
-window.addEventListener('blur', () => { input.clear(); audio.setPaused(true); pause('Focus was lost. Resume when you are ready.'); }, { signal: lifetime.signal });
-document.addEventListener('visibilitychange', () => { if (document.hidden) { input.clear(); audio.setPaused(true); pause('The game paused while this tab was hidden.'); } }, { signal: lifetime.signal });
+// A real blur mid-ride sends the Sketch rider back to the departure exit with
+// the lift deck reset (S4L); an Escape pause only freezes the ride.
+window.addEventListener('blur', () => { activeSketch()?.routeModel?.cancelRide(); input.clear(); audio.setPaused(true); pause('Focus was lost. Resume when you are ready.'); }, { signal: lifetime.signal });
+document.addEventListener('visibilitychange', () => { if (document.hidden) { activeSketch()?.routeModel?.cancelRide(); input.clear(); audio.setPaused(true); pause('The game paused while this tab was hidden.'); } }, { signal: lifetime.signal });
 document.addEventListener('pointerlockchange', () => { if (!document.pointerLockElement && activeMuseum()) pause('Mouse look released. Resume to continue; dragging also works.'); }, { signal: lifetime.signal });
 // Bay hotkeys are contextual to the isolated playground and reset through the
 // same safe transition as the selector buttons.
@@ -322,13 +324,15 @@ if (import.meta.env.DEV) {
         mode: sketch.mode.kind, field: sketch.field.id,
         bay: sketch.mode.kind === 'bay' ? sketch.field.id : null,
         study: sketchMode, entryLeg: sketch.routeModel?.route.entryLegId ?? null,
-        transitId: sketch.routeModel?.leg.escalator?.id ?? null,
-        escalators: sketch.routeModel?.route.legs.flatMap(l => l.escalator ? [l.escalator.id] : []) ?? [],
+        liftId: sketch.routeModel?.leg.lift?.id ?? null,
+        lifts: sketch.routeModel?.liftViews().map(v => ({ id: v.id, state: v.state, progress: v.progress, walls: v.walls, active: v.active,
+          left: v.deck.x, right: v.deck.x + v.deck.width, top: v.deck.y + v.deck.height })) ?? [],
         leg: sketch.routeModel?.legId ?? null,
         stage: sketch.routeModel?.stage ?? null,
         section: sketch.routeModel?.sectionId ?? null,
         transit: sketch.routeModel?.transitProgress ?? null,
-        boarding: sketch.routeModel?.boardingReady() ?? null,
+        onDeck: sketch.routeModel?.onLiftDeck() ?? null,
+        ride: sketch.routeModel?.rideElapsed ?? null,
         camera: sketch.cameraView(),
         nails: sketch.model.placedCount, available: sketch.model.availableNails,
         budget: sketch.model.nailBudget, pickup: sketch.model.pickupCollected,

@@ -178,6 +178,8 @@ test('affected S1 wall contacts and FIFO use real controls at both sizes',async(
 test('affected isolated S2 full route retains its original endpoint',async({page})=>{
   await page.goto('http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-1');await expect(page.locator('#sketch-hud')).toBeVisible();await page.waitForTimeout(300);
   await traverseLayerOne(page);
-  await page.keyboard.down('KeyD');await until(page,s=>s.body.x>57.5,'S2 boarding pad');await release(page);await page.keyboard.press('KeyE');await until(page,s=>s.sketch.completed,'S2 original arrival');
+  // S4L: the escalator is now a lift. Walk onto its deck, ride, step off right.
+  await page.keyboard.down('KeyD');await until(page,s=>s.sketch.stage==='transit','S2 lift starts');await release(page);
+  await until(page,s=>s.sketch.stage==='arrival','S2 lift arrival');await page.keyboard.down('KeyD');await until(page,s=>s.sketch.completed,'S2 original endpoint after stepping off');await release(page);
   await expect(page.locator('#sketch-endpoint')).toContainText('Slice 2 endpoint');await record(page,'S2 original endpoint');
 });

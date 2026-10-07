@@ -1,0 +1,4823 @@
+{
+  "status": "passed",
+  "events": [
+    {
+      "event": "nailed l3-strip-f @1",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-3-swings",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "state": {
+        "scene": "unfinished-sketch",
+        "transitioning": false,
+        "paused": false,
+        "body": {
+          "x": 17.2,
+          "y": 49.5,
+          "width": 0.65,
+          "height": 1.25,
+          "vx": 0,
+          "vy": 0,
+          "grounded": true
+        },
+        "museum": null,
+        "session": {
+          "artworkId": "royal-supper",
+          "checkpointId": "basket-start",
+          "fork": "upright",
+          "forkElapsed": 0,
+          "grapeElapsed": 0,
+          "candleElapsed": 0,
+          "dinerElapsed": 0,
+          "grapesStarted": false,
+          "candlesStarted": false,
+          "dinerStarted": false
+        },
+        "completed": false,
+        "campaign": {
+          "collectedPieceIds": [],
+          "restoredPieceIds": []
+        },
+        "updateCount": 33,
+        "renderCount": 73,
+        "sketch": {
+          "mode": "route",
+          "field": "layer-3-swings",
+          "bay": null,
+          "study": "layer-3-swings",
+          "entryLeg": "l3-swings",
+          "liftId": null,
+          "lifts": [
+            {
+              "id": "l1-lift",
+              "state": "parked",
+              "progress": 1,
+              "walls": false,
+              "active": false,
+              "left": 63,
+              "right": 66.5,
+              "top": 15.2
+            },
+            {
+              "id": "l2-lift",
+              "state": "parked",
+              "progress": 1,
+              "walls": false,
+              "active": false,
+              "left": -2.6,
+              "right": 0,
+              "top": 24.4
+            }
+          ],
+          "leg": "l3-swings",
+          "stage": "traversal",
+          "section": "l3-swings",
+          "transit": 0,
+          "onDeck": false,
+          "ride": 0,
+          "camera": {
+            "x": 23.525,
+            "y": 53,
+            "width": 35.55555555555556,
+            "height": 20.000000000000004
+          },
+          "nails": 1,
+          "available": 1,
+          "budget": 2,
+          "pickup": false,
+          "pickupOffered": false,
+          "reach": 10,
+          "freePlacement": true,
+          "queue": [
+            {
+              "nailId": "nail-1-0",
+              "targetId": "l3-strip-f#0",
+              "sequence": 0,
+              "surfaceId": "l3-strip-f",
+              "offset": 1
+            }
+          ],
+          "oldest": "l3-strip-f#0",
+          "motion": {
+            "state": "normal",
+            "wall": "",
+            "wallTransfer": true,
+            "swingTarget": "",
+            "swingAngle": 0
+          },
+          "completed": false,
+          "elapsed": 0.55,
+          "recovering": false,
+          "targets": [
+            {
+              "id": "l1-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Pendulum A",
+              "x": 23.108310392574747,
+              "y": 2.666471296122177,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 47.78582741437704,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 624.999174132691,
+                "y": 2172.007033339601,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Pendulum B",
+              "x": 32.427393721083675,
+              "y": 6.30535313914644,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 46.28436873965235,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 960.4861739590124,
+                "y": 2041.0072869907278,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Pendulum C",
+              "x": 40.10955196370881,
+              "y": 7.780297809415686,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 47.99099697871195,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 1237.0438706935172,
+                "y": 1987.909278861035,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-d",
+              "kind": "freeze-platform",
+              "label": "Pendulum D",
+              "x": 48.82328744382636,
+              "y": 9.370884701261376,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 51.38560801138058,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 1550.738347977749,
+                "y": 1930.6481507545902,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Board A",
+              "x": 56,
+              "y": 16.42710535583496,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 51.14561299319079,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 1809.1,
+                "y": 1676.6242071899414,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Board B",
+              "x": 47.986457174654646,
+              "y": 16.674999999999997,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 45.241605555100705,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 1520.6124582875673,
+                "y": 1667.7,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Board C",
+              "x": 36.409687808645806,
+              "y": 16.207556986534076,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 38.82041182421593,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 1103.848761111249,
+                "y": 1684.5279484847733,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-a-pin",
+              "kind": "freeze-platform",
+              "label": "Wall A",
+              "x": 12,
+              "y": 29.229851117035814,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 21.613256854098584,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 225.10000000000005,
+                "y": 1215.7253597867104,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-b-pin",
+              "kind": "freeze-platform",
+              "label": "Wall B",
+              "x": 6.5,
+              "y": 33.63450758327999,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 19.836505870387054,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 27.10000000000008,
+                "y": 1057.1577270019202,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-c-pin",
+              "kind": "freeze-platform",
+              "label": "Wall C",
+              "x": 12,
+              "y": 37.140332358013644,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 14.111244409081982,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 225.10000000000005,
+                "y": 930.9480351115086,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-d-pin",
+              "kind": "freeze-platform",
+              "label": "Wall D",
+              "x": 6.5,
+              "y": 40.64774575140626,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 14.538534076463417,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 27.10000000000008,
+                "y": 804.6811529493743,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-e-pin",
+              "kind": "freeze-platform",
+              "label": "Wall E",
+              "x": 12,
+              "y": 45.28237168930605,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 7.3468819206201,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 225.10000000000005,
+                "y": 637.834619184982,
+                "visible": true
+              }
+            },
+            {
+              "id": "l3-wall-f-pin",
+              "kind": "freeze-platform",
+              "label": "Wall F",
+              "x": 6.5,
+              "y": 49.67016504991534,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 11.034378089943196,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 27.10000000000008,
+                "y": 479.8740582030477,
+                "visible": true
+              }
+            },
+            {
+              "id": "l3-strip-f#0",
+              "kind": "foothold",
+              "label": "Strip F",
+              "x": 26.6,
+              "y": 50.9,
+              "width": 1.9,
+              "height": 0.35,
+              "occupiedBy": "nail-1-0",
+              "oldest": true,
+              "distance": 9.10803216946449,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 750.7,
+                "y": 435.6000000000001,
+                "visible": true
+              }
+            }
+          ],
+          "grips": [],
+          "nailSurfaces": [
+            {
+              "id": "l3-strip-f",
+              "kind": "foothold",
+              "label": "Strip F",
+              "from": {
+                "x": 23.4,
+                "y": 49.9
+              },
+              "to": {
+                "x": 26.6,
+                "y": 50.9
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 635.5,
+                  "y": 471.6,
+                  "visible": true,
+                  "reason": ""
+                },
+                {
+                  "offset": 0.25,
+                  "x": 664.3000000000001,
+                  "y": 462.6,
+                  "visible": true,
+                  "reason": ""
+                },
+                {
+                  "offset": 0.5,
+                  "x": 693.1,
+                  "y": 453.6000000000001,
+                  "visible": true,
+                  "reason": ""
+                },
+                {
+                  "offset": 0.75,
+                  "x": 721.9000000000001,
+                  "y": 444.6,
+                  "visible": true,
+                  "reason": "Too close to another nail."
+                },
+                {
+                  "offset": 1,
+                  "x": 750.7,
+                  "y": 435.6000000000001,
+                  "visible": true,
+                  "reason": "Too close to another nail."
+                }
+              ]
+            },
+            {
+              "id": "l3-bar-m1",
+              "kind": "moving-swing",
+              "label": "Bar M1",
+              "from": {
+                "x": 33.458973514448424,
+                "y": 55
+              },
+              "to": {
+                "x": 36.458973514448424,
+                "y": 55
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 997.6230465201434,
+                  "y": 288,
+                  "visible": true,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 0.25,
+                  "x": 1024.6230465201434,
+                  "y": 288,
+                  "visible": true,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 0.5,
+                  "x": 1051.6230465201434,
+                  "y": 288,
+                  "visible": true,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 0.75,
+                  "x": 1078.6230465201434,
+                  "y": 288,
+                  "visible": true,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 1,
+                  "x": 1105.6230465201431,
+                  "y": 288,
+                  "visible": true,
+                  "reason": "Out of reach."
+                }
+              ]
+            },
+            {
+              "id": "l3-bar-m2",
+              "kind": "moving-swing",
+              "label": "Bar M2",
+              "from": {
+                "x": 47.41421356237309,
+                "y": 56
+              },
+              "to": {
+                "x": 50.41421356237309,
+                "y": 56
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 1500.0116882454313,
+                  "y": 252.00000000000003,
+                  "visible": false,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 0.25,
+                  "x": 1527.0116882454313,
+                  "y": 252.00000000000003,
+                  "visible": false,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 0.5,
+                  "x": 1554.0116882454313,
+                  "y": 252.00000000000003,
+                  "visible": false,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 0.75,
+                  "x": 1581.0116882454315,
+                  "y": 252.00000000000003,
+                  "visible": false,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 1,
+                  "x": 1608.0116882454313,
+                  "y": 252.00000000000003,
+                  "visible": false,
+                  "reason": "Out of reach."
+                }
+              ]
+            }
+          ],
+          "boards": [
+            {
+              "id": "l1-pendulum-a",
+              "x": 23.108310392574747,
+              "left": 20.808310392574747,
+              "right": 25.408310392574748,
+              "top": 2.666471296122177,
+              "bottom": 2.166471296122177,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-b",
+              "x": 32.427393721083675,
+              "left": 30.327393721083673,
+              "right": 34.527393721083676,
+              "top": 6.30535313914644,
+              "bottom": 5.75535313914644,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-c",
+              "x": 40.10955196370881,
+              "left": 38.20955196370881,
+              "right": 42.00955196370881,
+              "top": 7.780297809415686,
+              "bottom": 7.280297809415686,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-d",
+              "x": 48.82328744382636,
+              "left": 47.12328744382636,
+              "right": 50.52328744382636,
+              "top": 9.370884701261376,
+              "bottom": 8.870884701261376,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-a",
+              "x": 56,
+              "left": 54.3,
+              "right": 57.7,
+              "top": 16.42710535583496,
+              "bottom": 15.877105355834962,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-b",
+              "x": 47.986457174654646,
+              "left": 46.486457174654646,
+              "right": 49.486457174654646,
+              "top": 16.674999999999997,
+              "bottom": 16.125,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-c",
+              "x": 36.409687808645806,
+              "left": 35.10968780864581,
+              "right": 37.7096878086458,
+              "top": 16.207556986534076,
+              "bottom": 15.657556986534077,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-a",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 33.12985111703581,
+              "bottom": 25.329851117035815,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-b",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 36.78450758327999,
+              "bottom": 30.484507583279992,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-c",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 40.29033235801364,
+              "bottom": 33.990332358013646,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-d",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 43.79774575140626,
+              "bottom": 37.49774575140626,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-e",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 49.55737168930605,
+              "bottom": 41.007371689306055,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-f",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 54.82016504991534,
+              "bottom": 44.52016504991534,
+              "pinned": false
+            }
+          ],
+          "axes": [
+            {
+              "id": "l2-axe-a",
+              "kind": "axe",
+              "x": 52.76222436265387,
+              "y": 20.588889636426174,
+              "angle": 1.3291353534418355,
+              "vx": 0.7518196283001544,
+              "vy": 3.050252136443561,
+              "width": 2.6,
+              "height": 0.65,
+              "pinned": false,
+              "hazard": true
+            },
+            {
+              "id": "l2-axe-b",
+              "kind": "axe",
+              "x": 41.065268434634405,
+              "y": 22.511271242968686,
+              "angle": 3.7699111843077517,
+              "vx": -2.888115750936038,
+              "vy": -2.098338918857081,
+              "width": 2.5,
+              "height": 0.65,
+              "pinned": false,
+              "hazard": true
+            }
+          ],
+          "dangerBounds": [
+            {
+              "id": "l3-swings-glue",
+              "x": 22,
+              "y": 46.8,
+              "width": 35,
+              "height": 1.5
+            },
+            {
+              "x": 52.13555790841657,
+              "y": 19.24888768287885,
+              "width": 1.2533329084745841,
+              "height": 2.680003907094648
+            },
+            {
+              "x": 39.86296698467066,
+              "y": 21.513609154431236,
+              "width": 2.4046028999274767,
+              "height": 1.9953241770748984
+            }
+          ],
+          "surfaces": [
+            {
+              "id": "l1-ground",
+              "left": -2,
+              "right": 16,
+              "top": 0
+            },
+            {
+              "id": "l1-step",
+              "left": 11,
+              "right": 12.8,
+              "top": 0.8
+            },
+            {
+              "id": "l1-terrace",
+              "left": 12.8,
+              "right": 17.6,
+              "top": 1.6
+            },
+            {
+              "id": "l1-exit",
+              "left": 55,
+              "right": 63,
+              "top": 11.899999999999999
+            },
+            {
+              "id": "l2-landing",
+              "left": 66.5,
+              "right": 77,
+              "top": 15.2
+            },
+            {
+              "id": "l2-exit",
+              "left": 23,
+              "right": 31,
+              "top": 16.3
+            },
+            {
+              "id": "l2-walkway",
+              "left": 0,
+              "right": 23,
+              "top": 16.3
+            },
+            {
+              "id": "l3-arrival",
+              "left": 0,
+              "right": 10,
+              "top": 24.4
+            },
+            {
+              "id": "l3-walls-exit",
+              "left": 13.2,
+              "right": 22,
+              "top": 49.5
+            },
+            {
+              "id": "l3-swings-ledge",
+              "left": 57,
+              "right": 65,
+              "top": 54
+            },
+            {
+              "id": "l1-lift-deck",
+              "left": 63,
+              "right": 66.5,
+              "top": 15.2
+            },
+            {
+              "id": "l2-lift-deck",
+              "left": -2.6,
+              "right": 0,
+              "top": 24.4
+            },
+            {
+              "id": "l3-strip-f#0-head",
+              "left": 25.650000000000002,
+              "right": 27.55,
+              "top": 51.075
+            }
+          ]
+        },
+        "geometryCount": 57,
+        "canvasCount": 1,
+        "textureCount": 3,
+        "lowQuality": false,
+        "pixelRatio": 1,
+        "audio": {
+          "activated": true,
+          "paused": false,
+          "scene": "royal-supper",
+          "ownedSounds": 11,
+          "playing": false,
+          "volume": 0.7,
+          "playedCues": {}
+        }
+      }
+    },
+    {
+      "event": "standing on F",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-3-swings",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "state": {
+        "scene": "unfinished-sketch",
+        "transitioning": false,
+        "paused": false,
+        "body": {
+          "x": 25.924444444444443,
+          "y": 51.075,
+          "width": 0.65,
+          "height": 1.25,
+          "vx": 6.8,
+          "vy": 0,
+          "grounded": true
+        },
+        "museum": null,
+        "session": {
+          "artworkId": "royal-supper",
+          "checkpointId": "basket-start",
+          "fork": "upright",
+          "forkElapsed": 0,
+          "grapeElapsed": 0,
+          "candleElapsed": 0,
+          "dinerElapsed": 0,
+          "grapesStarted": false,
+          "candlesStarted": false,
+          "dinerStarted": false
+        },
+        "completed": false,
+        "campaign": {
+          "collectedPieceIds": [],
+          "restoredPieceIds": []
+        },
+        "updateCount": 114,
+        "renderCount": 268,
+        "sketch": {
+          "mode": "route",
+          "field": "layer-3-swings",
+          "bay": null,
+          "study": "layer-3-swings",
+          "entryLeg": "l3-swings",
+          "liftId": null,
+          "lifts": [
+            {
+              "id": "l1-lift",
+              "state": "parked",
+              "progress": 1,
+              "walls": false,
+              "active": false,
+              "left": 63,
+              "right": 66.5,
+              "top": 15.2
+            },
+            {
+              "id": "l2-lift",
+              "state": "parked",
+              "progress": 1,
+              "walls": false,
+              "active": false,
+              "left": -2.6,
+              "right": 0,
+              "top": 24.4
+            }
+          ],
+          "leg": "l3-swings",
+          "stage": "traversal",
+          "section": "l3-swings",
+          "transit": 0,
+          "onDeck": false,
+          "ride": 0,
+          "camera": {
+            "x": 30.796381802386236,
+            "y": 54.24133770289623,
+            "width": 35.55555555555556,
+            "height": 20.000000000000004
+          },
+          "nails": 1,
+          "available": 1,
+          "budget": 2,
+          "pickup": false,
+          "pickupOffered": false,
+          "reach": 10,
+          "freePlacement": true,
+          "queue": [
+            {
+              "nailId": "nail-1-0",
+              "targetId": "l3-strip-f#0",
+              "sequence": 0,
+              "surfaceId": "l3-strip-f",
+              "offset": 1
+            }
+          ],
+          "oldest": "l3-strip-f#0",
+          "motion": {
+            "state": "normal",
+            "wall": "",
+            "wallTransfer": true,
+            "swingTarget": "",
+            "swingAngle": 0
+          },
+          "completed": false,
+          "elapsed": 1.8999999999999981,
+          "recovering": false,
+          "targets": [
+            {
+              "id": "l1-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Pendulum A",
+              "x": 21.810622227104673,
+              "y": 2.571119595463537,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 49.32899788643994,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 316.5126552898638,
+                "y": 2220.1278518675767,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Pendulum B",
+              "x": 30.910197411867017,
+              "y": 6.280689409408752,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 45.657818528133085,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 644.0973619413081,
+                "y": 2086.583338565549,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Pendulum C",
+              "x": 39.42869236351879,
+              "y": 7.753413716252958,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 45.88022473470732,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 950.763180200772,
+                "y": 2033.5652635191577,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-d",
+              "kind": "freeze-platform",
+              "label": "Pendulum D",
+              "x": 47.337964747845554,
+              "y": 9.483216933510787,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 47.19091502683511,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 1235.4969860365354,
+                "y": 1971.2923476978758,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Board A",
+              "x": 56,
+              "y": 16.33088571617311,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 46.217635174104316,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 1547.3302551140955,
+                "y": 1724.776271522032,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Board B",
+              "x": 46.56008130618755,
+              "y": 16.674999999999997,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 40.48793147012574,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 1207.4931821368473,
+                "y": 1712.3881573042643,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Board C",
+              "x": 37.712909808942726,
+              "y": 16.918405350332396,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 36.62199290777112,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 888.9950082360336,
+                "y": 1703.625564692298,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-a-pin",
+              "kind": "freeze-platform",
+              "label": "Wall A",
+              "x": 12,
+              "y": 29.483558316454413,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 26.393502004351195,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -36.66974488590441,
+                "y": 1251.2800579119053,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-b-pin",
+              "kind": "freeze-platform",
+              "label": "Wall B",
+              "x": 6.5,
+              "y": 33.91567684454965,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 26.576732416941045,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -234.66974488590452,
+                "y": 1091.7237909004768,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-c-pin",
+              "kind": "freeze-platform",
+              "label": "Wall C",
+              "x": 12,
+              "y": 37.45168416076895,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 20.150959561018208,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -36.66974488590441,
+                "y": 964.4275275165821,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-d-pin",
+              "kind": "freeze-platform",
+              "label": "Wall D",
+              "x": 6.5,
+              "y": 40.99111080471669,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 22.465993493746343,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -234.66974488590452,
+                "y": 837.0081683344633,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-e-pin",
+              "kind": "freeze-platform",
+              "label": "Wall E",
+              "x": 12,
+              "y": 45.657242156855354,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 15.477777273439322,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -36.66974488590441,
+                "y": 669.0274396574715,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-f-pin",
+              "kind": "freeze-platform",
+              "label": "Wall F",
+              "x": 6.5,
+              "y": 50.07073689821473,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 19.816534866596545,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -234.66974488590452,
+                "y": 510.1416289685339,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-strip-f#0",
+              "kind": "foothold",
+              "label": "Strip F",
+              "x": 26.6,
+              "y": 50.9,
+              "width": 1.9,
+              "height": 0.35,
+              "occupiedBy": "nail-1-0",
+              "oldest": true,
+              "distance": 0.8734352852563682,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 488.93025511409553,
+                "y": 480.28815730426436,
+                "visible": true
+              }
+            }
+          ],
+          "grips": [],
+          "nailSurfaces": [
+            {
+              "id": "l3-strip-f",
+              "kind": "foothold",
+              "label": "Strip F",
+              "from": {
+                "x": 23.4,
+                "y": 49.9
+              },
+              "to": {
+                "x": 26.6,
+                "y": 50.9
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 373.7302551140955,
+                  "y": 516.2881573042644,
+                  "visible": true,
+                  "reason": ""
+                },
+                {
+                  "offset": 0.25,
+                  "x": 402.53025511409544,
+                  "y": 507.28815730426436,
+                  "visible": true,
+                  "reason": ""
+                },
+                {
+                  "offset": 0.5,
+                  "x": 431.33025511409556,
+                  "y": 498.28815730426436,
+                  "visible": true,
+                  "reason": ""
+                },
+                {
+                  "offset": 0.75,
+                  "x": 460.1302551140955,
+                  "y": 489.2881573042643,
+                  "visible": true,
+                  "reason": "Too close to another nail."
+                },
+                {
+                  "offset": 1,
+                  "x": 488.93025511409553,
+                  "y": 480.28815730426436,
+                  "visible": true,
+                  "reason": "Too close to another nail."
+                }
+              ]
+            },
+            {
+              "id": "l3-bar-m1",
+              "kind": "moving-swing",
+              "label": "Bar M1",
+              "from": {
+                "x": 36.45793725484282,
+                "y": 55
+              },
+              "to": {
+                "x": 39.45793725484282,
+                "y": 55
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 843.815996288437,
+                  "y": 332.68815730426434,
+                  "visible": true,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 0.25,
+                  "x": 870.815996288437,
+                  "y": 332.68815730426434,
+                  "visible": true,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 0.5,
+                  "x": 897.815996288437,
+                  "y": 332.68815730426434,
+                  "visible": true,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 0.75,
+                  "x": 924.815996288437,
+                  "y": 332.68815730426434,
+                  "visible": true,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 1,
+                  "x": 951.815996288437,
+                  "y": 332.68815730426434,
+                  "visible": true,
+                  "reason": "Out of reach."
+                }
+              ]
+            },
+            {
+              "id": "l3-bar-m2",
+              "kind": "moving-swing",
+              "label": "Bar M2",
+              "from": {
+                "x": 44.18073600929097,
+                "y": 56
+              },
+              "to": {
+                "x": 47.18073600929097,
+                "y": 56
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 1121.8367514485703,
+                  "y": 296.68815730426434,
+                  "visible": true,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 0.25,
+                  "x": 1148.8367514485703,
+                  "y": 296.68815730426434,
+                  "visible": true,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 0.5,
+                  "x": 1175.8367514485703,
+                  "y": 296.68815730426434,
+                  "visible": true,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 0.75,
+                  "x": 1202.8367514485703,
+                  "y": 296.68815730426434,
+                  "visible": true,
+                  "reason": "Out of reach."
+                },
+                {
+                  "offset": 1,
+                  "x": 1229.8367514485703,
+                  "y": 296.68815730426434,
+                  "visible": true,
+                  "reason": "Out of reach."
+                }
+              ]
+            }
+          ],
+          "boards": [
+            {
+              "id": "l1-pendulum-a",
+              "x": 21.810622227104673,
+              "left": 19.510622227104673,
+              "right": 24.110622227104674,
+              "top": 2.571119595463537,
+              "bottom": 2.071119595463537,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-b",
+              "x": 30.910197411867017,
+              "left": 28.810197411867016,
+              "right": 33.01019741186702,
+              "top": 6.280689409408752,
+              "bottom": 5.730689409408751,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-c",
+              "x": 39.42869236351879,
+              "left": 37.52869236351879,
+              "right": 41.32869236351879,
+              "top": 7.753413716252958,
+              "bottom": 7.253413716252958,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-d",
+              "x": 47.337964747845554,
+              "left": 45.63796474784555,
+              "right": 49.03796474784556,
+              "top": 9.483216933510787,
+              "bottom": 8.983216933510787,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-a",
+              "x": 56,
+              "left": 54.3,
+              "right": 57.7,
+              "top": 16.33088571617311,
+              "bottom": 15.780885716173112,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-b",
+              "x": 46.56008130618755,
+              "left": 45.06008130618755,
+              "right": 48.06008130618755,
+              "top": 16.674999999999997,
+              "bottom": 16.125,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-c",
+              "x": 37.712909808942726,
+              "left": 36.41290980894273,
+              "right": 39.01290980894272,
+              "top": 16.918405350332396,
+              "bottom": 16.3684053503324,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-a",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 33.38355831645441,
+              "bottom": 25.583558316454415,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-b",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 37.06567684454965,
+              "bottom": 30.765676844549652,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-c",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 40.60168416076895,
+              "bottom": 34.30168416076895,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-d",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 44.14111080471669,
+              "bottom": 37.84111080471669,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-e",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 49.93224215685535,
+              "bottom": 41.382242156855355,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-f",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 55.22073689821473,
+              "bottom": 44.920736898214734,
+              "pinned": false
+            }
+          ],
+          "axes": [
+            {
+              "id": "l2-axe-a",
+              "kind": "axe",
+              "x": 50.20947846367253,
+              "y": 21.056697684331926,
+              "angle": 4.591558493708154,
+              "vx": -0.37867075026554176,
+              "vy": -3.1186342062302685,
+              "width": 2.6,
+              "height": 0.65,
+              "pinned": false,
+              "hazard": true
+            },
+            {
+              "id": "l2-axe-b",
+              "kind": "axe",
+              "x": 43.017514896177914,
+              "y": 21.21687904071779,
+              "angle": 7.625502168258856,
+              "vx": 0.8085724849871667,
+              "vy": 3.477132345153393,
+              "width": 2.5,
+              "height": 0.65,
+              "pinned": false,
+              "hazard": true
+            }
+          ],
+          "dangerBounds": [
+            {
+              "id": "l3-swings-glue",
+              "x": 22,
+              "y": 46.8,
+              "width": 35,
+              "height": 1.5
+            },
+            {
+              "x": 49.73015039525874,
+              "y": 19.727001726921475,
+              "width": 0.9586561368275875,
+              "height": 2.6593919148209024
+            },
+            {
+              "x": 42.41784006388944,
+              "y": 19.925752695126498,
+              "width": 1.1993496645769417,
+              "height": 2.582252691182581
+            }
+          ],
+          "surfaces": [
+            {
+              "id": "l1-ground",
+              "left": -2,
+              "right": 16,
+              "top": 0
+            },
+            {
+              "id": "l1-step",
+              "left": 11,
+              "right": 12.8,
+              "top": 0.8
+            },
+            {
+              "id": "l1-terrace",
+              "left": 12.8,
+              "right": 17.6,
+              "top": 1.6
+            },
+            {
+              "id": "l1-exit",
+              "left": 55,
+              "right": 63,
+              "top": 11.899999999999999
+            },
+            {
+              "id": "l2-landing",
+              "left": 66.5,
+              "right": 77,
+              "top": 15.2
+            },
+            {
+              "id": "l2-exit",
+              "left": 23,
+              "right": 31,
+              "top": 16.3
+            },
+            {
+              "id": "l2-walkway",
+              "left": 0,
+              "right": 23,
+              "top": 16.3
+            },
+            {
+              "id": "l3-arrival",
+              "left": 0,
+              "right": 10,
+              "top": 24.4
+            },
+            {
+              "id": "l3-walls-exit",
+              "left": 13.2,
+              "right": 22,
+              "top": 49.5
+            },
+            {
+              "id": "l3-swings-ledge",
+              "left": 57,
+              "right": 65,
+              "top": 54
+            },
+            {
+              "id": "l1-lift-deck",
+              "left": 63,
+              "right": 66.5,
+              "top": 15.2
+            },
+            {
+              "id": "l2-lift-deck",
+              "left": -2.6,
+              "right": 0,
+              "top": 24.4
+            },
+            {
+              "id": "l3-strip-f#0-head",
+              "left": 25.650000000000002,
+              "right": 27.55,
+              "top": 51.075
+            }
+          ]
+        },
+        "geometryCount": 74,
+        "canvasCount": 1,
+        "textureCount": 4,
+        "lowQuality": false,
+        "pixelRatio": 1,
+        "audio": {
+          "activated": true,
+          "paused": false,
+          "scene": "royal-supper",
+          "ownedSounds": 11,
+          "playing": true,
+          "volume": 0.7,
+          "playedCues": {}
+        }
+      }
+    },
+    {
+      "event": "nailed l3-bar-m1 @0.25",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-3-swings",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "state": {
+        "scene": "unfinished-sketch",
+        "transitioning": false,
+        "paused": false,
+        "body": {
+          "x": 26.199444444444442,
+          "y": 51.075,
+          "width": 0.65,
+          "height": 1.25,
+          "vx": 0,
+          "vy": 0,
+          "grounded": true
+        },
+        "museum": null,
+        "session": {
+          "artworkId": "royal-supper",
+          "checkpointId": "basket-start",
+          "fork": "upright",
+          "forkElapsed": 0,
+          "grapeElapsed": 0,
+          "candleElapsed": 0,
+          "dinerElapsed": 0,
+          "grapesStarted": false,
+          "candlesStarted": false,
+          "dinerStarted": false
+        },
+        "completed": false,
+        "campaign": {
+          "collectedPieceIds": [],
+          "restoredPieceIds": []
+        },
+        "updateCount": 222,
+        "renderCount": 526,
+        "sketch": {
+          "mode": "route",
+          "field": "layer-3-swings",
+          "bay": null,
+          "study": "layer-3-swings",
+          "entryLeg": "l3-swings",
+          "liftId": null,
+          "lifts": [
+            {
+              "id": "l1-lift",
+              "state": "parked",
+              "progress": 1,
+              "walls": false,
+              "active": false,
+              "left": 63,
+              "right": 66.5,
+              "top": 15.2
+            },
+            {
+              "id": "l2-lift",
+              "state": "parked",
+              "progress": 1,
+              "walls": false,
+              "active": false,
+              "left": -2.6,
+              "right": 0,
+              "top": 24.4
+            }
+          ],
+          "leg": "l3-swings",
+          "stage": "traversal",
+          "section": "l3-swings",
+          "transit": 0,
+          "onDeck": false,
+          "ride": 0,
+          "camera": {
+            "x": 32.52388944840145,
+            "y": 54.10004462271134,
+            "width": 35.55555555555556,
+            "height": 20.000000000000004
+          },
+          "nails": 2,
+          "available": 0,
+          "budget": 2,
+          "pickup": false,
+          "pickupOffered": false,
+          "reach": 10,
+          "freePlacement": true,
+          "queue": [
+            {
+              "nailId": "nail-1-0",
+              "targetId": "l3-strip-f#0",
+              "sequence": 0,
+              "surfaceId": "l3-strip-f",
+              "offset": 1
+            },
+            {
+              "nailId": "nail-2-1",
+              "targetId": "l3-bar-m1#1",
+              "sequence": 1,
+              "surfaceId": "l3-bar-m1",
+              "offset": 0.2639200012778318
+            }
+          ],
+          "oldest": "l3-strip-f#0",
+          "motion": {
+            "state": "normal",
+            "wall": "",
+            "wallTransfer": true,
+            "swingTarget": "",
+            "swingAngle": 0
+          },
+          "completed": false,
+          "elapsed": 3.6999999999999917,
+          "recovering": false,
+          "targets": [
+            {
+              "id": "l1-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Pendulum A",
+              "x": 22.76618625419641,
+              "y": 2.5948019569144907,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 49.2488068837735,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 288.72268500861867,
+                "y": 2214.1887359686866,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Pendulum B",
+              "x": 33.011823235091775,
+              "y": 6.4633802303939145,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 45.69942944669284,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 657.5656163208519,
+                "y": 2074.919918123427,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Pendulum C",
+              "x": 38.52818922635465,
+              "y": 7.885720750778384,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 45.42885597192613,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 856.1547920063151,
+                "y": 2023.715659389586,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-d",
+              "kind": "freeze-platform",
+              "label": "Pendulum D",
+              "x": 47.976712556173666,
+              "y": 9.370884701261375,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 47.45475538985975,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 1196.3016318797997,
+                "y": 1970.2497571721985,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Board A",
+              "x": 56,
+              "y": 17.249444369716805,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 45.33926729165216,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 1485.1399798575476,
+                "y": 1686.6216091078031,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Board B",
+              "x": 46.01008130618754,
+              "y": 16.674999999999997,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 40.080427504053915,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 1125.5029068802992,
+                "y": 1707.3016064176081,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Board C",
+              "x": 37.39031219135422,
+              "y": 16.742443013465937,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 36.60734724560236,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 815.1912187462997,
+                "y": 1704.8736579328342,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-a-pin",
+              "kind": "freeze-platform",
+              "label": "Wall A",
+              "x": 12,
+              "y": 29.695982397149656,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 26.36543716850341,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -98.86002014245207,
+                "y": 1238.5462401202203,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-b-pin",
+              "kind": "freeze-platform",
+              "label": "Wall B",
+              "x": 6.5,
+              "y": 34.076718590212636,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 26.675052445256764,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -296.8600201424521,
+                "y": 1080.839737169953,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-c-pin",
+              "kind": "freeze-platform",
+              "label": "Wall C",
+              "x": 12,
+              "y": 37.53578620636935,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 20.2875439324584,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -98.86002014245207,
+                "y": 956.3133029883114,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-d-pin",
+              "kind": "freeze-platform",
+              "label": "Wall D",
+              "x": 6.5,
+              "y": 40.966666830806425,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 22.719657044716868,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -296.8600201424521,
+                "y": 832.8016005085767,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-e-pin",
+              "kind": "freeze-platform",
+              "label": "Wall E",
+              "x": 12,
+              "y": 45.490697629882334,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 15.796041350392253,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -98.86002014245207,
+                "y": 669.9364917418441,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-f-pin",
+              "kind": "freeze-platform",
+              "label": "Wall F",
+              "x": 6.5,
+              "y": 49.74040721330273,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 20.120098886395112,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -296.8600201424521,
+                "y": 516.9469467387098,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-strip-f#0",
+              "kind": "foothold",
+              "label": "Strip F",
+              "x": 26.6,
+              "y": 50.9,
+              "width": 1.9,
+              "height": 0.35,
+              "occupiedBy": "nail-1-0",
+              "oldest": true,
+              "distance": 0.8035599803221388,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 426.73997985754795,
+                "y": 475.20160641760816,
+                "visible": true
+              }
+            },
+            {
+              "id": "l3-bar-m1#1",
+              "kind": "moving-swing",
+              "label": "Bar M1",
+              "x": 35.91734104289214,
+              "y": 55,
+              "width": 0.8,
+              "height": 0.8,
+              "occupiedBy": "nail-2-1",
+              "oldest": false,
+              "distance": 9.955727321955456,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 762.1642574016648,
+                "y": 327.60160641760814,
+                "visible": true
+              }
+            }
+          ],
+          "grips": [
+            {
+              "id": "l3-bar-m1#1",
+              "x": 35.91734104289214,
+              "y": 55,
+              "vx": -2.5083032893630275,
+              "vy": 0
+            }
+          ],
+          "nailSurfaces": [
+            {
+              "id": "l3-strip-f",
+              "kind": "foothold",
+              "label": "Strip F",
+              "from": {
+                "x": 23.4,
+                "y": 49.9
+              },
+              "to": {
+                "x": 26.6,
+                "y": 50.9
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 311.53997985754785,
+                  "y": 511.2016064176082,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.25,
+                  "x": 340.33997985754786,
+                  "y": 502.20160641760816,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.5,
+                  "x": 369.1399798575479,
+                  "y": 493.20160641760816,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.75,
+                  "x": 397.93997985754794,
+                  "y": 484.2016064176081,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 1,
+                  "x": 426.73997985754795,
+                  "y": 475.20160641760816,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                }
+              ]
+            },
+            {
+              "id": "l3-bar-m1",
+              "kind": "moving-swing",
+              "label": "Bar M1",
+              "from": {
+                "x": 35.125581039058645,
+                "y": 55
+              },
+              "to": {
+                "x": 38.125581039058645,
+                "y": 55
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 733.6608972636591,
+                  "y": 327.60160641760814,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.25,
+                  "x": 760.6608972636591,
+                  "y": 327.60160641760814,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.5,
+                  "x": 787.6608972636591,
+                  "y": 327.60160641760814,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.75,
+                  "x": 814.6608972636591,
+                  "y": 327.60160641760814,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 1,
+                  "x": 841.6608972636591,
+                  "y": 327.60160641760814,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                }
+              ]
+            },
+            {
+              "id": "l3-bar-m2",
+              "kind": "moving-swing",
+              "label": "Bar M2",
+              "from": {
+                "x": 47.08128163491118,
+                "y": 56
+              },
+              "to": {
+                "x": 50.08128163491118,
+                "y": 56
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 1164.06611871435,
+                  "y": 291.60160641760814,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.25,
+                  "x": 1191.0661187143503,
+                  "y": 291.60160641760814,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.5,
+                  "x": 1218.0661187143503,
+                  "y": 291.60160641760814,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.75,
+                  "x": 1245.0661187143503,
+                  "y": 291.60160641760814,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 1,
+                  "x": 1272.0661187143503,
+                  "y": 291.60160641760814,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                }
+              ]
+            }
+          ],
+          "boards": [
+            {
+              "id": "l1-pendulum-a",
+              "x": 22.76618625419641,
+              "left": 20.46618625419641,
+              "right": 25.06618625419641,
+              "top": 2.5948019569144907,
+              "bottom": 2.0948019569144907,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-b",
+              "x": 33.011823235091775,
+              "left": 30.911823235091774,
+              "right": 35.11182323509178,
+              "top": 6.4633802303939145,
+              "bottom": 5.913380230393914,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-c",
+              "x": 38.52818922635465,
+              "left": 36.62818922635465,
+              "right": 40.42818922635465,
+              "top": 7.885720750778384,
+              "bottom": 7.385720750778384,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-d",
+              "x": 47.976712556173666,
+              "left": 46.27671255617366,
+              "right": 49.67671255617367,
+              "top": 9.370884701261375,
+              "bottom": 8.870884701261375,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-a",
+              "x": 56,
+              "left": 54.3,
+              "right": 57.7,
+              "top": 17.249444369716805,
+              "bottom": 16.699444369716808,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-b",
+              "x": 46.01008130618754,
+              "left": 44.51008130618754,
+              "right": 47.51008130618754,
+              "top": 16.674999999999997,
+              "bottom": 16.125,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-c",
+              "x": 37.39031219135422,
+              "left": 36.09031219135422,
+              "right": 38.69031219135422,
+              "top": 16.742443013465937,
+              "bottom": 16.19244301346594,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-a",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 33.595982397149655,
+              "bottom": 25.795982397149658,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-b",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 37.226718590212634,
+              "bottom": 30.926718590212637,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-c",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 40.68578620636935,
+              "bottom": 34.38578620636935,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-d",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 44.11666683080642,
+              "bottom": 37.816666830806426,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-e",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 49.76569762988233,
+              "bottom": 41.215697629882335,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-f",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 54.89040721330273,
+              "bottom": 44.59040721330273,
+              "pinned": false
+            }
+          ],
+          "axes": [
+            {
+              "id": "l2-axe-a",
+              "kind": "axe",
+              "x": 52.104140123656926,
+              "y": 22.05109283334916,
+              "angle": 8.941456014063236,
+              "vx": -2.781695139195506,
+              "vy": 1.4599462325551826,
+              "width": 2.6,
+              "height": 0.65,
+              "pinned": false,
+              "hazard": true
+            },
+            {
+              "id": "l2-axe-b",
+              "kind": "axe",
+              "x": 42.04823808330715,
+              "y": 20.2748967986345,
+              "angle": 12.766290146860316,
+              "vx": 3.4988039825975648,
+              "vy": 0.708949575463862,
+              "width": 2.5,
+              "height": 0.65,
+              "pinned": false,
+              "hazard": true
+            }
+          ],
+          "dangerBounds": [
+            {
+              "id": "l3-swings-glue",
+              "x": 22,
+              "y": 46.8,
+              "width": 35,
+              "height": 1.5
+            },
+            {
+              "x": 50.802012259393535,
+              "y": 21.159179501354945,
+              "width": 2.604255728526782,
+              "height": 1.7838266639884273
+            },
+            {
+              "x": 40.75859298028179,
+              "y": 19.70813188297232,
+              "width": 2.579290206050714,
+              "height": 1.133529831324359
+            }
+          ],
+          "surfaces": [
+            {
+              "id": "l1-ground",
+              "left": -2,
+              "right": 16,
+              "top": 0
+            },
+            {
+              "id": "l1-step",
+              "left": 11,
+              "right": 12.8,
+              "top": 0.8
+            },
+            {
+              "id": "l1-terrace",
+              "left": 12.8,
+              "right": 17.6,
+              "top": 1.6
+            },
+            {
+              "id": "l1-exit",
+              "left": 55,
+              "right": 63,
+              "top": 11.899999999999999
+            },
+            {
+              "id": "l2-landing",
+              "left": 66.5,
+              "right": 77,
+              "top": 15.2
+            },
+            {
+              "id": "l2-exit",
+              "left": 23,
+              "right": 31,
+              "top": 16.3
+            },
+            {
+              "id": "l2-walkway",
+              "left": 0,
+              "right": 23,
+              "top": 16.3
+            },
+            {
+              "id": "l3-arrival",
+              "left": 0,
+              "right": 10,
+              "top": 24.4
+            },
+            {
+              "id": "l3-walls-exit",
+              "left": 13.2,
+              "right": 22,
+              "top": 49.5
+            },
+            {
+              "id": "l3-swings-ledge",
+              "left": 57,
+              "right": 65,
+              "top": 54
+            },
+            {
+              "id": "l1-lift-deck",
+              "left": 63,
+              "right": 66.5,
+              "top": 15.2
+            },
+            {
+              "id": "l2-lift-deck",
+              "left": -2.6,
+              "right": 0,
+              "top": 24.4
+            },
+            {
+              "id": "l3-strip-f#0-head",
+              "left": 25.650000000000002,
+              "right": 27.55,
+              "top": 51.075
+            }
+          ]
+        },
+        "geometryCount": 79,
+        "canvasCount": 1,
+        "textureCount": 4,
+        "lowQuality": false,
+        "pixelRatio": 1,
+        "audio": {
+          "activated": true,
+          "paused": false,
+          "scene": "royal-supper",
+          "ownedSounds": 11,
+          "playing": true,
+          "volume": 0.7,
+          "playedCues": {}
+        }
+      }
+    },
+    {
+      "event": "gripped M1",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-3-swings",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "state": {
+        "scene": "unfinished-sketch",
+        "transitioning": false,
+        "paused": false,
+        "body": {
+          "x": 32.35132690632015,
+          "y": 55.34595923150191,
+          "width": 0.65,
+          "height": 1.25,
+          "vx": -77.30053093368895,
+          "vy": 154.25755389011456,
+          "grounded": false
+        },
+        "museum": null,
+        "session": {
+          "artworkId": "royal-supper",
+          "checkpointId": "basket-start",
+          "fork": "upright",
+          "forkElapsed": 0,
+          "grapeElapsed": 0,
+          "candleElapsed": 0,
+          "dinerElapsed": 0,
+          "grapesStarted": false,
+          "candlesStarted": false,
+          "dinerStarted": false
+        },
+        "completed": false,
+        "campaign": {
+          "collectedPieceIds": [],
+          "restoredPieceIds": []
+        },
+        "updateCount": 281,
+        "renderCount": 668,
+        "sketch": {
+          "mode": "route",
+          "field": "layer-3-swings",
+          "bay": null,
+          "study": "layer-3-swings",
+          "entryLeg": "l3-swings",
+          "liftId": null,
+          "lifts": [
+            {
+              "id": "l1-lift",
+              "state": "parked",
+              "progress": 1,
+              "walls": false,
+              "active": false,
+              "left": 63,
+              "right": 66.5,
+              "top": 15.2
+            },
+            {
+              "id": "l2-lift",
+              "state": "parked",
+              "progress": 1,
+              "walls": false,
+              "active": false,
+              "left": -2.6,
+              "right": 0,
+              "top": 24.4
+            }
+          ],
+          "leg": "l3-swings",
+          "stage": "traversal",
+          "section": "l3-swings",
+          "transit": 0,
+          "onDeck": false,
+          "ride": 0,
+          "camera": {
+            "x": 37.36918943973935,
+            "y": 54.494380557258346,
+            "width": 35.55555555555556,
+            "height": 20.000000000000004
+          },
+          "nails": 2,
+          "available": 0,
+          "budget": 2,
+          "pickup": false,
+          "pickupOffered": false,
+          "reach": 10,
+          "freePlacement": true,
+          "queue": [
+            {
+              "nailId": "nail-1-0",
+              "targetId": "l3-strip-f#0",
+              "sequence": 0,
+              "surfaceId": "l3-strip-f",
+              "offset": 1
+            },
+            {
+              "nailId": "nail-2-1",
+              "targetId": "l3-bar-m1#1",
+              "sequence": 1,
+              "surfaceId": "l3-bar-m1",
+              "offset": 0.2639200012778318
+            }
+          ],
+          "oldest": "l3-strip-f#0",
+          "motion": {
+            "state": "swing",
+            "wall": "",
+            "wallTransfer": true,
+            "swingTarget": "l3-bar-m1#1",
+            "swingAngle": -127.36204968492426
+          },
+          "completed": false,
+          "elapsed": 4.683333333333322,
+          "recovering": false,
+          "targets": [
+            {
+              "id": "l1-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Pendulum A",
+              "x": 22.946371525619433,
+              "y": 2.6282206846901213,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 54.22287144170758,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 120.77855509168302,
+                "y": 2227.181755412456,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Pendulum B",
+              "x": 30.95823380990055,
+              "y": 6.273160850026752,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 49.72748744762517,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 409.2055973258032,
+                "y": 2095.963909460337,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Pendulum C",
+              "x": 40.31769931683096,
+              "y": 7.810317501201255,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 48.76308013436489,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 746.146355575298,
+                "y": 2040.6262700180548,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-d",
+              "kind": "freeze-platform",
+              "label": "Pendulum D",
+              "x": 48.610503301393095,
+              "y": 9.35515560699778,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 49.263892710053184,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 1044.6872990195347,
+                "y": 1985.0120982093802,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Board A",
+              "x": 56,
+              "y": 15.809712286938836,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 46.4426472406884,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 1310.7091801693832,
+                "y": 1752.6480577315021,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Board B",
+              "x": 47.82253762473999,
+              "y": 16.674999999999997,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 42.11389451298272,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 1016.3205346600228,
+                "y": 1721.4977000613003,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Board C",
+              "x": 36.93387456441174,
+              "y": 16.493477035133672,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 39.70640140613969,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 624.328664488206,
+                "y": 1728.032526796488,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-a-pin",
+              "kind": "freeze-platform",
+              "label": "Wall A",
+              "x": 12,
+              "y": 29.571747206101094,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 33.532504975010234,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -273.29081983061656,
+                "y": 1257.214800641661,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-b-pin",
+              "kind": "freeze-platform",
+              "label": "Wall B",
+              "x": 6.5,
+              "y": 33.896053818526006,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 34.24180981341922,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -471.29081983061656,
+                "y": 1101.5397625943642,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-c-pin",
+              "kind": "freeze-platform",
+              "label": "Wall C",
+              "x": 12,
+              "y": 37.30229775115587,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 27.857304532290538,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -273.29081983061656,
+                "y": 978.914981019689,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-d-pin",
+              "kind": "freeze-platform",
+              "label": "Wall D",
+              "x": 6.5,
+              "y": 40.70113491888683,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 30.304580921779323,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -471.29081983061656,
+                "y": 856.5568429813745,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-e-pin",
+              "kind": "freeze-platform",
+              "label": "Wall E",
+              "x": 12,
+              "y": 45.24453421210288,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 23.29306094170125,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -273.29081983061656,
+                "y": 692.9944684255968,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-f-pin",
+              "kind": "freeze-platform",
+              "label": "Wall F",
+              "x": 6.5,
+              "y": 49.60814619513428,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 26.938550073125878,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -471.29081983061656,
+                "y": 535.9044370364662,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-strip-f#0",
+              "kind": "foothold",
+              "label": "Strip F",
+              "x": 26.6,
+              "y": 50.9,
+              "width": 1.9,
+              "height": 0.35,
+              "occupiedBy": "nail-1-0",
+              "oldest": true,
+              "distance": 7.91431463868001,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 252.3091801693834,
+                "y": 489.39770006130044,
+                "visible": true
+              }
+            },
+            {
+              "id": "l3-bar-m1#1",
+              "kind": "moving-swing",
+              "label": "Bar M1",
+              "x": 33.9480337006565,
+              "y": 55,
+              "width": 0.8,
+              "height": 0.8,
+              "occupiedBy": "nail-2-1",
+              "oldest": false,
+              "distance": 1.6000000000000005,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 516.8383933930174,
+                "y": 341.7977000613005,
+                "visible": true
+              }
+            }
+          ],
+          "grips": [
+            {
+              "id": "l3-bar-m1#1",
+              "x": 33.9480337006565,
+              "y": 55,
+              "vx": -0.9739284454923336,
+              "vy": 0
+            }
+          ],
+          "nailSurfaces": [
+            {
+              "id": "l3-strip-f",
+              "kind": "foothold",
+              "label": "Strip F",
+              "from": {
+                "x": 23.4,
+                "y": 49.9
+              },
+              "to": {
+                "x": 26.6,
+                "y": 50.9
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 137.10918016938336,
+                  "y": 525.3977000613005,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.25,
+                  "x": 165.90918016938332,
+                  "y": 516.3977000613005,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.5,
+                  "x": 194.70918016938333,
+                  "y": 507.39770006130044,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.75,
+                  "x": 223.50918016938337,
+                  "y": 498.3977000613005,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 1,
+                  "x": 252.3091801693834,
+                  "y": 489.39770006130044,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                }
+              ]
+            },
+            {
+              "id": "l3-bar-m1",
+              "kind": "moving-swing",
+              "label": "Bar M1",
+              "from": {
+                "x": 33.15627369682301,
+                "y": 55
+              },
+              "to": {
+                "x": 36.15627369682301,
+                "y": 55
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 488.33503325501164,
+                  "y": 341.7977000613005,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.25,
+                  "x": 515.3350332550116,
+                  "y": 341.7977000613005,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.5,
+                  "x": 542.3350332550116,
+                  "y": 341.7977000613005,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.75,
+                  "x": 569.3350332550117,
+                  "y": 341.7977000613005,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 1,
+                  "x": 596.3350332550116,
+                  "y": 341.7977000613005,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                }
+              ]
+            },
+            {
+              "id": "l3-bar-m2",
+              "kind": "moving-swing",
+              "label": "Bar M2",
+              "from": {
+                "x": 47.838520607163346,
+                "y": 56
+              },
+              "to": {
+                "x": 50.838520607163346,
+                "y": 56
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 1016.8959220272637,
+                  "y": 305.7977000613005,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.25,
+                  "x": 1043.8959220272639,
+                  "y": 305.7977000613005,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.5,
+                  "x": 1070.8959220272639,
+                  "y": 305.7977000613005,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.75,
+                  "x": 1097.8959220272639,
+                  "y": 305.7977000613005,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 1,
+                  "x": 1124.8959220272639,
+                  "y": 305.7977000613005,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                }
+              ]
+            }
+          ],
+          "boards": [
+            {
+              "id": "l1-pendulum-a",
+              "x": 22.946371525619433,
+              "left": 20.646371525619433,
+              "right": 25.246371525619434,
+              "top": 2.6282206846901213,
+              "bottom": 2.1282206846901213,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-b",
+              "x": 30.95823380990055,
+              "left": 28.858233809900547,
+              "right": 33.05823380990055,
+              "top": 6.273160850026752,
+              "bottom": 5.723160850026751,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-c",
+              "x": 40.31769931683096,
+              "left": 38.41769931683096,
+              "right": 42.21769931683096,
+              "top": 7.810317501201255,
+              "bottom": 7.310317501201255,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-d",
+              "x": 48.610503301393095,
+              "left": 46.91050330139309,
+              "right": 50.3105033013931,
+              "top": 9.35515560699778,
+              "bottom": 8.85515560699778,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-a",
+              "x": 56,
+              "left": 54.3,
+              "right": 57.7,
+              "top": 15.809712286938836,
+              "bottom": 15.259712286938836,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-b",
+              "x": 47.82253762473999,
+              "left": 46.32253762473999,
+              "right": 49.32253762473999,
+              "top": 16.674999999999997,
+              "bottom": 16.125,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-c",
+              "x": 36.93387456441174,
+              "left": 35.63387456441174,
+              "right": 38.233874564411735,
+              "top": 16.493477035133672,
+              "bottom": 15.943477035133673,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-a",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 33.47174720610109,
+              "bottom": 25.671747206101095,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-b",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 37.046053818526005,
+              "bottom": 30.746053818526008,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-c",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 40.45229775115587,
+              "bottom": 34.15229775115587,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-d",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 43.85113491888683,
+              "bottom": 37.55113491888683,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-e",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 49.519534212102876,
+              "bottom": 40.96953421210288,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-f",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 54.75814619513428,
+              "bottom": 44.45814619513428,
+              "pinned": false
+            }
+          ],
+          "axes": [
+            {
+              "id": "l2-axe-a",
+              "kind": "axe",
+              "x": 50.2669026254687,
+              "y": 20.488331608058118,
+              "angle": 11.317788918701662,
+              "vx": 0.9948250320471175,
+              "vy": -2.9798647628690844,
+              "width": 2.6,
+              "height": 0.65,
+              "pinned": false,
+              "hazard": true
+            },
+            {
+              "id": "l2-axe-b",
+              "kind": "axe",
+              "x": 41.966106816962856,
+              "y": 22.738914252625445,
+              "angle": 15.57468357961482,
+              "vx": -3.538247321818062,
+              "vy": 0.4743887633941313,
+              "width": 2.5,
+              "height": 0.65,
+              "pinned": false,
+              "hazard": true
+            }
+          ],
+          "dangerBounds": [
+            {
+              "id": "l3-swings-glue",
+              "x": 22,
+              "y": 46.8,
+              "width": 35,
+              "height": 1.5
+            },
+            {
+              "x": 49.546959889894,
+              "y": 19.15231713554135,
+              "width": 1.4398854711494087,
+              "height": 2.6720289450335413
+            },
+            {
+              "x": 40.684004791927066,
+              "y": 22.25068972997997,
+              "width": 2.5642040500715786,
+              "height": 0.9764490452909496
+            }
+          ],
+          "surfaces": [
+            {
+              "id": "l1-ground",
+              "left": -2,
+              "right": 16,
+              "top": 0
+            },
+            {
+              "id": "l1-step",
+              "left": 11,
+              "right": 12.8,
+              "top": 0.8
+            },
+            {
+              "id": "l1-terrace",
+              "left": 12.8,
+              "right": 17.6,
+              "top": 1.6
+            },
+            {
+              "id": "l1-exit",
+              "left": 55,
+              "right": 63,
+              "top": 11.899999999999999
+            },
+            {
+              "id": "l2-landing",
+              "left": 66.5,
+              "right": 77,
+              "top": 15.2
+            },
+            {
+              "id": "l2-exit",
+              "left": 23,
+              "right": 31,
+              "top": 16.3
+            },
+            {
+              "id": "l2-walkway",
+              "left": 0,
+              "right": 23,
+              "top": 16.3
+            },
+            {
+              "id": "l3-arrival",
+              "left": 0,
+              "right": 10,
+              "top": 24.4
+            },
+            {
+              "id": "l3-walls-exit",
+              "left": 13.2,
+              "right": 22,
+              "top": 49.5
+            },
+            {
+              "id": "l3-swings-ledge",
+              "left": 57,
+              "right": 65,
+              "top": 54
+            },
+            {
+              "id": "l1-lift-deck",
+              "left": 63,
+              "right": 66.5,
+              "top": 15.2
+            },
+            {
+              "id": "l2-lift-deck",
+              "left": -2.6,
+              "right": 0,
+              "top": 24.4
+            },
+            {
+              "id": "l3-strip-f#0-head",
+              "left": 25.650000000000002,
+              "right": 27.55,
+              "top": 51.075
+            }
+          ]
+        },
+        "geometryCount": 83,
+        "canvasCount": 1,
+        "textureCount": 4,
+        "lowQuality": false,
+        "pixelRatio": 1,
+        "audio": {
+          "activated": true,
+          "paused": false,
+          "scene": "royal-supper",
+          "ownedSounds": 11,
+          "playing": true,
+          "volume": 0.7,
+          "playedCues": {}
+        }
+      }
+    },
+    {
+      "event": "nailed l3-bar-m2 @0",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-3-swings",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "state": {
+        "scene": "unfinished-sketch",
+        "transitioning": false,
+        "paused": false,
+        "body": {
+          "x": 35.69282747482316,
+          "y": 54.25066494630845,
+          "width": 0.65,
+          "height": 1.25,
+          "vx": 2.2561562490841425,
+          "vy": 4.376484204881308,
+          "grounded": false
+        },
+        "museum": null,
+        "session": {
+          "artworkId": "royal-supper",
+          "checkpointId": "basket-start",
+          "fork": "upright",
+          "forkElapsed": 0,
+          "grapeElapsed": 0,
+          "candleElapsed": 0,
+          "dinerElapsed": 0,
+          "grapesStarted": false,
+          "candlesStarted": false,
+          "dinerStarted": false
+        },
+        "completed": false,
+        "campaign": {
+          "collectedPieceIds": [],
+          "restoredPieceIds": []
+        },
+        "updateCount": 339,
+        "renderCount": 806,
+        "sketch": {
+          "mode": "route",
+          "field": "layer-3-swings",
+          "bay": null,
+          "study": "layer-3-swings",
+          "entryLeg": "l3-swings",
+          "liftId": null,
+          "lifts": [
+            {
+              "id": "l1-lift",
+              "state": "parked",
+              "progress": 1,
+              "walls": false,
+              "active": false,
+              "left": 63,
+              "right": 66.5,
+              "top": 15.2
+            },
+            {
+              "id": "l2-lift",
+              "state": "parked",
+              "progress": 1,
+              "walls": false,
+              "active": false,
+              "left": -2.6,
+              "right": 0,
+              "top": 24.4
+            }
+          ],
+          "leg": "l3-swings",
+          "stage": "traversal",
+          "section": "l3-swings",
+          "transit": 0,
+          "onDeck": false,
+          "ride": 0,
+          "camera": {
+            "x": 40.76070893150424,
+            "y": 54.49992468461244,
+            "width": 35.55555555555556,
+            "height": 20.000000000000004
+          },
+          "nails": 2,
+          "available": 0,
+          "budget": 2,
+          "pickup": false,
+          "pickupOffered": false,
+          "reach": 10,
+          "freePlacement": true,
+          "queue": [
+            {
+              "nailId": "nail-2-1",
+              "targetId": "l3-bar-m1#1",
+              "sequence": 1,
+              "surfaceId": "l3-bar-m1",
+              "offset": 0.2639200012778318
+            },
+            {
+              "nailId": "nail-2-2",
+              "targetId": "l3-bar-m2#2",
+              "sequence": 2,
+              "surfaceId": "l3-bar-m2",
+              "offset": 0.05838307534370083
+            }
+          ],
+          "oldest": "l3-bar-m1#1",
+          "motion": {
+            "state": "swing",
+            "wall": "",
+            "wallTransfer": true,
+            "swingTarget": "l3-bar-m1#1",
+            "swingAngle": 85.5430854619608
+          },
+          "completed": false,
+          "elapsed": 5.649999999999985,
+          "recovering": false,
+          "targets": [
+            {
+              "id": "l1-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Pendulum A",
+              "x": 21.291689607425266,
+              "y": 2.666471296122173,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 54.246281329619826,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -60.8846956668431,
+                "y": 2226.0043219856493,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Pendulum B",
+              "x": 30.88187183390524,
+              "y": 6.285390119708964,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 48.86095422799215,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 284.36186448643605,
+                "y": 2095.7232443365247,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Pendulum C",
+              "x": 39.557003560770106,
+              "y": 7.750214969767263,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 47.258161230192016,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 596.6666066535711,
+                "y": 2042.9895497344262,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-d",
+              "kind": "freeze-platform",
+              "label": "Pendulum D",
+              "x": 48.46685834993405,
+              "y": 9.350519803389705,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 47.19658049068049,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 917.4213790634731,
+                "y": 1985.3785757240182,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Board A",
+              "x": 56,
+              "y": 16.981571071756516,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 42.83981290107703,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 1188.6144784658472,
+                "y": 1710.660730062813,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Board B",
+              "x": 45.91989282339277,
+              "y": 16.674999999999997,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 39.4631689111184,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 825.7306201079871,
+                "y": 1721.6972886460476,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Board C",
+              "x": 36.409687808645856,
+              "y": 16.207556986534104,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 38.67009345359781,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 483.36323957709817,
+                "y": 1738.52523713082,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-a-pin",
+              "kind": "freeze-platform",
+              "label": "Wall A",
+              "x": 12,
+              "y": 29.362156293979666,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 35.03990811007965,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -395.38552153415253,
+                "y": 1264.9596620627797,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-b-pin",
+              "kind": "freeze-platform",
+              "label": "Wall B",
+              "x": 6.5,
+              "y": 33.6797460353033,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 36.33963562441609,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -593.3855215341526,
+                "y": 1109.5264313751288,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-c-pin",
+              "kind": "freeze-platform",
+              "label": "Wall C",
+              "x": 12,
+              "y": 37.1166048933757,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 29.87039086744668,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -395.38552153415253,
+                "y": 985.7995124845224,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-d-pin",
+              "kind": "freeze-platform",
+              "label": "Wall D",
+              "x": 6.5,
+              "y": 40.60366154103808,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 32.7870739779181,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -593.3855215341526,
+                "y": 860.2654731686769,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-e-pin",
+              "kind": "freeze-platform",
+              "label": "Wall E",
+              "x": 12,
+              "y": 45.30386322351782,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 25.85489170023321,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -395.38552153415253,
+                "y": 691.058212599406,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-f-pin",
+              "kind": "freeze-platform",
+              "label": "Wall F",
+              "x": 6.5,
+              "y": 49.85872487417562,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 29.9411393657756,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -593.3855215341526,
+                "y": 527.0831931757253,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-bar-m1#1",
+              "kind": "moving-swing",
+              "label": "Bar M1",
+              "x": 34.42266579197609,
+              "y": 55,
+              "width": 0.8,
+              "height": 0.8,
+              "occupiedBy": "nail-2-1",
+              "oldest": true,
+              "distance": 1.6000000000000005,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 411.8304469769865,
+                "y": 341.99728864604776,
+                "visible": true
+              }
+            },
+            {
+              "id": "l3-bar-m2#2",
+              "kind": "moving-swing",
+              "label": "Bar M2",
+              "x": 45.75001864692519,
+              "y": 56,
+              "width": 0.8,
+              "height": 0.8,
+              "occupiedBy": "nail-2-2",
+              "oldest": false,
+              "distance": 9.796921675878613,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 819.6151497551543,
+                "y": 305.9972886460478,
+                "visible": true
+              }
+            }
+          ],
+          "grips": [
+            {
+              "id": "l3-bar-m1#1",
+              "x": 34.42266579197609,
+              "y": 55,
+              "vx": 1.8320896163606903,
+              "vy": 0
+            },
+            {
+              "id": "l3-bar-m2#2",
+              "x": 45.75001864692519,
+              "y": 56,
+              "vx": -2.790708456950597,
+              "vy": 0
+            }
+          ],
+          "nailSurfaces": [
+            {
+              "id": "l3-strip-f",
+              "kind": "foothold",
+              "label": "Strip F",
+              "from": {
+                "x": 23.4,
+                "y": 49.9
+              },
+              "to": {
+                "x": 26.6,
+                "y": 50.9
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 15.014478465847318,
+                  "y": 525.5972886460478,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.25,
+                  "x": 43.814478465847344,
+                  "y": 516.5972886460478,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.5,
+                  "x": 72.61447846584737,
+                  "y": 507.5972886460478,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.75,
+                  "x": 101.4144784658474,
+                  "y": 498.5972886460478,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 1,
+                  "x": 130.21447846584744,
+                  "y": 489.5972886460478,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                }
+              ]
+            },
+            {
+              "id": "l3-bar-m1",
+              "kind": "moving-swing",
+              "label": "Bar M1",
+              "from": {
+                "x": 33.63090578814259,
+                "y": 55
+              },
+              "to": {
+                "x": 36.63090578814259,
+                "y": 55
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 383.3270868389806,
+                  "y": 341.99728864604776,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.25,
+                  "x": 410.3270868389807,
+                  "y": 341.99728864604776,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.5,
+                  "x": 437.3270868389807,
+                  "y": 341.99728864604776,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.75,
+                  "x": 464.3270868389807,
+                  "y": 341.99728864604776,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 1,
+                  "x": 491.3270868389807,
+                  "y": 341.99728864604776,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                }
+              ]
+            },
+            {
+              "id": "l3-bar-m2",
+              "kind": "moving-swing",
+              "label": "Bar M2",
+              "from": {
+                "x": 45.57486942089409,
+                "y": 56
+              },
+              "to": {
+                "x": 48.57486942089409,
+                "y": 56
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 813.3097776180346,
+                  "y": 305.9972886460478,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.25,
+                  "x": 840.3097776180346,
+                  "y": 305.9972886460478,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.5,
+                  "x": 867.3097776180346,
+                  "y": 305.9972886460478,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.75,
+                  "x": 894.3097776180346,
+                  "y": 305.9972886460478,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 1,
+                  "x": 921.3097776180346,
+                  "y": 305.9972886460478,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                }
+              ]
+            }
+          ],
+          "boards": [
+            {
+              "id": "l1-pendulum-a",
+              "x": 21.291689607425266,
+              "left": 18.991689607425265,
+              "right": 23.591689607425266,
+              "top": 2.666471296122173,
+              "bottom": 2.166471296122173,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-b",
+              "x": 30.88187183390524,
+              "left": 28.78187183390524,
+              "right": 32.98187183390524,
+              "top": 6.285390119708964,
+              "bottom": 5.735390119708963,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-c",
+              "x": 39.557003560770106,
+              "left": 37.65700356077011,
+              "right": 41.457003560770104,
+              "top": 7.750214969767263,
+              "bottom": 7.250214969767263,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-d",
+              "x": 48.46685834993405,
+              "left": 46.76685834993405,
+              "right": 50.16685834993405,
+              "top": 9.350519803389705,
+              "bottom": 8.850519803389705,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-a",
+              "x": 56,
+              "left": 54.3,
+              "right": 57.7,
+              "top": 16.981571071756516,
+              "bottom": 16.43157107175652,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-b",
+              "x": 45.91989282339277,
+              "left": 44.41989282339277,
+              "right": 47.41989282339277,
+              "top": 16.674999999999997,
+              "bottom": 16.125,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-c",
+              "x": 36.409687808645856,
+              "left": 35.10968780864586,
+              "right": 37.70968780864585,
+              "top": 16.207556986534104,
+              "bottom": 15.657556986534106,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-a",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 33.262156293979665,
+              "bottom": 25.462156293979668,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-b",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 36.8297460353033,
+              "bottom": 30.529746035303305,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-c",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 40.2666048933757,
+              "bottom": 33.9666048933757,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-d",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 43.75366154103808,
+              "bottom": 37.45366154103808,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-e",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 49.57886322351782,
+              "bottom": 41.028863223517824,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-f",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 55.00872487417562,
+              "bottom": 44.70872487417562,
+              "pinned": false
+            }
+          ],
+          "axes": [
+            {
+              "id": "l2-axe-a",
+              "kind": "axe",
+              "x": 52.65109283334915,
+              "y": 20.295859876343055,
+              "angle": 13.65384499444791,
+              "vx": 1.4599462325551826,
+              "vy": 2.781695139195506,
+              "width": 2.6,
+              "height": 0.65,
+              "pinned": false,
+              "hazard": true
+            },
+            {
+              "id": "l2-axe-b",
+              "kind": "axe",
+              "x": 41.18533384419295,
+              "y": 20.411567403600305,
+              "angle": 18.33547712367857,
+              "vx": 3.108482859915682,
+              "vy": -1.7554410040796142,
+              "width": 2.5,
+              "height": 0.65,
+              "pinned": false,
+              "hazard": true
+            }
+          ],
+          "dangerBounds": [
+            {
+              "id": "l3-swings-glue",
+              "x": 22,
+              "y": 46.8,
+              "width": 35,
+              "height": 1.5
+            },
+            {
+              "x": 51.75917950135492,
+              "y": 18.99373201207967,
+              "width": 1.7838266639884597,
+              "height": 2.604255728526772
+            },
+            {
+              "x": 39.93708804728342,
+              "y": 19.513908772729334,
+              "width": 2.4964915938190573,
+              "height": 1.795317261741944
+            }
+          ],
+          "surfaces": [
+            {
+              "id": "l1-ground",
+              "left": -2,
+              "right": 16,
+              "top": 0
+            },
+            {
+              "id": "l1-step",
+              "left": 11,
+              "right": 12.8,
+              "top": 0.8
+            },
+            {
+              "id": "l1-terrace",
+              "left": 12.8,
+              "right": 17.6,
+              "top": 1.6
+            },
+            {
+              "id": "l1-exit",
+              "left": 55,
+              "right": 63,
+              "top": 11.899999999999999
+            },
+            {
+              "id": "l2-landing",
+              "left": 66.5,
+              "right": 77,
+              "top": 15.2
+            },
+            {
+              "id": "l2-exit",
+              "left": 23,
+              "right": 31,
+              "top": 16.3
+            },
+            {
+              "id": "l2-walkway",
+              "left": 0,
+              "right": 23,
+              "top": 16.3
+            },
+            {
+              "id": "l3-arrival",
+              "left": 0,
+              "right": 10,
+              "top": 24.4
+            },
+            {
+              "id": "l3-walls-exit",
+              "left": 13.2,
+              "right": 22,
+              "top": 49.5
+            },
+            {
+              "id": "l3-swings-ledge",
+              "left": 57,
+              "right": 65,
+              "top": 54
+            },
+            {
+              "id": "l1-lift-deck",
+              "left": 63,
+              "right": 66.5,
+              "top": 15.2
+            },
+            {
+              "id": "l2-lift-deck",
+              "left": -2.6,
+              "right": 0,
+              "top": 24.4
+            }
+          ]
+        },
+        "geometryCount": 92,
+        "canvasCount": 1,
+        "textureCount": 4,
+        "lowQuality": false,
+        "pixelRatio": 1,
+        "audio": {
+          "activated": true,
+          "paused": false,
+          "scene": "royal-supper",
+          "ownedSounds": 11,
+          "playing": true,
+          "volume": 0.7,
+          "playedCues": {}
+        }
+      }
+    },
+    {
+      "event": "gripped M2",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-3-swings",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "state": {
+        "scene": "unfinished-sketch",
+        "transitioning": false,
+        "paused": false,
+        "body": {
+          "x": 45.70289223143024,
+          "y": 55.50481505508579,
+          "width": 0.65,
+          "height": 1.25,
+          "vx": -93.6882334184358,
+          "vy": 103.78890330514764,
+          "grounded": false
+        },
+        "museum": null,
+        "session": {
+          "artworkId": "royal-supper",
+          "checkpointId": "basket-start",
+          "fork": "upright",
+          "forkElapsed": 0,
+          "grapeElapsed": 0,
+          "candleElapsed": 0,
+          "dinerElapsed": 0,
+          "grapesStarted": false,
+          "candlesStarted": false,
+          "dinerStarted": false
+        },
+        "completed": false,
+        "campaign": {
+          "collectedPieceIds": [],
+          "restoredPieceIds": []
+        },
+        "updateCount": 496,
+        "renderCount": 1183,
+        "sketch": {
+          "mode": "route",
+          "field": "layer-3-swings",
+          "bay": null,
+          "study": "layer-3-swings",
+          "entryLeg": "l3-swings",
+          "liftId": null,
+          "lifts": [
+            {
+              "id": "l1-lift",
+              "state": "parked",
+              "progress": 1,
+              "walls": false,
+              "active": false,
+              "left": 63,
+              "right": 66.5,
+              "top": 15.2
+            },
+            {
+              "id": "l2-lift",
+              "state": "parked",
+              "progress": 1,
+              "walls": false,
+              "active": false,
+              "left": -2.6,
+              "right": 0,
+              "top": 24.4
+            }
+          ],
+          "leg": "l3-swings",
+          "stage": "traversal",
+          "section": "l3-swings",
+          "transit": 0,
+          "onDeck": false,
+          "ride": 0,
+          "camera": {
+            "x": 50.55708235061492,
+            "y": 54.49999999942285,
+            "width": 35.55555555555556,
+            "height": 20.000000000000004
+          },
+          "nails": 2,
+          "available": 0,
+          "budget": 2,
+          "pickup": false,
+          "pickupOffered": false,
+          "reach": 10,
+          "freePlacement": true,
+          "queue": [
+            {
+              "nailId": "nail-2-1",
+              "targetId": "l3-bar-m1#1",
+              "sequence": 1,
+              "surfaceId": "l3-bar-m1",
+              "offset": 0.2639200012778318
+            },
+            {
+              "nailId": "nail-2-2",
+              "targetId": "l3-bar-m2#2",
+              "sequence": 2,
+              "surfaceId": "l3-bar-m2",
+              "offset": 0.05838307534370083
+            }
+          ],
+          "oldest": "l3-bar-m1#1",
+          "motion": {
+            "state": "swing",
+            "wall": "",
+            "wallTransfer": true,
+            "swingTarget": "l3-bar-m2#2",
+            "swingAngle": -94.65377459419874
+          },
+          "completed": false,
+          "elapsed": 8.266666666666657,
+          "recovering": false,
+          "targets": [
+            {
+              "id": "l1-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Pendulum A",
+              "x": 22.650215277622873,
+              "y": 2.5782628590845382,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 58.43187933275485,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -364.64721462771365,
+                "y": 2229.1825370521788,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Pendulum B",
+              "x": 30.444580624107218,
+              "y": 6.383139781956479,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 52.130329956572346,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -84.05006215427719,
+                "y": 2092.206967828789,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Pendulum C",
+              "x": 39.09890920256225,
+              "y": 7.779296543574679,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 48.84448224872815,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 227.50576667010378,
+                "y": 2041.9453244105337,
+                "visible": false
+              }
+            },
+            {
+              "id": "l1-freeze-d",
+              "kind": "freeze-platform",
+              "label": "Pendulum D",
+              "x": 47.29843400885227,
+              "y": 9.49349276830333,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 46.65362614893741,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 522.6886596965446,
+                "y": 1980.2342603203022,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Board A",
+              "x": 56,
+              "y": 17.229769465589424,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 40.15789436976079,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 835.945035377863,
+                "y": 1701.7282992180033,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Board B",
+              "x": 47.717459308025106,
+              "y": 16.674999999999997,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 39.49097451237862,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 537.7735704667667,
+                "y": 1721.6999999792222,
+                "visible": false
+              }
+            },
+            {
+              "id": "l2-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Board C",
+              "x": 37.61568013022463,
+              "y": 16.865370980122528,
+              "width": 1.2,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 40.1554713700585,
+              "reason": "Another layer.",
+              "screen": {
+                "x": 174.10952006594968,
+                "y": 1714.8466446948114,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-a-pin",
+              "kind": "freeze-platform",
+              "label": "Wall A",
+              "x": 12,
+              "y": 29.344910692922607,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 43.305063807874234,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -748.054964622137,
+                "y": 1265.5832150340086,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-b-pin",
+              "kind": "freeze-platform",
+              "label": "Wall B",
+              "x": 6.5,
+              "y": 33.88412840298518,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 45.35774287685632,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -946.0549646221369,
+                "y": 1102.1713774717557,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-c-pin",
+              "kind": "freeze-platform",
+              "label": "Wall C",
+              "x": 12,
+              "y": 37.52983495008466,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 38.77959140605105,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -748.054964622137,
+                "y": 970.9259417761745,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-d-pin",
+              "kind": "freeze-platform",
+              "label": "Wall D",
+              "x": 6.5,
+              "y": 41.09995468638088,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 42.28889886202205,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -946.0549646221369,
+                "y": 842.4016312695106,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-e-pin",
+              "kind": "freeze-platform",
+              "label": "Wall E",
+              "x": 12,
+              "y": 45.61767839192111,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 35.61463838001001,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -748.054964622137,
+                "y": 679.7635778700625,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-wall-f-pin",
+              "kind": "freeze-platform",
+              "label": "Wall F",
+              "x": 6.5,
+              "y": 49.7199959680177,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 40.04422611299294,
+              "reason": "Another layer.",
+              "screen": {
+                "x": -946.0549646221369,
+                "y": 532.0801451305853,
+                "visible": false
+              }
+            },
+            {
+              "id": "l3-bar-m1#1",
+              "kind": "moving-swing",
+              "label": "Bar M1",
+              "x": 36.93318713920238,
+              "y": 55,
+              "width": 0.8,
+              "height": 0.8,
+              "occupiedBy": "nail-2-1",
+              "oldest": true,
+              "distance": 9.164613618330778,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 149.53977238914865,
+                "y": 341.99999997922254,
+                "visible": true
+              }
+            },
+            {
+              "id": "l3-bar-m2#2",
+              "kind": "moving-swing",
+              "label": "Bar M2",
+              "x": 47.62261730224122,
+              "y": 56,
+              "width": 0.8,
+              "height": 0.8,
+              "occupiedBy": "nail-2-2",
+              "oldest": false,
+              "distance": 1.5999999999999974,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 534.3592582585467,
+                "y": 305.99999997922254,
+                "visible": true
+              }
+            }
+          ],
+          "grips": [
+            {
+              "id": "l3-bar-m1#1",
+              "x": 36.93318713920238,
+              "y": 55,
+              "vx": -2.063763628426898,
+              "vy": 0
+            },
+            {
+              "id": "l3-bar-m2#2",
+              "x": 47.62261730224122,
+              "y": 56,
+              "vx": 1.970849419235492,
+              "vy": 0
+            }
+          ],
+          "nailSurfaces": [
+            {
+              "id": "l3-strip-f",
+              "kind": "foothold",
+              "label": "Strip F",
+              "from": {
+                "x": 23.4,
+                "y": 49.9
+              },
+              "to": {
+                "x": 26.6,
+                "y": 50.9
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": -337.6549646221371,
+                  "y": 525.5999999792225,
+                  "visible": false,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.25,
+                  "x": -308.8549646221371,
+                  "y": 516.5999999792225,
+                  "visible": false,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.5,
+                  "x": -280.05496462213716,
+                  "y": 507.5999999792225,
+                  "visible": false,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.75,
+                  "x": -251.25496462213704,
+                  "y": 498.59999997922256,
+                  "visible": false,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 1,
+                  "x": -222.45496462213708,
+                  "y": 489.5999999792225,
+                  "visible": false,
+                  "reason": "Both nails are placed. Press Q."
+                }
+              ]
+            },
+            {
+              "id": "l3-bar-m1",
+              "kind": "moving-swing",
+              "label": "Bar M1",
+              "from": {
+                "x": 36.141427135368886,
+                "y": 55
+              },
+              "to": {
+                "x": 39.141427135368886,
+                "y": 55
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 121.0364122511428,
+                  "y": 341.99999997922254,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.25,
+                  "x": 148.03641225114285,
+                  "y": 341.99999997922254,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.5,
+                  "x": 175.0364122511428,
+                  "y": 341.99999997922254,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.75,
+                  "x": 202.03641225114282,
+                  "y": 341.99999997922254,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 1,
+                  "x": 229.0364122511428,
+                  "y": 341.99999997922254,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                }
+              ]
+            },
+            {
+              "id": "l3-bar-m2",
+              "kind": "moving-swing",
+              "label": "Bar M2",
+              "from": {
+                "x": 47.447468076210114,
+                "y": 56
+              },
+              "to": {
+                "x": 50.447468076210114,
+                "y": 56
+              },
+              "screen": [
+                {
+                  "offset": 0,
+                  "x": 528.053886121427,
+                  "y": 305.99999997922254,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.25,
+                  "x": 555.053886121427,
+                  "y": 305.99999997922254,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.5,
+                  "x": 582.053886121427,
+                  "y": 305.99999997922254,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 0.75,
+                  "x": 609.053886121427,
+                  "y": 305.99999997922254,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                },
+                {
+                  "offset": 1,
+                  "x": 636.053886121427,
+                  "y": 305.99999997922254,
+                  "visible": true,
+                  "reason": "Both nails are placed. Press Q."
+                }
+              ]
+            }
+          ],
+          "boards": [
+            {
+              "id": "l1-pendulum-a",
+              "x": 22.650215277622873,
+              "left": 20.350215277622873,
+              "right": 24.950215277622874,
+              "top": 2.5782628590845382,
+              "bottom": 2.0782628590845382,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-b",
+              "x": 30.444580624107218,
+              "left": 28.344580624107216,
+              "right": 32.54458062410722,
+              "top": 6.383139781956479,
+              "bottom": 5.833139781956478,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-c",
+              "x": 39.09890920256225,
+              "left": 37.19890920256225,
+              "right": 40.998909202562245,
+              "top": 7.779296543574679,
+              "bottom": 7.279296543574679,
+              "pinned": false
+            },
+            {
+              "id": "l1-pendulum-d",
+              "x": 47.29843400885227,
+              "left": 45.598434008852266,
+              "right": 48.99843400885227,
+              "top": 9.49349276830333,
+              "bottom": 8.99349276830333,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-a",
+              "x": 56,
+              "left": 54.3,
+              "right": 57.7,
+              "top": 17.229769465589424,
+              "bottom": 16.679769465589427,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-b",
+              "x": 47.717459308025106,
+              "left": 46.217459308025106,
+              "right": 49.217459308025106,
+              "top": 16.674999999999997,
+              "bottom": 16.125,
+              "pinned": false
+            },
+            {
+              "id": "l2-board-c",
+              "x": 37.61568013022463,
+              "left": 36.315680130224635,
+              "right": 38.91568013022463,
+              "top": 16.865370980122528,
+              "bottom": 16.31537098012253,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-a",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 33.24491069292261,
+              "bottom": 25.44491069292261,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-b",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 37.03412840298518,
+              "bottom": 30.734128402985185,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-c",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 40.67983495008466,
+              "bottom": 34.379834950084664,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-d",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 44.24995468638088,
+              "bottom": 37.949954686380885,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-e",
+              "x": 12,
+              "left": 10.9,
+              "right": 13.1,
+              "top": 49.89267839192111,
+              "bottom": 41.34267839192111,
+              "pinned": false
+            },
+            {
+              "id": "l3-wall-f",
+              "x": 6.5,
+              "left": 5.4,
+              "right": 7.6,
+              "top": 54.8699959680177,
+              "bottom": 44.5699959680177,
+              "pinned": false
+            }
+          ],
+          "axes": [
+            {
+              "id": "l2-axe-a",
+              "kind": "axe",
+              "x": 52.67448556499348,
+              "y": 20.342699670176,
+              "angle": 19.977307130519687,
+              "vx": 1.3467546436140765,
+              "vy": 2.838225286914877,
+              "width": 2.6,
+              "height": 0.65,
+              "pinned": false,
+              "hazard": true
+            },
+            {
+              "id": "l2-axe-b",
+              "kind": "axe",
+              "x": 42.58201758686837,
+              "y": 20.524834119839827,
+              "angle": 25.80865964812703,
+              "vx": 2.785001509581946,
+              "vy": 2.2333842931323034,
+              "width": 2.5,
+              "height": 0.65,
+              "pinned": false,
+              "hazard": true
+            }
+          ],
+          "dangerBounds": [
+            {
+              "id": "l3-swings-glue",
+              "x": 22,
+              "y": 46.8,
+              "width": 35,
+              "height": 1.5
+            },
+            {
+              "x": 51.823563843921114,
+              "y": 19.028889022726517,
+              "width": 1.7018434421447384,
+              "height": 2.6276212948989666
+            },
+            {
+              "x": 41.40352713412242,
+              "y": 19.489273404129808,
+              "width": 2.3569809054919015,
+              "height": 2.071121431420037
+            }
+          ],
+          "surfaces": [
+            {
+              "id": "l1-ground",
+              "left": -2,
+              "right": 16,
+              "top": 0
+            },
+            {
+              "id": "l1-step",
+              "left": 11,
+              "right": 12.8,
+              "top": 0.8
+            },
+            {
+              "id": "l1-terrace",
+              "left": 12.8,
+              "right": 17.6,
+              "top": 1.6
+            },
+            {
+              "id": "l1-exit",
+              "left": 55,
+              "right": 63,
+              "top": 11.899999999999999
+            },
+            {
+              "id": "l2-landing",
+              "left": 66.5,
+              "right": 77,
+              "top": 15.2
+            },
+            {
+              "id": "l2-exit",
+              "left": 23,
+              "right": 31,
+              "top": 16.3
+            },
+            {
+              "id": "l2-walkway",
+              "left": 0,
+              "right": 23,
+              "top": 16.3
+            },
+            {
+              "id": "l3-arrival",
+              "left": 0,
+              "right": 10,
+              "top": 24.4
+            },
+            {
+              "id": "l3-walls-exit",
+              "left": 13.2,
+              "right": 22,
+              "top": 49.5
+            },
+            {
+              "id": "l3-swings-ledge",
+              "left": 57,
+              "right": 65,
+              "top": 54
+            },
+            {
+              "id": "l1-lift-deck",
+              "left": 63,
+              "right": 66.5,
+              "top": 15.2
+            },
+            {
+              "id": "l2-lift-deck",
+              "left": -2.6,
+              "right": 0,
+              "top": 24.4
+            }
+          ]
+        },
+        "geometryCount": 92,
+        "canvasCount": 1,
+        "textureCount": 4,
+        "lowQuality": false,
+        "pixelRatio": 1,
+        "audio": {
+          "activated": true,
+          "paused": false,
+          "scene": "royal-supper",
+          "ownedSounds": 11,
+          "playing": true,
+          "volume": 0.7,
+          "playedCues": {}
+        }
+      }
+    },
+    {
+      "event": "crossed",
+      "tries": 1
+    }
+  ]
+}

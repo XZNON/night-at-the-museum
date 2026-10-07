@@ -9,7 +9,7 @@ import { sketchRoute } from '../src/levels/unfinished-sketch-route';
 
 // Layer 1 route proof: authored topology, the two-nail FIFO chain that defines
 // the section, the bypass sweep that keeps the reuse unavoidable, the exit
-// checkpoint, the scripted escalator and a real-input traversal. Everything
+// checkpoint, the vertical lift (S4L) and a real-input traversal. Everything
 // runs through the ordinary controller; nothing teleports or sets a nail.
 
 const dt = 1 / 60;
@@ -65,6 +65,22 @@ function runToEdgeOf(m: SketchRouteModel, rect: { x: number; width: number }, li
 
 function runTo(m: SketchRouteModel, x: number, limit = 600): void {
   for (let i = 0; i < limit && m.controller.body.x < x; i++) m.update(dt, keys({ axis: 1 }));
+}
+
+const lift = sketchRoute.legs[0].lift;
+/** Walk right from the exit checkpoint until standing on the deck starts the lift. */
+function stepOn(m: SketchRouteModel, limit = 600): void {
+  for (let i = 0; i < limit && m.stage === 'exit'; i++) m.update(dt, keys({ axis: 1 }));
+}
+/** Step on and ride to the top with no input. */
+function rideUp(m: SketchRouteModel): void {
+  stepOn(m);
+  expect(m.stage).toBe('transit');
+  for (let i = 0; i < 600 && m.stage === 'transit'; i++) m.update(dt, keys());
+}
+/** Step off right at the top onto the Layer 2 landing. */
+function stepOff(m: SketchRouteModel): void {
+  for (let i = 0; i < 120 && !m.completed; i++) m.update(dt, keys({ axis: 1 }));
 }
 
 const board = (m: SketchRouteModel, id: string) => {
@@ -220,21 +236,25 @@ describe('Layer 1 authored data', () => {
     }
   });
 
-  it('authors four freezable pendulums, two nails and one escalator', () => {
+  it('authors four freezable pendulums, two nails and one vertical lift', () => {
     expect(sketchRoute.mechanisms.filter(x => x.kind === 'pendulum')).toHaveLength(4);
     expect(sketchRoute.mechanisms.every(x => x.freezable)).toBe(true);
     expect(sketchTuning.nailBudget).toBe(2);
-    const e = sketchRoute.legs[0].escalator;
-    expect(e.path).toHaveLength(6);
-    expect(e.duration).toBeGreaterThan(2);
-    expect(e.path[0]).toEqual({ x: 57.2, y: 11.9 });
-    expect(e.arrival.y).toBeCloseTo(e.path.at(-1)!.y, 6);
+    expect(lift.id).toBe('l1-lift');
+    expect(lift.duration).toBeGreaterThan(2);
+    const exit = sketchRoute.solids.find(s => s.id === 'l1-exit')!;
     const landing = sketchRoute.solids.find(s => s.id === 'l2-landing')!;
-    // The arrival stands on generous fixed Layer 2 ground.
-    expect(e.arrival.y).toBeGreaterThanOrEqual(landing.y + landing.height - 0.001);
-    expect(e.arrival.y).toBeLessThan(landing.y + landing.height + 0.6);
-    expect(e.arrival.x).toBeGreaterThan(landing.x);
-    expect(e.arrival.x).toBeLessThan(landing.x + landing.width);
+    // The deck is the right end of the exit ground, flush with its top.
+    expect(lift.deck.x).toBeCloseTo(exit.x + exit.width, 6);
+    expect(lift.deck.y + lift.deck.height).toBeCloseTo(exit.y + exit.height, 6);
+    // Straight up into the landing's opening: parked, deck + landing are x63..77.
+    expect(lift.deck.y + lift.deck.height + lift.rise).toBeCloseTo(landing.y + landing.height, 6);
+    expect(lift.deck.x + lift.deck.width).toBeCloseTo(landing.x, 6);
+    expect(lift.deck.x).toBe(63); expect(landing.x + landing.width).toBe(77);
+    // The retry spawn stands on fixed Layer 2 ground (the parked deck).
+    expect(lift.arrival).toEqual(sketchRoute.sections['layer-2-landing'].spawn);
+    expect(lift.arrival.x).toBeGreaterThan(lift.deck.x);
+    expect(lift.arrival.x + 0.65).toBeLessThan(landing.x + landing.width);
   });
 });
 
@@ -444,17 +464,18 @@ describe('the intended route is traversable with ordinary input', () => {
     expect(m.session.queue).toEqual([]);
     expect(m.completed).toBe(false);
 
-    runTo(m, sketchRoute.legs[0].escalator.boarding.x + 1.2);
-    expect(m.boardingReady()).toBe(true);
-    m.update(dt, keys({ interactPressed: true }));
-    expect(m.stage).toBe('transit');
-    for (let i = 0; i < 400 && m.stage === 'transit'; i++) m.update(dt, keys());
+    rideUp(m);
     expect(m.stage).toBe('arrival');
-    expect(m.completed).toBe(true);
-    expect(Math.abs(m.controller.body.x - sketchRoute.legs[0].escalator.arrival.x)).toBeLessThan(0.01);
+    // Straight up: the player arrives where they got on, on the parked deck.
+    expect(m.controller.body.x).toBeGreaterThanOrEqual(lift.deck.x);
+    expect(m.controller.body.x + m.controller.body.width).toBeLessThanOrEqual(lift.deck.x + lift.deck.width);
+    expect(m.controller.body.y).toBe(15.2);
     expect(m.controller.body.vx).toBe(0);
     expect(m.controller.body.vy).toBe(0);
     expect(m.controller.airJumpAvailable).toBe(true);
+    stepOff(m);
+    expect(m.completed).toBe(true);
+    expect(m.stage).toBe('arrival');
   });
 
   it('places A then B, recalls A with Q and only then places C', () => {
@@ -482,7 +503,7 @@ describe('the intended route is traversable with ordinary input', () => {
   });
 });
 
-describe('exit checkpoint, escalator transit and retry behaviour', () => {
+describe('exit checkpoint, lift ride and retry behaviour', () => {
   it('commits the exit checkpoint only after landing, never from airborne overlap', () => {
     const m = build();
     m.controller.respawn(sketchRoute.legs[0].exitSpawn.x, sketchRoute.legs[0].exitSpawn.y + 0.4);
@@ -508,28 +529,25 @@ describe('exit checkpoint, escalator transit and retry behaviour', () => {
     expect(m.stage).toBe('exit');
   });
 
-  it('a fresh E on the boarding pad starts the ride and cannot also act as a grip', () => {
+  it('stepping fully onto the deck starts the ride; E does nothing and nail commands are refused', () => {
     const m = build();
     clearToExit(m);
-    // E at the checkpoint itself is away from the pad and does nothing.
-    expect(m.boardingReady()).toBe(false);
+    // E at the checkpoint does nothing; the spawn is off the deck.
+    expect(m.onLiftDeck()).toBe(false);
     m.update(dt, keys({ interactPressed: true }));
     expect(m.stage).toBe('exit');
-    runTo(m, sketchRoute.legs[0].escalator.boarding.x + 1.2);
-    expect(m.boardingReady()).toBe(true);
-    // The fresh E starts the ride and is consumed: movement never runs on this
-    // tick, so the same press cannot also grip a nail or start a jump.
-    m.update(dt, keys({ interactPressed: true, axis: 1, jumpPressed: true }));
+    idle(m, 60);
+    expect(m.stage).toBe('exit');
+    stepOn(m);
     expect(m.stage).toBe('transit');
     m.enqueue({ type: 'recall' });
     m.enqueue({ type: 'place', targetId: 'l1-freeze-a' });
-    const before = m.controller.body.x;
-    m.update(dt, keys({ axis: 1, jumpPressed: true }));
-    expect(m.controller.body.x).toBeLessThan(before + 2);
+    m.update(dt, keys({ axis: 1, jumpPressed: true, interactPressed: true }));
     expect(m.placedCount).toBe(0);
+    expect(m.controller.body.x + m.controller.body.width).toBeLessThanOrEqual(lift.deck.x + lift.deck.width + 1e-6);
   });
 
-  it('R before boarding keeps the cleared exit checkpoint and allows boarding', () => {
+  it('R before the ride keeps the cleared exit checkpoint and the deck still waits', () => {
     const m = traverse();
     expect(m.stage).toBe('exit');
     m.enqueue({ type: 'recall' });
@@ -542,46 +560,44 @@ describe('exit checkpoint, escalator transit and retry behaviour', () => {
     expect(m.stage).toBe('exit');
     expect(m.controller.body.grounded).toBe(true);
     expect(m.controller.body.y).toBeCloseTo(sketchRoute.legs[0].exitSpawn.y, 5);
-    runTo(m, sketchRoute.legs[0].escalator.boarding.x + 1.2);
-    expect(m.boardingReady()).toBe(true);
-    m.update(dt, keys({ interactPressed: true }));
+    stepOn(m);
     expect(m.stage).toBe('transit');
   });
 
-  it('R during the ride returns to the safe exit checkpoint', () => {
+  it('R during the ride returns to the safe exit checkpoint with the deck reset', () => {
     const m = build();
     clearToExit(m);
-    runTo(m, sketchRoute.legs[0].escalator.boarding.x + 1.2);
-    m.update(dt, keys({ interactPressed: true }));
+    stepOn(m);
     expect(m.stage).toBe('transit');
-    for (let i = 0; i < 40; i++) m.update(dt, keys());
+    for (let i = 0; i < 60; i++) m.update(dt, keys());
     expect(m.transitProgress).toBeGreaterThan(0);
     m.update(dt, keys({ restartPressed: true }));
     expect(m.stage).toBe('exit');
     expect(m.controller.body.x).toBeCloseTo(sketchRoute.legs[0].exitSpawn.x, 5);
     expect(m.controller.body.y).toBeCloseTo(sketchRoute.legs[0].exitSpawn.y, 5);
     expect(m.transitProgress).toBe(0);
+    expect(m.liftViews()[0]).toMatchObject({ state: 'bottom', progress: 0, walls: false });
+    idle(m, 60);
+    expect(m.stage).toBe('exit');
   });
 
   it('R after arrival stays on the Layer 2 landing and never undoes the route', () => {
     const m = build();
     clearToExit(m);
-    runTo(m, sketchRoute.legs[0].escalator.boarding.x + 1.2);
-    m.update(dt, keys({ interactPressed: true }));
-    for (let i = 0; i < 400 && m.stage === 'transit'; i++) m.update(dt, keys());
+    rideUp(m);
+    stepOff(m);
     expect(m.completed).toBe(true);
     m.update(dt, keys({ restartPressed: true }));
     expect(m.stage).toBe('arrival');
     expect(m.completed).toBe(true);
-    expect(Math.abs(m.controller.body.x - sketchRoute.legs[0].escalator.arrival.x)).toBeLessThan(0.02);
+    expect(Math.abs(m.controller.body.x - lift.arrival.x)).toBeLessThan(0.02);
+    expect(m.liftViews()[0].state).toBe('parked');
   });
 
   it('restart adventure returns to Layer 1 and clears route completion', () => {
     const m = build();
     clearToExit(m);
-    runTo(m, sketchRoute.legs[0].escalator.boarding.x + 1.2);
-    m.update(dt, keys({ interactPressed: true }));
-    for (let i = 0; i < 400 && m.stage === 'transit'; i++) m.update(dt, keys());
+    rideUp(m);
     m.restartAdventure();
     expect(m.stage).toBe('traversal');
     expect(m.completed).toBe(false);
@@ -613,14 +629,13 @@ describe('exit checkpoint, escalator transit and retry behaviour', () => {
   it('a fall from the Layer 2 landing recovers to that layer, not to Layer 1', () => {
     const m = build();
     clearToExit(m);
-    runTo(m, sketchRoute.legs[0].escalator.boarding.x + 1.2);
-    m.update(dt, keys({ interactPressed: true }));
-    for (let i = 0; i < 400 && m.stage === 'transit'; i++) m.update(dt, keys());
+    rideUp(m);
     m.controller.respawn(62, 13.4);
     for (let i = 0; i < 40 && m.recoveryRemaining === 0; i++) m.update(dt, keys());
     for (let i = 0; i < 40 && m.recoveryRemaining > 0; i++) m.update(dt, keys());
     expect(m.stage).toBe('arrival');
-    expect(m.controller.body.y).toBeCloseTo(sketchRoute.legs[0].escalator.arrival.y, 5);
+    expect(m.controller.body.y).toBeCloseTo(lift.arrival.y, 5);
+    expect(m.controller.body.x).toBeCloseTo(lift.arrival.x, 5);
   });
 
   it('a fall from the exit checkpoint returns to that checkpoint, not to Layer 1', () => {
@@ -639,12 +654,15 @@ describe('exit checkpoint, escalator transit and retry behaviour', () => {
   it('the ride only advances through fixed steps, so a paused loop freezes it', () => {
     const m = build();
     clearToExit(m);
-    runTo(m, sketchRoute.legs[0].escalator.boarding.x + 1.2);
-    m.update(dt, keys({ interactPressed: true }));
-    for (let i = 0; i < 30; i++) m.update(dt, keys());
-    const frozen = { x: m.controller.body.x, y: m.controller.body.y };
-    expect(m.controller.body.x).toBe(frozen.x);
-    expect(m.transitProgress).toBeCloseTo(30 * dt / sketchRoute.legs[0].escalator.duration, 6);
+    stepOn(m);
+    // The wind-up holds the deck at the bottom, then it rises on schedule.
+    for (let i = 0; i < 20; i++) m.update(dt, keys());
+    expect(m.transitProgress).toBe(0);
+    expect(m.liftViews()[0].state).toBe('wind-up');
+    for (let i = 0; i < 40; i++) m.update(dt, keys());
+    expect(m.transitProgress).toBeCloseTo((60 * dt - lift.windUp) / lift.duration, 6);
+    // The rider is carried: grounded on the moving deck top.
+    expect(m.controller.body.y).toBeCloseTo(lift.deck.y + lift.deck.height + lift.rise * m.transitProgress, 6);
   });
 });
 
@@ -677,8 +695,7 @@ describe('same-session route memory', () => {
   it('never restores in mid-transit; a mid-ride snapshot re-enters at the checkpoint', () => {
     const m = build();
     clearToExit(m);
-    runTo(m, sketchRoute.legs[0].escalator.boarding.x + 1.2);
-    m.update(dt, keys({ interactPressed: true }));
+    stepOn(m);
     for (let i = 0; i < 40; i++) m.update(dt, keys());
     const midRide = JSON.parse(JSON.stringify(m.session)) as SketchRouteSession;
     expect(midRide.stage).toBe('transit');
@@ -688,6 +705,10 @@ describe('same-session route memory', () => {
     restored.update(dt, keys());
     expect(restored.controller.body.x).toBeCloseTo(sketchRoute.legs[0].exitSpawn.x, 5);
     expect(restored.controller.body.grounded).toBe(true);
+    // The deck is back at the bottom and the spawn never auto-starts a ride.
+    expect(restored.liftViews()[0].state).toBe('bottom');
+    for (let i = 0; i < 60; i++) restored.update(dt, keys());
+    expect(restored.stage).toBe('exit');
   });
 
   it('a fresh route session starts at Layer 1 with two nails', () => {

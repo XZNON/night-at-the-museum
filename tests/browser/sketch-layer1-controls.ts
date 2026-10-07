@@ -8,7 +8,9 @@ type Observation = {
   body: { x: number; y: number; vx: number; vy: number; grounded: boolean } | null;
   sketch: null | {
     mode: string; field: string; bay: string | null;
-    stage: string | null; section: string | null; transit: number | null; boarding: boolean | null;
+    stage: string | null; section: string | null; transit: number | null; onDeck: boolean | null; ride: number | null;
+    liftId: string | null; leg: string | null;
+    lifts: { id: string; state: string; progress: number; walls: boolean; active: boolean; left: number; right: number; top: number }[];
     camera: { x: number; y: number; width: number; height: number };
     nails: number; available: number; oldest: string | null;
     queue: { targetId: string }[];
@@ -210,4 +212,26 @@ export async function traverseLayerOne(page: Page) {
   // D is required for the fixed exit ground.
   expect(await transferTo(page, 'l1-exit', true), 'reached the exit ground').toBe(true);
   await expect.poll(async () => (await observe(page)).sketch!.stage, { timeout: 15000 }).toBe('exit');
+}
+
+/**
+ * S4L: walk toward the active lift deck with a real held key until standing
+ * fully on it starts the ride. The ride boundary clears held input, so the key
+ * is released only afterwards, exactly as a player would let go.
+ */
+export async function stepOntoLift(page: Page, timeout = 20000) {
+  const s = await observe(page);
+  const lift = s.sketch!.lifts.find(l => l.active)!;
+  expect(lift, 'an active lift waits at this exit').toBeTruthy();
+  const key = (lift.left + lift.right) / 2 > s.body!.x + 0.325 ? 'KeyD' : 'KeyA';
+  await page.keyboard.down(key);
+  await expect.poll(async () => (await observe(page)).sketch!.stage, { timeout }).toBe('transit');
+  await page.keyboard.up(key);
+}
+
+/** After arriving, step off the exit side onto the next layer's ground. */
+export async function stepOffLift(page: Page, key: 'KeyD' | 'KeyA' = 'KeyD', timeout = 8000) {
+  await page.keyboard.down(key);
+  await expect.poll(async () => (await observe(page)).sketch!.completed, { timeout }).toBe(true);
+  await page.keyboard.up(key);
 }

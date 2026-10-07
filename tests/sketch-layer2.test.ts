@@ -56,7 +56,7 @@ describe('S3A moving-board route', () => {
     const m = build(); tick(m, 2);
     expect(m.legId).toBe('layer-2'); expect(m.section.travelDirection).toBe(-1);
     expect(m.controller.body).toMatchObject({ x: 64.2, y: 15.2, grounded: true });
-    expect(m.availableNails).toBe(2); expect(m.leg.escalator?.id).toBe('l2-escalator');
+    expect(m.availableNails).toBe(2); expect(m.leg.lift?.id).toBe('l2-lift');
     expect(sketchLayerTwo.solids.filter(s => s.id.startsWith('l1-'))).toEqual(sketchRoute.solids.filter(s => s.id.startsWith('l1-')));
     expect(sketchLayerTwo.mechanisms.filter(s => s.id.startsWith('l1-'))).toEqual(sketchRoute.mechanisms);
   });

@@ -1,6 +1,6 @@
 # Sketch S4L — Vertical lifts between layers
 
-2026-10-07 planning only. User decision after accepting S4C: replace both scripted escalators with **vertical lift platforms** built into the exit ground. This block runs **before S4D**, so S4D verifies the final transport once. [Overview/contracts](SKETCH_S4_PLAN.md), [S4D plan](SKETCH_S4D_PLAN.md), [paste-ready prompt](SKETCH_S4_PROMPTS.md#s4l--vertical-lifts).
+**Implemented 2026-10-07 at its playable review gate** ([evidence](../validation/sketch-s4/s4l/README.md)); stop for user review, S4D needs its own request. Delivered deviation: the Layer 1 deck sits at x63..66.5 under an opening in the Layer 2 landing (not x59.5..63), so the parked deck restores the landing's accepted footprint and Layer 2's first jump is unchanged; arrival commits in place. Originally: 2026-10-07 planning only. User decision after accepting S4C: replace both scripted escalators with **vertical lift platforms** built into the exit ground. This block runs **before S4D**, so S4D verifies the final transport once. [Overview/contracts](SKETCH_S4_PLAN.md), [S4D plan](SKETCH_S4D_PLAN.md), [paste-ready prompt](SKETCH_S4_PROMPTS.md#s4l--vertical-lifts).
 
 ## User decisions (2026-10-07)
 
@@ -51,9 +51,9 @@ Browser (real keys/clicks, 1280×720 and 960×540): Layer 1 route → lift → L
 
 Evidence: `docs/validation/sketch-s4/s4l/README.md`, both-size captures of each lift at the bottom, mid-ride and arrival, geometry table, ride timings and results. Update DECISIONS/REQUIREMENTS (FR24)/UNFINISHED_SKETCH/PLAN/NEXT_SESSION; S4D then plans on lifts.
 
-- [ ] Both lifts work in every ride study with real inputs; the player cannot leave mid-ride.
-- [ ] Accepted challenges, Layer 3 studies and evidence unchanged.
-- [ ] Recovery/snapshot/input/resource contracts hold across both lifts.
+- [x] Both lifts work in every ride study with real inputs; the player cannot leave mid-ride.
+- [x] Accepted challenges, Layer 3 studies and evidence unchanged.
+- [x] Recovery/snapshot/input/resource contracts hold across both lifts.
 
 ## If S4L needs more time
 

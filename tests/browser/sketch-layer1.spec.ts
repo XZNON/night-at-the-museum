@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { observe, body, SENTINEL, open, clickSocket, waitReachable, climbToTerrace, hopRight, transferTo, traverseLayerOne } from './sketch-layer1-controls';
+import { observe, body, SENTINEL, open, clickSocket, waitReachable, climbToTerrace, transferTo, traverseLayerOne, stepOntoLift, stepOffLift } from './sketch-layer1-controls';
 
 test.describe('Sketch slice 2 Layer 1 route', () => {
   test('opens save-isolated with one canvas and reports the route state', async ({ page }) => {
@@ -77,7 +77,7 @@ test.describe('Sketch slice 2 Layer 1 route', () => {
       expect((await observe(page)).sketch!.targets.find(t => t.id === 'l1-freeze-d')!.screen!.visible, 'D visible from C').toBe(true);
       await clickSocket(page, 'l1-freeze-d');
       expect(await transferTo(page, 'l1-pendulum-d', true), 'on D').toBe(true);
-      // From D the fixed exit ground and the escalator boarding pad are the
+      // From D the fixed exit ground and the lift at its right end are the
       // next decision, and both are inside the view before the last jump.
       const exitGround = (await observe(page)).sketch!.surfaces.find(s => s.id === 'l1-exit')!;
       const cam = (await observe(page)).sketch!.camera;
@@ -86,7 +86,7 @@ test.describe('Sketch slice 2 Layer 1 route', () => {
     }
   });
 
-  test('two nails, FIFO reuse and the escalator reach the Layer 2 endpoint', async ({ page }) => {
+  test('two nails, FIFO reuse and the lift reach the Layer 2 endpoint', async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(String(error)));
     await page.addInitScript(sentinel => localStorage.setItem('last-curator.save.v1', sentinel as string), SENTINEL);
@@ -99,20 +99,17 @@ test.describe('Sketch slice 2 Layer 1 route', () => {
     expect(cleared.sketch!.available).toBe(2);
     await expect(page.locator('#sketch-goal')).toContainText('layer-1 clear');
 
-    // Walk onto the boarding pad; the prompt appears before pressing E.
-    expect(await hopRight(page, 58.6)).toBe(true);
-    await expect.poll(async () => (await observe(page)).sketch!.boarding, { timeout: 8000 }).toBe(true);
-    await expect(page.locator('#sketch-prompt')).toContainText('Press E');
-    await page.keyboard.press('KeyE');
-    await expect.poll(async () => (await observe(page)).sketch!.stage, { timeout: 8000 }).toBe('transit');
-    // The ride is scripted: transit progress rises and then commits once.
+    // The prompt points at the lift; standing fully on its deck starts it.
+    await expect(page.locator('#sketch-prompt')).toContainText('onto the lift');
+    await stepOntoLift(page);
+    // The deck rises on schedule and the arrival commits once.
     await expect.poll(async () => (await observe(page)).sketch!.transit, { timeout: 10000 }).toBeGreaterThan(0.4);
     await expect.poll(async () => (await observe(page)).sketch!.stage, { timeout: 15000 }).toBe('arrival');
     const arrived = await observe(page);
-    expect(arrived.sketch!.completed).toBe(true);
     expect(arrived.body!.vx).toBe(0);
-    expect(arrived.body!.vy).toBe(0);
+    expect(arrived.body!.y).toBeCloseTo(15.2, 5);
     expect(arrived.sketch!.section).toBe('layer-2-landing');
+    await stepOffLift(page);
     await expect(page.locator('#sketch-endpoint')).toContainText('Slice 2 endpoint');
     expect(errors).toEqual([]);
     expect(await page.evaluate(() => localStorage.getItem('last-curator.save.v1'))).toBe(SENTINEL);
@@ -150,8 +147,10 @@ test.describe('Sketch slice 2 Layer 1 route', () => {
     await page.keyboard.press('KeyR');
     await expect.poll(async () => (await body(page))!.y).toBeCloseTo(11.9, 1);
     expect((await observe(page)).sketch!.stage).toBe('exit');
-    expect(await hopRight(page, 58.6)).toBe(true);
-    await page.keyboard.press('KeyE');
+    // y was already 11.9 before R: let the retry tick consume R and clear its
+    // boundary input before holding the next direction.
+    await page.waitForTimeout(150);
+    await stepOntoLift(page);
     await expect.poll(async () => (await observe(page)).sketch!.transit).toBeGreaterThan(0.2);
     await page.keyboard.press('Escape');
     await expect(page.locator('#modal')).toBeVisible();
@@ -165,9 +164,9 @@ test.describe('Sketch slice 2 Layer 1 route', () => {
     await page.keyboard.press('KeyR');
     await expect.poll(async () => (await observe(page)).sketch!.stage).toBe('exit');
     expect((await body(page))!.y).toBeCloseTo(11.9, 1);
-    expect(await hopRight(page, 58.6)).toBe(true);
-    await page.keyboard.press('KeyE');
-    await expect.poll(async () => (await observe(page)).sketch!.stage).toBe('arrival');
+    await stepOntoLift(page);
+    await expect.poll(async () => (await observe(page)).sketch!.stage, { timeout: 10000 }).toBe('arrival');
+    await stepOffLift(page);
     await page.keyboard.press('KeyR');
     await expect.poll(async () => (await body(page))!.y).toBeCloseTo(15.2, 1);
     // y was already 15.2 before R. Wait for the retry tick to consume R and

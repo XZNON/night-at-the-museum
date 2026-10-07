@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
-import { observe as state, body, open, waitReachable, clickSocket, hopRight, climbToTerrace, transferTo } from './sketch-layer1-controls';
+import { observe as state, body, open, waitReachable, clickSocket, climbToTerrace, transferTo, stepOntoLift, stepOffLift } from './sketch-layer1-controls';
 
-const DIR = 'docs/validation/sketch-s2/four-pendulums';
+const DIR = process.env.SKETCH_EVIDENCE_DIR ?? 'docs/validation/sketch-s2/four-pendulums';
 
 /** Capture at both review sizes so the framing evidence is comparable. */
 async function captureBoth(page: Page, name: string) {
@@ -55,7 +55,7 @@ test.describe('Sketch slice 2 review captures', () => {
     await captureBoth(page, 'layer1-exit-checkpoint');
   });
 
-  test('capture the escalator, mid-transit and the Layer 2 arrival', async ({ page }) => {
+  test('capture the lift, mid-ride and the Layer 2 arrival', async ({ page }) => {
     await open(page);
     // Reach the checkpoint through the same real-input route the checks use.
     expect(await climbToTerrace(page), 'reached the waiting terrace').toBe(true);
@@ -78,23 +78,21 @@ test.describe('Sketch slice 2 review captures', () => {
     expect(await transferTo(page, 'l1-exit', true), 'exit ground').toBe(true);
     await expect.poll(async () => (await state(page)).sketch!.stage, { timeout: 15000 }).toBe('exit');
 
-    expect(await hopRight(page, 58.6)).toBe(true);
-    await expect.poll(async () => (await state(page)).sketch!.boarding, { timeout: 8000 }).toBe(true);
-    await captureBoth(page, 'layer1-escalator-prompt');
+    await captureBoth(page, 'layer1-lift-prompt');
 
-    await page.keyboard.press('KeyE');
-    await expect.poll(async () => (await state(page)).sketch!.stage, { timeout: 8000 }).toBe('transit');
+    await stepOntoLift(page);
     // Capture the reframe while the camera is still moving between layers.
     await expect.poll(async () => (await state(page)).sketch!.transit, { timeout: 8000 }).toBeGreaterThan(0.35);
     await page.setViewportSize({ width: 1280, height: 720 });
     await page.waitForTimeout(120);
-    await page.screenshot({ path: `${DIR}/layer1-escalator-transit-1280.png` });
+    await page.screenshot({ path: `${DIR}/layer1-lift-ride-1280.png` });
     await page.setViewportSize({ width: 960, height: 540 });
     await page.waitForTimeout(120);
-    await page.screenshot({ path: `${DIR}/layer1-escalator-transit-960.png` });
+    await page.screenshot({ path: `${DIR}/layer1-lift-ride-960.png` });
     await page.setViewportSize({ width: 1280, height: 720 });
 
     await expect.poll(async () => (await state(page)).sketch!.stage, { timeout: 15000 }).toBe('arrival');
+    await stepOffLift(page);
     await captureBoth(page, 'layer1-layer2-arrival');
     expect((await state(page)).sketch!.completed).toBe(true);
     // The arrival is on fixed Layer 2 ground with no leftover momentum.

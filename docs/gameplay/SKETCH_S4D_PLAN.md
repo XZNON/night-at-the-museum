@@ -5,6 +5,8 @@
 ## Revision for the delivered S4A/S4B/S4C (2026-10-07, supersedes conflicting text below)
 
 > **Order change (user, 2026-10-07):** both escalators become vertical lifts in a separate block, [S4L](SKETCH_S4L_PLAN.md), which runs **before** S4D. Wherever this plan says escalator, ride pad, treads, boarding with E, `l1-escalator`/`l2-escalator` or `escalatorPosition`, use the delivered S4L lifts (`l1-lift`/`l2-lift`, step on to ride, invisible walls, one-way) and its evidence. The second lift arrives beside `l3-arrival`, so the climb entrance (4.2, 24.4) is unchanged.
+>
+> **S4L delivered (2026-10-07, at review):** the legs carry `lift` (IDs `l1-lift`, `l2-lift`) instead of `escalator`; read `l1-escalator`/`l2-escalator` below as those. Arrival commits in place on the parked deck (`l2-lift` deck x-2.6..0, top 24.4, beside `l3-arrival`), so the climb starts when the player steps right onto `l3-arrival`; retries on that ground still use (4.2, 24.4). Layer 3 studies already draw both decks parked (`route.parkedLifts`); a `layers-1-3` preset plays all three legs so it needs none. See the [S4L evidence](../validation/sketch-s4/s4l/README.md).
 
 S4A, S4B and S4C are accepted and pushed (`6e89b0e`). Read their evidence first: [S4A](../validation/sketch-s4/s4a/README.md), [S4B](../validation/sketch-s4/s4b/README.md), [S4C](../validation/sketch-s4/s4c/README.md), plus [S3B](../validation/sketch-s3/s3b/). Where the original text below says glue, `l3-glue`, glue route or "accepted wall/glue route", read the S4B swing crossing (`l3-swings`) and the S4C joined Layer 3.
 

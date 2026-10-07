@@ -5,8 +5,9 @@ import type { Controls } from '../gameplay/controller';
 import { SketchModel, SketchRouteModel } from '../gameplay/sketch-model';
 import type { SketchHud, SketchRouteSession, SketchSession } from '../gameplay/sketch-model';
 import type {
-  SketchBay, SketchEscalator, SketchGuide, SketchMechanism, SketchPlayfieldData, SketchRoute, SketchTuning,
+  SketchBay, SketchGuide, SketchLift, SketchMechanism, SketchPlayfieldData, SketchRoute, SketchTuning,
 } from '../levels/unfinished-sketch';
+import { LIFT_WALL_HEIGHT, LIFT_WALL_THICKNESS } from '../levels/unfinished-sketch';
 
 // Fully cartoon placeholder presentation: flat colour areas, simple cel-style
 // shading and bold outlines. No asset is generated or loaded here beyond the
@@ -23,7 +24,7 @@ const C = {
   // Route-only cartoon palette.
   rowA: 0xfbe6bb, rowB: 0xd7e9fb, rowC: 0xf7d8e6,
   guide: 0xb9aed6, guideEdge: 0x8d80b5, guideGlue: 0x9fd8cd,
-  escalator: 0x8f9fd6, escalatorTop: 0xbcc9ec, rail: 0x6f7bb0,
+  lift: 0x8f9fd6, liftTop: 0xfff0c2, rail: 0x6f7bb0, cab: 0x5a7fd6,
   suspension: 0x8b7cae, bracket: 0x6d5f96,
   // S4B nailable wood and the free-placement ghost.
   wood: 0xd99a5b, woodGrain: 0xa86a3a, track: 0x7d6aa8, ghostOk: 0x5fd38d, ghostBad: 0xf25f5c,
@@ -73,9 +74,8 @@ export class UnfinishedSketchScene implements GameScene {
   private pickup: THREE.Group | null = null;
   /** The pickup this scene draws: the field's, or a joined route section's. */
   private pickupRect: SketchPlayfieldData['nailPickup'];
-  private readonly chevrons: THREE.Mesh[] = [];
-  private readonly escalatorSteps = new Map<string, THREE.Group>();
-  private readonly boardingPads = new Map<string, THREE.Mesh>();
+  /** S4L lifts: the moving deck, its lamp and the faint cab outline. */
+  private readonly lifts = new Map<string, { deck: THREE.Group; lamp: THREE.MeshBasicMaterial; cab: THREE.Group; cue: THREE.Group; was: string; flashUntil: number }>();
   private readonly scratchFocus = new THREE.Vector3();
   private hovered: string | null = null;
   /** S4B: last cursor position, re-projected each frame because bars move. */
@@ -131,7 +131,7 @@ export class UnfinishedSketchScene implements GameScene {
     this.buildPickup();
     this.buildPlayer(playerImage);
     if (mode.kind === 'route') {
-      for (const leg of mode.field.legs) if (leg.escalator) this.buildEscalator(leg.escalator);
+      for (const lift of [...mode.field.parkedLifts ?? [], ...mode.field.legs.flatMap(l => l.lift ? [l.lift] : [])]) this.buildLift(lift);
     }
     this.world.add(this.player, this.hand, this.debug);
     this.debug.visible = false;
@@ -321,22 +321,6 @@ export class UnfinishedSketchScene implements GameScene {
     }
     this.goalMesh = this.slab(this.field.goalBounds.width, 0.32, 2.2, C.goal);
     this.center(this.goalMesh, { ...this.field.goalBounds, y: this.field.goalBounds.y, height: 0.32 }, 0.6);
-    if (this.mode.kind === 'route') for (const route of this.mode.field.legs) if (route.escalator) {
-      // The Layer 2 endpoint marker: a chevron column beside the boarding pad.
-      const pad = this.slab(route.escalator!.boarding.width, 0.24, 2.4, C.escalatorTop, this.world, 0.9);
-      this.boardingPads.set(route.escalator!.id, pad);
-      this.center(pad, { ...route.escalator!.boarding, y: route.escalator!.boarding.y, height: 0.24 }, 0.5);
-      for (let i = 0; i < 3; i++) {
-        const chevron = this.slab(1.5, 0.34, 0.3, C.escalatorTop, this.world, 0.85, false);
-        chevron.position.set(route.escalator!.boarding.x + route.escalator!.boarding.width / 2,
-          route.escalator!.boarding.y + 0.9 + i * 0.72, 0.8);
-        chevron.rotation.z = Math.PI / 4;
-        chevron.userData.escalatorId = route.escalator!.id;
-        chevron.userData.phase = i * 0.9;
-        chevron.userData.baseY = chevron.position.y;
-        this.chevrons.push(chevron);
-      }
-    }
   }
 
   private buildMechanisms(): void {
@@ -602,53 +586,67 @@ export class UnfinishedSketchScene implements GameScene {
   }
 
   /**
-   * The authored escalator, drawn as a cartoon stepped incline with two side
-   * rails. Each tread is a real box with an outline so the ride reads clearly
-   * from the Layer 1 exit ground, and one tread animates along the path.
+   * An S4L vertical lift as a cartoon 2.5D placeholder: an open shaft frame
+   * of two guide rails and a top beam reaching the next layer, a thick deck
+   * with a bright edge and a lamp, and a faint ink cab outline that shows the
+   * invisible walls only while they hold the rider. Collision lives in the
+   * model; this only follows its live deck.
    */
-  private buildEscalator(escalator: SketchEscalator): void {
-    const path = escalator.path;
-    const body = new THREE.Group();
-    this.world.add(body);
-    // Solid incline under the treads, so the structure never reads as floating.
-    for (let i = 0; i < path.length - 1; i++) {
-      const a = path[i]; const b = path[i + 1];
-      const length = Math.hypot(b.x - a.x, b.y - a.y);
-      const angle = Math.atan2(b.y - a.y, b.x - a.x);
-      const ramp = this.slab(length + 0.6, 1.1, 2.6, C.rail, body);
-      ramp.position.set((a.x + b.x) / 2, (a.y + b.y) / 2 - 0.6, -0.6);
-      ramp.rotation.z = angle;
-      // Individual treads on top of the incline.
-      const treads = Math.max(2, Math.round(length / 1.1));
-      for (let t = 0; t < treads; t++) {
-        const k = (t + 0.5) / treads;
-        const tread = this.slab(length / treads + 0.12, 0.3, 2.8, t % 2 ? C.escalator : C.escalatorTop, body);
-        tread.position.set(a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k, 0);
-        tread.rotation.z = angle;
-      }
-      // Cartoon handrails on both sides.
-      for (const side of [-1.5, 1.5]) {
-        const rail = this.slab(length + 0.6, 0.24, 0.24, C.rail, body);
-        rail.position.set((a.x + b.x) / 2, (a.y + b.y) / 2 + 1.5, side);
-        rail.rotation.z = angle;
-        for (let p = 0; p <= 2; p++) {
-          const post = this.slab(0.22, 1.5, 0.22, C.rail, body);
-          post.position.set(a.x + (b.x - a.x) * (p / 2) + side * 0, a.y + (b.y - a.y) * (p / 2) + 0.75, side);
-          post.rotation.z = angle;
-        }
-      }
+  private buildLift(lift: SketchLift): void {
+    const { deck } = lift;
+    const bottom = deck.y - 0.5;
+    // The frame clears a standing rider's head at the top.
+    const top = deck.y + deck.height + lift.rise + 2.6;
+    for (const x of [deck.x - 0.2, deck.x + deck.width + 0.2]) {
+      const rail = this.slab(0.3, top - bottom, 0.4, C.rail, this.world);
+      rail.position.set(x, (top + bottom) / 2, -0.9);
     }
-    // The single travelling tread that makes the ride visibly running.
-    const step = new THREE.Group();
-    this.escalatorSteps.set(escalator.id, step);
-    const tread = this.slab(1.1, 0.34, 2.8, 0xfff0c2, step);
-    tread.position.y = 0.2;
-    step.add(tread);
-    const chevron = this.slab(0.5, 0.34, 2.9, C.escalator, step, 1, false);
-    chevron.position.set(0.1, 0.36, 0);
-    step.add(chevron);
-    step.position.set(path[0].x, path[0].y, 0.3);
-    this.world.add(step);
+    const beam = this.slab(deck.width + 0.9, 0.36, 0.5, C.rail, this.world);
+    beam.position.set(deck.x + deck.width / 2, top, -0.9);
+    // Rungs on the rails, so the shaft reads as built and not as a ladder.
+    for (let y = bottom + 1.2; y < top - 0.6; y += 1.6) {
+      const rung = this.slab(deck.width + 0.4, 0.1, 0.12, C.rail, this.world, 0.55, false);
+      rung.position.set(deck.x + deck.width / 2, y, -1.05);
+    }
+    const group = new THREE.Group(); this.world.add(group);
+    const slab = this.slab(deck.width, deck.height, 2.4, C.lift, group);
+    slab.position.set(0, -deck.height / 2, 0);
+    const lip = new THREE.Mesh(new THREE.BoxGeometry(deck.width, 0.16, 2.5), this.flat(C.liftTop));
+    this.resources.add(lip.geometry);
+    lip.position.set(0, -0.08, 0.04);
+    group.add(lip);
+    const lampMaterial = this.flat(C.goal);
+    const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.17, 12, 8), lampMaterial);
+    this.resources.add(lamp.geometry);
+    lamp.position.set(0, -deck.height / 2, 1.3);
+    group.add(lamp);
+    // Faint ink cab: two posts and a top rail the height of the invisible walls.
+    const cab = new THREE.Group(); group.add(cab);
+    const ink = new THREE.LineBasicMaterial({ color: C.cab, transparent: true, opacity: 0.55 });
+    this.resources.add(ink);
+    const half = deck.width / 2 + LIFT_WALL_THICKNESS / 2;
+    const outline = new THREE.BufferGeometry().setFromPoints([
+      new THREE.Vector3(-half, 0, 1), new THREE.Vector3(-half, LIFT_WALL_HEIGHT, 1),
+      new THREE.Vector3(-half, LIFT_WALL_HEIGHT, 1), new THREE.Vector3(half, LIFT_WALL_HEIGHT, 1),
+      new THREE.Vector3(half, LIFT_WALL_HEIGHT, 1), new THREE.Vector3(half, 0, 1),
+    ]);
+    this.resources.add(outline);
+    cab.add(new THREE.LineSegments(outline, ink));
+    const glass = this.slab(deck.width + LIFT_WALL_THICKNESS, LIFT_WALL_HEIGHT, 0.05, C.cab, cab, 0.08, false);
+    glass.position.set(0, LIFT_WALL_HEIGHT / 2, 0.95);
+    cab.visible = false;
+    // Wind-up and arrival cue: a small arrow on the exit side of the deck.
+    const cue = new THREE.Group(); group.add(cue);
+    for (const r of [Math.PI / 4, -Math.PI / 4]) {
+      const bar = this.slab(0.7, 0.18, 0.18, C.goal, cue, 1, false);
+      bar.rotation.z = r; bar.position.set(-0.22, r > 0 ? 0.24 : -0.24, 0);
+    }
+    // Mirrored so the chevron points toward the exit side.
+    cue.scale.x = -lift.exitSide;
+    cue.position.set(lift.exitSide * (deck.width / 2 - 0.5), 0.9, 1.2);
+    cue.visible = false;
+    group.position.set(deck.x + deck.width / 2, deck.y + deck.height, 0);
+    this.lifts.set(lift.id, { deck: group, lamp: lampMaterial, cab, cue, was: '', flashUntil: 0 });
   }
 
   // --- input --------------------------------------------------------------
@@ -831,7 +829,7 @@ export class UnfinishedSketchScene implements GameScene {
     this.elapsed += dt;
     const focus = this.focusTarget();
     // Pause stops the fixed step entirely, so camera progression and the
-    // escalator ride freeze with it. Reduced motion drops the easing but keeps
+    // lift ride freeze with it. Reduced motion drops the easing but keeps
     // the essential transport and the readable reframe.
     const rate = this.reducedMotion ? 40 : this.field.camera.followRate;
     const blend = 1 - Math.exp(-rate * dt);
@@ -920,10 +918,7 @@ export class UnfinishedSketchScene implements GameScene {
       bubble.position.y = 0.12 + Math.sin(this.elapsed * 2.4 + Number(bubble.userData.phase)) * 0.09;
     }
     if (this.goalMesh) (this.goalMesh.material as THREE.MeshBasicMaterial).color.setHex(this.model.completed ? C.goalDone : C.goal);
-    for (const chevron of this.chevrons) {
-      chevron.position.y = Number(chevron.userData.baseY) + Math.sin(this.elapsed * 2 + Number(chevron.userData.phase)) * 0.18;
-    }
-    if (this.mode.kind === 'route') this.animateEscalator();
+    if (this.mode.kind === 'route') this.animateLifts();
 
     this.camera.position.x = THREE.MathUtils.lerp(this.previousCamera.x, this.cameraPosition.x, alpha);
     this.camera.position.y = THREE.MathUtils.lerp(this.previousCamera.y, this.cameraPosition.y, alpha);
@@ -966,22 +961,24 @@ export class UnfinishedSketchScene implements GameScene {
     }
   }
 
-  private animateEscalator(): void {
+  /** Follow each live deck; lamp, shudder, cab outline and exit cue. */
+  private animateLifts(): void {
     const model = this.model as SketchRouteModel;
-    for (const leg of model.route.legs) {
-      const escalator = leg.escalator;
-      if (!escalator) continue;
-      const step = this.escalatorSteps.get(escalator.id)!;
-      const active = model.legId === leg.id;
-      const loop = active && model.inTransit ? model.transitProgress : (this.elapsed / escalator.duration) % 1;
-      const at = model.escalatorPosition(loop, escalator);
-      // Treads stay level underfoot, including the leftward second incline.
-      step.position.set(at.x, at.y - 0.34, 0.2);
-      const pad = this.boardingPads.get(escalator.id)!;
-      (pad.material as THREE.MeshStandardMaterial).color.setHex(active && model.stage === 'exit' ? C.goal : C.escalatorTop);
-    }
-    for (const chevron of this.chevrons) {
-      chevron.visible = chevron.userData.escalatorId === model.leg.escalator?.id && model.stage === 'exit';
+    for (const view of model.liftViews()) {
+      const rig = this.lifts.get(view.id);
+      if (!rig) continue;
+      // Arrival cue: the exit-side arrow stays lit briefly after the deck parks.
+      if (rig.was && rig.was !== 'parked' && view.state === 'parked') rig.flashUntil = this.elapsed + 1.4;
+      rig.was = view.state;
+      const flash = this.elapsed < rig.flashUntil;
+      const shudder = view.state === 'wind-up' && !this.reducedMotion ? Math.sin(this.elapsed * 70) * 0.05 : 0;
+      rig.deck.position.set(view.deck.x + view.deck.width / 2 + shudder, view.deck.y + view.deck.height, 0);
+      rig.cab.visible = view.walls;
+      const ready = view.active && model.stage === 'exit';
+      const blink = (Math.sin(this.elapsed * (view.state === 'wind-up' ? 18 : 4)) + 1) / 2;
+      rig.lamp.color.setHex(view.walls ? (view.state === 'wind-up' && blink > 0.5 ? C.goal : C.goalDone)
+        : ready ? (blink > 0.35 || this.reducedMotion ? C.goal : C.liftTop) : flash ? C.goalDone : C.rail);
+      rig.cue.visible = view.state === 'arriving' || flash;
     }
   }
 
@@ -1005,7 +1002,7 @@ export class UnfinishedSketchScene implements GameScene {
     let centreY: number; let viewHeight: number;
     let direction: number = model.section.travelDirection ?? 1;
     if (model.inTransit) {
-      // Smooth reframe through the escalator; linear under reduced motion.
+      // Smooth reframe up the lift shaft; linear under reduced motion.
       const lower = model.route.sections[model.leg.sectionId].focus;
       const upper = model.route.sections[model.leg.arrivalSectionId!].focus;
       const k = this.reducedMotion ? model.transitProgress : smooth(model.transitProgress);
@@ -1070,7 +1067,7 @@ export class UnfinishedSketchScene implements GameScene {
     this.rigs.clear(); this.rings.clear(); this.heads.clear(); this.rods.clear();
     this.inkPlatforms.clear();
     this.ghosts.clear(); this.ghostMaterials = []; this.freeHeads.length = 0; this.airMark = null;
-    this.escalatorSteps.clear(); this.boardingPads.clear(); this.chevrons.length = 0;
+    this.lifts.clear();
     this.glueBubbles.length = 0;
     this.pickup = null;
     this.world.clear();

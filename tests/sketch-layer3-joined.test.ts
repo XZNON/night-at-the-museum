@@ -37,7 +37,7 @@ describe('S4C composition', () => {
     expect(route.solids.filter(s => s.id === 'l3-walls-exit')).toHaveLength(1);
     const ledge = route.solids.find(s => s.id === 'l3-walls-exit')!;
     expect({ x: ledge.x, top: ledge.y + ledge.height, right: ledge.x + ledge.width }).toEqual({ x: 13.2, top: 49.5, right: 22 });
-    expect(route.legs.map(l => [l.id, l.nextLegId ?? null, !!l.escalator])).toEqual([['l3-walls', 'l3-swings', false], ['l3-swings', null, false]]);
+    expect(route.legs.map(l => [l.id, l.nextLegId ?? null, !!l.lift])).toEqual([['l3-walls', 'l3-swings', false], ['l3-swings', null, false]]);
     expect(route.legs[0].exitBounds).toEqual(sketchLayerThreeWalls.legs[0].exitBounds);
     expect(route.legs[1].exitBounds).toEqual(sketchLayerThreeSwings.legs[0].exitBounds);
     expect(route.sections['l3-walls']).toEqual(sketchLayerThreeWalls.sections['l3-walls']);

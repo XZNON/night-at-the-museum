@@ -1,0 +1,219 @@
+{
+  "status": "passed",
+  "events": [
+    {
+      "event": "capture l1-lift-bottom",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-1",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "tick": 700,
+      "body": {
+        "x": 55.7,
+        "y": 11.899999999999999,
+        "width": 0.65,
+        "height": 1.25,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true
+      },
+      "stage": "exit",
+      "leg": "layer-1",
+      "transit": 0,
+      "ride": 0,
+      "lifts": [
+        {
+          "id": "l1-lift",
+          "state": "bottom",
+          "progress": 0,
+          "walls": false,
+          "active": true,
+          "left": 63,
+          "right": 66.5,
+          "top": 11.9
+        }
+      ],
+      "camera": {
+        "x": 63.53818073620806,
+        "y": 11.199999956749984,
+        "width": 32,
+        "height": 18
+      },
+      "paused": false,
+      "canvasCount": 1
+    },
+    {
+      "event": "ride started by standing on the deck",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-1",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "tick": 825,
+      "body": {
+        "x": 63.06444444444466,
+        "y": 12.295312500000001,
+        "width": 0.65,
+        "height": 1.25,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true
+      },
+      "stage": "transit",
+      "leg": "layer-1",
+      "transit": 0.1197916666666669,
+      "ride": 0.7833333333333341,
+      "lifts": [
+        {
+          "id": "l1-lift",
+          "state": "rising",
+          "progress": 0.1197916666666669,
+          "walls": true,
+          "active": true,
+          "left": 63,
+          "right": 66.5,
+          "top": 12.295312500000001
+        }
+      ],
+      "camera": {
+        "x": 67.9935417285322,
+        "y": 11.23747101240107,
+        "width": 32,
+        "height": 18
+      },
+      "paused": false,
+      "canvasCount": 1
+    },
+    {
+      "event": "capture l1-lift-mid",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-1",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "tick": 895,
+      "body": {
+        "x": 63.06444444444466,
+        "y": 13.498437499999998,
+        "width": 0.65,
+        "height": 1.25,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true
+      },
+      "stage": "transit",
+      "leg": "layer-1",
+      "transit": 0.4843749999999994,
+      "ride": 1.949999999999998,
+      "lifts": [
+        {
+          "id": "l1-lift",
+          "state": "rising",
+          "progress": 0.4843749999999994,
+          "walls": true,
+          "active": true,
+          "left": 63,
+          "right": 66.5,
+          "top": 13.498437499999998
+        }
+      ],
+      "camera": {
+        "x": 67.99996710155224,
+        "y": 12.1421557388536,
+        "width": 32,
+        "height": 18
+      },
+      "paused": false,
+      "canvasCount": 1
+    },
+    {
+      "triedToLeave": "l1-lift",
+      "highestAboveDeck": 2.9707166666666733
+    },
+    {
+      "event": "capture l1-lift-arrival",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-1",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "tick": 1034,
+      "body": {
+        "x": 65.85,
+        "y": 15.2,
+        "width": 0.65,
+        "height": 1.25,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true
+      },
+      "stage": "arrival",
+      "leg": "layer-1",
+      "transit": 1,
+      "ride": 0,
+      "lifts": [
+        {
+          "id": "l1-lift",
+          "state": "parked",
+          "progress": 1,
+          "walls": false,
+          "active": true,
+          "left": 63,
+          "right": 66.5,
+          "top": 15.2
+        }
+      ],
+      "camera": {
+        "x": 67.99999999903378,
+        "y": 16.18180524123452,
+        "width": 32,
+        "height": 18
+      },
+      "paused": false,
+      "canvasCount": 1
+    },
+    {
+      "event": "capture l1-landing-endpoint",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-1",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "tick": 1050,
+      "body": {
+        "x": 66.57333333333331,
+        "y": 15.2,
+        "width": 0.65,
+        "height": 1.25,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true
+      },
+      "stage": "arrival",
+      "leg": "layer-1",
+      "transit": 1,
+      "ride": 0,
+      "lifts": [
+        {
+          "id": "l1-lift",
+          "state": "parked",
+          "progress": 1,
+          "walls": false,
+          "active": true,
+          "left": 63,
+          "right": 66.5,
+          "top": 15.2
+        }
+      ],
+      "camera": {
+        "x": 67.99999999971443,
+        "y": 16.617284262842325,
+        "width": 32,
+        "height": 18
+      },
+      "paused": false,
+      "canvasCount": 1
+    }
+  ]
+}

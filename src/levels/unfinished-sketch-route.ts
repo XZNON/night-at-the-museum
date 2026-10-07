@@ -1,8 +1,8 @@
 import type { Collider } from '../gameplay/collision';
-import type { SketchGuide, SketchGuideKind, SketchMechanism, SketchRoute } from './unfinished-sketch';
+import type { SketchGuide, SketchGuideKind, SketchLift, SketchMechanism, SketchRoute } from './unfinished-sketch';
 
 // Authored data for Sketch Slice 2: Layer 1 of the connected three-layer
-// world plus the first scripted escalator. Behaviour lives in
+// world plus the first vertical lift (S4L). Behaviour lives in
 // gameplay/sketch-model.ts; nothing here executes.
 //
 // Geometry is authored from the measured ordinary-jump envelope of the current
@@ -26,15 +26,30 @@ const guide = (id: string, kind: SketchGuideKind, layer: 1 | 2 | 3,
   x: number, top: number, width: number, height: number): SketchGuide =>
   ({ id, kind, layer, rect: { x, y: top - height, width, height } });
 
+/**
+ * S4L: the Layer 1 -> 2 lift. Its deck is the right end of the Layer 1 exit
+ * ground, directly under a deck-sized opening in the Layer 2 landing, so the
+ * parked deck restores exactly the landing's accepted footprint (x63..77):
+ * Layer 2's first jump toward board A is unchanged. The landing's left face
+ * above the opening is the shaft's right side; step off right at the top.
+ */
+export const l1Lift: SketchLift = {
+  id: 'l1-lift',
+  deck: { x: 63, y: 11.9 - 0.6, width: 3.5, height: 0.6 },
+  rise: 3.3, duration: 3.2, windUp: 0.4, exitSide: 1,
+  arrival: { x: 64.2, y: 15.2 },
+};
+
 export const sketchRoute = {
   id: 'layer-1',
   entryLegId: 'layer-1',
   name: 'Layer 1 · Four pendulum transfers',
   hint: 'Moving outlines cannot hold you. Pin A, land, then pin B and land. Q recalls A for C; from C, Q recalls B for D. Time the faster sweeps before pinning.',
-  goal: 'Reach the escalator on the right-hand ground and press E to ride it to Layer 2.',
+  goal: 'Reach the right-hand ground and step onto the lift to ride up to Layer 2.',
   spawn: { x: 1.5, y: 0 },
-  // The review gate ends on the fixed Layer 2 arrival landing.
-  goalBounds: { x: 63.8, y: 15.2, width: 8, height: 3.2 },
+  // The review gate ends on the fixed Layer 2 landing, one step off the
+  // parked lift deck (S4L): the marker never hangs over the open shaft.
+  goalBounds: { x: 66.5, y: 15.2, width: 8, height: 3.2 },
   bounds: { x: -6, y: -6, width: 86, height: 38 },
   // The shared-shape default. Every standing area overrides this with its own
   // section fall line; see `sections` and `exitDeathY` below.
@@ -51,7 +66,8 @@ export const sketchRoute = {
     // C cannot reach the exit; D is required for the final transfer.
     solid('l1-exit', 55, 11.9, 8, 3.2),
     // Only the Layer 2 arrival ground is playable; nothing else up there is.
-    solid('l2-landing', 63, 15.2, 14, 2.2),
+    // Its first 3.5u are the l1-lift deck once it has risen (see l1Lift).
+    solid('l2-landing', 66.5, 15.2, 10.5, 2.2),
     solid('l2-landing-bound', 77, 16.8, 1.2, 4.6),
   ],
   hazards: [],
@@ -118,8 +134,8 @@ export const sketchRoute = {
     guide('g2-board-c', 'board', 2, 20, 16.2, 4.4, 0.55),
     guide('g2-axe-a', 'wall', 2, 28, 18.4, 0.5, 3.2),
     guide('g2-axe-b', 'wall', 2, 35, 18.4, 0.5, 3.2),
-    guide('g2-stair', 'stair', 2, 40, 20.6, 9, 6.9),
-    guide('g2-rail', 'rail', 2, 39.4, 21.2, 10.2, 0.4),
+    // The reserved Layer 2 -> 3 lift shaft at the far left (S4L).
+    guide('g2-lift-shaft', 'wall', 2, -2.6, 21.2, 2.6, 4.9),
     guide('g3-floor', 'row-floor', 3, -4, 22.3, 76, 0.9),
     guide('g3-wall-a', 'wall', 3, 2, 29, 0.6, 6.7),
     guide('g3-wall-b', 'wall', 3, 9, 29, 0.6, 6.7),
@@ -149,25 +165,12 @@ export const sketchRoute = {
     id: 'layer-1', sectionId: 'layer-1',
     targetIds: ['l1-freeze-a', 'l1-freeze-b', 'l1-freeze-c', 'l1-freeze-d'],
     arrivalSectionId: 'layer-2-landing',
-  escalator: {
-    id: 'l1-escalator',
-    boarding: { x: 57.2, y: 11.9, width: 3.6, height: 2.4 },
-    duration: 3.2,
-    path: [
-      { x: 57.2, y: 11.9 },
-      { x: 58.6, y: 12.8 },
-      { x: 60, y: 13.7 },
-      { x: 61.4, y: 14.6 },
-      { x: 62.8, y: 15.2 },
-      { x: 64.2, y: 15.2 },
-    ],
-    arrival: { x: 64.2, y: 15.2 },
-  },
-
-  exitBounds: { x: 55, y: 11.9, width: 8, height: 1.8 },
-  exitSpawn: { x: 55.7, y: 11.9 },
-  // Standing at the Layer 1-clear checkpoint, a fall recovers from just below
-  // the exit ground instead of dropping the whole height of the layer.
-  exitDeathY: 7.5,
+    lift: l1Lift,
+    exitBounds: { x: 55, y: 11.9, width: 8, height: 1.8 },
+    // Off the deck, so a retry here never starts a ride by itself.
+    exitSpawn: { x: 55.7, y: 11.9 },
+    // Standing at the Layer 1-clear checkpoint, a fall recovers from just below
+    // the exit ground instead of dropping the whole height of the layer.
+    exitDeathY: 7.5,
   }],
 } satisfies SketchRoute;

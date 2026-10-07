@@ -14,13 +14,17 @@ const exit = (m: SketchRouteModel) => {
   m.controller.respawn(m.leg.exitSpawn.x, m.leg.exitSpawn.y); tick(m, 2);
   expect(m.stage).toBe('exit');
 };
+/** Walk from the exit checkpoint onto the lift deck; standing on it starts the ride. */
 const board = (m: SketchRouteModel) => {
-  m.controller.respawn(m.leg.escalator!.boarding.x + 1, m.leg.exitSpawn.y); tick(m, 2);
-  tick(m, 1, { interactPressed: true, jumpPressed: true }); expect(m.inTransit).toBe(true);
+  const deck = m.leg.lift!.deck;
+  const axis = deck.x + deck.width / 2 > m.controller.body.x ? 1 : -1;
+  for (let i = 0; i < 2400 && m.stage === 'exit'; i++) tick(m, 1, { axis });
+  expect(m.inTransit).toBe(true);
 };
-const firstArrival = (m: SketchRouteModel) => { exit(m); board(m); tick(m, 193); };
+const ride = (m: SketchRouteModel) => { for (let i = 0; i < 900 && m.inTransit; i++) tick(m); };
+const firstArrival = (m: SketchRouteModel) => { exit(m); board(m); ride(m); };
 
-describe('S3B linked legs and scripted rides', () => {
+describe('S3B linked legs and S4L lift rides', () => {
   it('normalizes malformed target/FIFO/frozen IDs without corrupting the preserved S2 snapshot', () => {
     const m = new SketchRouteModel(sketchRoute, sketchTuning);
     const session = createRouteSession();
@@ -43,20 +47,27 @@ describe('S3B linked legs and scripted rides', () => {
     for (const list of [sketchJoinedRoute.solids, sketchJoinedRoute.targets, sketchJoinedRoute.mechanisms]) {
       expect(new Set(list.map(v => v.id)).size).toBe(list.length);
     }
-    expect(sketchJoinedRoute.legs.map(l => l.escalator!.id)).toEqual(['l1-escalator', 'l2-escalator']);
+    expect(sketchJoinedRoute.legs.map(l => l.lift!.id)).toEqual(['l1-lift', 'l2-lift']);
+    expect(sketchJoinedRoute.parkedLifts).toBeUndefined();
     const l3 = sketchLayerTwo.solids.find(s => s.id === 'l3-arrival')!;
     // New support is out of the measured 4.479u double-jump ceiling from exit;
-    // staircase visuals are absent from collision data.
+    // lift decks and cab walls are model-made, never authored solids.
     expect(l3.y + l3.height - sketchLayerTwo.legs[0].exitSpawn.y).toBeGreaterThan(4.479);
-    expect(sketchLayerTwo.solids.some(s => s.id.includes('escalator'))).toBe(false);
-    expect(sketchLayerTwo.legs[0].escalator!.path.at(-1)).toEqual(sketchLayerTwo.sections['layer-3-landing'].spawn);
+    expect(sketchLayerTwo.solids.some(s => s.id.includes('lift'))).toBe(false);
+    const lift = sketchLayerTwo.legs[0].lift!;
+    expect(lift.arrival).toEqual(sketchLayerTwo.sections['layer-3-landing'].spawn);
+    expect(lift.deck.y + lift.deck.height + lift.rise).toBeCloseTo(l3.y + l3.height, 6);
+    expect(lift.deck.x + lift.deck.width).toBeCloseTo(l3.x, 6);
   });
 
   it('advances once with empty FIFO, no phase offsets, no attachment or buffered actions and no endpoint', () => {
     const m = joined(); tick(m, 2); firstArrival(m);
     expect(m.legId).toBe('layer-2'); expect(m.stage).toBe('traversal'); expect(m.completed).toBe(false);
     expect(m.availableNails).toBe(2); expect(m.session.queue).toEqual([]); expect(m.session.frozen).toEqual({});
-    expect(m.controller.body).toMatchObject({ x: 64.2, y: 15.2, vx: 0, vy: 0 });
+    // Arrival commits in place on the parked deck, straight above where they got on.
+    expect(m.controller.body).toMatchObject({ y: 15.2, vx: 0, vy: 0 });
+    expect(m.controller.body.x).toBeGreaterThanOrEqual(63); expect(m.controller.body.x + 0.65).toBeLessThanOrEqual(66.5);
+    expect(m.liftViews().map(v => [v.id, v.state])).toEqual([['l1-lift', 'parked'], ['l2-lift', 'bottom']]);
     const fresh = new SketchRouteModel(sketchLayerTwo, sketchTuning);
     expect(m.mechanismView()).toEqual(fresh.mechanismView());
     expect(m.hud().endpoint).toBe(''); expect(m.section.travelDirection).toBe(-1);
@@ -66,20 +77,22 @@ describe('S3B linked legs and scripted rides', () => {
   });
 
   it('keeps isolated Layer 1 terminal behavior and separate entry factories', () => {
-    const m = new SketchRouteModel(sketchRoute, sketchTuning); exit(m); board(m); tick(m, 193);
+    const m = new SketchRouteModel(sketchRoute, sketchTuning); exit(m); board(m); ride(m);
+    expect(m.stage).toBe('arrival'); for (let f = 0; f < 120 && !m.completed; f++) tick(m, 1, { axis: 1 });
     expect(m.legId).toBe('layer-1'); expect(m.stage).toBe('arrival'); expect(m.completed).toBe(true);
     expect(m.hud().endpoint).toContain('Slice 2 endpoint');
     const a = createRouteSession(); const b = createRouteSession('layer-2');
     expect(a.entryLegId).toBe('layer-1'); expect(b.entryLegId).toBe('layer-2'); expect(a.queue).not.toBe(b.queue);
   });
 
-  it('R wins over boarding/place/recall and retries each ride from its own departure', () => {
+  it('R wins over the ride/place/recall and retries each ride from its own departure', () => {
     const m = joined(); exit(m); board(m);
     m.enqueue({ type: 'place', targetId: 'l1-freeze-d' }); m.enqueue({ type: 'recall' });
     tick(m, 1, { restartPressed: true, interactPressed: true, jumpPressed: true });
     expect(m.stage).toBe('exit'); expect(m.controller.body.x).toBe(55.7);
     expect(m.session.queue).toEqual([]);
-    board(m); tick(m, 193); exit(m); board(m); tick(m, 80);
+    expect(m.liftViews()[0].state).toBe('bottom');
+    board(m); ride(m); exit(m); board(m); tick(m, 80);
     const snapshot = m.session;
     const restored = joined(); restored.restoreSession(snapshot);
     expect(restored.legId).toBe('layer-2'); expect(restored.stage).toBe('exit'); expect(restored.controller.body.x).toBe(27.5);
@@ -89,12 +102,18 @@ describe('S3B linked legs and scripted rides', () => {
 
   it('suppresses ride commands, commits safe Layer 3 once, and recovers there after R/fall/re-entry', () => {
     const m = new SketchRouteModel(sketchLayerTwo, sketchTuning); exit(m); board(m);
-    for (let f = 0; f < 241; f++) {
+    let arrivals = 0;
+    for (let f = 0; f < 900 && m.stage === 'transit'; f++) {
       m.enqueue({ type: 'place', targetId: 'l2-freeze-a' }); m.enqueue({ type: 'recall' });
-      tick(m, 1, f < 240 ? { axis: -1, jumpPressed: true, interactPressed: true } : {});
+      tick(m, 1, { axis: -1, jumpPressed: true, interactPressed: true });
+      if ((m.stage as string) === 'arrival') arrivals++;
     }
-    expect(m.stage).toBe('arrival'); expect(m.completed).toBe(true); expect(m.availableNails).toBe(2);
-    expect(m.controller.body).toMatchObject({ x: 4.2, y: 24.4, vx: 0, vy: 0 });
+    expect(arrivals).toBe(1);
+    expect(m.stage).toBe('arrival'); expect(m.availableNails).toBe(2);
+    expect(m.controller.body).toMatchObject({ x: -2.6, y: 24.4, vx: 0, vy: 0 });
+    // Step off right onto the Layer 3 ground: the S3 endpoint.
+    for (let f = 0; f < 120 && !m.completed; f++) tick(m, 1, { axis: 1 });
+    expect(m.completed).toBe(true); expect(m.stage).toBe('arrival');
     expect(m.sectionId).toBe('layer-3-landing'); expect(m.hud().endpoint).toContain('S3 endpoint');
     tick(m, 1, { restartPressed: true }); expect(m.controller.body.x).toBe(4.2);
     m.controller.respawn(11, 21.8); tick(m); tick(m, 35);

@@ -1,5 +1,6 @@
 import type { SketchMechanism, SketchRoute } from './unfinished-sketch';
-import { sketchLayerTwo } from './unfinished-sketch-layer2';
+import { l2Lift, sketchLayerTwo } from './unfinished-sketch-layer2';
+import { l1Lift } from './unfinished-sketch-route';
 
 const wall = (letter: string, x: number, y: number, period: number, height = 6.3): SketchMechanism => ({
   id: `l3-wall-${letter}`, kind: 'board', centre: { x, y }, travel: { x: 0, y: 0.5 },
@@ -59,6 +60,9 @@ export const sketchLayerThreeWalls: SketchRoute = {
   layers: sketchLayerTwo.layers.map(l => l.layer === 3
     ? { ...l, playable: true, bounds: { ...l.bounds, height: 36 } } : l),
   guides: sketchLayerTwo.guides.filter(g => g.layer !== 3),
+  // Context only: both earlier lifts wait at the top as fixed ground; the
+  // Layer 2 deck sits beside the arrival ground, left of the entrance.
+  parkedLifts: [l1Lift, l2Lift],
   sections: { ...sketchLayerTwo.sections,
     'l3-walls': { id: 'l3-walls', layer: 3, name: 'Layer 3 walls',
       spawn: { x: 4.2, y: 24.4 }, deathY: 22, travelDirection: 1,
@@ -70,7 +74,7 @@ export const sketchLayerThreeWalls: SketchRoute = {
     targetIds: letters.map(letter => `l3-wall-${letter}-pin`),
     exitBounds: { x: RIGHT + 1.2, y: 49.5, width: 8.8, height: 2.4 },
     exitSpawn: { x: RIGHT + 5, y: 49.5 }, exitDeathY: 45,
-    escalator: null, arrivalSectionId: null,
+    lift: null, arrivalSectionId: null,
   }],
 };
 
@@ -126,7 +130,7 @@ export const sketchLayerThreeSwings: SketchRoute = {
     surfaceIds: ['l3-strip-f', 'l3-bar-m1', 'l3-bar-m2'],
     exitBounds: { x: 57, y: 54, width: 8, height: 2.4 },
     exitSpawn: { x: 59, y: 54 }, exitDeathY: 49,
-    escalator: null, arrivalSectionId: null,
+    lift: null, arrivalSectionId: null,
   }],
 };
 

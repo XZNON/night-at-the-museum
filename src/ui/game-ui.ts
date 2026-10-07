@@ -51,7 +51,7 @@ export class GameUi {
         <div class="sketch-status"><span id="sketch-layer"></span><span id="sketch-nails"></span><span id="sketch-oldest"></span><span id="sketch-nearest"></span><span id="sketch-motion"></span></div>
         <p id="sketch-hint" class="section-hint"></p>
         <div id="sketch-bays" class="sketch-bays">${sketchBayList.map((bay, i) => `<button class="quiet" data-action="bay" data-bay="${bay.id}">${i + 1} ${bay.name.split(' · ')[1]}</button>`).join('')}</div>
-        <div class="bottom-hud"><div class="controls"><span><kbd>A</kbd><kbd>D</kbd> move / pump</span><span><kbd>Space</kbd> jump · kick · release</span><span>Left click pins a nail</span><span><kbd>Q</kbd> recall oldest</span><span><kbd>E</kbd> grab / board</span><span><kbd>R</kbd> retry</span></div><span id="sketch-goal" class="checkpoint"></span></div>
+        <div class="bottom-hud"><div class="controls"><span><kbd>A</kbd><kbd>D</kbd> move / pump</span><span><kbd>Space</kbd> jump · kick · release</span><span>Left click pins a nail</span><span><kbd>Q</kbd> recall oldest</span><span><kbd>E</kbd> grab a nail</span><span><kbd>R</kbd> retry</span></div><span id="sketch-goal" class="checkpoint"></span></div>
         <span id="sketch-endpoint" class="sketch-endpoint" hidden></span>
         <div id="sketch-prompt" class="prompt" hidden></div><div id="sketch-cue" class="cue" role="status" aria-live="polite"></div>
       </section>
@@ -184,18 +184,18 @@ export class GameUi {
       }
       if (this.sketchMode === 'layers-1-2') {
         this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S3 / Joined layers</p>
-        <h2>One picture.<br><em>Two rides.</em></h2><p class="intro">Four pendulums.<br>Three boards and two axes.<br>Two nails to reuse.</p>
-        <p class="menu-description">Climb Layer 1 and press E at its escalator. Cross Layer 2 to the left, then board the second ride to safe Layer 3 ground. Falling retries your current layer.</p>
+        <h2>One picture.<br><em>Two lifts.</em></h2><p class="intro">Four pendulums.<br>Three boards and two axes.<br>Two nails to reuse.</p>
+        <p class="menu-description">Climb Layer 1 and step onto its lift. Cross Layer 2 to the left, walk to the far end and ride the second lift to safe Layer 3 ground. Falling retries your current layer.</p>
         <button class="primary" data-action="start">Continue the picture</button>
         ${remembered ? '<button class="quiet" data-action="replay">Restart Layers 1 &amp; 2</button>' : ''}
-        <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move / <kbd>Space</kbd> Jump x2 / Click pin / <kbd>Q</kbd> Recall / <kbd>E</kbd> Board</div>
+        <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move / <kbd>Space</kbd> Jump x2 / Click pin / <kbd>Q</kbd> Recall / <kbd>R</kbd> Retry</div>
         <p class="small-note">Campaign saves are untouched. Stop on safe Layer 3 ground for review.</p>`);
         return;
       }
       if (this.sketchMode === 'layer-2') {
         this.show('menu', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / S3 · Layer 2</p>
         <h2>Boards &amp;<br><em>axes.</em></h2><p class="intro">Three moving boards.<br>Two nails.<br>Axes that keep turning.</p>
-        <p class="menu-description">Moving outlines cannot hold you. Pin A and B, then recall A with Q to ink C. Narrow landings and fast red blades demand timed double jumps. Reach fixed ground, then press E on the pad for the ride to Layer 3.</p>
+        <p class="menu-description">Moving outlines cannot hold you. Pin A and B, then recall A with Q to ink C. Narrow landings and fast red blades demand timed double jumps. Reach fixed ground, then walk left to the lift and step on to ride to Layer 3.</p>
         <button class="primary" data-action="start">Enter Layer 2 <span>←</span></button>
         ${remembered ? '<button class="quiet" data-action="replay">Restart Layer 2</button>' : ''}
         <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move · <kbd>Space</kbd> Jump ×2 · Left click pin · <kbd>Q</kbd> Recall · <kbd>R</kbd> Retry</div>
@@ -206,11 +206,11 @@ export class GameUi {
         this.show('menu', `
       <div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / Slice 2 · Layer 1</p>
       <h2>Four<br><em>pendulums.</em></h2><p class="intro">One unfinished picture.<br>Two nails.<br>Three layers to climb.</p>
-      <p class="menu-description">Start at the bottom left. Pin a pendulum, land on it, pin the next, then press Q so the oldest nail frees one for the third. Each target is only in reach from the platform you just reached, so the reuse cannot be skipped. The escalator on the right carries you to a safe Layer 2 landing.</p>
+      <p class="menu-description">Start at the bottom left. Pin a pendulum, land on it, pin the next, then press Q so the oldest nail frees one for the third. Each target is only in reach from the platform you just reached, so the reuse cannot be skipped. The lift at the right end of the exit ground carries you up to a safe Layer 2 landing.</p>
       <button class="primary" data-action="start">Enter Layer 1 <span>→</span></button>
       ${remembered ? '<button class="quiet" data-action="replay">Restart the route</button>' : ''}
-      <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move <span>·</span> <kbd>Space</kbd> Jump ×2 <span>·</span> Left click pin <span>·</span> <kbd>Q</kbd> Recall <span>·</span> <kbd>E</kbd> Board</div>
-      <p class="small-note">Isolated development route · Campaign saves are untouched.<br>Layer 2 content, the second escalator and Layer 3 are scenery only in this slice.</p>`);
+      <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move <span>·</span> <kbd>Space</kbd> Jump ×2 <span>·</span> Left click pin <span>·</span> <kbd>Q</kbd> Recall <span>·</span> <kbd>R</kbd> Retry</div>
+      <p class="small-note">Isolated development route · Campaign saves are untouched.<br>Layer 2's challenge, the second lift and Layer 3 are scenery only in this study.</p>`);
         return;
       }
       this.show('menu', `

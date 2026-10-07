@@ -2,6 +2,10 @@
 
 ## Purpose and current state
 
+S4L accepted by the user on 2026-10-07 and committed/pushed at their request; next is S4D (Layers 1-3, final S4 gate) on its own request. No S4D code, generation or sub-agents are authorized by the acceptance.
+
+S4L implemented at its playable review gate, 2026-10-07: both escalators are vertical lifts (step fully onto the deck after clearing the layer, invisible walls while riding, straight up, step off right; arrival commits in place; decks stay parked). See docs/validation/sketch-s4/s4l/README.md and NEXT_SESSION. Uncommitted over `98a213c`; stop for user review; S4D needs its own request. No commit/push, generation or sub-agents authorized.
+
 Vertical lifts planned, 2026-10-07 (user): every layer transition becomes a vertical lift (step on to ride, invisible walls while riding, straight up) in its own block S4L before S4D; see docs/gameplay/SKETCH_S4L_PLAN.md. Planning only; S4L needs its own request.
 
 S4C accepted by the user on 2026-10-07 (after the Layer 3 air-momentum fix) and committed/pushed at their request; next is S4D (Layers 1/2 joined to this Layer 3, the final S4 gate) on its own request, using the revised S4D plan/prompt. No S4D code, generation or sub-agents are authorized by the acceptance.

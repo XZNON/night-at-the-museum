@@ -6,10 +6,10 @@ import { sweptBladeContact } from './sketch-blade';
 import { SketchMovement } from './sketch-movement';
 import type { GripSite, SketchMoveHud, SketchWorld } from './sketch-movement';
 import type {
-  SketchBay, SketchBayId, SketchLegSettings, SketchMechanism, SketchNailSurface, SketchPlayfieldData, SketchRoute,
+  SketchBay, SketchBayId, SketchLegSettings, SketchLift, SketchMechanism, SketchNailSurface, SketchPlayfieldData, SketchRoute,
   SketchRouteSection, SketchTarget, SketchTuning, TargetKind, SketchRouteLegId, SketchRouteId,
 } from '../levels/unfinished-sketch';
-import { sketchMovement } from '../levels/unfinished-sketch';
+import { LIFT_WALL_HEIGHT, LIFT_WALL_THICKNESS, sketchMovement } from '../levels/unfinished-sketch';
 
 // No Three.js, DOM, storage or museum references live here. The scene turns
 // pointer coordinates into a target ID; this model revalidates everything
@@ -44,6 +44,25 @@ export interface MechanismView {
   vx: number; vy: number;
   width: number; height: number;
   pinned: boolean; hazard: boolean;
+}
+
+/**
+ * A lift's live state (S4L). `bottom`: waiting flush with its departure
+ * ground; `wind-up`/`rising`/`arriving`: the active ride, cab walls closed
+ * (`arriving` holds at the top until the rider stands on the deck); `parked`:
+ * at the top as fixed ground for good.
+ */
+export type LiftState = 'bottom' | 'wind-up' | 'rising' | 'arriving' | 'parked';
+export interface LiftView {
+  id: string; lift: SketchLift; state: LiftState;
+  /** The deck's current collision rectangle. */
+  deck: Rect;
+  /** 0 at the bottom, 1 flush with the arrival ground. */
+  progress: number;
+  /** True while the invisible cab walls hold the rider. */
+  walls: boolean;
+  /** True for the lift of the leg being played now. */
+  active: boolean;
 }
 
 export interface TargetView {
@@ -94,6 +113,8 @@ export const createRouteSession = (entryLegId: SketchRouteLegId = 'layer-1'): Sk
   ({ entryLegId, legId: entryLegId, stage: 'traversal', elapsed: 0, sequence: 0, queue: [], frozen: {} });
 
 const VELOCITY_STEP = 1 / 240;
+/** A lift deck's top at 0..1 of its rise. */
+const liftTop = (lift: SketchLift, progress: number) => lift.deck.y + lift.deck.height + lift.rise * progress;
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
 
 /**
@@ -340,10 +361,14 @@ export abstract class SketchPlayfield {
   }
 
   // --- collision world ----------------------------------------------------
+  /** Route-only kinematic solids (S4L lift decks and cab walls). */
+  protected addRouteSolids(_out: Collider[]): void {}
+
   protected buildWorld(views = this.mechanismView()): SketchWorld {
     this.solidsCache.length = 0; this.hazardsCache.length = 0;
     this.wallsCache.length = 0; this.gripsCache.length = 0;
     for (const s of this.field.solids) this.solidsCache.push(s);
+    this.addRouteSolids(this.solidsCache);
     for (const h of this.field.hazards) this.hazardsCache.push(h);
     for (const view of views) {
       const m = this.mechanism(view.id)!;
@@ -423,7 +448,7 @@ export abstract class SketchPlayfield {
   // --- fixed-step transaction --------------------------------------------
   update(dt: number, input: Controls): void {
     // Restart wins over everything else in the tick, including an in-flight
-    // escalator ride, and clears any other queued command.
+    // lift ride, and clears any other queued command.
     if (input.restartPressed) { this.onRestart(); return; }
     this.cueRemaining = Math.max(0, this.cueRemaining - dt);
     if (this.recoveryRemaining > 0) {
@@ -431,7 +456,7 @@ export abstract class SketchPlayfield {
       if (this.recoveryRemaining <= 0) this.onRecovered();
       return;
     }
-    // A scripted transit owns the whole tick; nothing else may advance.
+    // A route boundary (a lift's arrival) may own the whole tick.
     if (!this.beforeStep(dt, input)) return;
     const beforeBody = { ...this.controller.body };
     this.elapsed += dt;
@@ -598,8 +623,8 @@ export class SketchModel extends SketchPlayfield {
 /**
  * Connected route presets: the preserved S2 leg and isolated S3A leg. It reuses the proven ledger,
  * mechanism and movement behaviour unchanged and adds only what the route
- * needs — section-local recovery, the Layer 1-clear checkpoint and the one
- * authored escalator to a fixed Layer 2 landing.
+ * needs — section-local recovery, exit checkpoints and the vertical lifts
+ * (S4L) that carry the player from one layer's exit ground to the next.
  */
 export class SketchRouteModel extends SketchPlayfield {
   constructor(readonly route: SketchRoute, tuning: SketchTuning) {
@@ -628,7 +653,7 @@ export class SketchRouteModel extends SketchPlayfield {
     return this.route.id === 'layer-3-walls' || this.route.id === 'layer-3-swings' || this.route.id === 'layer-3';
   }
   /** A same-layer leg that hands over on its exit ground instead of ending (S4C). */
-  private get continuesOnGround(): boolean { return !this.leg.escalator && !!this.leg.nextLegId; }
+  private get continuesOnGround(): boolean { return !this.leg.lift && !!this.leg.nextLegId; }
   /** True once the joined Layer 3 has moved past its entry leg. */
   private get laterSection(): boolean { return this.route.id === 'layer-3' && this.legId !== this.route.entryLegId; }
 
@@ -668,11 +693,15 @@ export class SketchRouteModel extends SketchPlayfield {
       !['traversal', 'exit', 'transit', 'arrival'].includes(session.stage)) { this.restartAdventure(); return; }
     // A leg that hands over on its own ground never rests at its exit.
     const owner = this.route.legs.find(l => l.id === reachable)!;
-    if (!owner.escalator && owner.nextLegId && session.stage !== 'traversal') { this.restartAdventure(); return; }
+    if (!owner.lift && owner.nextLegId && session.stage !== 'traversal') { this.restartAdventure(); return; }
     this.legId = reachable;
     this.restartLeg();
+    // A mid-ride snapshot re-enters at the departure exit, deck at the bottom.
     const stage = session.stage === 'transit' ? 'exit' : session.stage;
-    if (stage === 'arrival' && this.leg.escalator) { this.arrive(); return; }
+    if (stage === 'arrival' && this.leg.lift) {
+      if (this.leg.nextLegId) { this.legId = this.leg.nextLegId; this.restartLeg(); return; }
+      this.settleArrival(); return;
+    }
     if (stage === 'exit') { this.enterExitCheckpoint(); return; }
     if (this.route.id === 'layer-1') {
       const targets = new Set<string>(); const nails = new Set<string>();
@@ -702,21 +731,98 @@ export class SketchRouteModel extends SketchPlayfield {
     if (this.stage === 'exit' || this.stage === 'transit') return this.leg.exitDeathY;
     return this.section.deathY;
   }
-  /** 0 before boarding, then 0..1 along the authored escalator path. */
+  /** 0 until the deck starts rising, then 0..1 up the shaft; 1 once arrived. */
   get transitProgress(): number {
-    return this.stage !== 'transit' ? (this.stage === 'arrival' ? 1 : 0) :
-      clamp(this.transitElapsed / this.leg.escalator!.duration, 0, 1);
+    if (this.stage !== 'transit') return this.stage === 'arrival' ? 1 : 0;
+    const lift = this.leg.lift!;
+    return clamp((this.transitElapsed - lift.windUp) / lift.duration, 0, 1);
   }
+  /** Seconds since the current ride started, wind-up included. */
+  get rideElapsed(): number { return this.stage === 'transit' ? this.transitElapsed : 0; }
   get inTransit(): boolean { return this.stage === 'transit'; }
-  /** True while the player stands on the escalator's boarding pad. */
-  boardingReady(): boolean {
-    return this.stage === 'exit' && !!this.leg.escalator && overlaps(this.controller.body, this.leg.escalator.boarding);
+
+  // --- vertical lifts (S4L) ----------------------------------------------
+  /** Every lift drawn in this study with its live deck, oldest layer first. */
+  liftViews(): LiftView[] {
+    const views: LiftView[] = (this.route.parkedLifts ?? []).map(lift => this.liftView(lift, 'parked', false));
+    const current = this.route.legs.findIndex(l => l.id === this.legId);
+    this.route.legs.forEach((leg, index) => {
+      if (!leg.lift) return;
+      const lift = leg.lift;
+      let state: LiftState = index < current ? 'parked' : 'bottom';
+      if (index === current) {
+        if (this.stage === 'arrival') state = 'parked';
+        else if (this.stage === 'transit') state = this.transitElapsed < lift.windUp ? 'wind-up'
+          : this.transitElapsed < lift.windUp + lift.duration ? 'rising' : 'arriving';
+      }
+      views.push(this.liftView(lift, state, index === current));
+    });
+    return views;
+  }
+
+  private liftView(lift: SketchLift, state: LiftState, active: boolean): LiftView {
+    const progress = state === 'parked' || state === 'arriving' ? 1
+      : state === 'rising' ? clamp((this.transitElapsed - lift.windUp) / lift.duration, 0, 1) : 0;
+    return {
+      id: lift.id, lift, state, progress, active,
+      // Positioned by its top, so a parked deck is exactly flush with the ground.
+      deck: { ...lift.deck, y: liftTop(lift, progress) - lift.deck.height },
+      walls: state === 'wind-up' || state === 'rising' || state === 'arriving',
+    };
+  }
+
+  /** Top of a lift's deck at the current ride time. */
+  private deckTop(lift: SketchLift): number {
+    return liftTop(lift, clamp((this.transitElapsed - lift.windUp) / lift.duration, 0, 1));
+  }
+
+  /** Grounded on the deck top with the whole body inside its x-range. */
+  private standsOn(deck: Rect, top: number): boolean {
+    const b = this.controller.body;
+    return b.grounded && Math.abs(b.y - top) < 0.00001 &&
+      b.x >= deck.x - 0.00001 && b.x + b.width <= deck.x + deck.width + 0.00001;
+  }
+
+  /** True when the exit-stage player stands fully on this leg's waiting deck. */
+  onLiftDeck(): boolean {
+    const lift = this.leg.lift;
+    return this.stage === 'exit' && !!lift && this.recoveryRemaining <= 0 &&
+      this.standsOn(lift.deck, lift.deck.y + lift.deck.height);
+  }
+
+  /** Any part of the body over this leg's waiting deck (HUD guidance only). */
+  private overDeck(): boolean {
+    const lift = this.leg.lift; const b = this.controller.body;
+    return this.stage === 'exit' && !!lift && b.x + b.width > lift.deck.x && b.x < lift.deck.x + lift.deck.width;
+  }
+
+  protected override addRouteSolids(out: Collider[]): void {
+    for (const view of this.liftViews()) {
+      out.push({ id: `${view.id}-deck`, ...view.deck });
+      if (!view.walls) continue;
+      // Invisible cab walls ride with the deck, taller than any double jump.
+      const height = view.deck.height + LIFT_WALL_HEIGHT;
+      out.push({ id: `${view.id}-wall-left`, x: view.deck.x - LIFT_WALL_THICKNESS, y: view.deck.y, width: LIFT_WALL_THICKNESS, height });
+      out.push({ id: `${view.id}-wall-right`, x: view.deck.x + view.deck.width, y: view.deck.y, width: LIFT_WALL_THICKNESS, height });
+    }
   }
 
   enqueue(command: SketchCommand): void {
-    // A scripted ride owns the player: place/recall/grip never accumulate.
+    // A lift ride owns the player's nails: place/recall never accumulate.
     if (this.stage === 'transit') return;
     super.enqueue(command);
+  }
+
+  /**
+   * A real window blur mid-ride returns the player to the departure exit with
+   * the deck back at the bottom, exactly like R. Returns whether it did.
+   */
+  cancelRide(): boolean {
+    if (this.stage !== 'transit') return false;
+    this.recoveryRemaining = 0;
+    this.enterExitCheckpoint();
+    this.notify('Focus was lost mid-ride. Back at the exit: step onto the lift again.');
+    return true;
   }
 
   // --- authored checkpoint and transit -----------------------------------
@@ -773,74 +879,77 @@ export class SketchRouteModel extends SketchPlayfield {
     const spawn = this.leg.exitSpawn;
     this.controller.respawn(spawn.x, spawn.y);
     if (this.route.id !== 'layer-1') this.elapsed = 0;
-    if (!this.leg.escalator) { this.completed = true; this.elapsed = 0; }
+    if (!this.leg.lift) { this.completed = true; this.elapsed = 0; }
   }
 
-  private boardEscalator(): void {
+  /**
+   * Standing fully on the waiting deck in the exit stage starts the ride: the
+   * cab walls close, queued commands are dropped and a short wind-up plays
+   * before the deck rises. The player keeps walking and jumping in the cab.
+   */
+  private startRide(): void {
     this.stage = 'transit';
     this.transitElapsed = 0;
     this.movement.reset();
     this.clearCommandQueue();
-    const b = this.controller.body;
-    b.vx = 0; b.vy = 0; b.grounded = false;
-    this.controller.contacts.length = 0;
-    this.notify(`Boarding the escalator to Layer ${this.route.sections[this.leg.arrivalSectionId!].layer}…`);
+    this.controller.body.vx = 0;
+    this.notify(`The lift closes. Riding up to Layer ${this.route.sections[this.leg.arrivalSectionId!].layer}…`);
   }
 
-  private arrive(): void {
+  /**
+   * The deck is flush with the next layer's ground and the rider stands on
+   * it: the exit-side wall opens and the arrival commits once, in place. A
+   * respawn where the player stands clears coyote time, the jump buffer and
+   * every held allowance, so no press carries across the boundary.
+   */
+  private commitArrival(): void {
+    const lift = this.leg.lift!;
+    const b = this.controller.body;
+    const at = { x: b.x, y: b.y };
     if (this.leg.nextLegId) {
       this.legId = this.leg.nextLegId;
       this.restartLeg();
+      this.controller.respawn(at.x, at.y);
       this.notify(`Layer ${this.section.layer} reached. Three boards, two nails; the axes stay active.`);
       return;
     }
+    this.settleArrival(at);
+    if (!this.completed) this.notify(`Layer ${this.section.layer} reached. Step off ${lift.exitSide > 0 ? 'right' : 'left'} onto the landing.`);
+  }
+
+  /** Terminal arrival section: where the ride ended, or its safe spawn on a retry. */
+  private settleArrival(at = this.leg.lift!.arrival): void {
     this.stage = 'arrival';
     this.transitElapsed = 0;
     this.movement.reset();
     this.clearCommandQueue();
     if (this.route.id !== 'layer-1') { this.resetLedger(); this.elapsed = 0; }
-    const arrival = this.leg.escalator!.arrival;
-    // A respawn clears coyote time, the jump buffer and every held allowance,
-    // so no held key or buffered press can launch the player on arrival.
-    this.controller.respawn(arrival.x, arrival.y);
+    this.controller.respawn(at.x, at.y);
     // The endpoint is evaluated on arrival so the review marker shows at once.
     this.afterStep();
   }
 
-  /** Position along the authored escalator path, eased by ride progress. */
-  escalatorPosition(progress: number, escalator = this.leg.escalator!): { x: number; y: number } {
-    const path = escalator.path;
-    const clamped = clamp(progress, 0, 1);
-    // Equal per-segment time keeps the drawn stairs moving with the rider.
-    const scaled = clamped * (path.length - 1);
-    const index = Math.min(path.length - 2, Math.floor(scaled));
-    const k = scaled - index;
-    return { x: path[index].x + (path[index + 1].x - path[index].x) * k,
-      y: path[index].y + (path[index + 1].y - path[index].y) * k };
-  }
-
   // --- fixed-step hooks ---------------------------------------------------
-  protected override beforeStep(dt: number, input: Controls): boolean {
+  protected override beforeStep(dt: number, _input: Controls): boolean {
+    if (this.stage !== 'transit') return true;
+    const lift = this.leg.lift!;
     const b = this.controller.body;
-    if (this.stage === 'transit') {
-      this.transitElapsed += dt;
-      const progress = this.transitProgress;
-      const at = this.escalatorPosition(progress);
-      b.x = at.x - b.width / 2; b.y = at.y;
-      b.vx = 0; b.vy = 0; b.grounded = false;
-      this.controller.contacts.length = 0;
-      if (this.transitElapsed >= this.leg.escalator!.duration) {
-        this.arrive();
-      }
-      return false;
-    }
-    if (this.stage === 'exit' && input.interactPressed === true && this.boardingReady()) {
-      // One fresh E starts the ride and is consumed here, so it can never also
-      // grip a nail or trigger another interaction in the same tick.
-      this.boardEscalator();
+    const before = this.deckTop(lift);
+    this.transitElapsed += dt;
+    const top = this.deckTop(lift);
+    // The kinematic deck carries whoever stands on it (or is caught by it
+    // this tick) before the ordinary step lands them on its new top.
+    if (b.x + b.width > lift.deck.x && b.x < lift.deck.x + lift.deck.width && b.y < top && b.y >= before - 0.05) b.y = top;
+    if (this.transitElapsed >= lift.windUp + lift.duration && this.standsOn(lift.deck, top)) {
+      this.commitArrival();
       return false;
     }
     return true;
+  }
+
+  /** Inside the cab the player only walks and jumps: no grip, no interaction. */
+  protected override motionInput(input: Controls): Controls {
+    return this.stage === 'transit' && input.interactPressed ? { ...input, interactPressed: false } : input;
   }
 
   protected override afterStep(): void {
@@ -851,11 +960,14 @@ export class SketchRouteModel extends SketchPlayfield {
       Math.abs(b.y - this.leg.exitBounds.y) < 0.00001 && overlaps(b, this.leg.exitBounds)) {
       if (this.continuesOnGround) { this.continueOnGround(); return; }
       this.enterExitCheckpoint();
-      this.notify(this.leg.escalator ? `Layer ${this.section.layer} clear. Safe checkpoint reached — walk onto the escalator and press E.` :
+      this.notify(this.leg.lift ? `Layer ${this.section.layer} clear. Safe checkpoint reached — step onto the lift to ride up.` :
         this.route.id === 'layer-3-walls' ? 'S4A endpoint. Fixed post-climb ground reached.'
           : this.route.id === 'layer-3-swings' ? 'S4B endpoint. Landed on the fixed end ledge.'
           : this.route.id === 'layer-3' ? 'S4C endpoint. Layer 3 crossed: landed on the fixed end ledge.' : 'Layer 2 clear. S3A endpoint reached on fixed ground.');
     }
+    // Stepping fully onto the waiting deck starts the ride (never on a hop
+    // across it, never while recovering, never before the layer is clear).
+    if (this.onLiftDeck()) { this.startRide(); return; }
     if (!this.completed && this.stage === 'arrival' && overlaps(this.controller.body, this.route.goalBounds)) {
       this.completed = true;
       this.notify(this.section.layer === 3 ? 'S3 endpoint. Safe Layer 3 ground reached.' : 'Slice 2 endpoint. Layer 2 content arrives in the next slice.');
@@ -883,37 +995,53 @@ export class SketchRouteModel extends SketchPlayfield {
   }
 
   protected override onRecovered(): void {
-    if (this.stage === 'arrival') { this.arrive(); this.notify(`Back on the Layer ${this.section.layer} landing.`); return; }
-    if (this.stage === 'exit') { this.enterExitCheckpoint(); return; }
+    if (this.stage === 'arrival') { this.settleArrival(); this.notify(`Back on the Layer ${this.section.layer} landing.`); return; }
+    if (this.stage === 'exit' || this.stage === 'transit') { this.enterExitCheckpoint(); return; }
     this.restartLeg();
   }
 
   protected override onFall(): void {
-    if (this.stage === 'arrival') { this.recover('Off the landing. Back to the top of the escalator…'); return; }
-    if (this.stage === 'exit') { this.recover('Back to the safe exit checkpoint…'); return; }
+    if (this.stage === 'arrival') { this.recover(`Off the landing. Back onto Layer ${this.section.layer}…`); return; }
+    // Impossible inside the cab walls, but defended: back to the departure exit.
+    if (this.stage === 'exit' || this.stage === 'transit') { this.recover('Back to the safe exit checkpoint…'); return; }
     this.recover(this.nailPickup ? `Nothing under you. Layer ${this.section.layer} restarts; pick up the third nail again…`
       : this.laterSection ? 'Nothing under you. The swing crossing restarts with two nails; the climb stays clear…'
       : `Nothing under you. Layer ${this.section.layer} restarts with two nails…`);
   }
 
+  /** Lift guidance for the HUD prompt. */
+  private liftPrompt(): string {
+    const lift = this.leg.lift;
+    if (!lift) return '';
+    const next = this.route.sections[this.leg.arrivalSectionId!].layer;
+    if (this.stage === 'transit') {
+      return this.transitElapsed < lift.windUp ? 'The lift is closing…'
+        : this.transitProgress < 1 ? `Riding the lift to Layer ${next} · the cab holds you on` : `Step off ${lift.exitSide > 0 ? 'right' : 'left'} onto Layer ${next}`;
+    }
+    if (this.stage !== 'exit' || this.recoveryRemaining > 0) return '';
+    if (this.overDeck()) return 'Step fully onto the lift';
+    const b = this.controller.body;
+    return `Walk ${lift.deck.x + lift.deck.width / 2 > b.x + b.width / 2 ? 'right' : 'left'} onto the lift to ride up to Layer ${next}`;
+  }
+
   hud(): SketchHud {
     const hint = this.stage === 'arrival' && this.section.layer === 3
       ? 'Safe ground reached. Explore the landing or press R to return here.'
-      : this.stage === 'transit' ? `Riding to Layer ${this.route.sections[this.leg.arrivalSectionId!].layer}.`
+      : this.stage === 'transit' ? `Riding the lift to Layer ${this.route.sections[this.leg.arrivalSectionId!].layer}. Walk and jump freely; the cab holds you on.`
       : this.legId === 'layer-2' ? 'Pin A, then B. From B, Q recalls A for C. Time both active axes.' : this.leg.hint ?? this.route.hint;
     const hud = this.baseHud(this.route.id, this.route.id === 'layer-1' ? this.route.name : this.section.name, hint, this.route.goal);
     const checkpoint = this.stage === 'arrival' ? this.section.name.toLowerCase()
       : this.stage === 'traversal' ? `${this.legId} start` : `${this.legId} clear`;
     return {
       ...hud,
-      motion: this.route.id === 'layer-1' || (this.layerThree && this.move.state !== 'normal') ? hud.motion : this.inTransit ? 'Riding escalator'
+      motion: this.inTransit ? 'Riding the lift' : this.route.id === 'layer-1' || (this.layerThree && this.move.state !== 'normal') ? hud.motion
         : this.controller.body.grounded ? 'Grounded' : 'In the air',
       layer: `${this.section.layer} / 3 · ${this.section.name}`,
       checkpoint: `Checkpoint / ${checkpoint}`,
-      prompt: this.boardingReady() ? 'Press E to board the escalator' : '',
+      prompt: this.liftPrompt(),
       endpoint: this.completed ? (this.route.id === 'layer-3-walls' ? 'S4A endpoint reached · Wall climb clear · Stop for review'
         : this.route.id === 'layer-3-swings' ? 'S4B endpoint reached · Swing crossing clear · Stop for review'
-        : this.route.id === 'layer-3' ? 'S4C endpoint reached · Wall climb and swing crossing clear · Stop for review' : this.section.layer === 3 ? 'S3 endpoint reached · Safe Layer 3 ground · Stop for review' : this.leg.escalator ? 'Slice 2 endpoint reached · Layer 2 content follows in S3' :
+        : this.route.id === 'layer-3' ? 'S4C endpoint reached · Wall climb and swing crossing clear · Stop for review' : this.section.layer === 3 ? 'S3 endpoint reached · Safe Layer 3 ground · Stop for review' : this.leg.lift ? 'Slice 2 endpoint reached · Layer 2 content follows in S3' :
         'S3A endpoint reached · Layer 2 clear') : '',
     };
   }
