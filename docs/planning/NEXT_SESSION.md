@@ -1,4 +1,33 @@
-# Next session — Sketch S4 planning and implementation
+# Next session — Implement Sketch S4B (free-placement moving-swing crossing)
+
+**Current handoff, 2026-10-07:** the user accepted the three-nail S4A wall climb and redesigned S4B: make a platform → swing point moving back and forth → second moving swing point → fixed end ledge. The player chooses where to drive each nail along nailable things (foothold strip, moving bars), never in empty air; there are no pre-made rings in this section. The third nail stays for the climb and is taken back after it, so S4B uses two nails and FIFO. Layers 1/2 and the walls keep marked targets. Start from the [revised S4B plan](../gameplay/SKETCH_S4B_PLAN.md) and its [prompt](../gameplay/SKETCH_S4_PROMPTS.md#s4b--moving-swing-crossing), only on the user's explicit request. S5's moving-socket finale must be differentiated later. At the user's request, accepted S4A and the S4 plans are committed and pushed to origin/main as the checkpoint after `77acf03`; that does not authorize later commits.
+
+## S4A review handoff (accepted)
+
+
+**Accepted S4A handoff, 2026-10-07 (second review — three nails):** the user found the six-board climb still impossible but liked it. They decided Layer 3 gives a **third nail picked up at its start** and asked for the climb to stay a little tough. S4A is revised and back at its playable review gate; stop for user review. S4B requires its own request after acceptance. All S4A code, tests, evidence and S4 planning docs are uncommitted over pushed main `77acf03`.
+
+Play [S4A wall climb](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-3-walls) after `npm run dev`. [S4A evidence](../validation/sketch-s4/s4a/README.md) has both reviews, geometry, measured waits and skip margins. Route: pin A and B, run right over the nail pickup, jump onto A; pin C from A with the third nail, `Space`. On each later wall: `Q` (frees the board two behind), pin the board after next, `Space`, up to F. F's kick carries over E onto the ledge.
+
+Section-only (preset fields): pickup x7..7.8 on the arrival ground (budget 2→3 until the section restarts), placement reach 11, wall grip 0.9 s then slide 2 u/s, kick 14.5 with lock to the arc's top, 0.3 s early-kick buffer. Layers 1/2 and S1 keep two nails and their tuning. A shaft axe was prototyped and rejected (its hub makes a band of kick heights certain death in the 3.3u shaft). Verification: build pass; 148/148 unit tests; S4A browser spec 8/8 with real input at both sizes; S1/S3 regressions rerun (see PLAN log). Scripted input only — the user's own play is the comfort check.
+
+Next after acceptance: [S4B prompt](../gameplay/SKETCH_S4_PROMPTS.md) with [S4B plan](../gameplay/SKETCH_S4B_PLAN.md), read with three nails on Layer 3 (see the update note atop each S4 plan). S4C must place the glue section relative to the taller climb (ledge top 49.5) and keep the pickup at the Layer 3 entrance. Reuse `routeId` snapshot ownership, terminal-leg handling, the per-field `wall`/`placementReach`/`nailPickup` overrides. No commit/push, generation or sub-agents are authorized.
+
+## Historical first S4A review handoff
+
+The user found the first three-board S4A climb humanly impossible: a kick cancelled while holding toward the wall. The six-board continuous criss-cross with a section kick lock (slide 1.2, kick 14.5) replaced it; that version passed 143 unit tests and 8/8 browser cases before the second review above.
+
+## Historical S4 planning handoff
+
+**Current handoff, 2026-10-06:** S3 is committed/pushed at `77acf03`; S4 planning is complete and no S4 gameplay is implemented. The user requested comfortable session boundaries. S4 is divided into **four separately requested blocks**: A isolated wall climb, B isolated glue crossing, C joined Layer 3/section recovery, D integration with Layers 1/2 and the final S4 gate. Each stops for playable review. Four is not a hard session cap; A/B have further-subdivision rules if the proofs need more time. Planning does not authorize executing these prompts, commits/pushes, generation or sub-agents.
+
+Start with [S4 overview/contracts](../gameplay/SKETCH_S4_PLAN.md) and [S4A plan](../gameplay/SKETCH_S4A_PLAN.md). All four [paste-ready prompts](../gameplay/SKETCH_S4_PROMPTS.md) are written; the first is [S4A](../gameplay/SKETCH_S4_PROMPTS.md#s4a--wall-climb). Read the actual preceding block's evidence before using each later prompt; proposed selectors are not working entries yet. [B](../gameplay/SKETCH_S4B_PLAN.md), [C](../gameplay/SKETCH_S4C_PLAN.md) and [D](../gameplay/SKETCH_S4D_PLAN.md) define their dependencies, implementation order, verification and stop conditions.
+
+The technical risks are complete alternating wall-contact feasibility, placement/release onto a real foothold head, same-layer grounded transitions (the current model only advances linked legs at escalator arrival), section-owned memory restore, null-escalator terminal state and camera/HUD assumptions. Preserve `(4.2,24.4)` Layer 3 arrival, old study endpoints and all reviewed S1/S2/S3 challenge data. Final S4 stops before S5's moving-socket finale/sun/campaign. S4 studies remain save-isolated/development-only, with no new asset or dependency.
+
+Planning verification: clean main at `77acf036605521a705fdcb527f880589afce38cf` before edits, expected origin, Node v22.14.0/npm v10.9.2 rechecked. Runtime/tests/dependencies/assets were inspected and remain unchanged. Existing 132-test/build/browser results are checkpoint/implementation evidence, not a new playtest or S4 pass. No provider request, commit or push in this planning session. Earlier handoff text below is historical.
+
+## Historical S3 checkpoint handoff
 
 **Latest user direction, 2026-10-06:** the user confirmed Slice 3 is made and explicitly requested committing/pushing its completed checkpoint to origin/main. S3 (S3A + S3B) is complete for this checkpoint. The next named slice is S4, requiring a separate implementation request; no S4 code was added here. The S3B review instructions below are retained as historical review guidance, not the current next task.
 

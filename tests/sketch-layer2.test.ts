@@ -8,7 +8,7 @@ import { sketchRoute } from '../src/levels/unfinished-sketch-route';
 import { sketchMovement, sketchTuning, isSketchStudy } from '../src/levels/unfinished-sketch';
 import { bladeContact, sweptBladeContact } from '../src/gameplay/sketch-blade';
 
-const DIR = 'docs/validation/sketch-s3/s3b';
+const DIR = process.env.SKETCH_EVIDENCE_DIR ?? 'docs/validation/sketch-s3/s3b';
 mkdirSync(DIR, { recursive: true });
 const record = (name: string, value: unknown) => writeFileSync(`${DIR}/${name}.json`, JSON.stringify(value, null, 2));
 const dt = 1 / 60;

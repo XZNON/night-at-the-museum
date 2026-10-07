@@ -55,6 +55,10 @@ export class SketchMovement {
   swing: SwingState | null = null;
   private wallTransfer = true;
   private lastKickWall = '';
+  private kickAxis = 0;
+  private kickLock = 0;
+  private kickBufferUntil = -1;
+  private wallTime = 0;
   private gripBlockId = '';
   private gripBlockUntil = 0;
   private elapsed = 0;
@@ -70,7 +74,7 @@ export class SketchMovement {
 
   reset(): void {
     this.state = 'normal'; this.wallId = ''; this.wallSide = 0; this.swing = null;
-    this.wallTransfer = true; this.lastKickWall = '';
+    this.wallTransfer = true; this.lastKickWall = ''; this.kickAxis = 0; this.kickLock = 0; this.kickBufferUntil = -1;
     this.gripBlockId = ''; this.gripBlockUntil = 0; this.elapsed = 0; this.cue = '';
   }
 
@@ -79,19 +83,37 @@ export class SketchMovement {
     const fresh = input.jumpPressed === true;
     if (this.state === 'swing') return this.tickSwing(dt, input, world, fresh || input.interactPressed === true);
     if (this.state === 'wall-slide') return this.tickWall(dt, world, fresh);
-    this.controller.update(dt, input, world.solids, { butterIds: [], bounceIds: [] });
+    // A locked kick keeps carrying toward the far wall even while the player
+    // still holds the direction of the wall they just left.
+    this.kickLock = Math.max(0, this.kickLock - dt);
+    // An airborne press with no air jump left would otherwise do nothing. A
+    // section may keep it briefly, so Space pressed on touching the next wall
+    // (still rising, before the slide begins) kicks as soon as the slide starts.
+    if (fresh && !this.controller.body.grounded && !this.controller.airJumpAvailable && (this.tuning.wall.kickBuffer ?? 0) > 0) {
+      this.kickBufferUntil = this.elapsed + this.tuning.wall.kickBuffer!;
+    }
+    const steer = this.kickLock > 0 ? { ...input, axis: this.kickAxis } : input;
+    this.controller.update(dt, steer, world.solids, { butterIds: [], bounceIds: [] });
     const body = this.controller.body;
+    // The lock ends at the top of the arc: a kick that clears the far wall's
+    // top lands under the player's own control instead of overshooting.
+    if (body.vy <= 0) this.kickLock = 0;
     if (body.grounded) {
       // A valid landing is the only ordinary way to renew a wall transfer.
       this.wallTransfer = true;
       this.state = 'normal'; this.wallId = ''; this.wallSide = 0;
+      this.kickBufferUntil = -1;
     } else if (input.interactPressed === true && this.tryGrip(world)) {
       // Attaching to a nail is always an explicit action: the player never
       // clips onto a swing by merely passing through its grip zone.
       return this.hud();
     } else {
       const wall = this.findWall(world);
-      if (wall) this.enterWall(wall);
+      if (wall) {
+        this.enterWall(wall);
+        // Only a real transfer fires; a spent same-wall press keeps the slide.
+        if (this.elapsed <= this.kickBufferUntil && this.wallTransfer) { this.kickBufferUntil = -1; this.kick(wall); }
+      }
     }
     return this.hud();
   }
@@ -132,6 +154,8 @@ export class SketchMovement {
     // air jump away is what stops one wall being climbed by double-jumping it:
     // gaining height requires transferring to the opposite board.
     this.controller.consumeAirJump();
+    this.kickLock = 0;
+    this.wallTime = 0;
     b.vy = clamp(b.vy, -this.tuning.wall.slideMaxFall, 0);
     b.vx = 0;
   }
@@ -146,18 +170,26 @@ export class SketchMovement {
     if (fresh) {
       // One authoritative wall-kick action for one fresh press. A press with
       // no transfer credit simply lets go: it never produces a kick.
-      this.state = 'normal'; this.wallId = '';
-      if (!this.wallTransfer) return this.hud();
-      this.controller.launch(this.wallSide * this.tuning.wall.kickHorizontal,
-        this.tuning.wall.kickVertical, { airJump: false });
-      this.wallTransfer = false;
-      this.lastKickWall = contact.id;
+      this.kick(contact);
       return this.hud();
     }
     body.vx = 0;
-    body.vy = clamp(body.vy - this.tuning.swing.gravity * dt, -this.tuning.wall.slideMaxFall, 0);
+    // A section may hold a fresh catch still briefly before the slide starts.
+    this.wallTime += dt;
+    body.vy = this.wallTime <= (this.tuning.wall.grip ?? 0) ? 0
+      : clamp(body.vy - this.tuning.swing.gravity * dt, -this.tuning.wall.slideMaxFall, 0);
     moveBody(body, world.solids, dt, this.controller.contacts);
     return this.hud();
+  }
+
+  private kick(contact: Collider): void {
+    this.state = 'normal'; this.wallId = '';
+    if (!this.wallTransfer) return;
+    this.controller.launch(this.wallSide * this.tuning.wall.kickHorizontal,
+      this.tuning.wall.kickVertical, { airJump: false });
+    this.wallTransfer = false;
+    this.lastKickWall = contact.id;
+    this.kickAxis = this.wallSide; this.kickLock = this.tuning.wall.kickLock ?? 0;
   }
 
   // --- direct nail swing --------------------------------------------------

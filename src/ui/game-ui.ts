@@ -123,6 +123,7 @@ export class GameUi {
 
   private tagLabel(): string {
     const base = this.study !== 'sketch' ? 'ROYAL SUPPER STUDY'
+      : this.sketchMode === 'layer-3-walls' ? 'UNFINISHED SKETCH / S4A / WALL CLIMB'
       : this.sketchMode === 'layers-1-2' ? 'UNFINISHED SKETCH / JOINED LAYERS (S3)'
       : this.sketchMode === 'layer-2' ? 'UNFINISHED SKETCH · LAYER 2 (S3)'
       : this.sketchMode === 'layer-1' ? 'UNFINISHED SKETCH · LAYER 1 (SLICE 2)' : 'UNFINISHED SKETCH · SLICE 1 PLAYGROUND';
@@ -149,6 +150,16 @@ export class GameUi {
       return;
     }
     if (this.study === 'sketch') {
+      if (this.sketchMode === 'layer-3-walls') {
+        this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S4A / Layer 3 walls</p>
+        <h2>Criss-cross<br><em>walls.</em></h2><p class="intro">Six moving outlines.<br>A third nail on the way.<br>Kick from wall to wall.</p>
+        <p class="menu-description">Pin A and B, pick up the third nail as you run right, and jump onto A. Space kicks you across to the opposite wall. A catch holds you for a moment, then you slide fast, so keep kicking. Keep the board ahead pinned: Q frees the oldest nail and you click the next board up. From F, kick right over E onto the ledge. Outlines cannot hold you.</p>
+        <button class="primary" data-action="start">Enter the wall climb</button>
+        ${remembered ? '<button class="quiet" data-action="replay">Restart wall climb</button>' : ''}
+        <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move · <kbd>Space</kbd> Jump / kick · Click pin · <kbd>Q</kbd> Recall · <kbd>R</kbd> Retry</div>
+        <p class="small-note">Campaign saves are untouched. Stop at the fixed S4A endpoint for review.</p>`);
+        return;
+      }
       if (this.sketchMode === 'layers-1-2') {
         this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S3 / Joined layers</p>
         <h2>One picture.<br><em>Two rides.</em></h2><p class="intro">Four pendulums.<br>Three boards and two axes.<br>Two nails to reuse.</p>
@@ -211,7 +222,7 @@ export class GameUi {
   markSketch(mode: SketchStudy, bayId: SketchBayId): void {
     this.sketchMode = mode;
     document.getElementById('sketch-hud')!.dataset.study = mode;
-    document.getElementById('sketch-eyebrow')!.textContent = mode === 'layers-1-2' ? 'Unfinished Sketch / S3 / Joined layers' : mode === 'layer-2' ? 'Unfinished Sketch / S3 · Layer 2' : mode === 'layer-1'
+    document.getElementById('sketch-eyebrow')!.textContent = mode === 'layer-3-walls' ? 'Unfinished Sketch / S4A / Layer 3 walls' : mode === 'layers-1-2' ? 'Unfinished Sketch / S3 / Joined layers' : mode === 'layer-2' ? 'Unfinished Sketch / S3 · Layer 2' : mode === 'layer-1'
       ? 'The Last Curator · Slice 2 · Layer 1 of the unfinished picture' : 'The Last Curator · Slice 1 mechanics playground';
     document.getElementById('sketch-bays')!.hidden = mode !== 'mechanics';
     const tag = document.querySelector<HTMLElement>('.build-tag');
@@ -245,7 +256,7 @@ export class GameUi {
     this.show('pause', `<p class="eyebrow">A moment between brushstrokes</p><h2 class="compact">Paused.</h2>
       <p class="menu-description">${reason}</p><button class="primary" data-action="resume">Resume <span>→</span></button>
       ${adventure ? `<button class="secondary" data-action="checkpoint">${route ? 'Back to the last safe checkpoint' : sketch ? 'Restart bay' : 'Restart from checkpoint'}</button>
-      <button class="quiet" data-action="replay">${route ? `Restart ${this.sketchMode === 'layers-1-2' ? 'Layers 1 &amp; 2' : this.sketchMode === 'layer-2' ? 'Layer 2' : 'Layer 1'}` : 'Restart adventure'}</button><button class="quiet" data-action="leave">${this.direct ? 'Leave painting' : 'Return to Museum'}</button>` : ''}
+      <button class="quiet" data-action="replay">${route ? `Restart ${this.sketchMode === 'layer-3-walls' ? 'wall climb' : this.sketchMode === 'layers-1-2' ? 'Layers 1 &amp; 2' : this.sketchMode === 'layer-2' ? 'Layer 2' : 'Layer 1'}` : 'Restart adventure'}</button><button class="quiet" data-action="leave">${this.direct ? 'Leave painting' : 'Return to Museum'}</button>` : ''}
       <label class="setting"><input type="checkbox" id="low-quality" ${lowQuality ? 'checked' : ''}> Low rendering quality</label>
       <label class="setting">Master volume <input id="master-volume" type="range" min="0" max="1" step="0.05" value="${settings?.masterVolume ?? 0.7}"></label>
       ${!this.direct ? '<button class="quiet" data-action="reset">Reset progress</button>' : ''}

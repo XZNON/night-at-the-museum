@@ -2,6 +2,8 @@
 
 Updated: 2026-10-06. S1 was implemented/revised in another session and the user has now declared it complete; see NEXT_SESSION/PLAN for evidence. S2 is implemented and awaiting user review at its playable gate. The complete three-layer adventure, new art and ending remain unimplemented. Sketch replaces Mountain as adventure two, retaining `sun-disc` and the existing two-stage restoration. Explicitly labelled working defaults are not additional user approvals.
 
+Latest status, 2026-10-07: S4A wall climb is implemented at its review gate after a second user review that added a Layer 3 third-nail pickup ([evidence](../validation/sketch-s4/s4a/README.md)); B/C/D remain unimplemented. Earlier: S3 is complete and pushed at `77acf03`. S4 is planned only as A wall climb, B glue, C joined Layer 3 and D full-route integration, each with a separate request/playable review. See [S4 plan](SKETCH_S4_PLAN.md) and [prompts](SKETCH_S4_PROMPTS.md); this supersedes older review/unimplemented status for S3.
+
 ## Selected experience
 
 Start at the bottom left of an unfinished picture. Clear three stacked layers, using two reusable nails to prepare moving objects and create transfers. Escalators connect Layers 1/2 and 2/3. Recover the sun at the top and return to the museum.
@@ -17,8 +19,8 @@ The distinguishing decision is where and when to spend two nails, then when to r
 | Subject | Status and rule |
 | --- | --- |
 | Campaign | User-selected: Royal Supper then Unfinished Sketch; pear restoration unlocks Sketch; sun restoration completes the two-adventure campaign. Mountain is a reserve; Garden remains gated. |
-| Budget | User-selected: exactly two nails. |
-| Placement | User-selected: authored places where nails can be put. No arbitrary drawing/free placement. |
+| Budget | User-selected: exactly two nails. Layer 3 wall climb (2026-10-07): a third nail is picked up at the layer's start and taken back on the post-climb ground; the swing crossing uses two. |
+| Placement | User-selected: authored places where nails can be put. No arbitrary drawing/free placement. Exception (2026-10-07): the S4B swing crossing has no pre-made targets; nails go anywhere along nailable surfaces, never in empty air. |
 | Retrieval | User-selected: one button recalls nails in FIFO order, oldest placed first. No selecting a newer nail or automatic eviction when the budget is full. |
 | Platform effects | User-selected: pinning freezes pendulums and boards in place. S2 and later S3A difficulty reviews require reuse: Layer 1 pendulums and Layer 2 boards are moving outlines that become solid only while pinned; recall removes support. S1 is unchanged. |
 | Hazards | User-selected: axes keep swinging; nails cannot stop them. |
@@ -122,13 +124,15 @@ The next-session code-specific plan and preserved difficulty baseline are in [SK
 
 ### S4 — Layer 3 wall climb and glue crossing
 
-Current next slice after the user's 2026-10-06 completed-S3 checkpoint request. Requires a separate implementation request; no S4 work is included in that checkpoint.
+Current next slice after the completed-S3 checkpoint. The user subsequently requested a comfortable implementation plan, resulting in [four blocks](SKETCH_S4_PLAN.md#3-users-and-primary-workflows): [A walls](SKETCH_S4A_PLAN.md), [B glue](SKETCH_S4B_PLAN.md), [C joined Layer 3](SKETCH_S4C_PLAN.md), [D full-route integration](SKETCH_S4D_PLAN.md). Each requires its own implementation request and review; [paste-ready prompts](SKETCH_S4_PROMPTS.md) are available. S4 is unimplemented and only complete after D's full playable gate. Further sub-blocks are permitted where a proof needs more time; do not cram all S4 into one or two sessions.
 
 **Build:** Layer 3 sections 1/2 using S1's proven wall and fixed-pivot swing mechanics. Add safe introductions and checkpoints at the layer entrance, after the wall climb and after glue. Provide individual section entry for review.
 
 **Player sees:** The complete criss-cross climb and the foothold-to-swing-to-foothold resource sequence, joined to earlier layers.
 
-**Gate:** Both sequences are achievable with exactly two nails and strict FIFO; enough slide time exists to place the next pin; release lands on a readable foothold; glue/recall-current-support/R retries neither lose nails nor erase earlier cleared sections. Individually and consecutively traverse sections with real controls. Camera/input targeting works while climbing/swinging at both review sizes.
+**Revised section 2 (2026-10-07):** make a platform → moving swing → second moving swing → fixed end ledge, with free placement on nailable surfaces; see [S4B plan](SKETCH_S4B_PLAN.md).
+
+**Gate:** The wall climb is achievable with three nails and the swing crossing with two, both with strict FIFO; enough slide time exists to place the next pin; release lands on a readable foothold; glue/recall-current-support/R retries neither lose nails nor erase earlier cleared sections. Individually and consecutively traverse sections with real controls. Camera/input targeting works while climbing/swinging at both review sizes.
 
 **Stop:** End at safe ground before the moving-socket finale. Do not invent another wall or rope system here.
 

@@ -68,6 +68,7 @@ export class UnfinishedSketchScene implements GameScene {
   private readonly cameraPosition = new THREE.Vector2();
   private readonly previousCamera = new THREE.Vector2();
   private goalMesh: THREE.Mesh | null = null;
+  private pickup: THREE.Group | null = null;
   private readonly chevrons: THREE.Mesh[] = [];
   private readonly escalatorSteps = new Map<string, THREE.Group>();
   private readonly boardingPads = new Map<string, THREE.Mesh>();
@@ -114,6 +115,7 @@ export class UnfinishedSketchScene implements GameScene {
     this.buildGround();
     this.buildMechanisms();
     this.buildTargets();
+    this.buildPickup();
     this.buildPlayer(playerImage);
     if (mode.kind === 'route') {
       for (const leg of mode.field.legs) if (leg.escalator) this.buildEscalator(leg.escalator);
@@ -373,6 +375,15 @@ export class UnfinishedSketchScene implements GameScene {
         }
       }
       if (m.kind === 'pendulum') this.buildSuspension(m);
+      if (this.field.id === 'layer-3-walls' && m.id.startsWith('l3-wall-')) {
+        const label = document.createElement('canvas'); label.width = 128; label.height = 64;
+        const ctx = label.getContext('2d')!;
+        ctx.fillStyle = '#2b2440'; ctx.font = 'bold 46px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(m.id.slice(-1).toUpperCase(), 64, 50);
+        const texture = new THREE.CanvasTexture(label); this.resources.add(texture);
+        const material = new THREE.SpriteMaterial({ map: texture, depthTest: false }); this.resources.add(material);
+        const text = new THREE.Sprite(material); text.scale.set(1.6, 0.8, 1); text.position.set(0, 1.05, 1.5); rig.add(text);
+      }
     }
   }
 
@@ -439,6 +450,21 @@ export class UnfinishedSketchScene implements GameScene {
       rig.add(inset);
     }
     return rig;
+  }
+
+  /** A loose cartoon nail lying in wait, side-on: shaft, head and a soft halo. */
+  private buildPickup(): void {
+    const p = this.field.nailPickup;
+    if (!p) return;
+    const rig = new THREE.Group();
+    rig.position.set(p.x + p.width / 2, p.y + p.height / 2, 1.3);
+    this.disc(0.5, 0.08, 28, C.goal, rig).position.z = -0.3;
+    const shaft = this.slab(0.16, 0.8, 0.16, C.nailShaft, rig); shaft.position.y = -0.1;
+    const head = this.slab(0.62, 0.18, 0.3, C.nailCap, rig); head.position.y = 0.36;
+    rig.rotation.z = -0.35;
+    rig.visible = !this.model.pickupCollected;
+    this.world.add(rig);
+    this.pickup = rig;
   }
 
   private buildPlayer(playerImage: HTMLImageElement): void {
@@ -699,6 +725,11 @@ export class UnfinishedSketchScene implements GameScene {
       }
     }
 
+    if (this.pickup && this.field.nailPickup) {
+      this.pickup.visible = !this.model.pickupCollected;
+      const p = this.field.nailPickup;
+      this.pickup.position.y = p.y + p.height / 2 + (this.reducedMotion ? 0 : Math.sin(this.elapsed * 2.6) * 0.12);
+    }
     for (const bubble of this.glueBubbles) {
       bubble.position.y = 0.12 + Math.sin(this.elapsed * 2.4 + Number(bubble.userData.phase)) * 0.09;
     }
@@ -767,7 +798,7 @@ export class UnfinishedSketchScene implements GameScene {
     const viewWidth = this.viewWidthFor(viewHeight);
     const minX = this.field.bounds.x + viewWidth / 2 - 4;
     const maxX = this.field.bounds.x + this.field.bounds.width - viewWidth / 2 + 4;
-    const x = clamp(cx + camera.lookAhead * direction, Math.min(minX, maxX), Math.max(minX, maxX));
+    const x = clamp(cx + (model.section.focus.lookAhead ?? camera.lookAhead) * direction, Math.min(minX, maxX), Math.max(minX, maxX));
     return this.scratchFocus.set(x, centreY, viewHeight);
   }
 
@@ -805,6 +836,7 @@ export class UnfinishedSketchScene implements GameScene {
     this.inkPlatforms.clear();
     this.escalatorSteps.clear(); this.boardingPads.clear(); this.chevrons.length = 0;
     this.glueBubbles.length = 0;
+    this.pickup = null;
     this.world.clear();
   }
 }

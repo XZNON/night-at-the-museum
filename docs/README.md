@@ -4,11 +4,13 @@ Start with the [current handoff](planning/NEXT_SESSION.md), then the [build plan
 
 ## Current work
 
-Latest user direction, 2026-10-06: Slice 3 is complete for the explicitly requested origin/main checkpoint. Next is [S4: Layer 3 wall climb and glue crossing](gameplay/UNFINISHED_SKETCH.md#s4--layer-3-wall-climb-and-glue-crossing), on a separate implementation request. [NEXT_SESSION](planning/NEXT_SESSION.md) has the current handoff; prior review-only/uncommitted statements below are historical.
+Latest, 2026-10-07: **S4A wall climb is revised again (three nails on Layer 3) and at its playable review gate** — [evidence](validation/sketch-s4/s4a/README.md), [play](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-3-walls). The user accepted it and redesigned S4B as a free-placement moving-swing crossing ([plan](gameplay/SKETCH_S4B_PLAN.md)); S4B needs a separate request.
+
+Latest user direction, 2026-10-06: Slice 3 is complete and pushed at `77acf03`. S4 implementation planning is now complete, split into four separately requested/reviewed blocks: wall climb, glue crossing, joined Layer 3 and full-route integration. Read [S4 overview](gameplay/SKETCH_S4_PLAN.md), [S4A plan](gameplay/SKETCH_S4A_PLAN.md), [all four prompts](gameplay/SKETCH_S4_PROMPTS.md) and [NEXT_SESSION](planning/NEXT_SESSION.md). No S4 gameplay is implemented; proposed studies are not working entries. Earlier review-only/uncommitted statements below are historical.
 
 Royal Supper/M3 and its scoped cohesion pass are complete. Unfinished Sketch replaces Sleeping Mountain as adventure two and retains the sun reward. Sketch S1 is complete after user review; S2 (Layer 1, the first escalator and the stacked-world framing) is implemented with the requested mandatory nail-reuse revision and awaiting user playtest. Its four faster pendulum outlines become solid only while pinned, require two FIFO recalls, and show circular nail heads centered on their holes. Preserve all uncommitted work.
 
-Sketch uses two nails, authored targets and FIFO recall; direct nail swinging has explicit E grip and A/D momentum, with no rope. The final world has three stacked layers, moderate camera focus on the active layer with adjacent-layer context, and modern cartoon 2.5D depth. See the [Sketch design and slices](gameplay/UNFINISHED_SKETCH.md) and [art direction](art/ART_DIRECTION.md).
+Sketch uses two nails (three on Layer 3, after a pickup at its start), authored targets and FIFO recall; direct nail swinging has explicit E grip and A/D momentum, with no rope. The final world has three stacked layers, moderate camera focus on the active layer with adjacent-layer context, and modern cartoon 2.5D depth. See the [Sketch design and slices](gameplay/UNFINISHED_SKETCH.md) and [art direction](art/ART_DIRECTION.md).
 
 S3A's reviewed hard challenge is preserved. **S3B is implemented at its playable review gate:** [joined Layers 1/2](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layers-1-2) and [direct Layer 2](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-2) now finish on safe Layer 3 ground after the second ride. Isolated S2 retains its original endpoint. Read [fresh S3B evidence](validation/sketch-s3/s3b/README.md), [the implementation plan](gameplay/SKETCH_S3B_PLAN.md) and [current review handoff](planning/NEXT_SESSION.md). Stop for user review before S4; the complete adventure/ending remain unimplemented. Current work is uncommitted over bd9cab7; earlier S3A/hard-v1 evidence is historical.
 
@@ -31,6 +33,12 @@ S3A's reviewed hard challenge is preserved. **S3B is implemented at its playable
 | [Sketch S2 technical plan](gameplay/SKETCH_S2_PLAN.md) | Layer 1, first escalator and stacked-world framing; implemented, awaiting review |
 | [Sketch S3B implementation plan](gameplay/SKETCH_S3B_PLAN.md) | Implemented S3B scope, state contracts and verification gate |
 | [Sketch S3 technical plan](gameplay/SKETCH_S3_PLAN.md) | S3A/S3B implemented; user review before S4 |
+| [Sketch S4 overview](gameplay/SKETCH_S4_PLAN.md) | Four-block delivery, inspected code, state/data contracts and final gate |
+| [Sketch S4A plan](gameplay/SKETCH_S4A_PLAN.md) | First future implementation: isolated wall climb |
+| [Sketch S4B plan](gameplay/SKETCH_S4B_PLAN.md) | Dry practice and isolated glue crossing after A review |
+| [Sketch S4C plan](gameplay/SKETCH_S4C_PLAN.md) | Joined Layer 3 and grounded section recovery after B review |
+| [Sketch S4D plan](gameplay/SKETCH_S4D_PLAN.md) | Both rides into Layer 3 and final S4 gate after C review |
+| [Sketch S4 prompts](gameplay/SKETCH_S4_PROMPTS.md) | Four paste-ready future requests; do not execute together |
 | [Opening sequence](gameplay/OPENING.md) | Deferred M6 presentation; not the current task |
 
 ## Art and references

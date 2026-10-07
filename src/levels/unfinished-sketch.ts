@@ -69,7 +69,15 @@ export interface SketchTuning {
     arm: number; pumpAccel: number; maxOmega: number; maxArc: number; damping: number; gravity: number;
     reattachCooldown: number; obstructionTolerance: number; momentumSeconds: number;
   };
-  wall: { slideMaxFall: number; kickHorizontal: number; kickVertical: number };
+  wall: {
+    slideMaxFall: number; kickHorizontal: number; kickVertical: number;
+    /** Seconds a kick holds horizontal input toward the far wall (0: none). */
+    kickLock?: number;
+    /** Seconds an early airborne Space is kept and fires as a kick on wall catch (0: none). */
+    kickBuffer?: number;
+    /** Seconds a fresh catch holds still before sliding (0: slides at once). */
+    grip?: number;
+  };
   recoverySeconds: number;
   cueSeconds: number;
 }
@@ -102,6 +110,12 @@ export interface SketchPlayfieldData {
   mechanisms: SketchMechanism[];
   targets: SketchTarget[];
   camera: SketchCamera;
+  /** Field-specific wall feel; absent keeps the shared S1 tuning. */
+  wall?: Partial<SketchTuning['wall']>;
+  /** Field-specific placement reach; absent keeps the shared tuning. */
+  placementReach?: number;
+  /** One collectible extra nail; it raises the budget until the field restarts. */
+  nailPickup?: Rect & { id: string };
 }
 
 export interface SketchBay extends SketchPlayfieldData {
@@ -109,10 +123,10 @@ export interface SketchBay extends SketchPlayfieldData {
 }
 
 /** Development entry values for the save-isolated Sketch scene. */
-export type SketchRouteId = 'layer-1' | 'layer-2' | 'layers-1-2';
+export type SketchRouteId = 'layer-1' | 'layer-2' | 'layers-1-2' | 'layer-3-walls';
 export type SketchStudy = 'mechanics' | SketchRouteId;
 
-export const sketchStudies: readonly SketchStudy[] = ['mechanics', 'layer-1', 'layer-2', 'layers-1-2'];
+export const sketchStudies: readonly SketchStudy[] = ['mechanics', 'layer-1', 'layer-2', 'layers-1-2', 'layer-3-walls'];
 
 export const isSketchStudy = (value: string | null | undefined): value is SketchStudy =>
   !!value && (sketchStudies as readonly string[]).includes(value);
@@ -163,11 +177,11 @@ export interface SketchRouteSection {
   /** A fall here recovers to this section, never below the whole world. */
   deathY: number;
   /** Active-layer focus band, in world units. */
-  focus: { viewHeight: number; centreY: { min: number; max: number } };
+  focus: { viewHeight: number; centreY: { min: number; max: number }; lookAhead?: number };
   travelDirection?: 1 | -1;
 }
 
-export type SketchRouteLegId = 'layer-1' | 'layer-2';
+export type SketchRouteLegId = 'layer-1' | 'layer-2' | 'l3-walls';
 
 export interface SketchRouteLeg {
   id: SketchRouteLegId;

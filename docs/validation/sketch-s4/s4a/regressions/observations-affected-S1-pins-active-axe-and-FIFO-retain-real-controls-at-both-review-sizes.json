@@ -1,0 +1,702 @@
+{
+  "title": "affected S1 pins, active axe and FIFO retain real controls at both review sizes",
+  "status": "passed",
+  "records": [
+    {
+      "placement": "pins-freeze-a",
+      "width": 1280,
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=mechanics&bay=pins",
+      "tick": 103,
+      "body": {
+        "x": 9.931666666666665,
+        "y": 0,
+        "width": 0.65,
+        "height": 1.25,
+        "vx": 5.633333333333333,
+        "vy": 0,
+        "grounded": true
+      },
+      "target": {
+        "id": "pins-freeze-a",
+        "kind": "freeze-platform",
+        "label": "Freeze socket A",
+        "x": 8,
+        "y": 4.402455948909477,
+        "width": 1.1,
+        "height": 0.5,
+        "occupiedBy": null,
+        "oldest": false,
+        "distance": 4.400195210487374,
+        "reason": "",
+        "screen": {
+          "x": 415.9319749755872,
+          "y": 293.88211445234515,
+          "visible": true
+        }
+      }
+    },
+    {
+      "placement": "pins-freeze-b",
+      "width": 1280,
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=mechanics&bay=pins",
+      "tick": 111,
+      "body": {
+        "x": 10.112777777777776,
+        "y": 0,
+        "width": 0.65,
+        "height": 1.25,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true
+      },
+      "target": {
+        "id": "pins-freeze-b",
+        "kind": "freeze-platform",
+        "label": "Freeze socket B",
+        "x": 13.5,
+        "y": 5.216092395335818,
+        "width": 1.1,
+        "height": 0.5,
+        "occupiedBy": null,
+        "oldest": false,
+        "distance": 5.5186351864190115,
+        "reason": "",
+        "screen": {
+          "x": 648.351653541806,
+          "y": 254.82756502388077,
+          "visible": true
+        }
+      }
+    },
+    {
+      "label": "s1-pins-regression",
+      "width": 1280,
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=mechanics&bay=pins",
+      "state": {
+        "scene": "unfinished-sketch",
+        "transitioning": false,
+        "paused": false,
+        "body": {
+          "x": 10.112777777777776,
+          "y": 0,
+          "width": 0.65,
+          "height": 1.25,
+          "vx": 0,
+          "vy": 0,
+          "grounded": true
+        },
+        "museum": null,
+        "session": {
+          "artworkId": "royal-supper",
+          "checkpointId": "basket-start",
+          "fork": "upright",
+          "forkElapsed": 0,
+          "grapeElapsed": 0,
+          "candleElapsed": 0,
+          "dinerElapsed": 0,
+          "grapesStarted": false,
+          "candlesStarted": false,
+          "dinerStarted": false
+        },
+        "completed": false,
+        "campaign": {
+          "collectedPieceIds": [],
+          "restoredPieceIds": []
+        },
+        "updateCount": 122,
+        "renderCount": 293,
+        "sketch": {
+          "mode": "bay",
+          "field": "pins",
+          "bay": "pins",
+          "study": "mechanics",
+          "entryLeg": null,
+          "transitId": null,
+          "escalators": [],
+          "leg": null,
+          "stage": null,
+          "section": null,
+          "transit": null,
+          "boarding": null,
+          "camera": {
+            "x": 13.738973210939443,
+            "y": 3.0249999999999995,
+            "width": 26.666666666666664,
+            "height": 15
+          },
+          "nails": 2,
+          "available": 0,
+          "budget": 2,
+          "pickup": false,
+          "queue": [
+            {
+              "nailId": "nail-1-0",
+              "targetId": "pins-freeze-a",
+              "sequence": 0
+            },
+            {
+              "nailId": "nail-2-1",
+              "targetId": "pins-freeze-b",
+              "sequence": 1
+            }
+          ],
+          "oldest": "pins-freeze-a",
+          "motion": {
+            "state": "normal",
+            "wall": "",
+            "wallTransfer": true,
+            "swingTarget": "",
+            "swingAngle": 0
+          },
+          "completed": false,
+          "elapsed": 2.033333333333331,
+          "recovering": false,
+          "targets": [
+            {
+              "id": "pins-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Freeze socket A",
+              "x": 8,
+              "y": 4.4329371405922675,
+              "width": 1.1,
+              "height": 0.5,
+              "occupiedBy": "nail-1-0",
+              "oldest": true,
+              "distance": 4.5214097094301415,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 364.52928587490675,
+                "y": 292.4190172515711,
+                "visible": true
+              }
+            },
+            {
+              "id": "pins-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Freeze socket B",
+              "x": 13.5,
+              "y": 5.229697006462027,
+              "width": 1.1,
+              "height": 0.5,
+              "occupiedBy": "nail-2-1",
+              "oldest": false,
+              "distance": 5.529958359661668,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 628.5292858749067,
+                "y": 254.17454368982268,
+                "visible": true
+              }
+            },
+            {
+              "id": "pins-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Freeze socket C",
+              "x": 19,
+              "y": 4.898766581279117,
+              "width": 1.1,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 9.569573144815514,
+              "reason": "Both nails are placed. Press Q.",
+              "screen": {
+                "x": 892.5292858749067,
+                "y": 270.0592040986024,
+                "visible": true
+              }
+            },
+            {
+              "id": "pins-foothold",
+              "kind": "foothold",
+              "label": "Foothold site",
+              "x": 4,
+              "y": 5.2,
+              "width": 1.9,
+              "height": 0.35,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 7.897822973202763,
+              "reason": "Both nails are placed. Press Q.",
+              "screen": {
+                "x": 172.52928587490663,
+                "y": 255.6,
+                "visible": true
+              }
+            },
+            {
+              "id": "pins-moving",
+              "kind": "moving-swing",
+              "label": "Moving swing socket",
+              "x": 19.749381861065146,
+              "y": 6.2,
+              "width": 0.8,
+              "height": 0.8,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 10.85295331252715,
+              "reason": "Both nails are placed. Press Q.",
+              "screen": {
+                "x": 928.4996152060337,
+                "y": 207.59999999999997,
+                "visible": true
+              }
+            }
+          ],
+          "boards": [
+            {
+              "id": "pins-board-a",
+              "x": 8,
+              "left": 6.3,
+              "right": 9.7,
+              "top": 4.1829371405922675,
+              "bottom": 3.6829371405922675,
+              "pinned": true
+            },
+            {
+              "id": "pins-board-b",
+              "x": 13.5,
+              "left": 11.8,
+              "right": 15.2,
+              "top": 4.979697006462027,
+              "bottom": 4.479697006462027,
+              "pinned": true
+            },
+            {
+              "id": "pins-board-c",
+              "x": 19,
+              "left": 17.3,
+              "right": 20.7,
+              "top": 4.648766581279117,
+              "bottom": 4.148766581279117,
+              "pinned": false
+            }
+          ],
+          "axes": [
+            {
+              "id": "pins-axe",
+              "kind": "axe",
+              "x": 30.40079019036603,
+              "y": 10.252079666150019,
+              "angle": 2.9035932101360173,
+              "vx": -2.3591503265478764,
+              "vy": 0.5723236765467021,
+              "width": 3.4,
+              "height": 0.7,
+              "pinned": false,
+              "hazard": true
+            }
+          ],
+          "dangerBounds": [
+            {
+              "x": 28.66619489678771,
+              "y": 9.511155426870747,
+              "width": 3.4691905871566404,
+              "height": 1.4818484785585433
+            }
+          ],
+          "surfaces": [
+            {
+              "id": "pins-ground",
+              "left": -2,
+              "right": 22.5,
+              "top": 0
+            },
+            {
+              "id": "pins-step",
+              "left": 22.5,
+              "right": 25.5,
+              "top": 1.2
+            },
+            {
+              "id": "pins-goal",
+              "left": 25.5,
+              "right": 34.5,
+              "top": 2.4
+            },
+            {
+              "id": "pins-board-a",
+              "left": 6.3,
+              "right": 9.7,
+              "top": 4.1829371405922675
+            },
+            {
+              "id": "pins-board-b",
+              "left": 11.8,
+              "right": 15.200000000000001,
+              "top": 4.979697006462027
+            },
+            {
+              "id": "pins-board-c",
+              "left": 17.3,
+              "right": 20.7,
+              "top": 4.648766581279117
+            }
+          ]
+        },
+        "geometryCount": 52,
+        "canvasCount": 1,
+        "textureCount": 1,
+        "lowQuality": false,
+        "pixelRatio": 1,
+        "audio": {
+          "activated": true,
+          "paused": false,
+          "scene": "royal-supper",
+          "ownedSounds": 11,
+          "playing": true,
+          "volume": 0.7,
+          "playedCues": {}
+        }
+      }
+    },
+    {
+      "placement": "pins-freeze-a",
+      "width": 960,
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=mechanics&bay=pins",
+      "tick": 103,
+      "body": {
+        "x": 10.044999999999998,
+        "y": 0,
+        "width": 0.65,
+        "height": 1.25,
+        "vx": 5.633333333333333,
+        "vy": 0,
+        "grounded": true
+      },
+      "target": {
+        "id": "pins-freeze-a",
+        "kind": "freeze-platform",
+        "label": "Freeze socket A",
+        "x": 8,
+        "y": 4.402455948909477,
+        "width": 1.1,
+        "height": 0.5,
+        "occupiedBy": null,
+        "oldest": false,
+        "distance": 4.459380388120258,
+        "reason": "",
+        "screen": {
+          "x": 307.8944908041495,
+          "y": 220.41158583925883,
+          "visible": true
+        }
+      }
+    },
+    {
+      "placement": "pins-freeze-b",
+      "width": 960,
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=mechanics&bay=pins",
+      "tick": 111,
+      "body": {
+        "x": 10.22611111111111,
+        "y": 0,
+        "width": 0.65,
+        "height": 1.25,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true
+      },
+      "target": {
+        "id": "pins-freeze-b",
+        "kind": "freeze-platform",
+        "label": "Freeze socket B",
+        "x": 13.5,
+        "y": 5.216092395335818,
+        "width": 1.1,
+        "height": 0.5,
+        "occupiedBy": null,
+        "oldest": false,
+        "distance": 5.456562568277096,
+        "reason": "",
+        "screen": {
+          "x": 481.2969546244554,
+          "y": 191.12067376791055,
+          "visible": true
+        }
+      }
+    },
+    {
+      "label": "s1-pins-regression",
+      "width": 960,
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=mechanics&bay=pins",
+      "state": {
+        "scene": "unfinished-sketch",
+        "transitioning": false,
+        "paused": false,
+        "body": {
+          "x": 10.22611111111111,
+          "y": 0,
+          "width": 0.65,
+          "height": 1.25,
+          "vx": 0,
+          "vy": 0,
+          "grounded": true
+        },
+        "museum": null,
+        "session": {
+          "artworkId": "royal-supper",
+          "checkpointId": "basket-start",
+          "fork": "upright",
+          "forkElapsed": 0,
+          "grapeElapsed": 0,
+          "candleElapsed": 0,
+          "dinerElapsed": 0,
+          "grapesStarted": false,
+          "candlesStarted": false,
+          "dinerStarted": false
+        },
+        "completed": false,
+        "campaign": {
+          "collectedPieceIds": [],
+          "restoredPieceIds": []
+        },
+        "updateCount": 122,
+        "renderCount": 292,
+        "sketch": {
+          "mode": "bay",
+          "field": "pins",
+          "bay": "pins",
+          "study": "mechanics",
+          "entryLeg": null,
+          "transitId": null,
+          "escalators": [],
+          "leg": null,
+          "stage": null,
+          "section": null,
+          "transit": null,
+          "boarding": null,
+          "camera": {
+            "x": 13.84409453810843,
+            "y": 3.025,
+            "width": 26.666666666666664,
+            "height": 15
+          },
+          "nails": 2,
+          "available": 0,
+          "budget": 2,
+          "pickup": false,
+          "queue": [
+            {
+              "nailId": "nail-1-0",
+              "targetId": "pins-freeze-a",
+              "sequence": 0
+            },
+            {
+              "nailId": "nail-2-1",
+              "targetId": "pins-freeze-b",
+              "sequence": 1
+            }
+          ],
+          "oldest": "pins-freeze-a",
+          "motion": {
+            "state": "normal",
+            "wall": "",
+            "wallTransfer": true,
+            "swingTarget": "",
+            "swingAngle": 0
+          },
+          "completed": false,
+          "elapsed": 2.033333333333331,
+          "recovering": false,
+          "targets": [
+            {
+              "id": "pins-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Freeze socket A",
+              "x": 8,
+              "y": 4.4329371405922675,
+              "width": 1.1,
+              "height": 0.5,
+              "occupiedBy": "nail-1-0",
+              "oldest": true,
+              "distance": 4.583508827081777,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 269.61259662809647,
+                "y": 219.31426293867838,
+                "visible": true
+              }
+            },
+            {
+              "id": "pins-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Freeze socket B",
+              "x": 13.5,
+              "y": 5.243025411669522,
+              "width": 1.1,
+              "height": 0.5,
+              "occupiedBy": "nail-2-1",
+              "oldest": false,
+              "distance": 5.479243048253821,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 467.61259662809647,
+                "y": 190.1510851798972,
+                "visible": true
+              }
+            },
+            {
+              "id": "pins-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Freeze socket C",
+              "x": 19,
+              "y": 4.898766581279117,
+              "width": 1.1,
+              "height": 0.5,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 9.46830524687752,
+              "reason": "Both nails are placed. Press Q.",
+              "screen": {
+                "x": 665.6125966280965,
+                "y": 202.5444030739518,
+                "visible": true
+              }
+            },
+            {
+              "id": "pins-foothold",
+              "kind": "foothold",
+              "label": "Foothold site",
+              "x": 4,
+              "y": 5.2,
+              "width": 1.9,
+              "height": 0.35,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 7.9904744408654125,
+              "reason": "Both nails are placed. Press Q.",
+              "screen": {
+                "x": 125.61259662809647,
+                "y": 191.7,
+                "visible": true
+              }
+            },
+            {
+              "id": "pins-moving",
+              "kind": "moving-swing",
+              "label": "Moving swing socket",
+              "x": 19.749381861065146,
+              "y": 6.2,
+              "width": 0.8,
+              "height": 0.8,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 10.755873269496066,
+              "reason": "Both nails are placed. Press Q.",
+              "screen": {
+                "x": 692.5903436264417,
+                "y": 155.7,
+                "visible": true
+              }
+            }
+          ],
+          "boards": [
+            {
+              "id": "pins-board-a",
+              "x": 8,
+              "left": 6.3,
+              "right": 9.7,
+              "top": 4.1829371405922675,
+              "bottom": 3.6829371405922675,
+              "pinned": true
+            },
+            {
+              "id": "pins-board-b",
+              "x": 13.5,
+              "left": 11.8,
+              "right": 15.2,
+              "top": 4.993025411669522,
+              "bottom": 4.493025411669522,
+              "pinned": true
+            },
+            {
+              "id": "pins-board-c",
+              "x": 19,
+              "left": 17.3,
+              "right": 20.7,
+              "top": 4.648766581279117,
+              "bottom": 4.148766581279117,
+              "pinned": false
+            }
+          ],
+          "axes": [
+            {
+              "id": "pins-axe",
+              "kind": "axe",
+              "x": 30.40079019036603,
+              "y": 10.252079666150019,
+              "angle": 2.9035932101360173,
+              "vx": -2.3591503265478764,
+              "vy": 0.5723236765467021,
+              "width": 3.4,
+              "height": 0.7,
+              "pinned": false,
+              "hazard": true
+            }
+          ],
+          "dangerBounds": [
+            {
+              "x": 28.66619489678771,
+              "y": 9.511155426870747,
+              "width": 3.4691905871566404,
+              "height": 1.4818484785585433
+            }
+          ],
+          "surfaces": [
+            {
+              "id": "pins-ground",
+              "left": -2,
+              "right": 22.5,
+              "top": 0
+            },
+            {
+              "id": "pins-step",
+              "left": 22.5,
+              "right": 25.5,
+              "top": 1.2
+            },
+            {
+              "id": "pins-goal",
+              "left": 25.5,
+              "right": 34.5,
+              "top": 2.4
+            },
+            {
+              "id": "pins-board-a",
+              "left": 6.3,
+              "right": 9.7,
+              "top": 4.1829371405922675
+            },
+            {
+              "id": "pins-board-b",
+              "left": 11.8,
+              "right": 15.200000000000001,
+              "top": 4.993025411669522
+            },
+            {
+              "id": "pins-board-c",
+              "left": 17.3,
+              "right": 20.7,
+              "top": 4.648766581279117
+            }
+          ]
+        },
+        "geometryCount": 52,
+        "canvasCount": 1,
+        "textureCount": 1,
+        "lowQuality": false,
+        "pixelRatio": 1,
+        "audio": {
+          "activated": true,
+          "paused": false,
+          "scene": "royal-supper",
+          "ownedSounds": 11,
+          "playing": true,
+          "volume": 0.7,
+          "playedCues": {}
+        }
+      }
+    }
+  ]
+}

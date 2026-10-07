@@ -7,7 +7,7 @@ import { SketchMovement } from './sketch-movement';
 import type { GripSite, SketchMoveHud, SketchWorld } from './sketch-movement';
 import type {
   SketchBay, SketchBayId, SketchMechanism, SketchPlayfieldData, SketchRoute, SketchRouteSection,
-  SketchTarget, SketchTuning, TargetKind, SketchRouteLegId,
+  SketchTarget, SketchTuning, TargetKind, SketchRouteLegId, SketchRouteId,
 } from '../levels/unfinished-sketch';
 import { sketchMovement } from '../levels/unfinished-sketch';
 
@@ -63,6 +63,7 @@ export const createSketchSession = (bayId: SketchBayId): SketchSession =>
 export type SketchRouteStage = 'traversal' | 'exit' | 'transit' | 'arrival';
 
 export interface SketchRouteSession {
+  routeId?: SketchRouteId;
   entryLegId: SketchRouteLegId;
   legId: SketchRouteLegId;
   stage: SketchRouteStage;
@@ -109,12 +110,20 @@ export abstract class SketchPlayfield {
 
   constructor(readonly field: SketchPlayfieldData, protected readonly tuning: SketchTuning) {
     this.controller = new CharacterController(sketchMovement, field.spawn.x, field.spawn.y);
-    this.movement = new SketchMovement(this.controller, tuning);
+    this.movement = new SketchMovement(this.controller, field.wall ? { ...tuning, wall: { ...tuning.wall, ...field.wall } } : tuning);
     this.notify(field.hint);
   }
 
   // --- ledger -------------------------------------------------------------
-  get availableNails(): number { return Math.max(0, this.tuning.nailBudget - this.placements.length); }
+  get availableNails(): number { return Math.max(0, this.nailBudget - this.placements.length); }
+  /** True once this field's extra nail has been picked up (until it restarts). */
+  pickupCollected = false;
+  /** 'Both nails' / 'All three nails' for the current budget. */
+  protected get allNailsText(): string { return this.nailBudget === 2 ? 'Both nails' : `All ${this.nailBudget} nails`; }
+  /** Leg/bay reset wording for the base budget. */
+  protected get resetNailsText(): string {
+    return this.field.nailPickup ? 'Two nails; pick up the third at the start.' : 'Two nails available.';
+  }
   get oldestPlacement(): NailPlacement | null { return this.placements[0] ?? null; }
   get placedCount(): number { return this.placements.length; }
   isOccupied(targetId: string): boolean { return this.placements.some(p => p.targetId === targetId); }
@@ -131,6 +140,7 @@ export abstract class SketchPlayfield {
 
   protected resetLedger(): void {
     this.placements = []; this.pinnedAt.clear(); this.phaseOffsets.clear(); this.sequence = 0;
+    this.pickupCollected = false;
   }
 
   // --- authored geometry --------------------------------------------------
@@ -209,8 +219,8 @@ export abstract class SketchPlayfield {
       let reason = '';
       if (!this.targetEligible(t.id)) reason = 'Another layer.';
       else if (occupiedBy) reason = 'A nail is already here.';
-      else if (this.availableNails <= 0) reason = 'Both nails are placed. Press Q.';
-      else if (distance > this.tuning.placementReach) reason = 'Out of reach.';
+      else if (this.availableNails <= 0) reason = `${this.allNailsText} are placed. Press Q.`;
+      else if (distance > this.placementReach) reason = 'Out of reach.';
       return {
         id: t.id, kind: t.kind, label: t.label, x: position.x, y: position.y,
         width: t.size.width, height: t.size.height,
@@ -303,8 +313,8 @@ export abstract class SketchPlayfield {
   get hazards(): readonly Rect[] { return this.hazardsCache; }
   get walls(): readonly Collider[] { return this.wallsCache; }
   get grips(): readonly GripSite[] { return this.gripsCache; }
-  get nailBudget(): number { return this.tuning.nailBudget; }
-  get placementReach(): number { return this.tuning.placementReach; }
+  get nailBudget(): number { return this.tuning.nailBudget + (this.pickupCollected ? 1 : 0); }
+  get placementReach(): number { return this.field.placementReach ?? this.tuning.placementReach; }
   get targetHitPixels(): number { return this.tuning.targetHitPixels; }
   /** Seconds of authored mechanism time; deterministic on every retry. */
   get routeTime(): number { return this.elapsed; }
@@ -342,6 +352,11 @@ export abstract class SketchPlayfield {
     })) {
       this.recover(this.field.hazards.length ? 'Glue! Quick retry.' : 'Caught by the axe. Watch its sweep.'); return;
     }
+    const pickup = this.field.nailPickup;
+    if (pickup && !this.pickupCollected && overlaps(b, pickup)) {
+      this.pickupCollected = true;
+      this.notify(`Third nail picked up. ${this.nailBudget} nails now; Q still recalls the oldest.`);
+    }
     this.afterStep();
   }
 
@@ -365,7 +380,7 @@ export abstract class SketchPlayfield {
     const t = this.target(targetId);
     if (!t) { this.notify('That is not a marked socket.'); return false; }
     if (this.isOccupied(targetId)) { this.notify(`${t.label} already holds a nail.`); return false; }
-    if (this.availableNails <= 0) { this.notify('Both nails are placed. Press Q to recall the oldest.'); return false; }
+    if (this.availableNails <= 0) { this.notify(`${this.allNailsText} are placed. Press Q to recall the oldest.`); return false; }
     const view = this.targetViews().find(v => v.id === targetId)!;
     if (view.reason) { this.notify(`${t.label}: ${view.reason.toLowerCase()}`); return false; }
     const nailId = `nail-${this.placements.length + 1}-${this.sequence}`;
@@ -374,7 +389,7 @@ export abstract class SketchPlayfield {
     if (m.freezable) {
       // Freezing captures the exact transform and motion phase for recall.
       this.pinnedAt.set(m.id, this.mechanismTime(m));
-      this.notify(m.solidWhenPinned ? `${t.label} inked solid. Safe to land while pinned.`
+      this.notify(m.solidWhenPinned && m.climbable ? `${t.label} inked solid. Slide its side; Space kicks away.` : m.solidWhenPinned ? `${t.label} inked solid. Safe to land while pinned.`
         : `${t.label} pinned. It stays exactly there.`);
     } else if (t.kind === 'moving-swing') {
       this.notify(`${t.label} pinned. The mount carries it; it never freezes.`);
@@ -416,7 +431,7 @@ export abstract class SketchPlayfield {
     const nearest = this.nearestValidTarget();
     return {
       bay: id, bayName: name, hint, goal,
-      nails: `${this.placements.length}/${this.tuning.nailBudget} placed · ${this.availableNails} available`,
+      nails: `${this.placements.length}/${this.nailBudget} placed · ${this.availableNails} available`,
       oldest: oldestTarget ? `Q recalls: ${oldestTarget.label}` : 'Q recalls: nothing yet',
       nearest: nearest ? `Click target: ${nearest.label} (${nearest.distance.toFixed(1)}u)` : 'No target in reach',
       cue: this.cueRemaining > 0 ? this.cue : '',
@@ -498,7 +513,7 @@ export class SketchRouteModel extends SketchPlayfield {
   // --- route session (memory only, never a campaign save) -----------------
   get session(): SketchRouteSession {
     return {
-      entryLegId: this.route.entryLegId, legId: this.legId, stage: this.stage, elapsed: this.elapsed, sequence: this.sequence,
+      routeId: this.route.id, entryLegId: this.route.entryLegId, legId: this.legId, stage: this.stage, elapsed: this.elapsed, sequence: this.sequence,
       queue: this.queue.map(p => ({ ...p })), frozen: this.frozenPhases,
     };
   }
@@ -509,6 +524,10 @@ export class SketchRouteModel extends SketchPlayfield {
    * the transit started from, so nobody re-enters in midair.
    */
   restoreSession(session: SketchRouteSession): void {
+    if ((session.routeId !== undefined && session.routeId !== this.route.id) ||
+      (this.route.id === 'layer-3-walls' && (session.routeId !== this.route.id ||
+        !['traversal', 'exit'].includes(session.stage) || !Number.isFinite(session.elapsed) ||
+        session.elapsed < 0 || !Number.isFinite(session.sequence)))) { this.restartAdventure(); return; }
     // S3A traversal re-entry is a deterministic entrance retry. Preserve the
     // reviewed S2 snapshot behavior while rejecting cross-study ownership.
     let reachable = this.route.entryLegId;
@@ -534,7 +553,7 @@ export class SketchRouteModel extends SketchPlayfield {
           typeof p.nailId !== 'string' || !p.nailId || !Number.isFinite(p.sequence) ||
           !Number.isFinite(session.frozen?.[this.target(p.targetId)!.mechanismId])) return false;
         targets.add(p.targetId); nails.add(p.nailId); return true;
-      }).slice(0, this.tuning.nailBudget).map(p => ({ ...p }));
+      }).slice(0, this.nailBudget).map(p => ({ ...p }));
       this.sequence = Math.max(0, Number.isFinite(session.sequence) ? session.sequence : 0,
         ...this.placements.map(p => p.sequence + 1));
       this.elapsed = Number.isFinite(session.elapsed) && session.elapsed >= 0 ? session.elapsed : 0;
@@ -582,8 +601,9 @@ export class SketchRouteModel extends SketchPlayfield {
     this.elapsed = 0;
     this.transitElapsed = 0;
     this.recoveryRemaining = 0; this.completed = false; this.stage = 'traversal';
+    if (this.route.id === 'layer-3-walls') this.move = { state: 'normal', wall: '', wallTransfer: true, swingTarget: '', swingAngle: 0 };
     this.clearCommandQueue();
-    this.notify(`Layer ${this.section.layer} reset. Two nails available.`);
+    this.notify(`Layer ${this.section.layer} reset. ${this.resetNailsText}`);
   }
 
   /** Restart adventure: back to the study entrance with no route completion kept. */
@@ -597,6 +617,7 @@ export class SketchRouteModel extends SketchPlayfield {
   private enterExitCheckpoint(): void {
     this.stage = 'exit';
     this.movement.reset();
+    if (this.route.id === 'layer-3-walls') this.move = { state: 'normal', wall: '', wallTransfer: true, swingTarget: '', swingAngle: 0 };
     this.resetLedger();
     this.clearCommandQueue();
     this.transitElapsed = 0;
@@ -681,7 +702,7 @@ export class SketchRouteModel extends SketchPlayfield {
       Math.abs(b.y - this.leg.exitBounds.y) < 0.00001 && overlaps(b, this.leg.exitBounds)) {
       this.enterExitCheckpoint();
       this.notify(this.leg.escalator ? `Layer ${this.section.layer} clear. Safe checkpoint reached — walk onto the escalator and press E.` :
-        'Layer 2 clear. S3A endpoint reached on fixed ground.');
+        this.route.id === 'layer-3-walls' ? 'S4A endpoint. Fixed post-climb ground reached.' : 'Layer 2 clear. S3A endpoint reached on fixed ground.');
     }
     if (!this.completed && this.stage === 'arrival' && overlaps(this.controller.body, this.route.goalBounds)) {
       this.completed = true;
@@ -718,7 +739,8 @@ export class SketchRouteModel extends SketchPlayfield {
   protected override onFall(): void {
     if (this.stage === 'arrival') { this.recover('Off the landing. Back to the top of the escalator…'); return; }
     if (this.stage === 'exit') { this.recover('Back to the safe exit checkpoint…'); return; }
-    this.recover(`Nothing under you. Layer ${this.section.layer} restarts with two nails…`);
+    this.recover(this.field.nailPickup ? `Nothing under you. Layer ${this.section.layer} restarts; pick up the third nail again…`
+      : `Nothing under you. Layer ${this.section.layer} restarts with two nails…`);
   }
 
   hud(): SketchHud {
@@ -731,12 +753,12 @@ export class SketchRouteModel extends SketchPlayfield {
       : this.stage === 'traversal' ? `${this.legId} start` : `${this.legId} clear`;
     return {
       ...hud,
-      motion: this.route.id === 'layer-1' ? hud.motion : this.inTransit ? 'Riding escalator'
+      motion: this.route.id === 'layer-1' || (this.route.id === 'layer-3-walls' && this.move.state !== 'normal') ? hud.motion : this.inTransit ? 'Riding escalator'
         : this.controller.body.grounded ? 'Grounded' : 'In the air',
       layer: `${this.section.layer} / 3 · ${this.section.name}`,
       checkpoint: `Checkpoint / ${checkpoint}`,
       prompt: this.boardingReady() ? 'Press E to board the escalator' : '',
-      endpoint: this.completed ? (this.section.layer === 3 ? 'S3 endpoint reached · Safe Layer 3 ground · Stop for review' : this.leg.escalator ? 'Slice 2 endpoint reached · Layer 2 content follows in S3' :
+      endpoint: this.completed ? (this.route.id === 'layer-3-walls' ? 'S4A endpoint reached · Wall climb clear · Stop for review' : this.section.layer === 3 ? 'S3 endpoint reached · Safe Layer 3 ground · Stop for review' : this.leg.escalator ? 'Slice 2 endpoint reached · Layer 2 content follows in S3' :
         'S3A endpoint reached · Layer 2 clear') : '',
     };
   }

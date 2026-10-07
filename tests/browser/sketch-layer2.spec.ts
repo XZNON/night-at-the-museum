@@ -5,7 +5,7 @@ import { observe, waitReachable, traverseLayerOne, hopRight } from './sketch-lay
 
 test.use({ headless: false });
 
-const DIR = 'docs/validation/sketch-s3/s3b';
+const DIR = process.env.SKETCH_EVIDENCE_DIR ?? 'docs/validation/sketch-s3/s3b';
 const URL = 'http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-2';
 const SENTINEL = 's3a-save-sentinel-unchanged';
 const measurements: unknown[] = [];
@@ -145,7 +145,8 @@ async function reenter(page: Page) {
     const s = (window as unknown as { __curatorDebug: () => { geometryCount: number; textureCount: number } }).__curatorDebug();
     return { geometryCount: s.geometryCount, textureCount: s.textureCount };
   });
-  await page.keyboard.press('Escape'); await page.locator('[data-action="leave"]').click();
+  if (!(await state(page)).paused) await page.keyboard.press('Escape');
+  await page.locator('[data-action="leave"]').click({ timeout: 8000 });
   await page.locator('[data-action="start"]').click(); await expect(page.locator('#sketch-hud')).toBeVisible();
   await page.waitForTimeout(300);
   expect((await state(page)).canvasCount).toBe(1);

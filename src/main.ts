@@ -12,6 +12,7 @@ import { isSketchBayId, isSketchStudy, sketchBayIds, sketchBays, sketchTuning } 
 import type { SketchBayId, SketchStudy } from './levels/unfinished-sketch';
 import { sketchRoute } from './levels/unfinished-sketch-route';
 import { sketchJoinedRoute, sketchLayerTwo } from './levels/unfinished-sketch-layer2';
+import { sketchLayerThreeWalls } from './levels/unfinished-sketch-layer3';
 import { museum, type MuseumPose } from './levels/museum';
 import { RoyalSupperScene } from './scenes/royal-supper';
 import { UnfinishedSketchScene } from './scenes/unfinished-sketch';
@@ -216,7 +217,7 @@ async function startSketch(restart: boolean, bayId?: SketchBayId): Promise<void>
       // cartoon placeholders; no new asset is generated or loaded here.
       const art = await loadArtSet(['player.idle']);
       const mode: SketchSceneMode = sketchMode !== 'mechanics'
-        ? { kind: 'route', field: sketchMode === 'layers-1-2' ? sketchJoinedRoute : sketchMode === 'layer-2' ? sketchLayerTwo : sketchRoute,
+        ? { kind: 'route', field: sketchMode === 'layer-3-walls' ? sketchLayerThreeWalls : sketchMode === 'layers-1-2' ? sketchJoinedRoute : sketchMode === 'layer-2' ? sketchLayerTwo : sketchRoute,
           session: restart ? null : routeSessions.get(sketchMode) ?? null }
         : { kind: 'bay', field: sketchBays[sketchBay],
           session: restart ? null : sketchSessions.get(sketchBay) ?? null };
@@ -330,6 +331,7 @@ if (import.meta.env.DEV) {
         boarding: sketch.routeModel?.boardingReady() ?? null,
         camera: sketch.cameraView(),
         nails: sketch.model.placedCount, available: sketch.model.availableNails,
+        budget: sketch.model.nailBudget, pickup: sketch.model.pickupCollected,
         queue: sketch.model.session.queue, oldest: sketch.model.oldestPlacement?.targetId ?? null,
         motion: { ...sketch.model.move },
         completed: sketch.model.completed, elapsed: sketch.model.session.elapsed,
@@ -337,7 +339,7 @@ if (import.meta.env.DEV) {
         targets: sketch.model.targetViews().map(t => ({ ...t, screen: sketch.targetScreen(t.id) })),
         boards: sketch.model.mechanismView()
           .filter(v => v.kind === 'pendulum' || v.kind === 'board')
-          .map(v => ({ id: v.id, x: v.x, left: v.x - v.width / 2, right: v.x + v.width / 2, top: v.y + v.height / 2, pinned: v.pinned })),
+          .map(v => ({ id: v.id, x: v.x, left: v.x - v.width / 2, right: v.x + v.width / 2, top: v.y + v.height / 2, bottom: v.y - v.height / 2, pinned: v.pinned })),
         axes: sketch.model.mechanismView().filter(v => v.kind === 'axe'),
         dangerBounds: sketch.model.hazards.map(h => ({ ...h })),
         surfaces: sketch.model.solids
