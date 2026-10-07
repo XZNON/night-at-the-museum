@@ -735,3 +735,7 @@ User decision: the player becomes a woman art restorer in every world (concept A
 
 The user asked to commit and push the S5A checkpoint: committed `9ce56f9` and pushed to origin/main, without the concurrent art reference pass, which was committed separately afterwards (`8e1d9fb`). The user then changed the reward to an enchanted light held in a torch that the player claims. `route.sun` became `route.light` (claim rect x62..63.4, y54..56), with player texts, code names and a placeholder torch (cup, glowing orb, halo, circling sparkles; emptied on claim). Contracts unchanged. Unit 10/10 (224/224 with `--testTimeout=30000`), build; browser light run 1 0/4 (two stale expectations, two Layer 1 bot misses), run 2 4/4. Committed and pushed on the user's request. Next: user review; S5B decides how the light restores the masterpiece.
 
+### 2026-10-07 — S5B handoff
+
+The user decided the enchanted light acts as the sun in the campaign (stage-2 piece `sun-disc`, unchanged save IDs; it lights up the masterpiece's sky) and that mid-air claims stay. The S5B prompt in SKETCH_S5_PROMPTS and NEXT_SESSION was revised accordingly (light naming, campaign callback, objectives, inventory, flaky-bot and unit-timeout notes); S5C carries a reading note. `32bb7ad` still needed a push after GitHub 500 errors. Next: S5B on its own request.
+

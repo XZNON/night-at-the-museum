@@ -2,6 +2,8 @@
 
 ## Purpose and current state
 
+Next is S5B on its own request (prompt in NEXT_SESSION and SKETCH_S5_PROMPTS). User, 2026-10-07: the enchanted light acts as the sun in the campaign (stage-2 piece `sun-disc`, unchanged save IDs; lights up the masterpiece's sky); mid-air claims stay.
+
 S5A committed/pushed at `9ce56f9` (user, 2026-10-07; the art reference pass was committed separately at `8e1d9fb`). Reward revision (user): the Sketch reward is an enchanted light held in a torch, claimed on the end ledge, not a sun; implemented in `study=adventure`, committed/pushed on request, at review. How the light restores the masterpiece is open for S5B/S5C. See DECISIONS.
 
 S5A implemented at its playable review gate, 2026-10-07: save-isolated `study=adventure` plays the full route; the end ledge is a safe checkpoint and touching the sun (on foot or in the air) takes it once, settles every mechanism and shows a success screen; R/fall/re-entry afterwards stay on the ledge with no second report. The user completed it in their own play. See docs/validation/sketch-s5/s5a/README.md and NEXT_SESSION. Uncommitted over `715770d`; stop for user review; S5B needs its own request. No commit/push, generation, museum/campaign change or sub-agents authorized.

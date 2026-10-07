@@ -4,7 +4,9 @@ Start with the [current handoff](planning/NEXT_SESSION.md), then the [build plan
 
 ## Current work
 
-Latest, 2026-10-07: S5A committed (`9ce56f9`); **the reward is now an enchanted light in a torch** (user revision, at review; [evidence](validation/sketch-s5/s5a/README.md#review-revision-the-enchanted-light)).
+Latest, 2026-10-07: **next is S5B** (Sketch frame in the museum, campaign claim of the light); the enchanted light acts as the sun in the campaign (user). Prompt: [NEXT_SESSION](planning/NEXT_SESSION.md).
+
+Earlier, 2026-10-07: S5A committed (`9ce56f9`); **the reward is now an enchanted light in a torch** (user revision, at review; [evidence](validation/sketch-s5/s5a/README.md#review-revision-the-enchanted-light)).
 
 Earlier, 2026-10-07: **S5A (the sun on the end ledge) is implemented at its playable review gate** ([evidence](validation/sketch-s5/s5a/README.md), [play](http://127.0.0.1:5173/?scene=unfinished-sketch&study=adventure)). Stop for user review; S5B needs its own request.
 
