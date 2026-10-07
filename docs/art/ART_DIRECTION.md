@@ -4,6 +4,15 @@ Accepted by the user on 2026-10-06 after the bread comparison and the recommenda
 
 Later planning update, 2026-10-06: Unfinished Sketch replaces Sleeping Mountain for M4; see docs/gameplay/UNFINISHED_SKETCH.md and current PLAN/NEXT_SESSION. Mountain references in the completed follow-up scope/prompt below are historical. This file does not approve Sketch references, generate new assets or authorize repeating the completed M3 pass.
 
+## Game-wide heroine — user decision 2026-10-07
+
+The user replaced the player character for the whole game with a woman art
+restorer (option A in `asset-sources/references/sketch/player-woman-concepts-v1.png`):
+dark messy bun with a paintbrush, brass goggles, deep-teal smock dress over a
+cream blouse, mustard satchel, dark boots. This supersedes "keep the small teal
+restorer's identity, cream scarf" and "keep existing registered player poses"
+below. Poses, provenance and registration: docs/art/SKETCH_ASSETS.md.
+
 ## Unfinished Sketch — separate selected direction
 
 Further user clarification: modern cartoon 2.5D, with a dimensional animated-world feel rather than flat 2D, pixel art or retro tiles. Side-view gameplay keeps its plane while platform/board thickness, rounded prop volume, layered scenery and soft stylised lighting establish depth. These cues must preserve foreground gameplay readability. Existing illustrated player poses can remain; no new full-3D character, free-depth controller or rendering engine is requested.

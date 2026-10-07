@@ -52,6 +52,8 @@ Generate required Unfinished Sketch assets only after its six-slice placeholder 
 
 Sketch's user-selected direction is fully animated/cartoon for both artifacts and environment/background, with no realism or semi-realism. Use simple designed silhouettes/outlines/shading and stylised drawing marks; do not inherit the completed M3 pass's richer semi-realistic/painterly scenery treatment. New references/palette remain unapproved; preserve approved Supper/masterpiece assets and the matching sun/restoration identity. No generation is authorized in this planning session.
 
+Game-wide heroine (user decision, 2026-10-07): the player art is replaced in every world by a new DreamLayer heroine (reference, three pose edits, four background removals; local registration by scripts/prepare-player-v2.py). Records: manifest `player-v2.*`, docs/art/SKETCH_ASSETS.md. The retired v1 frames stay in asset-sources/production/player-v1-runtime.
+
 ## Asset preparation rules
 
 Accepted visual direction (2026-10-06): stylised, leaning animated. Player/props use clear silhouettes, simplified shading and restrained painted texture; backgrounds retain richer, softer painterly detail. A targeted cohesion follow-up starts with a small actual-camera pilot against the completed M3 set. Preserve sources/reference approvals, revise only demonstrated mismatches, and do not regenerate delivered atlases automatically. Comparison boards are exploratory, not approved runtime replacements. See docs/art/ART_DIRECTION.md for scope, provider boundaries and verification.
