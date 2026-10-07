@@ -2,6 +2,8 @@
 
 ## Purpose and current state
 
+S5B implemented at its playable review gate, 2026-10-07: campaign stage 2 is `unfinished-sketch` (save IDs unchanged; Mountain removed from code/UI); the Sketch frame on the museum's left wall is locked until the pear is restored, then enters the S5A route in campaign mode; claiming the enchanted light collects `sun-disc` once and persists; Return to Museum lands at the frame; re-entry resumes, reload restarts at Layer 1, replay adds nothing. See docs/validation/sketch-s5/s5b/README.md and NEXT_SESSION. Committed and pushed to origin/main on the user's request (2026-10-07). Next: S5C (placement/ending) on its own request (prompt in NEXT_SESSION). Later commits need new authorization; no generation, publishing or sub-agents authorized.
+
 Next is S5B on its own request (prompt in NEXT_SESSION and SKETCH_S5_PROMPTS). User, 2026-10-07: the enchanted light acts as the sun in the campaign (stage-2 piece `sun-disc`, unchanged save IDs; lights up the masterpiece's sky); mid-air claims stay.
 
 S5A committed/pushed at `9ce56f9` (user, 2026-10-07; the art reference pass was committed separately at `8e1d9fb`). Reward revision (user): the Sketch reward is an enchanted light held in a torch, claimed on the end ledge, not a sun; implemented in `study=adventure`, committed/pushed on request, at review. How the light restores the masterpiece is open for S5B/S5C. See DECISIONS.

@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "duration": 19765,
+  "events": [
+    {
+      "event": "production new",
+      "objective": "Inspect the masterpiece · Find its missing pear in Royal Supper",
+      "inventory": "Inventory · Empty",
+      "prompt": "Restore the golden pear first"
+    },
+    {
+      "event": "production pear-owned",
+      "objective": "Bring the golden pear to the masterpiece",
+      "inventory": "Inventory · Golden pear",
+      "prompt": "Restore the golden pear first"
+    },
+    {
+      "event": "production pear-restored",
+      "objective": "Claim the enchanted light in the Unfinished Sketch",
+      "inventory": "Inventory · Empty",
+      "prompt": "Click / E — Enter the Unfinished Sketch"
+    },
+    {
+      "event": "production light-owned",
+      "objective": "Bring the light to the masterpiece",
+      "inventory": "Inventory · Enchanted light",
+      "prompt": "Click / E — Enter the Unfinished Sketch"
+    }
+  ],
+  "layerTwo": []
+}

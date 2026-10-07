@@ -18,6 +18,9 @@ export class MuseumScene implements GameScene {
   private readonly cursor = new THREE.Vector2();
   private lastPrompt = '';
   private masterpieceTexture: THREE.Texture | null = null;
+  private sketchMaterial: THREE.MeshBasicMaterial | null = null;
+  private drawSketchPlaque: ((line: string) => void) | null = null;
+  private sketchUnlocked = false;
 
   constructor(private readonly canvas: HTMLCanvasElement, pose: MuseumPose, restored: boolean,
     private readonly enabled: () => boolean, private readonly activate: (id: string) => void,
@@ -43,23 +46,40 @@ export class MuseumScene implements GameScene {
     box(wallThickness, height, depth, width / 2, height / 2, 0, 0x482531, true);
     box(width, 0.15, depth, 0, height, 0, 0x302b2e);
     for (const art of museum.artworks) {
-      box(art.width + 0.28, art.height + 0.28, 0.18, art.x, art.y, art.z - 0.06, 0xad8550);
-      const image = artImages[art.id === 'masterpiece' ? restored ? 'masterpiece.pear-restored' : 'masterpiece.damaged' : 'royal-supper.entrance']!;
+      // Each frame hangs in its own group, turned to face into the room.
+      const frame = new THREE.Group(); frame.position.set(art.x, art.y, art.z); frame.rotation.y = art.facing; this.world.add(frame);
+      frame.add(box(art.width + 0.28, art.height + 0.28, 0.18, 0, 0, -0.06, 0xad8550));
+      const image: HTMLImageElement | HTMLCanvasElement = art.id === 'unfinished-sketch' ? sketchPlaceholder()
+        : artImages[art.id === 'masterpiece' ? restored ? 'masterpiece.pear-restored' : 'masterpiece.damaged' : 'royal-supper.entrance']!;
       const g = new THREE.PlaneGeometry(art.width, Math.min(art.height, art.width * image.height / image.width));
-      const texture = new THREE.Texture(image); texture.needsUpdate = true;
+      const texture = art.id === 'unfinished-sketch' ? new THREE.CanvasTexture(image) : new THREE.Texture(image); texture.needsUpdate = true;
       texture.colorSpace = THREE.SRGBColorSpace;
       if (art.id === 'masterpiece') this.masterpieceTexture = texture;
       const m = new THREE.MeshBasicMaterial({ map: texture });
+      if (art.id === 'unfinished-sketch') this.sketchMaterial = m;
       this.resources.add(g); this.resources.add(m); this.resources.add(texture);
-      const mesh = new THREE.Mesh(g, m); mesh.position.set(art.x, art.y, art.z + 0.04); mesh.userData.artworkId = art.id;
-      this.world.add(mesh); this.solids.push(mesh);
+      const mesh = new THREE.Mesh(g, m); mesh.position.set(0, 0, 0.04); mesh.userData.artworkId = art.id;
+      frame.add(mesh); this.solids.push(mesh);
       const label = document.createElement('canvas'); label.width = 768; label.height = 96;
-      const ctx = label.getContext('2d')!; ctx.fillStyle = '#34252a'; ctx.fillRect(0, 0, 768, 96); ctx.fillStyle = '#e5cd9e'; ctx.textAlign = 'center'; ctx.font = '30px Georgia'; ctx.fillText(art.label, 384, 41); ctx.font = '18px sans-serif'; ctx.fillText(art.id === 'masterpiece' ? 'A garden waiting for its colour' : 'The king has borrowed the golden pear', 384, 74);
       const t = new THREE.CanvasTexture(label); t.colorSpace = THREE.SRGBColorSpace;
       const lg = new THREE.PlaneGeometry(art.width, 0.35); const lm = new THREE.MeshBasicMaterial({ map: t });
       this.resources.add(t); this.resources.add(lg); this.resources.add(lm);
-      const plaque = new THREE.Mesh(lg, lm); plaque.position.set(art.x, art.y - art.height / 2 - 0.4, art.z + 0.06); this.world.add(plaque);
+      const plaque = new THREE.Mesh(lg, lm); plaque.position.set(0, -art.height / 2 - 0.4, 0.06); frame.add(plaque);
+      const drawPlaque = (line: string) => {
+        const ctx = label.getContext('2d')!; ctx.fillStyle = '#34252a'; ctx.fillRect(0, 0, 768, 96); ctx.fillStyle = '#e5cd9e'; ctx.textAlign = 'center';
+        ctx.font = '30px Georgia'; ctx.fillText(art.label, 384, 41); ctx.font = '18px sans-serif'; ctx.fillText(line, 384, 74); t.needsUpdate = true;
+      };
+      if (art.id === 'unfinished-sketch') this.drawSketchPlaque = drawPlaque;
+      else drawPlaque(art.id === 'masterpiece' ? 'A garden waiting for its colour' : 'The king has borrowed the golden pear');
     }
+    this.setSketchOpen(restored);
+  }
+  /** The Sketch frame opens once the pear is restored; while locked it is dimmed and never enters. */
+  get sketchOpen(): boolean { return this.sketchUnlocked; }
+  private setSketchOpen(open: boolean): void {
+    this.sketchUnlocked = open;
+    this.sketchMaterial?.color.set(open ? 0xffffff : 0x5d5862);
+    this.drawSketchPlaque?.(open ? 'An enchanted light waits inside' : 'Restore the golden pear first');
   }
   enter(): void {
     const signal = this.lifetime.signal;
@@ -99,8 +119,10 @@ export class MuseumScene implements GameScene {
     const id = hit?.object.userData.artworkId as string | undefined;
     if (!id) return '';
     if (hit.distance > museum.interactionRange) return 'Walk closer to inspect this frame';
+    // A locked frame never activates anything.
+    if (id === 'unfinished-sketch' && !this.sketchUnlocked) return 'Restore the golden pear first';
     if (activate) this.activate(id);
-    return id === 'masterpiece' ? 'Click / E — Inspect the masterpiece' : 'Click / E — Enter Royal Supper';
+    return id === 'masterpiece' ? 'Click / E — Inspect the masterpiece' : id === 'unfinished-sketch' ? 'Click / E — Enter the Unfinished Sketch' : 'Click / E — Enter Royal Supper';
   }
   suspend(): void {
     if (this.pointerStart && this.canvas.hasPointerCapture(this.pointerStart.id)) this.canvas.releasePointerCapture(this.pointerStart.id);
@@ -110,6 +132,7 @@ export class MuseumScene implements GameScene {
   restoreColour(): void {
     if (!this.masterpieceTexture) return;
     this.masterpieceTexture.image = this.artImages['masterpiece.pear-restored']!; this.masterpieceTexture.needsUpdate = true;
+    this.setSketchOpen(true);
   }
   fixedUpdate(dt: number, input: Controls): void {
     const forward = input.forward ?? 0; const length = Math.max(1, Math.hypot(input.axis, forward));
@@ -128,4 +151,46 @@ export class MuseumScene implements GameScene {
     this.lifetime.abort(); this.suspend();
   }
   dispose(): void { this.exit(); for (const r of this.resources) r.dispose(); this.resources.clear(); this.world.clear(); }
+}
+
+/**
+ * Cartoon placeholder for the Sketch frame, drawn in code until the art task
+ * delivers `sketch.entrance`: a cream page with three pencilled layers, a
+ * pendulum, a lift and a torch holding a pale glow. Faceless, no generated art.
+ */
+function sketchPlaceholder(): HTMLCanvasElement {
+  const c = document.createElement('canvas'); c.width = 840; c.height = 540;
+  const ctx = c.getContext('2d')!;
+  ctx.fillStyle = '#f3e9d2'; ctx.fillRect(0, 0, 840, 540);
+  ctx.strokeStyle = '#d9cbb0'; ctx.lineWidth = 1;
+  for (let y = 30; y < 540; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(840, y); ctx.stroke(); }
+  const ink = '#3b3350';
+  const board = (x: number, y: number, w: number, dashed = false) => {
+    ctx.setLineDash(dashed ? [10, 8] : []); ctx.fillStyle = '#c98f5a';
+    ctx.beginPath(); ctx.roundRect(x, y, w, 22, 8); if (!dashed) ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = ink; ctx.stroke(); ctx.setLineDash([]);
+  };
+  // Three stacked layers, some boards still unfinished outlines.
+  board(40, 470, 330); board(470, 470, 300);
+  board(120, 330, 220); board(420, 330, 160, true); board(640, 330, 130);
+  board(60, 190, 180, true); board(300, 190, 160); board(560, 150, 210);
+  // A pendulum on Layer 1.
+  ctx.lineWidth = 4; ctx.strokeStyle = ink; ctx.beginPath(); ctx.moveTo(420, 380); ctx.lineTo(395, 440); ctx.stroke();
+  ctx.fillStyle = '#e0b16e'; ctx.beginPath(); ctx.roundRect(350, 438, 90, 16, 6); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = '#9c9aa6'; ctx.beginPath(); ctx.arc(420, 380, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  // A lift shaft up the right side.
+  ctx.setLineDash([6, 8]); ctx.lineWidth = 3; ctx.strokeRect(795, 180, 30, 290); ctx.setLineDash([]);
+  ctx.fillStyle = '#7fb6c9'; ctx.fillRect(793, 300, 34, 14); ctx.strokeRect(793, 300, 34, 14);
+  // The torch and its enchanted light on the top ledge.
+  ctx.fillStyle = '#8a5a3a'; ctx.beginPath(); ctx.roundRect(705, 88, 14, 62, 4); ctx.fill(); ctx.lineWidth = 4; ctx.stroke();
+  ctx.fillStyle = '#b07a4c'; ctx.beginPath(); ctx.moveTo(692, 80); ctx.lineTo(732, 80); ctx.lineTo(722, 96); ctx.lineTo(702, 96); ctx.closePath(); ctx.fill(); ctx.stroke();
+  const glow = ctx.createRadialGradient(712, 62, 4, 712, 62, 62);
+  glow.addColorStop(0, 'rgba(255,255,236,1)'); glow.addColorStop(0.35, 'rgba(176,236,255,0.75)'); glow.addColorStop(1, 'rgba(176,236,255,0)');
+  ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(712, 62, 62, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#fffbe6'; ctx.beginPath(); ctx.arc(712, 62, 15, 0, Math.PI * 2); ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#6fb7d6'; ctx.stroke();
+  // Loose pencil scribbles: the picture is not finished.
+  ctx.strokeStyle = '#8b8296'; ctx.lineWidth = 2;
+  for (const [x, y] of [[90, 120], [250, 70], [470, 95], [580, 250]]) {
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.bezierCurveTo(x + 30, y - 20, x + 60, y + 20, x + 90, y); ctx.stroke();
+  }
+  return c;
 }

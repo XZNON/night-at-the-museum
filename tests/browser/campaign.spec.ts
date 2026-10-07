@@ -117,8 +117,7 @@ test('production museum → supper → pear → return → click placement → r
   // Reload during the animation: restoration was saved synchronously.
   await page.reload(); await newMuseum(page, true);
   await expect(page.locator('#inventory')).toHaveText('Inventory · Empty');
-  await expect(page.locator('#objective')).toContainText('wake the sun');
-  await expect(page.locator('#objective')).toContainText('in development');
+  await expect(page.locator('#objective')).toHaveText('Claim the enchanted light in the Unfinished Sketch');
   await inspectFromSpawn(page); await expect(page.locator('#pear-target')).toBeDisabled();
   await page.screenshot({ path: 'test-results/pear-restoration-production.png' });
   await page.keyboard.press('Escape');
@@ -167,7 +166,7 @@ for (const mode of ['drag', 'keyboard'] as const) {
     }
     await expect(page.locator('#placement-message')).toContainText('Colour restored');
     expect((await saved(page)).restoredPieceIds).toEqual(['golden-pear']);
-    await page.reload(); await newMuseum(page, true); await expect(page.locator('#objective')).toContainText('wake the sun');
+    await page.reload(); await newMuseum(page, true); await expect(page.locator('#objective')).toHaveText('Claim the enchanted light in the Unfinished Sketch');
   });
 }
 

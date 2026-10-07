@@ -31,6 +31,8 @@ export class GameUi {
   private sketchHudCache = '';
   private selectedPiece = '';
   private context: 'museum' | 'supper' | 'sketch' = 'supper';
+  /** The Sketch is the campaign's second adventure (S5B), not a dev study. */
+  private sketchCampaign = false;
 
   constructor(root: HTMLElement, private readonly actions: UiActions, private readonly direct: boolean,
     private readonly study: 'supper' | 'sketch' = 'supper', private sketchMode: SketchStudy = 'mechanics') {
@@ -122,6 +124,8 @@ export class GameUi {
   }
 
   private tagLabel(): string {
+    // The campaign never shows study tags, also while it plays the Sketch.
+    if (!this.direct) return 'THE LAST CURATOR';
     const base = this.study !== 'sketch' ? 'ROYAL SUPPER STUDY'
       : this.sketchMode === 'adventure' ? 'UNFINISHED SKETCH / S5A / THE LIGHT'
       : this.sketchMode === 'layers-1-3' ? 'UNFINISHED SKETCH / S4D / LAYERS 1–3'
@@ -150,7 +154,7 @@ export class GameUi {
     document.getElementById('museum-hud')!.hidden = true;
     document.getElementById('sketch-hud')!.hidden = true;
     if (!this.direct) {
-      this.show('menu', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / A restoration study</p><h2>The garden<br><em>before dawn.</em></h2><p class="intro">A quiet museum.<br>A borrowed golden pear.<br>A garden waiting for colour.</p><p class="menu-description">Walk to the frames, enter Royal Supper and bring a missing piece home.</p><button class="primary" data-action="start" aria-label="${remembered ? 'Continue' : 'New Game'}">${remembered ? 'Continue' : 'New Game'} <span>→</span></button>${remembered ? '<button class="quiet" data-action="reset">New Game / reset progress</button>' : ''}<div class="menu-controls"><kbd>WASD</kbd> Walk · Drag to look · Click frame</div><p class="small-note">Royal Supper is playable. The two-artwork campaign is in progress.<br>The sun adventure arrives in a later update.</p>`);
+      this.show('menu', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / A restoration study</p><h2>The garden<br><em>before dawn.</em></h2><p class="intro">A quiet museum.<br>A borrowed golden pear.<br>A garden waiting for colour.</p><p class="menu-description">Walk to the frames, step into the paintings and bring the missing pieces home.</p><button class="primary" data-action="start" aria-label="${remembered ? 'Continue' : 'New Game'}">${remembered ? 'Continue' : 'New Game'} <span>→</span></button>${remembered ? '<button class="quiet" data-action="reset">New Game / reset progress</button>' : ''}<div class="menu-controls"><kbd>WASD</kbd> Walk · Drag to look · Click frame</div><p class="small-note">Royal Supper and the Unfinished Sketch are playable.<br>Placing the enchanted light arrives in a later update.</p>`);
       return;
     }
     if (this.study === 'sketch') {
@@ -263,10 +267,10 @@ export class GameUi {
     this.canvas.setAttribute('aria-label', context === 'museum' ? 'Museum. WASD to walk, drag to look, click or E on a nearby frame, Escape to pause.' : context === 'sketch' ? 'Unfinished Sketch. A/D move or pump, Space jump or release, E grip or board, click pin, Q recalls oldest, R retry, Escape pause.' : 'Royal Supper. A or D to move, Space to jump, E to interact, R for checkpoint, Escape to pause.');
     this.canvas.focus({ preventScroll: true });
   }
-  markSketch(mode: SketchStudy, bayId: SketchBayId): void {
-    this.sketchMode = mode;
+  markSketch(mode: SketchStudy, bayId: SketchBayId, campaign = false): void {
+    this.sketchMode = mode; this.sketchCampaign = campaign;
     document.getElementById('sketch-hud')!.dataset.study = mode;
-    document.getElementById('sketch-eyebrow')!.textContent = mode === 'adventure' ? 'Unfinished Sketch / S5A / The light' : mode === 'layers-1-3' ? 'Unfinished Sketch / S4D / Layers 1–3' : mode === 'layer-3' ? 'Unfinished Sketch / S4C / Joined Layer 3' : mode === 'layer-3-swings' ? 'Unfinished Sketch / S4B / Layer 3 swings' : mode === 'layer-3-walls' ? 'Unfinished Sketch / S4A / Layer 3 walls' : mode === 'layers-1-2' ? 'Unfinished Sketch / S3 / Joined layers' : mode === 'layer-2' ? 'Unfinished Sketch / S3 · Layer 2' : mode === 'layer-1'
+    document.getElementById('sketch-eyebrow')!.textContent = campaign ? 'The Last Curator' : mode === 'adventure' ? 'Unfinished Sketch / S5A / The light' : mode === 'layers-1-3' ? 'Unfinished Sketch / S4D / Layers 1–3' : mode === 'layer-3' ? 'Unfinished Sketch / S4C / Joined Layer 3' : mode === 'layer-3-swings' ? 'Unfinished Sketch / S4B / Layer 3 swings' : mode === 'layer-3-walls' ? 'Unfinished Sketch / S4A / Layer 3 walls' : mode === 'layers-1-2' ? 'Unfinished Sketch / S3 / Joined layers' : mode === 'layer-2' ? 'Unfinished Sketch / S3 · Layer 2' : mode === 'layer-1'
       ? 'The Last Curator · Slice 2 · Layer 1 of the unfinished picture' : 'The Last Curator · Slice 1 mechanics playground';
     document.getElementById('sketch-bays')!.hidden = mode !== 'mechanics';
     const tag = document.querySelector<HTMLElement>('.build-tag');
@@ -302,7 +306,7 @@ export class GameUi {
     this.show('pause', `<p class="eyebrow">A moment between brushstrokes</p><h2 class="compact">Paused.</h2>
       <p class="menu-description">${reason}</p><button class="primary" data-action="resume">Resume <span>→</span></button>
       ${adventure ? `<button class="secondary" data-action="checkpoint">${route ? 'Back to the last safe checkpoint' : sketch ? 'Restart bay' : 'Restart from checkpoint'}</button>
-      <button class="quiet" data-action="replay">${route ? this.sketchMode === 'adventure' ? 'Restart the Sketch' : `Restart ${this.sketchMode === 'layers-1-3' ? 'Layers 1–3' : this.sketchMode === 'layer-3' ? 'Layer 3' : this.sketchMode === 'layer-3-swings' ? 'swing crossing' : this.sketchMode === 'layer-3-walls' ? 'wall climb' : this.sketchMode === 'layers-1-2' ? 'Layers 1 &amp; 2' : this.sketchMode === 'layer-2' ? 'Layer 2' : 'Layer 1'}` : 'Restart adventure'}</button><button class="quiet" data-action="leave">${this.direct ? 'Leave painting' : 'Return to Museum'}</button>` : ''}
+      <button class="quiet" data-action="replay">${route ? this.sketchCampaign ? 'Restart adventure' : this.sketchMode === 'adventure' ? 'Restart the Sketch' : `Restart ${this.sketchMode === 'layers-1-3' ? 'Layers 1–3' : this.sketchMode === 'layer-3' ? 'Layer 3' : this.sketchMode === 'layer-3-swings' ? 'swing crossing' : this.sketchMode === 'layer-3-walls' ? 'wall climb' : this.sketchMode === 'layers-1-2' ? 'Layers 1 &amp; 2' : this.sketchMode === 'layer-2' ? 'Layer 2' : 'Layer 1'}` : 'Restart adventure'}</button><button class="quiet" data-action="leave">${this.direct ? 'Leave painting' : 'Return to Museum'}</button>` : ''}
       <label class="setting"><input type="checkbox" id="low-quality" ${lowQuality ? 'checked' : ''}> Low rendering quality</label>
       <label class="setting">Master volume <input id="master-volume" type="range" min="0" max="1" step="0.05" value="${settings?.masterVolume ?? 0.7}"></label>
       ${!this.direct ? '<button class="quiet" data-action="reset">Reset progress</button>' : ''}
@@ -316,8 +320,18 @@ export class GameUi {
       <button class="primary" data-action="leave" aria-label="${this.direct ? 'Finish blockout' : 'Return to Museum'}">${this.direct ? 'Finish blockout' : 'Return to Museum'} <span>→</span></button>
       <button class="secondary" data-action="resume">Continue exploring</button><p class="small-note">${this.direct ? 'Isolated development session. Campaign saves are untouched.' : 'Your pear is in inventory. Walk to the masterpiece to place it.'}</p>`);
   }
-  /** S5A: the light is claimed. The isolated study has no campaign award to report. */
-  sketchSuccess(): void {
+  /**
+   * The light is claimed. The isolated study (no result) has no campaign award
+   * to report; the campaign reports whether the claim added the piece.
+   */
+  sketchSuccess(result?: CampaignResult): void {
+    if (result) {
+      this.show('success', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">A piece recovered</p><h2 class="compact">The enchanted<br><em>light.</em></h2>
+      <p class="menu-description">${result.changed ? 'The light leaves the torch and is yours. Carry it to the masterpiece: it will light the garden’s dawn sky.' : 'A lovely return visit. The enchanted light is already yours; replay adds no duplicate.'}</p>
+      <button class="primary" data-action="leave" aria-label="Return to Museum">Return to Museum <span>→</span></button>
+      <button class="secondary" data-action="resume">Keep exploring</button><p class="small-note">${result.changed ? 'The enchanted light is in your inventory.' : 'Nothing new was added to your inventory.'}</p>`);
+      return;
+    }
     this.show('success', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">A piece recovered</p><h2 class="compact">The enchanted<br><em>light.</em></h2>
       <p class="menu-description">The light leaves the torch and is yours. The unfinished picture settles.</p>
       <button class="primary" data-action="leave" aria-label="Return">Return <span>→</span></button>
@@ -362,22 +376,30 @@ export class GameUi {
   museumState(state: CampaignState): void {
     const restored = state.restoredPieceIds.includes('golden-pear');
     const owned = state.collectedPieceIds.includes('golden-pear') && !restored;
-    document.getElementById('inventory')!.textContent = owned ? 'Inventory · Golden pear' : 'Inventory · Empty';
-    document.getElementById('objective')!.textContent = restored ? 'Next: wake the sun above the mountain · Adventure in development' : owned ? 'Bring the golden pear to the masterpiece' : 'Inspect the masterpiece · Find its missing pear in Royal Supper';
+    const lightRestored = state.restoredPieceIds.includes('sun-disc');
+    const light = state.collectedPieceIds.includes('sun-disc') && !lightRestored;
+    // Player-facing: the stage-2 piece `sun-disc` is the enchanted light.
+    const items = [owned ? 'Golden pear' : '', light ? '<span class="light-icon" aria-hidden="true"></span>Enchanted light' : ''].filter(Boolean);
+    document.getElementById('inventory')!.innerHTML = `Inventory · ${items.length ? items.join(' · ') : 'Empty'}`;
+    document.getElementById('objective')!.textContent = lightRestored ? 'The Garden Before Dawn is restored'
+      : light ? 'Bring the light to the masterpiece'
+      : restored ? 'Claim the enchanted light in the Unfinished Sketch'
+      : owned ? 'Bring the golden pear to the masterpiece' : 'Inspect the masterpiece · Find its missing pear in Royal Supper';
   }
   museumPrompt(text: string): void { const el = document.getElementById('museum-prompt')!; el.textContent = text; el.hidden = !text; }
   inspection(state: CampaignState, animate = false): void {
     this.selectedPiece = '';
     const restored = state.restoredPieceIds.includes('golden-pear');
     const owned = state.collectedPieceIds.includes('golden-pear') && !restored;
+    const light = state.collectedPieceIds.includes('sun-disc') && !state.restoredPieceIds.includes('sun-disc');
     const pear = museum.targets.pear; const sun = museum.targets.sun;
     const style = (t: typeof pear | typeof sun) => `left:${t.left}%;top:${t.top}%;width:${t.width}%;height:${t.height}%`;
     this.show('inspection', `<p class="eyebrow">Masterpiece / Close inspection</p><h2 class="compact">The Garden Before Dawn</h2>
-      <div class="painting-study ${animate ? 'restoring' : ''}" data-action="invalid-drop"><img alt="A traveller under a pear tree, mountains and the missing sun. ${restored ? 'The tree and garden have regained colour.' : 'The pear and garden are grey.'}" src="${masterpieceImage(restored)}">
+      <div class="painting-study ${animate ? 'restoring' : ''}" data-action="invalid-drop"><img alt="A traveller under a pear tree in a garden before dawn, its sky still waiting for light. ${restored ? 'The tree and garden have regained colour.' : 'The pear and garden are grey.'}" src="${masterpieceImage(restored)}">
       <button id="pear-target" class="restoration-target ${restored ? 'placed' : ''}" data-action="target" data-target="golden-pear" style="${style(pear)}" aria-label="Pear silhouette" ${restored ? 'disabled' : ''}>${restored ? 'Pear restored' : 'Pear'}</button>
       <button class="restoration-target sun-target" data-action="target" data-target="sun-disc" style="${style(sun)}" aria-label="Sun silhouette">Sun</button></div>
-      <div class="inspection-inventory" aria-label="Inventory">${owned ? `<button class="piece-button" data-action="piece" data-piece="golden-pear" draggable="true" aria-pressed="false"><img class="inventory-art" src="${runtimeAssetUrl(runtimeAssets['restoration.pear'].path)}" alt="" draggable="false"> Golden pear</button>` : '<span>Inventory · Empty</span>'}</div>
-      <p id="placement-message" class="placement-message" role="status" aria-live="polite">${restored ? 'Colour restored. Next objective: wake the sun above the mountain. Its adventure is in development.' : owned ? 'Drag the pear onto its silhouette, or select it and activate the target. Tab / Enter also works.' : 'The king has borrowed the golden pear. Look inside Royal Supper.'}</p>
+      <div class="inspection-inventory" aria-label="Inventory">${owned ? `<button class="piece-button" data-action="piece" data-piece="golden-pear" draggable="true" aria-pressed="false"><img class="inventory-art" src="${runtimeAssetUrl(runtimeAssets['restoration.pear'].path)}" alt="" draggable="false"> Golden pear</button>` : light ? '<span class="piece-held"><span class="light-icon" aria-hidden="true"></span>Enchanted light</span>' : '<span>Inventory · Empty</span>'}</div>
+      <p id="placement-message" class="placement-message" role="status" aria-live="polite">${light ? 'The enchanted light will become this garden’s sun. Placing it in the sky arrives in a later update; it stays in your inventory.' : restored ? 'Colour restored. Next: climb the Unfinished Sketch on the left wall and claim its enchanted light.' : owned ? 'Drag the pear onto its silhouette, or select it and activate the target. Tab / Enter also works.' : 'The king has borrowed the golden pear. Look inside Royal Supper.'}</p>
       <button class="secondary" data-action="close-inspection">Back to Museum <kbd>Esc</kbd></button>`);
     this.modal.classList.add('inspection-modal');
     if (animate) this.modal.querySelector<HTMLElement>('[data-action="close-inspection"]')?.focus();

@@ -1,0 +1,106 @@
+
+Running 9 tests using 1 worker
+
+Expanded section reached before-butter 23.3
+Retry stage 1 0 Checkpoint / before butter 
+Expanded section reached after-butter 55.0
+Expanded section reached before-fork 75.5
+Expanded section reached after-fork 81.3
+Expanded section reached after-candle 97.1
+Expanded section reached after-diner 121.5
+Expanded section reached pear 133.0
+Expanded route elapsed seconds / retries 133.678 1
+Expanded section reached before-butter 23.3
+Expanded section reached after-butter 38.9
+Expanded section reached before-fork 59.4
+Expanded section reached after-fork 65.2
+Expanded section reached after-candle 81.1
+Expanded section reached after-diner 105.5
+Expanded section reached pear 117.1
+Expanded route elapsed seconds / retries 117.756 0
+  ✓  1 tests\browser\campaign.spec.ts:79:1 › production museum → supper → pear → return → click placement → reload → replay → confirmed reset (4.4m)
+  ✓  2 tests\browser\campaign.spec.ts:150:3 › production drag placement from reloaded inventory retains wrong drops (3.5s)
+  ✓  3 tests\browser\campaign.spec.ts:150:3 › production keyboard placement from reloaded inventory retains wrong drops (3.4s)
+Expanded section reached before-butter 23.3
+Retry stage 1 0 Checkpoint / before butter 
+Retry stage 1 1 Checkpoint / before butter A slip, not a setback. Returning to checkpoint…
+Retry stage 1 2 Checkpoint / before butter 
+Retry stage 1 3 Checkpoint / before butter 
+  ✘  4 tests\browser\campaign.spec.ts:173:1 › production malformed saves and denied storage stay playable; settings persist (1.9m)
+  ✓  5 tests\browser\campaign.spec.ts:196:1 › museum input contexts, room bounds, drag look and pointer lock release/fallback (18.7s)
+  ✓  6 tests\browser\sketch-adventure.spec.ts:178:3 › S5A full route to the light with terminal retries 1280 (1.1m)
+  ✓  7 tests\browser\sketch-adventure.spec.ts:178:3 › S5A full route to the light with terminal retries 960 (1.1m)
+  ✘  8 tests\browser\sketch-adventure.spec.ts:198:1 › S5A reduced motion: a still light, claimed at the end of the full route (1.7m)
+  ✓  9 tests\browser\sketch-adventure.spec.ts:213:1 › S5A menu, denied storage and production isolation (1.8s)
+
+
+  1) tests\browser\campaign.spec.ts:173:1 › production malformed saves and denied storage stay playable; settings persist 
+
+    Error: Expanded section after-butter
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+       at expanded-route.ts:58
+
+      56 |       }
+      57 |     }
+    > 58 |     expect(reached, `Expanded section ${stage.checkpoint}`).toBe(true);
+         |                                                             ^
+      59 |     console.log('Expanded section reached', stage.checkpoint, ((Date.now() - began) / 1000).toFixed(1));
+      60 |     if (onStage) await onStage(index);
+      61 |     if (index >= endStage) break;
+        at expandedRoute (C:\Users\XZNON\DreamLayer\tests\browser\expanded-route.ts:58:61)
+        at supperRoute (C:\Users\XZNON\DreamLayer\tests\browser\campaign.spec.ts:34:3)
+        at C:\Users\XZNON\DreamLayer\tests\browser\campaign.spec.ts:189:66
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\campaign-production-malfor-390dd-y-playable-settings-persist\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\campaign-production-malfor-390dd-y-playable-settings-persist\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\campaign-production-malfor-390dd-y-playable-settings-persist\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\campaign-production-malfor-390dd-y-playable-settings-persist\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) tests\browser\sketch-adventure.spec.ts:198:1 › S5A reduced motion: a still light, claimed at the end of the full route 
+
+    Error: no crossing in four real-control attempts
+
+       at sketch-layer3-controls.ts:273
+
+      271 |     await page.waitForTimeout(100);
+      272 |   }
+    > 273 |   throw new Error('no crossing in four real-control attempts');
+          |         ^
+      274 | }
+      275 | /** A free nail, then run off the ledge into the glue: the crossing retries, the climb stays clear. */
+      276 | export async function glueFail(page: Page, label: string) {
+        at cross (C:\Users\XZNON\DreamLayer\tests\browser\sketch-layer3-controls.ts:273:9)
+        at C:\Users\XZNON\DreamLayer\tests\browser\sketch-adventure.spec.ts:203:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\sketch-adventure-S5A-reduc-9f2da-t-the-end-of-the-full-route\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\sketch-adventure-S5A-reduc-9f2da-t-the-end-of-the-full-route\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\sketch-adventure-S5A-reduc-9f2da-t-the-end-of-the-full-route\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\sketch-adventure-S5A-reduc-9f2da-t-the-end-of-the-full-route\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    tests\browser\campaign.spec.ts:173:1 › production malformed saves and denied storage stay playable; settings persist 
+    tests\browser\sketch-adventure.spec.ts:198:1 › S5A reduced motion: a still light, claimed at the end of the full route 
+  7 passed (11.5m)

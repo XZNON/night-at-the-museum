@@ -4,6 +4,8 @@
 
 > **Revision, 2026-10-07 (user, after S5A):** the reward is an **enchanted light in a torch**, claimed on the end ledge, not a sun. S5A's study now shows the torch (see DECISIONS). Read "sun" below as the claimed light wherever the Sketch is concerned. Decided (user, 2026-10-07): the light acts as the sun; carried back and placed in the masterpiece's sky, it lights it up. Piece/region/save IDs unchanged; player-facing names say "enchanted light". Mid-air claims stay.
 
+> **Status, 2026-10-07:** S5A done (committed); **S5B implemented at its review gate** ([evidence](../validation/sketch-s5/s5b/README.md)): objective/inventory wording uses "enchanted light" (e.g. "Claim the enchanted light in the Unfinished Sketch"), the inventory icon is a CSS glow (no cutout yet). S5C next on its own request.
+
 S5 runs as **three separately requested blocks**, each stopping at a playable review gate:
 
 | Block | Result | Depends on |

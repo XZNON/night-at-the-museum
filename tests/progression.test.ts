@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { Progression } from '../src/campaign/progression';
 
 const pear = { artworkId: 'royal-supper', pieceId: 'golden-pear' };
-const sun = { artworkId: 'sleeping-mountain', pieceId: 'sun-disc' };
+const sun = { artworkId: 'unfinished-sketch', pieceId: 'sun-disc' };
 
 describe('shared campaign commands', () => {
   it('awards a piece once, keeps it awarded after restoration, and derives completion from stage count', () => {

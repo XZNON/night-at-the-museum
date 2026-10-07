@@ -6,6 +6,8 @@ Start with the [current handoff](planning/NEXT_SESSION.md), then the [build plan
 
 Latest, 2026-10-07: **next is S5B** (Sketch frame in the museum, campaign claim of the light); the enchanted light acts as the sun in the campaign (user). Prompt: [NEXT_SESSION](planning/NEXT_SESSION.md).
 
+Latest, 2026-10-07: **S5B (the Sketch in the museum) is implemented at its playable review gate**: frame on the left wall, locked until the pear is restored; campaign claim of the enchanted light (`sun-disc`), return, Mountain removed ([evidence](validation/sketch-s5/s5b/README.md)). Stop for user review; S5C needs its own request.
+
 Earlier, 2026-10-07: S5A committed (`9ce56f9`); **the reward is now an enchanted light in a torch** (user revision, at review; [evidence](validation/sketch-s5/s5a/README.md#review-revision-the-enchanted-light)).
 
 Earlier, 2026-10-07: **S5A (the sun on the end ledge) is implemented at its playable review gate** ([evidence](validation/sketch-s5/s5a/README.md), [play](http://127.0.0.1:5173/?scene=unfinished-sketch&study=adventure)). Stop for user review; S5B needs its own request.

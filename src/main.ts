@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import './style.css';
+import { campaign } from './campaign/definition';
 import { Progression } from './campaign/progression';
 import { SaveStore, defaultSettings } from './campaign/save';
 import { Input } from './core/input';
@@ -41,6 +42,12 @@ let sketchBay: SketchBayId = isSketchBayId(parameters.get('bay')) ? parameters.g
 // Nothing here touches campaign storage.
 const sketchSessions = new Map<SketchBayId, SketchSession>();
 const routeSessions = new Map<SketchStudy, SketchRouteSession>();
+// S5B: the campaign Sketch keeps its own same-session checkpoint, apart from
+// every dev study. A reload loses it (Layer 1 again); a reset bumps the
+// generation so a departing scene cannot write a stale snapshot back.
+const sketchStage = campaign.stages[1];
+let campaignSketchSession: SketchRouteSession | null = null;
+let campaignGeneration = 0;
 let progression = new Progression();
 let settings = defaultSettings();
 let session = createSupperSession();
@@ -66,7 +73,7 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matc
 const input = new Input(() => togglePause(), () => toggleDebug());
 const ui = new GameUi(root, {
   start: () => { void (sketchStudy ? startSketch(false) : isolated ? startSupper(false) : enterMuseum()); },
-  replay: () => { void (sketchStudy ? startSketch(true) : startSupper(true)); },
+  replay: () => { void (sketchStudy ? startSketch(true) : activeSketch() ? startSketchAdventure(true) : startSupper(true)); },
   resume, leave: () => { void leave(); }, pause: () => pause(),
   checkpoint: () => {
     if (manager?.transitioning) return;
@@ -122,7 +129,7 @@ function resume(): void {
   if (!manager?.active || manager.transitioning || document.hidden || overlay === 'reset' || overlay === 'inspection') return;
   overlay = 'none';
   const museumActive = activeMuseum() !== null;
-  ui.play(museumActive ? 'museum' : study === 'sketch' && activeSketch() ? 'sketch' : 'supper');
+  ui.play(museumActive ? 'museum' : activeSketch() ? 'sketch' : 'supper');
   setPaused(false);
 }
 function togglePause(): void {
@@ -173,7 +180,7 @@ async function enterMuseum(pose: MuseumPose = museum.spawn): Promise<void> {
     const changed = await manager.transition(async () => new MuseumScene(ui.canvas, pose,
       progression.snapshot.restoredPieceIds.includes('golden-pear'),
       () => !paused && !manager?.transitioning && performance.now() >= inputReadyAt,
-      id => { if (id === 'masterpiece') inspect(); else if (id === royalSupper.id) void startSupper(false); },
+      id => { if (id === 'masterpiece') inspect(); else if (id === royalSupper.id) void startSupper(false); else if (id === sketchStage.artworkId) void startSketchAdventure(false); },
       text => ui.museumPrompt(text), await loadArtSet(museumArtIds)));
     if (changed) { audio.setScene('museum'); inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS; remembered = true; ui.museumState(progression.snapshot); ui.museumPrompt(''); resume(); }
   } catch (error) { showError(error); }
@@ -195,13 +202,27 @@ async function startSupper(restart: boolean, preserveLane = false): Promise<void
     if (changed) { audio.setScene('royal-supper'); inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS; remembered = true; resume(); }
   } catch (error) { showError(error); }
 }
+/** One Sketch scene with the shared heroine poses; studies and the campaign differ only in mode and callbacks. */
+async function createSketchScene(mode: SketchSceneMode, onExit: (snapshot: SketchSession | SketchRouteSession) => void,
+  onLightClaimed: () => void): Promise<UnfinishedSketchScene> {
+  // The game-wide heroine poses are reused. Sketch props are cartoon
+  // placeholders; no new asset is generated or loaded here.
+  const art = await loadArtSet(['player.idle', 'player.walk-a', 'player.walk-b', 'player.jump']);
+  const scene = new UnfinishedSketchScene(mode, sketchTuning, art['player.idle']!, state => ui.updateSketchHud(state),
+    onExit, ui.canvas, () => input.clear(), onLightClaimed,
+    { 'walk-a': art['player.walk-a'], 'walk-b': art['player.walk-b'], jump: art['player.jump'] });
+  scene.attachPointer(ui.canvas);
+  scene.setReducedMotion(reducedMotion);
+  scene.debug.visible = debugEnabled;
+  return scene;
+}
 /**
- * Launch one of the two save-isolated Sketch studies. `bayId` is accepted only
- * by the Slice 1 playground selector and forces that mode, so a bay button
- * can never open the route by accident.
+ * Launch one of the save-isolated Sketch studies (dev entry only). `bayId` is
+ * accepted only by the Slice 1 playground selector and forces that mode, so a
+ * bay button can never open the route by accident.
  */
 async function startSketch(restart: boolean, bayId?: SketchBayId): Promise<void> {
-  if (disposed || manager?.transitioning || !initializeRenderer() || !manager) return;
+  if (!sketchStudy || disposed || manager?.transitioning || !initializeRenderer() || !manager) return;
   if (bayId) {
     if (bayId !== sketchBay) restart = true;
     sketchBay = bayId;
@@ -213,28 +234,20 @@ async function startSketch(restart: boolean, bayId?: SketchBayId): Promise<void>
   try {
     const created: { scene: UnfinishedSketchScene | null } = { scene: null };
     const changed = await manager.transition(async () => {
-      // The game-wide heroine poses are reused. Sketch props are cartoon
-      // placeholders; no new asset is generated or loaded here.
-      const art = await loadArtSet(['player.idle', 'player.walk-a', 'player.walk-b', 'player.jump']);
       const mode: SketchSceneMode = sketchMode !== 'mechanics'
         ? { kind: 'route', field: sketchMode === 'adventure' ? sketchAdventure : sketchMode === 'layers-1-3' ? sketchLayersOneToThree : sketchMode === 'layer-3' ? sketchLayerThree : sketchMode === 'layer-3-swings' ? sketchLayerThreeSwings : sketchMode === 'layer-3-walls' ? sketchLayerThreeWalls : sketchMode === 'layers-1-2' ? sketchJoinedRoute : sketchMode === 'layer-2' ? sketchLayerTwo : sketchRoute,
           session: restart ? null : routeSessions.get(sketchMode) ?? null }
         : { kind: 'bay', field: sketchBays[sketchBay],
           session: restart ? null : sketchSessions.get(sketchBay) ?? null };
-      const scene = new UnfinishedSketchScene(mode, sketchTuning, art['player.idle']!, state => ui.updateSketchHud(state),
+      created.scene = await createSketchScene(mode,
         snapshot => {
           if (mode.kind === 'route') routeSessions.set(mode.field.id, snapshot as SketchRouteSession);
           else sketchSessions.set(sketchBay, snapshot as SketchSession);
-        }, ui.canvas, () => input.clear(),
+        },
         // S5A: claiming the light in the isolated study only shows the success
-        // screen; the campaign award belongs to S5B and never runs from a dev study.
-        () => { setPaused(true); audio.play('collect', true); overlay = 'success'; ui.sketchSuccess(); },
-        { 'walk-a': art['player.walk-a'], 'walk-b': art['player.walk-b'], jump: art['player.jump'] });
-      created.scene = scene;
-      scene.attachPointer(ui.canvas);
-      scene.setReducedMotion(reducedMotion);
-      scene.debug.visible = debugEnabled;
-      return scene;
+        // screen; the campaign award never runs from a dev study.
+        () => { setPaused(true); audio.play('collect', true); overlay = 'success'; ui.sketchSuccess(); });
+      return created.scene;
     });
     if (changed && created.scene) {
       audio.setScene('royal-supper');
@@ -245,9 +258,43 @@ async function startSketch(restart: boolean, bayId?: SketchBayId): Promise<void>
     }
   } catch (error) { showError(error); }
 }
+/**
+ * S5B: the campaign's second adventure, the S5A full route. It opens only
+ * after the pear is restored; claiming the light collects `sun-disc` once
+ * through progression and persists it.
+ */
+async function startSketchAdventure(restart: boolean): Promise<void> {
+  if (isolated || disposed || manager?.transitioning || !initializeRenderer() || !manager) return;
+  // A locked frame never opens a scene, whatever activated it.
+  if (!progression.snapshot.restoredPieceIds.includes('golden-pear')) return;
+  setPaused(true); overlay = 'none';
+  retryAction = () => { void startSketchAdventure(restart); };
+  ui.loading();
+  if (restart) campaignSketchSession = null;
+  const generation = campaignGeneration;
+  try {
+    const created: { scene: UnfinishedSketchScene | null } = { scene: null };
+    const changed = await manager.transition(async () => {
+      created.scene = await createSketchScene({ kind: 'route', field: sketchAdventure, session: restart ? null : campaignSketchSession },
+        snapshot => { if (generation === campaignGeneration) campaignSketchSession = snapshot as SketchRouteSession; },
+        () => {
+          const result = progression.applyCampaignCommand({ action: 'collect', artworkId: sketchStage.artworkId, pieceId: sketchStage.pieceId });
+          if (result.changed) persist();
+          setPaused(true); audio.play('collect', true); overlay = 'success'; ui.sketchSuccess(result);
+        });
+      return created.scene;
+    });
+    if (changed && created.scene) {
+      audio.setScene('royal-supper');
+      inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS;
+      created.scene.armInteraction(inputReadyAt);
+      remembered = true; ui.markSketch('adventure', sketchBay, true); resume();
+    }
+  } catch (error) { showError(error); }
+}
 async function leave(): Promise<void> {
   if (!manager || manager.transitioning) return;
-  if (!isolated) { await enterMuseum(museum.returnPose); audio.play('return', true); return; }
+  if (!isolated) { await enterMuseum(activeSketch() ? museum.sketchReturnPose : museum.returnPose); audio.play('return', true); return; }
   const finished = activeSupper()?.model.completed ?? false;
   setPaused(true); overlay = 'menu';
   try { await manager.transition(() => null); audio.setScene(null); ui.diagnostics(null); if (finished) ui.finished(); else ui.menu(remembered); }
@@ -260,6 +307,13 @@ function inspect(): void {
 function closeInspection(): void { if (overlay !== 'inspection') return; overlay = 'none'; resume(); }
 function place(piece: string, target: string): void {
   if (overlay !== 'inspection' || manager?.transitioning) return;
+  // The sky's target stays inert until S5C places the enchanted light there.
+  if (piece !== 'golden-pear' && target === 'sun-disc') {
+    ui.placementMessage(progression.snapshot.collectedPieceIds.includes('sun-disc')
+      ? 'The enchanted light will become this garden’s sun. Placing it arrives in a later update; it stays in your inventory.'
+      : 'The dark sky waits for the enchanted light from the Unfinished Sketch.');
+    return;
+  }
   if (piece !== 'golden-pear' || target !== piece) { ui.placementMessage('Choose the golden pear and its matching silhouette. Your piece stays in inventory.'); return; }
   const result = progression.applyCampaignCommand({ action: 'restore', artworkId: royalSupper.id, pieceId: piece });
   if (!result.ok) { ui.placementMessage('Recover the golden pear from Royal Supper first.'); return; }
@@ -281,7 +335,7 @@ function cancelReset(): void {
 }
 function confirmReset(): void {
   if (overlay !== 'reset' || manager?.transitioning || isolated) return;
-  ui.notice(''); store?.reset(); progression = new Progression(); settings = defaultSettings(); audio.volume(settings.masterVolume); session = createSupperSession(); remembered = false; resize();
+  ui.notice(''); store?.reset(); progression = new Progression(); campaignSketchSession = null; campaignGeneration++; settings = defaultSettings(); audio.volume(settings.masterVolume); session = createSupperSession(); remembered = false; resize();
   overlay = 'none'; void enterMuseum();
 }
 function showError(error: unknown): void { setPaused(true); overlay = 'menu'; ui.error(error instanceof Error ? error.message : String(error)); }
@@ -297,7 +351,7 @@ document.addEventListener('pointerlockchange', () => { if (!document.pointerLock
 // Bay hotkeys are contextual to the isolated playground and reset through the
 // same safe transition as the selector buttons.
 window.addEventListener('keydown', event => {
-  if (sketchMode !== 'mechanics' || event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
+  if (!sketchStudy || sketchMode !== 'mechanics' || event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
   const target = event.target;
   if (target instanceof HTMLElement && (target.matches('button, input, select, textarea, a') || target.isContentEditable)) return;
   const bay = sketchBayIds[Number(event.code.replace('Digit', '')) - 1];
@@ -322,12 +376,13 @@ if (import.meta.env.DEV) {
     return {
       scene: manager?.active?.id ?? null, transitioning: manager?.transitioning ?? false, paused,
       body: body ? { ...body } : null,
-      museum: activeMuseum() ? { position: activeMuseum()!.camera.position.toArray(), rotation: activeMuseum()!.camera.rotation.toArray() } : null,
+      museum: activeMuseum() ? { position: activeMuseum()!.camera.position.toArray(), rotation: activeMuseum()!.camera.rotation.toArray(), sketchOpen: activeMuseum()!.sketchOpen } : null,
+      campaignSketch: campaignSketchSession ? { leg: campaignSketchSession.legId, light: campaignSketchSession.lightClaimed ?? null } : null,
       session: { ...session }, completed: supper?.model.completed ?? false, campaign: progression.snapshot, updateCount, renderCount,
       sketch: sketch ? {
         mode: sketch.mode.kind, field: sketch.field.id,
         bay: sketch.mode.kind === 'bay' ? sketch.field.id : null,
-        study: sketchMode, entryLeg: sketch.routeModel?.route.entryLegId ?? null,
+        study: sketchStudy ? sketchMode : 'campaign', entryLeg: sketch.routeModel?.route.entryLegId ?? null,
         liftId: sketch.routeModel?.leg.lift?.id ?? null,
         lifts: sketch.routeModel?.liftViews().map(v => ({ id: v.id, state: v.state, progress: v.progress, walls: v.walls, active: v.active,
           left: v.deck.x, right: v.deck.x + v.deck.width, top: v.deck.y + v.deck.height })) ?? [],
