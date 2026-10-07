@@ -634,13 +634,8 @@ export class UnfinishedSketchScene implements GameScene {
     const sprite = new THREE.Mesh(geometry, material);
     sprite.scale.set(height * playerImage.width / playerImage.height, height, 1);
     sprite.position.set(0, height / 2, 1.4);
+    // No collider box is drawn around the heroine; the picture alone reads.
     this.player.add(sprite);
-    const edges = new THREE.EdgesGeometry(new THREE.BoxGeometry(this.model.controller.body.width, height, 0.3));
-    this.resources.add(edges);
-    const outline = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: C.ink }));
-    this.resources.add(outline.material as THREE.Material);
-    outline.position.set(0, height / 2, 0);
-    this.player.add(outline);
     this.disc(0.3, 0.09, 14, C.hand, this.hand);
     this.hand.visible = false;
   }
@@ -919,7 +914,7 @@ export class UnfinishedSketchScene implements GameScene {
     this.player.position.set(THREE.MathUtils.lerp(this.previous.x, b.x, alpha) + b.width / 2,
       THREE.MathUtils.lerp(this.previous.y, b.y, alpha), 0);
     // Presentation only: mirror the picture toward travel so moving left never
-    // reads as walking backwards. Collision and the outline are symmetric.
+    // reads as walking backwards. Collision is symmetric.
     if (Math.abs(b.vx) > 0.25) this.facing = b.vx > 0 ? 1 : -1;
     this.player.scale.x = this.facing;
     // Same pose rule as Royal Supper: airborne (including swings) jumps,

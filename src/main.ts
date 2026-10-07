@@ -213,8 +213,8 @@ async function startSketch(restart: boolean, bayId?: SketchBayId): Promise<void>
   try {
     const created: { scene: UnfinishedSketchScene | null } = { scene: null };
     const changed = await manager.transition(async () => {
-      // Only the approved existing player picture is reused. Sketch props are
-      // cartoon placeholders; no new asset is generated or loaded here.
+      // The game-wide heroine poses are reused. Sketch props are cartoon
+      // placeholders; no new asset is generated or loaded here.
       const art = await loadArtSet(['player.idle', 'player.walk-a', 'player.walk-b', 'player.jump']);
       const mode: SketchSceneMode = sketchMode !== 'mechanics'
         ? { kind: 'route', field: sketchMode === 'adventure' ? sketchAdventure : sketchMode === 'layers-1-3' ? sketchLayersOneToThree : sketchMode === 'layer-3' ? sketchLayerThree : sketchMode === 'layer-3-swings' ? sketchLayerThreeSwings : sketchMode === 'layer-3-walls' ? sketchLayerThreeWalls : sketchMode === 'layers-1-2' ? sketchJoinedRoute : sketchMode === 'layer-2' ? sketchLayerTwo : sketchRoute,

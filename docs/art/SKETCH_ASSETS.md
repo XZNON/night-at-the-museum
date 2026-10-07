@@ -215,3 +215,13 @@ typecheck and 214 unit tests pass, not yet checked in a browser.
   cycles the four poses; Sketch still shows only the idle pose (wiring the
   walk/jump poses into the Sketch scene is pending; another session was
   editing that scene at the time).
+- Follow-up, 2026-10-07: the Sketch scene now loads and cycles the walk/jump
+  poses with Royal Supper's rule (airborne and swings jump; grounded travel
+  alternates walk-a/walk-b; otherwise idle). Typecheck and 224 unit tests
+  pass. Real Chromium check (dev server, real keys D/A/Space) at 1280×720 and
+  960×540 in `?scene=royal-supper` and `?scene=unfinished-sketch&study=layer-1`:
+  the heroine renders on her foot baseline, walks, faces left after moving
+  left and keeps that facing at rest, and jumps, with no page errors (the only
+  console 404 is the pre-existing missing /favicon.ico). At the user's request
+  the Sketch placeholder ink box (collider outline) around the player is
+  removed; re-checked in the browser.
