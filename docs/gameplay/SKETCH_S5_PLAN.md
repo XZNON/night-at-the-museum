@@ -2,6 +2,8 @@
 
 2026-10-07, planning only. Written on the user's request after S4D was committed and pushed (`715770d`) and the user decided that **Layer 3 has no third section**: every Sketch section and layer is done. S5 builds no new traversal. It adds the sun at the end of the existing route and connects the Sketch to the museum campaign and its ending. Paste-ready prompts: [SKETCH_S5_PROMPTS.md](SKETCH_S5_PROMPTS.md).
 
+> **Revision, 2026-10-07 (user, after S5A):** the reward is an **enchanted light in a torch**, claimed on the end ledge, not a sun. S5A's study now shows the torch (see DECISIONS). Read "sun" below as the claimed light wherever the Sketch is concerned. Open for S5B/S5C: how the light restores the masterpiece (proposed: placed into the dark sky, it becomes the dawn sun; piece/region/save IDs unchanged, player-facing names change).
+
 S5 runs as **three separately requested blocks**, each stopping at a playable review gate:
 
 | Block | Result | Depends on |

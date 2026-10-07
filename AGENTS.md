@@ -2,6 +2,8 @@
 
 ## Purpose and current state
 
+S5A committed/pushed at `9ce56f9` (user, 2026-10-07; the art reference pass was committed separately at `8e1d9fb`). Reward revision (user): the Sketch reward is an enchanted light held in a torch, claimed on the end ledge, not a sun; implemented in `study=adventure`, committed/pushed on request, at review. How the light restores the masterpiece is open for S5B/S5C. See DECISIONS.
+
 S5A implemented at its playable review gate, 2026-10-07: save-isolated `study=adventure` plays the full route; the end ledge is a safe checkpoint and touching the sun (on foot or in the air) takes it once, settles every mechanism and shows a success screen; R/fall/re-entry afterwards stay on the ledge with no second report. The user completed it in their own play. See docs/validation/sketch-s5/s5a/README.md and NEXT_SESSION. Uncommitted over `715770d`; stop for user review; S5B needs its own request. No commit/push, generation, museum/campaign change or sub-agents authorized.
 
 Layer 3 complete (user, 2026-10-07): S4D was played and committed/pushed at `715770d` on the user's request. There is no third Layer 3 section: the moving-socket finale is dropped and all sections and layers are done. S5 is only the sun (default: on the swing crossing's end ledge) and the campaign ending, planned as three separately requested blocks (S5A sun, S5B museum/campaign collection, S5C placement/ending) in docs/gameplay/SKETCH_S5_PLAN.md with prompts in SKETCH_S5_PROMPTS.md. Next is S5A on its own request; planning authorizes no code. See DECISIONS.

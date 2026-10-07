@@ -249,21 +249,22 @@ export interface SketchRouteLeg {
 }
 
 /**
- * The sun at the end of the full route (S5A). Touching it once ends the
- * adventure; the texts are player-facing. Data only: the model reports the
- * touch and never touches campaign progression.
+ * The reward at the end of the full route (S5A): an enchanted light held in a
+ * torch. Touching it claims the light once and ends the adventure; the texts
+ * are player-facing. Data only: the model reports the claim and never touches
+ * campaign progression.
  */
-export interface SketchSun extends Rect {
+export interface SketchLight extends Rect {
   id: string;
-  /** Cue when the player lands on the end ledge before taking the sun. */
+  /** Cue when the player lands on the end ledge before claiming the light. */
   ledgeCue: string;
-  /** HUD hint on the end ledge before the sun is taken. */
+  /** HUD hint on the end ledge before the light is claimed. */
   ledgeHint: string;
-  /** Cue at the moment the sun is taken. */
+  /** Cue at the moment the light is claimed. */
   cue: string;
-  /** HUD hint once the sun is taken. */
+  /** HUD hint once the light is claimed. */
   doneHint: string;
-  /** HUD endpoint banner once the sun is taken. */
+  /** HUD endpoint banner once the light is claimed. */
   endpoint: string;
 }
 
@@ -285,8 +286,8 @@ export interface SketchRoute extends SketchPlayfieldData {
    * parked at the top as fixed ground (S4L context).
    */
   parkedLifts?: SketchLift[];
-  /** On the terminal leg's exit ground; touching it is the endpoint (S5A). */
-  sun?: SketchSun;
+  /** The torch on the terminal leg's exit ground; claiming its light is the endpoint (S5A). */
+  light?: SketchLight;
 }
 
 const solid = (id: string, x: number, top: number, width: number, height = 1): Collider =>

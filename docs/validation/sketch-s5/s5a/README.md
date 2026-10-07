@@ -1,4 +1,6 @@
-# Sketch S5A — The sun on the end ledge (evidence)
+# Sketch S5A — The reward on the end ledge (evidence)
+
+> **Review revision, 2026-10-07:** after S5A was committed and pushed (`9ce56f9`), the user changed the reward: an **enchanted light held in a torch** that the player claims, not a sun. See [the revision section](#review-revision-the-enchanted-light) at the end. The sections below record the original sun version as committed.
 
 2026-10-07. Implemented on the user's S5A-only request. One save-isolated development study plays the accepted full route (Layer 1 → lift → Layer 2 → lift → wall climb → handoff → swing crossing) and ends by touching the sun on the end ledge. No new traversal, section or mechanic; no accepted layer retuned. Stop for user review before S5B. All changes are uncommitted over `715770d`. No museum/campaign change, generation, dependency, commit/push, publishing or sub-agent work.
 
@@ -70,3 +72,13 @@ Reading: the reduced-motion and click-timing failures reproduce on unchanged HEA
 ## Limits
 
 Scripted input plus the user's own completion. Bot feasibility is not measured human difficulty, first-time duration or representative-machine performance. S5A is a development study: no museum frame, campaign award, sun placement or ending (S5B/S5C).
+
+## Review revision: the enchanted light
+
+2026-10-07, on the user's request after the S5A commit/push (`9ce56f9`): "the reward is light instead of sun, that is the light has enchanted and is inside a torch or something and you can claim it". Committed and pushed on the user's request after this evidence.
+
+- Data: `SketchSun`/`route.sun` → `SketchLight`/`route.light` (`sketch-light`), same spot x 62..63.4, height 1.6 → 2 so the claim covers the torch and its light (top y 56). Texts: "An enchanted light waits in the torch: walk right and claim it." / "The enchanted light is yours. The picture settles." / banner "The light is yours · The picture settles"; goal, menu card "Claim the light.", success "The enchanted light." ("The light leaves the torch and is yours."), eyebrow/tag "S5A / The light".
+- Model/scene names follow (`lightClaimed`, `consumeLightClaim()`, `onLightClaimed`, `lightView()`, debug `sketch.light`); behavior and contracts are unchanged (settle, one report per scene life, retries on the ledge, snapshot refusal).
+- Placeholder: a wooden torch with a cup holding a pale glowing orb, an ink rim, a soft cyan halo and four circling sparkles (pulse and sparkles still under reduced motion); claiming empties the torch, which stays. Faceless. Final art is a separate task.
+- Results: typecheck/build pass; `tests/sketch-adventure.test.ts` 10/10; full unit suite 224/224 with `--testTimeout=30000`; rewritten measurement JSON restored. Browser (light): run 1 0/4 — two expectations I had not updated (success wording, the taller rect) and two bot misses in the unchanged Layer 1 helpers (stepped onto the first lift before the waiting check; missed pendulum C); run 2 **4/4** (3.3 min): 1280 and 960 each claimed the light in the air with the last swing, reduced motion landed first and walked to it. Evidence: [light/](light/) (run 1 in [light/run1-failures/](light/run1-failures/)). With the taller claim rect, in-air claims became the common bot outcome.
+- Open for S5B/S5C: how the claimed light restores the masterpiece (proposed default in DECISIONS: placed into the dark sky it becomes the dawn sun; save/piece IDs unchanged).

@@ -123,7 +123,7 @@ export class GameUi {
 
   private tagLabel(): string {
     const base = this.study !== 'sketch' ? 'ROYAL SUPPER STUDY'
-      : this.sketchMode === 'adventure' ? 'UNFINISHED SKETCH / S5A / THE SUN'
+      : this.sketchMode === 'adventure' ? 'UNFINISHED SKETCH / S5A / THE LIGHT'
       : this.sketchMode === 'layers-1-3' ? 'UNFINISHED SKETCH / S4D / LAYERS 1–3'
       : this.sketchMode === 'layer-3' ? 'UNFINISHED SKETCH / S4C / JOINED LAYER 3'
       : this.sketchMode === 'layer-3-swings' ? 'UNFINISHED SKETCH / S4B / MOVING SWINGS'
@@ -156,8 +156,8 @@ export class GameUi {
     if (this.study === 'sketch') {
       if (this.sketchMode === 'adventure') {
         this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S5A / Unfinished Sketch</p>
-        <h2>Take back<br><em>the sun.</em></h2><p class="intro">An unfinished picture.<br>Three layers to climb.<br>The sun waits at the top.</p>
-        <p class="menu-description">Pin the swinging pendulums and ride the lift. Cross the boards past the axes and ride up again. Pick up a third nail, climb the criss-cross walls, then nail wood and swing over the glue. On the end ledge, walk to the sun and take it. A fall only sends you back to the start of the part you are in.</p>
+        <h2>Claim<br><em>the light.</em></h2><p class="intro">An unfinished picture.<br>Three layers to climb.<br>An enchanted light waits in a torch.</p>
+        <p class="menu-description">Pin the swinging pendulums and ride the lift. Cross the boards past the axes and ride up again. Pick up a third nail, climb the criss-cross walls, then nail wood and swing over the glue. On the end ledge, walk to the torch and claim its enchanted light. A fall only sends you back to the start of the part you are in.</p>
         <button class="primary" data-action="start">Enter the picture</button>
         ${remembered ? '<button class="quiet" data-action="replay">Restart the Sketch</button>' : ''}
         <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move / pump · <kbd>Space</kbd> Jump ×2 / kick / release · <kbd>E</kbd> Grip · Click pin or wood · <kbd>Q</kbd> Recall · <kbd>R</kbd> Retry</div>
@@ -266,7 +266,7 @@ export class GameUi {
   markSketch(mode: SketchStudy, bayId: SketchBayId): void {
     this.sketchMode = mode;
     document.getElementById('sketch-hud')!.dataset.study = mode;
-    document.getElementById('sketch-eyebrow')!.textContent = mode === 'adventure' ? 'Unfinished Sketch / S5A / The sun' : mode === 'layers-1-3' ? 'Unfinished Sketch / S4D / Layers 1–3' : mode === 'layer-3' ? 'Unfinished Sketch / S4C / Joined Layer 3' : mode === 'layer-3-swings' ? 'Unfinished Sketch / S4B / Layer 3 swings' : mode === 'layer-3-walls' ? 'Unfinished Sketch / S4A / Layer 3 walls' : mode === 'layers-1-2' ? 'Unfinished Sketch / S3 / Joined layers' : mode === 'layer-2' ? 'Unfinished Sketch / S3 · Layer 2' : mode === 'layer-1'
+    document.getElementById('sketch-eyebrow')!.textContent = mode === 'adventure' ? 'Unfinished Sketch / S5A / The light' : mode === 'layers-1-3' ? 'Unfinished Sketch / S4D / Layers 1–3' : mode === 'layer-3' ? 'Unfinished Sketch / S4C / Joined Layer 3' : mode === 'layer-3-swings' ? 'Unfinished Sketch / S4B / Layer 3 swings' : mode === 'layer-3-walls' ? 'Unfinished Sketch / S4A / Layer 3 walls' : mode === 'layers-1-2' ? 'Unfinished Sketch / S3 / Joined layers' : mode === 'layer-2' ? 'Unfinished Sketch / S3 · Layer 2' : mode === 'layer-1'
       ? 'The Last Curator · Slice 2 · Layer 1 of the unfinished picture' : 'The Last Curator · Slice 1 mechanics playground';
     document.getElementById('sketch-bays')!.hidden = mode !== 'mechanics';
     const tag = document.querySelector<HTMLElement>('.build-tag');
@@ -316,10 +316,10 @@ export class GameUi {
       <button class="primary" data-action="leave" aria-label="${this.direct ? 'Finish blockout' : 'Return to Museum'}">${this.direct ? 'Finish blockout' : 'Return to Museum'} <span>→</span></button>
       <button class="secondary" data-action="resume">Continue exploring</button><p class="small-note">${this.direct ? 'Isolated development session. Campaign saves are untouched.' : 'Your pear is in inventory. Walk to the masterpiece to place it.'}</p>`);
   }
-  /** S5A: the sun is taken. The isolated study has no campaign award to report. */
+  /** S5A: the light is claimed. The isolated study has no campaign award to report. */
   sketchSuccess(): void {
-    this.show('success', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">A piece recovered</p><h2 class="compact">The<br><em>sun.</em></h2>
-      <p class="menu-description">The unfinished picture settles. The sun is yours.</p>
+    this.show('success', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">A piece recovered</p><h2 class="compact">The enchanted<br><em>light.</em></h2>
+      <p class="menu-description">The light leaves the torch and is yours. The unfinished picture settles.</p>
       <button class="primary" data-action="leave" aria-label="Return">Return <span>→</span></button>
       <button class="secondary" data-action="resume">Keep exploring</button><p class="small-note">Isolated study · Campaign saves are untouched.</p>`);
   }

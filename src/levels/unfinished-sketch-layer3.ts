@@ -188,22 +188,24 @@ export const sketchLayersOneToThree: SketchRoute = {
 /**
  * S5A: the adventure as a player meets it. The accepted full route, cloned
  * leg by leg (no older study's data, links or endpoints change), with
- * player-facing texts and the sun on the end ledge. Landing on the ledge is a
- * safe checkpoint; touching the sun ends the adventure. The sun sits toward
- * the ledge's right end, clear of its spawn (x 59), so the player walks to it.
+ * player-facing texts and a torch holding an enchanted light on the end ledge.
+ * Landing on the ledge is a safe checkpoint; touching the torch claims the
+ * light and ends the adventure. The torch stands toward the ledge's right
+ * end, clear of its spawn (x 59), so the player walks to it.
  */
 export const sketchAdventure: SketchRoute = {
   ...sketchLayersOneToThree, id: 'adventure',
   name: 'The Unfinished Sketch',
-  goal: 'Climb the unfinished picture, layer by layer, and take back the sun.',
+  goal: 'Climb the unfinished picture, layer by layer, and claim the enchanted light.',
   spawn: { ...sketchLayersOneToThree.spawn },
   legs: sketchLayersOneToThree.legs.map(leg => ({ ...leg })),
-  sun: {
-    id: 'sketch-sun', x: 62, y: 54, width: 1.4, height: 1.6,
-    ledgeCue: 'The end ledge. Safe ground: walk right and take the sun.',
-    ledgeHint: 'Safe on the end ledge. Walk right and take the sun.',
-    cue: 'The sun is yours. The picture settles.',
-    doneHint: 'The sun is yours. Everything has settled; explore or leave when you are ready.',
-    endpoint: 'The sun is yours · The picture settles',
+  // The torch and the enchanted light above it: x 62..63.4, up to y 56.
+  light: {
+    id: 'sketch-light', x: 62, y: 54, width: 1.4, height: 2,
+    ledgeCue: 'The end ledge. Safe ground: walk right to the torch and claim the light.',
+    ledgeHint: 'Safe on the end ledge. An enchanted light waits in the torch: walk right and claim it.',
+    cue: 'The enchanted light is yours. The picture settles.',
+    doneHint: 'The light is yours. Everything has settled; explore or leave when you are ready.',
+    endpoint: 'The light is yours · The picture settles',
   },
 };

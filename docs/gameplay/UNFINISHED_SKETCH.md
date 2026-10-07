@@ -143,6 +143,8 @@ Current next slice after the completed-S3 checkpoint. The user subsequently requ
 > **Revised 2026-10-07 (user):** no finale section; every section and layer is done. S5 builds no new traversal. Planned as S5A/S5B/S5C in [SKETCH_S5_PLAN](SKETCH_S5_PLAN.md) ([prompts](SKETCH_S5_PROMPTS.md)).
 >
 > **S5A implemented, 2026-10-07:** the sun sits on the end ledge of the full route in the save-isolated `study=adventure`; taking it settles the picture and shows a success screen. Awaiting user review; S5B (museum/campaign) needs its own request. [Evidence](../validation/sketch-s5/s5a/README.md).
+>
+> **Reward revised, 2026-10-07 (user):** the reward is an enchanted light held in a torch on the end ledge, claimed by touching it, instead of the sun. The masterpiece link is decided in S5B/S5C.
 
 **Build:** Sun collection at the end of the existing full route (default: the swing crossing's end ledge) and a safe settling cue. Register the playable Sketch scene, replace the campaign's Mountain entry/clue with Sketch, add its museum frame, and connect collection/return/placement/completion through existing progression operations. Provide a minimal complete two-stage ending using existing masterpiece/restoration material and placeholder presentation where needed.
 

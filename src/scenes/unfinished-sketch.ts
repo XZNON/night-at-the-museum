@@ -28,8 +28,8 @@ const C = {
   suspension: 0x8b7cae, bracket: 0x6d5f96,
   // S4B nailable wood and the free-placement ghost.
   wood: 0xd99a5b, woodGrain: 0xa86a3a, track: 0x7d6aa8, ghostOk: 0x5fd38d, ghostBad: 0xf25f5c,
-  // S5A placeholder sun.
-  sunCore: 0xffd23f, sunRay: 0xffa83a, sunGlow: 0xfff3b8,
+  // S5A placeholder torch and its enchanted light.
+  torchWood: 0xa86a3a, torchCup: 0x6d5f96, lightCore: 0xfff6c9, lightHalo: 0x9ff0ff, lightSparkle: 0xc9b6ff,
 } as const;
 
 const KIND_COLORS: Record<string, number> = {
@@ -45,6 +45,9 @@ const clamp = (value: number, min: number, max: number) => Math.max(min, Math.mi
 const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
 /** Smoothstep used only for camera reframe; transport stays linear. */
 const smooth = (t: number) => t * t * (3 - 2 * t);
+
+/** Player picture poses; all share one canvas and foot baseline. */
+export type PlayerPose = 'idle' | 'walk-a' | 'walk-b' | 'jump';
 
 export type SketchSceneMode =
   | { kind: 'bay'; field: SketchBay; session: SketchSession | null }
@@ -62,6 +65,8 @@ export class UnfinishedSketchScene implements GameScene {
   private readonly player = new THREE.Group();
   /** Last horizontal travel direction; the player picture faces it. */
   private facing: 1 | -1 = 1;
+  private readonly poseTextures = new Map<PlayerPose, THREE.Texture>();
+  private playerMaterial!: THREE.MeshBasicMaterial;
   private readonly hand = new THREE.Group();
   private readonly rigs = new Map<string, THREE.Group>();
   private readonly inkPlatforms = new Map<string, { solid: THREE.Group; outline: THREE.Group }>();
@@ -78,9 +83,9 @@ export class UnfinishedSketchScene implements GameScene {
   private pickup: THREE.Group | null = null;
   /** The pickup this scene draws: the field's, or a joined route section's. */
   private pickupRect: SketchPlayfieldData['nailPickup'];
-  /** S5A: the sun on the end ledge, and its rays (they turn unless reduced motion). */
-  private sun: THREE.Group | null = null;
-  private sunRays: THREE.Group | null = null;
+  /** S5A: the torch's enchanted light and its sparkles (they pulse and circle unless reduced motion). */
+  private torchLight: THREE.Group | null = null;
+  private sparkles: THREE.Group | null = null;
   /** S4L lifts: the moving deck, its lamp and the faint cab outline. */
   private readonly lifts = new Map<string, { deck: THREE.Group; lamp: THREE.MeshBasicMaterial; cab: THREE.Group; cue: THREE.Group; was: string; flashUntil: number }>();
   private readonly scratchFocus = new THREE.Vector3();
@@ -105,8 +110,10 @@ export class UnfinishedSketchScene implements GameScene {
     private readonly onExit: (session: SketchSession | SketchRouteSession) => void,
     private readonly canvas?: HTMLCanvasElement,
     private readonly clearBoundaryInput: () => void = () => {},
-    /** S5A: told once when the sun is taken. The owner decides what it means. */
-    private readonly onSunCollected: () => void = () => {}) {
+    /** S5A: told once when the light is claimed. The owner decides what it means. */
+    private readonly onLightClaimed: () => void = () => {},
+    /** Optional walk/jump pictures; a missing pose falls back to the idle picture. */
+    playerPoses: Partial<Record<Exclude<PlayerPose, 'idle'>, HTMLImageElement>> = {}) {
     this.field = mode.field;
     this.model = mode.kind === 'bay'
       ? new SketchModel(mode.field, tuning)
@@ -138,8 +145,8 @@ export class UnfinishedSketchScene implements GameScene {
     this.buildTargets();
     this.buildSurfaces();
     this.buildPickup();
-    if (mode.kind === 'route') this.buildSun(mode.field);
-    this.buildPlayer(playerImage);
+    if (mode.kind === 'route') this.buildTorch(mode.field);
+    this.buildPlayer(playerImage, playerPoses);
     if (mode.kind === 'route') {
       for (const lift of [...mode.field.parkedLifts ?? [], ...mode.field.legs.flatMap(l => l.lift ? [l.lift] : [])]) this.buildLift(lift);
     }
@@ -576,39 +583,52 @@ export class UnfinishedSketchScene implements GameScene {
   }
 
   /**
-   * S5A: a cartoon placeholder sun resting on the end ledge: a warm disc with
-   * an ink rim, a soft highlight and a ring of short rays. Faceless, like
-   * every Sketch gameplay asset. Final art is a later task; nothing is loaded
-   * or generated here.
+   * S5A: a cartoon placeholder torch standing on the end ledge, holding an
+   * enchanted light: a wooden handle and cup with a glowing orb, a soft halo
+   * and a few sparkles circling it. Claiming the light empties the torch; the
+   * torch stays. Faceless, like every Sketch gameplay asset. Final art is a
+   * later task; nothing is loaded or generated here.
    */
-  private buildSun(route: SketchRoute): void {
-    const sun = route.sun;
-    if (!sun) return;
-    const rig = new THREE.Group();
-    rig.position.set(sun.x + sun.width / 2, sun.y + sun.height / 2, 1.3);
-    const rays = new THREE.Group(); rig.add(rays);
-    for (let i = 0; i < 10; i++) {
-      const ray = this.slab(0.14, 0.34, 0.12, C.sunRay, rays);
-      const a = i / 10 * Math.PI * 2;
-      ray.position.set(Math.sin(a) * 0.82, Math.cos(a) * 0.82, -0.1);
-      ray.rotation.z = -a;
+  private buildTorch(route: SketchRoute): void {
+    const light = route.light;
+    if (!light) return;
+    const torch = new THREE.Group();
+    torch.position.set(light.x + light.width / 2, light.y, 1.3);
+    this.slab(0.22, 1, 0.22, C.torchWood, torch).position.y = 0.5;
+    this.slab(0.6, 0.24, 0.34, C.torchCup, torch).position.y = 1.08;
+    const glow = new THREE.Group(); glow.position.y = 1.52; torch.add(glow);
+    const halo = new THREE.CircleGeometry(0.52, 32); this.resources.add(halo);
+    const haloMesh = new THREE.Mesh(halo, this.flat(C.lightHalo, 0.45)); haloMesh.position.z = -0.05; glow.add(haloMesh);
+    const orb = new THREE.CircleGeometry(0.3, 32); this.resources.add(orb);
+    glow.add(new THREE.Mesh(orb, this.flat(C.lightCore)));
+    this.disc(0.3, 0.04, 32, C.ink, glow).position.z = 0.02;
+    const sparkles = new THREE.Group(); glow.add(sparkles);
+    for (let i = 0; i < 4; i++) {
+      const sparkle = this.slab(0.12, 0.12, 0.05, C.lightSparkle, sparkles, 1, false);
+      const a = i / 4 * Math.PI * 2;
+      sparkle.position.set(Math.cos(a) * 0.62, Math.sin(a) * 0.62, 0.06);
+      sparkle.rotation.z = Math.PI / 4;
     }
-    const face = new THREE.CircleGeometry(0.6, 32); this.resources.add(face);
-    rig.add(new THREE.Mesh(face, this.flat(C.sunCore)));
-    this.disc(0.6, 0.06, 32, C.ink, rig).position.z = 0.02;
-    const glow = new THREE.CircleGeometry(0.26, 24); this.resources.add(glow);
-    const highlight = new THREE.Mesh(glow, this.flat(C.sunGlow)); highlight.position.set(-0.17, 0.17, 0.04); rig.add(highlight);
-    rig.visible = !(this.model as SketchRouteModel).sunCollected;
-    this.world.add(rig);
-    this.sun = rig; this.sunRays = rays;
+    glow.visible = !(this.model as SketchRouteModel).lightClaimed;
+    this.world.add(torch);
+    this.torchLight = glow; this.sparkles = sparkles;
   }
 
-  private buildPlayer(playerImage: HTMLImageElement): void {
-    const texture = new THREE.Texture(playerImage);
-    texture.colorSpace = THREE.SRGBColorSpace; texture.needsUpdate = true;
-    this.resources.add(texture);
+  private buildPlayer(playerImage: HTMLImageElement,
+    poses: Partial<Record<Exclude<PlayerPose, 'idle'>, HTMLImageElement>>): void {
+    // Every pose shares the idle canvas size and foot baseline, so swapping
+    // the map never moves the picture relative to the collider.
+    for (const pose of ['idle', 'walk-a', 'walk-b', 'jump'] as const) {
+      const image = pose === 'idle' ? playerImage : poses[pose];
+      if (!image) continue;
+      const texture = new THREE.Texture(image);
+      texture.colorSpace = THREE.SRGBColorSpace; texture.needsUpdate = true;
+      this.resources.add(texture);
+      this.poseTextures.set(pose, texture);
+    }
     const geometry = new THREE.PlaneGeometry(1, 1); this.resources.add(geometry);
-    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, alphaTest: 0.03 });
+    const material = new THREE.MeshBasicMaterial({ map: this.poseTextures.get('idle')!, transparent: true, alphaTest: 0.03 });
+    this.playerMaterial = material;
     this.resources.add(material);
     const height = this.model.controller.body.height * 272 / 256;
     const sprite = new THREE.Mesh(geometry, material);
@@ -824,9 +844,9 @@ export class UnfinishedSketchScene implements GameScene {
     return { x: rect.left + (nx + 1) / 2 * rect.width, y: rect.top + (1 - ny) / 2 * rect.height, visible: Math.abs(nx) <= 1 && Math.abs(ny) <= 1 };
   }
 
-  /** Read-only S5A sun readback (visibility, pulse scale, ray turn) for the review evidence. */
-  sunView(): { visible: boolean; scale: number; rays: number } | null {
-    return this.sun ? { visible: this.sun.visible, scale: this.sun.scale.x, rays: this.sunRays?.rotation.z ?? 0 } : null;
+  /** Read-only S5A torch readback (light shown, pulse scale, sparkle turn) for the review evidence. */
+  lightView(): { lit: boolean; scale: number; sparkles: number } | null {
+    return this.torchLight ? { lit: this.torchLight.visible, scale: this.torchLight.scale.x, sparkles: this.sparkles?.rotation.z ?? 0 } : null;
   }
 
   /** Read-only camera readback used by the review evidence. */
@@ -871,8 +891,8 @@ export class UnfinishedSketchScene implements GameScene {
     this.model.update(dt, input);
     if (this.routeModel && (boundary !== `${this.routeModel.legId}/${this.routeModel.stage}` ||
       input.restartPressed || recovering !== (this.model.recoveryRemaining > 0))) this.clearBoundaryInput();
-    // The sun is reported once per scene life; a restored snapshot never reports.
-    if (this.routeModel?.consumeSunTouch()) this.onSunCollected();
+    // The claim is reported once per scene life; a restored snapshot never reports.
+    if (this.routeModel?.consumeLightClaim()) this.onLightClaimed();
     this.elapsed += dt;
     const focus = this.focusTarget();
     // Pause stops the fixed step entirely, so camera progression and the
@@ -902,6 +922,11 @@ export class UnfinishedSketchScene implements GameScene {
     // reads as walking backwards. Collision and the outline are symmetric.
     if (Math.abs(b.vx) > 0.25) this.facing = b.vx > 0 ? 1 : -1;
     this.player.scale.x = this.facing;
+    // Same pose rule as Royal Supper: airborne (including swings) jumps,
+    // grounded travel alternates the two walk frames, otherwise idle.
+    const pose: PlayerPose = !b.grounded ? 'jump' : Math.abs(b.vx) > 0.25 && !this.reducedMotion
+      ? (Math.floor(this.elapsed * 9) % 2 ? 'walk-a' : 'walk-b') : 'idle';
+    this.playerMaterial.map = this.poseTextures.get(pose) ?? this.poseTextures.get('idle')!;
     this.player.visible = this.model.recoveryRemaining <= 0;
 
     this.hand.visible = this.model.move.state === 'swing';
@@ -965,11 +990,12 @@ export class UnfinishedSketchScene implements GameScene {
       const p = this.pickupRect;
       this.pickup.position.y = p.y + p.height / 2 + (this.reducedMotion ? 0 : Math.sin(this.elapsed * 2.6) * 0.12);
     }
-    if (this.sun) {
-      this.sun.visible = !(this.model as SketchRouteModel).sunCollected;
-      // A gentle pulse and turning rays; reduced motion keeps it still.
-      this.sun.scale.setScalar(this.reducedMotion ? 1 : 1 + Math.sin(this.elapsed * 3) * 0.06);
-      if (this.sunRays) this.sunRays.rotation.z = this.reducedMotion ? 0 : -this.elapsed * 0.6;
+    if (this.torchLight) {
+      // Claimed, the torch stands empty. A gentle pulse and circling
+      // sparkles while it holds the light; reduced motion keeps it still.
+      this.torchLight.visible = !(this.model as SketchRouteModel).lightClaimed;
+      this.torchLight.scale.setScalar(this.reducedMotion ? 1 : 1 + Math.sin(this.elapsed * 3) * 0.08);
+      if (this.sparkles) this.sparkles.rotation.z = this.reducedMotion ? 0 : this.elapsed * 1.2;
     }
     for (const bubble of this.glueBubbles) {
       bubble.position.y = 0.12 + Math.sin(this.elapsed * 2.4 + Number(bubble.userData.phase)) * 0.09;
@@ -1127,7 +1153,7 @@ export class UnfinishedSketchScene implements GameScene {
     this.lifts.clear();
     this.glueBubbles.length = 0;
     this.pickup = null;
-    this.sun = null; this.sunRays = null;
+    this.torchLight = null; this.sparkles = null;
     this.world.clear();
   }
 }

@@ -4,7 +4,9 @@ Start with the [current handoff](planning/NEXT_SESSION.md), then the [build plan
 
 ## Current work
 
-Latest, 2026-10-07: **S5A (the sun on the end ledge) is implemented at its playable review gate** ([evidence](validation/sketch-s5/s5a/README.md), [play](http://127.0.0.1:5173/?scene=unfinished-sketch&study=adventure)). Stop for user review; S5B needs its own request.
+Latest, 2026-10-07: S5A committed (`9ce56f9`); **the reward is now an enchanted light in a torch** (user revision, at review; [evidence](validation/sketch-s5/s5a/README.md#review-revision-the-enchanted-light)).
+
+Earlier, 2026-10-07: **S5A (the sun on the end ledge) is implemented at its playable review gate** ([evidence](validation/sketch-s5/s5a/README.md), [play](http://127.0.0.1:5173/?scene=unfinished-sketch&study=adventure)). Stop for user review; S5B needs its own request.
 
 Earlier, 2026-10-07: **all Sketch sections and layers are done** (user decision; S4D pushed at `715770d`). The planned moving-socket finale is dropped; S5 (sun and campaign ending only) is planned as three blocks: [S5 plan](gameplay/SKETCH_S5_PLAN.md), [prompts](gameplay/SKETCH_S5_PROMPTS.md). Next: S5A on its own request.
 

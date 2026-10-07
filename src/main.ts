@@ -215,7 +215,7 @@ async function startSketch(restart: boolean, bayId?: SketchBayId): Promise<void>
     const changed = await manager.transition(async () => {
       // Only the approved existing player picture is reused. Sketch props are
       // cartoon placeholders; no new asset is generated or loaded here.
-      const art = await loadArtSet(['player.idle']);
+      const art = await loadArtSet(['player.idle', 'player.walk-a', 'player.walk-b', 'player.jump']);
       const mode: SketchSceneMode = sketchMode !== 'mechanics'
         ? { kind: 'route', field: sketchMode === 'adventure' ? sketchAdventure : sketchMode === 'layers-1-3' ? sketchLayersOneToThree : sketchMode === 'layer-3' ? sketchLayerThree : sketchMode === 'layer-3-swings' ? sketchLayerThreeSwings : sketchMode === 'layer-3-walls' ? sketchLayerThreeWalls : sketchMode === 'layers-1-2' ? sketchJoinedRoute : sketchMode === 'layer-2' ? sketchLayerTwo : sketchRoute,
           session: restart ? null : routeSessions.get(sketchMode) ?? null }
@@ -226,9 +226,10 @@ async function startSketch(restart: boolean, bayId?: SketchBayId): Promise<void>
           if (mode.kind === 'route') routeSessions.set(mode.field.id, snapshot as SketchRouteSession);
           else sketchSessions.set(sketchBay, snapshot as SketchSession);
         }, ui.canvas, () => input.clear(),
-        // S5A: the isolated study only shows the success screen; the campaign
-        // award belongs to S5B and never runs from a dev study.
-        () => { setPaused(true); audio.play('collect', true); overlay = 'success'; ui.sketchSuccess(); });
+        // S5A: claiming the light in the isolated study only shows the success
+        // screen; the campaign award belongs to S5B and never runs from a dev study.
+        () => { setPaused(true); audio.play('collect', true); overlay = 'success'; ui.sketchSuccess(); },
+        { 'walk-a': art['player.walk-a'], 'walk-b': art['player.walk-b'], jump: art['player.jump'] });
       created.scene = scene;
       scene.attachPointer(ui.canvas);
       scene.setReducedMotion(reducedMotion);
@@ -343,9 +344,9 @@ if (import.meta.env.DEV) {
         queue: sketch.model.session.queue, oldest: sketch.model.oldestPlacement?.targetId ?? null,
         motion: { ...sketch.model.move },
         completed: sketch.model.completed, elapsed: sketch.model.session.elapsed,
-        sun: sketch.routeModel?.route.sun ? { x: sketch.routeModel.route.sun.x, y: sketch.routeModel.route.sun.y,
-          width: sketch.routeModel.route.sun.width, height: sketch.routeModel.route.sun.height,
-          collected: sketch.routeModel.sunCollected, settled: sketch.routeModel.isSettled, view: sketch.sunView() } : null,
+        light: sketch.routeModel?.route.light ? { x: sketch.routeModel.route.light.x, y: sketch.routeModel.route.light.y,
+          width: sketch.routeModel.route.light.width, height: sketch.routeModel.route.light.height,
+          claimed: sketch.routeModel.lightClaimed, settled: sketch.routeModel.isSettled, view: sketch.lightView() } : null,
         recovering: sketch.model.recoveryRemaining > 0,
         targets: sketch.model.targetViews().map(t => ({ ...t, screen: sketch.targetScreen(t.id) })),
         grips: sketch.model.grips.map(g => ({ ...g })),
