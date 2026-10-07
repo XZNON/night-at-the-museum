@@ -2,6 +2,8 @@
 
 ## Purpose and current state
 
+Vertical lifts planned, 2026-10-07 (user): every layer transition becomes a vertical lift (step on to ride, invisible walls while riding, straight up) in its own block S4L before S4D; see docs/gameplay/SKETCH_S4L_PLAN.md. Planning only; S4L needs its own request.
+
 S4C accepted by the user on 2026-10-07 (after the Layer 3 air-momentum fix) and committed/pushed at their request; next is S4D (Layers 1/2 joined to this Layer 3, the final S4 gate) on its own request, using the revised S4D plan/prompt. No S4D code, generation or sub-agents are authorized by the acceptance.
 
 Layer 3 air momentum (user, 2026-10-07): letting go of A/D in the air keeps a jump's momentum on Layer 3 only (`airCoast`); Layers 1/2, S1 and Supper keep air braking.

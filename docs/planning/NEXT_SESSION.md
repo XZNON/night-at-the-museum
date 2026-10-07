@@ -1,4 +1,7 @@
-# Next session — Sketch S4D (Layers 1–3, final S4 gate)
+# Next session — Sketch S4L (vertical lifts), then S4D
+
+**Order change, 2026-10-07 (user):** every layer transition becomes a vertical lift built into the exit ground: step onto the deck and it rises (no E); invisible walls keep the player on it while it rides; it goes straight up onto the next layer's ground. Next is **S4L** on its own request: paste the [S4L prompt](../gameplay/SKETCH_S4_PROMPTS.md#s4l--vertical-lifts) and read the [S4L plan](../gameplay/SKETCH_S4L_PLAN.md). S4D (Layers 1–3, final S4 gate) follows after S4L review, using its revised prompt. Planning only; no lift code exists yet.
+
 
 **S4C accepted, 2026-10-07:** the user accepted S4C after the Layer 3 air-momentum fix and authorized committing/pushing this checkpoint to origin/main. Next is S4D (Layers 1/2 joined to this Layer 3, the final S4 gate) on its own request: paste the [S4D prompt](../gameplay/SKETCH_S4_PROMPTS.md#s4d--full-route-through-s4) and read the [S4D plan](../gameplay/SKETCH_S4D_PLAN.md) first (revised for the delivered S4A–C facts after this checkpoint). No S4D code exists yet.
 

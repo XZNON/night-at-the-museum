@@ -8,7 +8,7 @@ The deadline is not a reason to include unfinished systems. Verify the live jam 
 
 ## Current status
 
-**S4C accepted by the user on 2026-10-07 (after the Layer 3 air-momentum fix) and committed/pushed at their request.** Next: S4D on its own request ([S4D plan](../gameplay/SKETCH_S4D_PLAN.md), [prompt](../gameplay/SKETCH_S4_PROMPTS.md#s4d--full-route-through-s4)).
+**S4C accepted by the user on 2026-10-07 (after the Layer 3 air-momentum fix) and committed/pushed at their request.** The user then decided all layer transitions become vertical lifts: next is [S4L](../gameplay/SKETCH_S4L_PLAN.md) on its own request, then S4D ([S4D plan](../gameplay/SKETCH_S4D_PLAN.md), [prompt](../gameplay/SKETCH_S4_PROMPTS.md#s4d--full-route-through-s4)).
 
 **Latest implementation, 2026-10-07: S4C joined Layer 3 at its playable review gate.** `study=layer-3` climbs the accepted S4A walls and crosses the accepted S4B swings in one Layer 3: the grounded landing on the shared ledge hands over once, in place, taking the third nail back; crossing retries keep the climb; Restart returns to the Layer 3 entrance. 180/180 unit tests, build, 7/7 joined browser cases at both sizes, S4A/S4B/S1/S3 regressions pass; see [S4C evidence](../validation/sketch-s4/s4c/README.md). Uncommitted over `68e7785`. Stop for user review before S4D. S4 is not complete.
 
@@ -61,7 +61,7 @@ M3 generation steering (2026-10-06): after persistent DreamLayer 503 failures th
 - [x] M4 S1 mechanics playground.
 - [x] M4 S2 pendulum layer/escalator (implemented, awaiting user review).
 - [x] M4 S3 board/axe layer/escalator (S3A + S3B complete for the user-requested origin/main checkpoint).
-- [ ] M4 S4 Layer 3 wall climb/glue crossing (planned as S4A/B/C/D, each separately requested/reviewed; S4A, S4B and S4C accepted; S4D next on its own request).
+- [ ] M4 S4 Layer 3 wall climb/glue crossing (planned as S4A/B/C/D plus S4L lifts, each separately requested/reviewed; S4A, S4B and S4C accepted; S4L next, then S4D).
 - [ ] M4 S5 moving-socket finale/sun/campaign/ending.
 - [ ] M4 S6 refinement and complete gameplay regression.
 - [ ] Required Sketch references/production art and final art/audio camera validation (separate follow-up).
@@ -685,4 +685,8 @@ Review fix, same day: testing S4C, the user reported that releasing A/D mid-jump
 ### 2026-10-07 — S4C accepted; S4D plan revised
 
 The user accepted S4C after the Layer 3 air-momentum fix and authorized committing/pushing the S4C checkpoint to origin/main. Afterwards, on the user's request, SKETCH_S4D_PLAN and the S4D prompt were revised for the delivered S4A/S4B/S4C facts (planning only; no S4D code).
+
+### 2026-10-07 — Vertical lifts planned (S4L, before S4D)
+
+The user asked for elevator platforms that carry the player straight up to the next layer, integrated with the platform, instead of the escalator stairs. Decisions: stepping on the deck starts it, invisible walls keep the player on it while riding, and every layer transition uses a lift. Planned as its own block in SKETCH_S4L_PLAN (data/model/presentation, a plain Layer 2 walkway to the second lift so Layer 3 geometry stays as accepted, recovery, tests, possible L1/L2 split) with a paste-ready prompt; S4D plan/prompt now run after S4L on lifts. DECISIONS, REQUIREMENTS FR24, UNFINISHED_SKETCH, README, AGENTS and NEXT_SESSION updated. Planning only; no code changed.
 
