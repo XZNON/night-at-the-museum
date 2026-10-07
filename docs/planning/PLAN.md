@@ -8,6 +8,8 @@ The deadline is not a reason to include unfinished systems. Verify the live jam 
 
 ## Current status
 
+**Latest implementation, 2026-10-07: S4D (Layers 1–3, the final S4 gate) at its playable review gate.** `study=layers-1-3` plays Layer 1, the first lift, Layer 2, the second lift and the accepted joined Layer 3 to one endpoint on the end ledge; the second arrival starts the climb once (two nails, third collectable). Each section retries at its own entrance; Restart returns to Layer 1. 214/214 unit tests, build; new full-route browser spec 4/4 (runs 1 and 3; run 2's 960 case paused on a real OS focus change, fixed in the test) and every regression spec passes. S4's automated gate is complete; stop for user review before S5. Uncommitted over `d0856d1`; no commit/push, generation or sub-agents authorized. [S4D evidence](../validation/sketch-s4/s4d/README.md).
+
 **S4L accepted by the user on 2026-10-07 and committed/pushed at their request.** Next: S4D on its own request ([plan](../gameplay/SKETCH_S4D_PLAN.md), [prompt](../gameplay/SKETCH_S4_PROMPTS.md#s4d--full-route-through-s4)).
 
 **Latest implementation, 2026-10-07: S4L vertical lifts at their playable review gate.** Both escalators are now lifts: step fully onto the deck after clearing a layer, ride straight up inside invisible walls, step off right onto the next layer's ground. Studies `layer-1`, `layer-2`, `layers-1-2` keep their endpoints; Layer 3 studies show both decks parked. Stop for user review; S4D needs its own request. Uncommitted over `98a213c`; no commit/push, generation or sub-agents authorized. [S4L evidence](../validation/sketch-s4/s4l/README.md).
@@ -65,7 +67,7 @@ M3 generation steering (2026-10-06): after persistent DreamLayer 503 failures th
 - [x] M4 S1 mechanics playground.
 - [x] M4 S2 pendulum layer/escalator (implemented, awaiting user review).
 - [x] M4 S3 board/axe layer/escalator (S3A + S3B complete for the user-requested origin/main checkpoint).
-- [ ] M4 S4 Layer 3 wall climb/glue crossing (planned as S4A/B/C/D plus S4L lifts, each separately requested/reviewed; S4A, S4B and S4C accepted; S4L next, then S4D).
+- [x] M4 S4 Layer 3 wall climb and swing crossing (S4A/B/C/L accepted; S4D full-route gate passed 2026-10-07, awaiting user review).
 - [ ] M4 S5 moving-socket finale/sun/campaign/ending.
 - [ ] M4 S6 refinement and complete gameplay regression.
 - [ ] Required Sketch references/production art and final art/audio camera validation (separate follow-up).
@@ -701,3 +703,8 @@ On the user's S4L-only request, both escalators became vertical lifts (`SketchLi
 ### 2026-10-07 — S4L accepted
 
 The user accepted S4L ("lgtm") and authorized committing/pushing the S4L checkpoint to origin/main. Next is S4D on its own request.
+
+### 2026-10-07 — S4D Layers 1–3 at playable review gate (final S4 gate)
+
+On the user's S4D request, new save-isolated study `layers-1-3` (`sketchLayersOneToThree`): the accepted `layer-3` field with four cloned legs — `layer-1` → `layer-2` (first lift), `layer-2` → `l3-walls` (second lift, arrival section `l3-walls`), `l3-walls` → `l3-swings` (grounded handoff), terminal `l3-swings`. No geometry, tuning or older preset changed. The second arrival commits once in place on the parked deck and starts the climb (two nails, third collectable, phase zero, empty queue, new optional `leg.arrivalCue`). Route-id assumptions now follow data: hazard cue by what was hit, Layer 3 strict restore/HUD by the active leg's layer, crossing texts by grounded-handoff legs, S4D exit/endpoint texts; `layers-1-3` snapshots must carry its route id. Scene/UI: wall letters keyed on leg targets, menu/eyebrow/tag/pause, `data-layer` switches the HUD to the compact Layer 3 layout. Accepted as is: other sections' rings are hidden in `layers-1-3` (as in the Layer 3 studies). Tests: `tests/sketch-layers-1-3.test.ts` (13; composition, both rides, second-arrival contract, input-only climb + crossing from the arrival to the endpoint, recovery table, cues, snapshot refusal); all unit 214/214; S3A/S4A/S4B/S4C measurement JSON byte-identical to HEAD output, accepted files restored. Browser helpers extracted unchanged into `sketch-layer2-controls.ts`/`sketch-layer3-controls.ts`. New `tests/browser/sketch-layer3-full.spec.ts` 4/4 in runs 1 and 3 (run 2: 3/4, the 960 case paused on a real OS window focus change because its earlier blur check left Playwright's focus emulation off; the spec now switches it back on) (full route with section recovery at 1280 and 960, reduced motion, menu/denied storage/production); regressions S3 layer2 14/14, S4C 7/7, S4A 8/8, S4B 8/8, S1 12/12, S4L lifts 8/8, S2 layer1 12/12 + motion 1/1, outputs moved to s4d/regressions, accepted files restored. One bot glue retry (run 2 reduced motion); all other crossings first attempt. Scripted input only. Next: user review of S4D; S5 only on its own request.
+

@@ -123,6 +123,7 @@ export class GameUi {
 
   private tagLabel(): string {
     const base = this.study !== 'sketch' ? 'ROYAL SUPPER STUDY'
+      : this.sketchMode === 'layers-1-3' ? 'UNFINISHED SKETCH / S4D / LAYERS 1–3'
       : this.sketchMode === 'layer-3' ? 'UNFINISHED SKETCH / S4C / JOINED LAYER 3'
       : this.sketchMode === 'layer-3-swings' ? 'UNFINISHED SKETCH / S4B / MOVING SWINGS'
       : this.sketchMode === 'layer-3-walls' ? 'UNFINISHED SKETCH / S4A / WALL CLIMB'
@@ -152,6 +153,16 @@ export class GameUi {
       return;
     }
     if (this.study === 'sketch') {
+      if (this.sketchMode === 'layers-1-3') {
+        this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S4D / Layers 1–3</p>
+        <h2>The whole<br><em>picture.</em></h2><p class="intro">Four pendulums. Boards and axes.<br>Two lifts. Six walls.<br>Two moving swings.</p>
+        <p class="menu-description">Climb Layer 1 and step onto its lift. Cross Layer 2 to the left, walk to the far end and ride the second lift. On Layer 3, pick up the third nail and climb the criss-cross walls; landing on the high ledge takes it back. Then nail wood anywhere and swing over the glue onto the end ledge. A fall retries only the section you are in.</p>
+        <button class="primary" data-action="start">Enter the picture</button>
+        ${remembered ? '<button class="quiet" data-action="replay">Restart Layers 1–3</button>' : ''}
+        <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move / pump · <kbd>Space</kbd> Jump ×2 / kick / release · <kbd>E</kbd> Grip · Click pin or wood · <kbd>Q</kbd> Recall · <kbd>R</kbd> Retry</div>
+        <p class="small-note">Campaign saves are untouched. Stop at the fixed end ledge for S4D review.</p>`);
+        return;
+      }
       if (this.sketchMode === 'layer-3') {
         this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S4C / Joined Layer 3</p>
         <h2>Walls, then<br><em>swings.</em></h2><p class="intro">Six walls to climb.<br>A glue pool to cross.<br>One Layer 3.</p>
@@ -244,7 +255,7 @@ export class GameUi {
   markSketch(mode: SketchStudy, bayId: SketchBayId): void {
     this.sketchMode = mode;
     document.getElementById('sketch-hud')!.dataset.study = mode;
-    document.getElementById('sketch-eyebrow')!.textContent = mode === 'layer-3' ? 'Unfinished Sketch / S4C / Joined Layer 3' : mode === 'layer-3-swings' ? 'Unfinished Sketch / S4B / Layer 3 swings' : mode === 'layer-3-walls' ? 'Unfinished Sketch / S4A / Layer 3 walls' : mode === 'layers-1-2' ? 'Unfinished Sketch / S3 / Joined layers' : mode === 'layer-2' ? 'Unfinished Sketch / S3 · Layer 2' : mode === 'layer-1'
+    document.getElementById('sketch-eyebrow')!.textContent = mode === 'layers-1-3' ? 'Unfinished Sketch / S4D / Layers 1–3' : mode === 'layer-3' ? 'Unfinished Sketch / S4C / Joined Layer 3' : mode === 'layer-3-swings' ? 'Unfinished Sketch / S4B / Layer 3 swings' : mode === 'layer-3-walls' ? 'Unfinished Sketch / S4A / Layer 3 walls' : mode === 'layers-1-2' ? 'Unfinished Sketch / S3 / Joined layers' : mode === 'layer-2' ? 'Unfinished Sketch / S3 · Layer 2' : mode === 'layer-1'
       ? 'The Last Curator · Slice 2 · Layer 1 of the unfinished picture' : 'The Last Curator · Slice 1 mechanics playground';
     document.getElementById('sketch-bays')!.hidden = mode !== 'mechanics';
     const tag = document.querySelector<HTMLElement>('.build-tag');
@@ -267,6 +278,8 @@ export class GameUi {
     text('sketch-nearest', state.nearest); text('sketch-motion', state.swing ? `Swing · ${state.swing}` : `Motion · ${state.motion}`);
     text('sketch-goal', state.checkpoint ?? (state.completed ? 'Goal reached · press R to retry' : state.goal));
     text('sketch-layer', state.layer ?? ''); document.getElementById('sketch-layer')!.hidden = !state.layer;
+    // The full route switches to the compact Layer 3 layout once it gets there.
+    document.getElementById('sketch-hud')!.dataset.layer = state.layer?.charAt(0) ?? '';
     text('sketch-endpoint', state.endpoint ?? ''); document.getElementById('sketch-endpoint')!.hidden = !state.endpoint;
     text('sketch-prompt', state.prompt ?? ''); document.getElementById('sketch-prompt')!.hidden = !state.prompt;
     text('sketch-cue', state.cue); this.markBay(state.bay as SketchBayId);
@@ -278,7 +291,7 @@ export class GameUi {
     this.show('pause', `<p class="eyebrow">A moment between brushstrokes</p><h2 class="compact">Paused.</h2>
       <p class="menu-description">${reason}</p><button class="primary" data-action="resume">Resume <span>→</span></button>
       ${adventure ? `<button class="secondary" data-action="checkpoint">${route ? 'Back to the last safe checkpoint' : sketch ? 'Restart bay' : 'Restart from checkpoint'}</button>
-      <button class="quiet" data-action="replay">${route ? `Restart ${this.sketchMode === 'layer-3' ? 'Layer 3' : this.sketchMode === 'layer-3-swings' ? 'swing crossing' : this.sketchMode === 'layer-3-walls' ? 'wall climb' : this.sketchMode === 'layers-1-2' ? 'Layers 1 &amp; 2' : this.sketchMode === 'layer-2' ? 'Layer 2' : 'Layer 1'}` : 'Restart adventure'}</button><button class="quiet" data-action="leave">${this.direct ? 'Leave painting' : 'Return to Museum'}</button>` : ''}
+      <button class="quiet" data-action="replay">${route ? `Restart ${this.sketchMode === 'layers-1-3' ? 'Layers 1–3' : this.sketchMode === 'layer-3' ? 'Layer 3' : this.sketchMode === 'layer-3-swings' ? 'swing crossing' : this.sketchMode === 'layer-3-walls' ? 'wall climb' : this.sketchMode === 'layers-1-2' ? 'Layers 1 &amp; 2' : this.sketchMode === 'layer-2' ? 'Layer 2' : 'Layer 1'}` : 'Restart adventure'}</button><button class="quiet" data-action="leave">${this.direct ? 'Leave painting' : 'Return to Museum'}</button>` : ''}
       <label class="setting"><input type="checkbox" id="low-quality" ${lowQuality ? 'checked' : ''}> Low rendering quality</label>
       <label class="setting">Master volume <input id="master-volume" type="range" min="0" max="1" step="0.05" value="${settings?.masterVolume ?? 0.7}"></label>
       ${!this.direct ? '<button class="quiet" data-action="reset">Reset progress</button>' : ''}

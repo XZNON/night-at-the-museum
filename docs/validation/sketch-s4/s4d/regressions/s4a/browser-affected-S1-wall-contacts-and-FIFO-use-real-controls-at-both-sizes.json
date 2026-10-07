@@ -1,0 +1,909 @@
+{
+  "status": "passed",
+  "events": [
+    {
+      "event": "S1 real wall contact",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=mechanics&bay=walls",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "state": {
+        "scene": "unfinished-sketch",
+        "transitioning": false,
+        "paused": false,
+        "body": {
+          "x": 11.75,
+          "y": 4.477500000000001,
+          "width": 0.65,
+          "height": 1.25,
+          "vx": 0,
+          "vy": -0.44999999999999823,
+          "grounded": false
+        },
+        "museum": null,
+        "session": {
+          "artworkId": "royal-supper",
+          "checkpointId": "basket-start",
+          "fork": "upright",
+          "forkElapsed": 0,
+          "grapeElapsed": 0,
+          "candleElapsed": 0,
+          "dinerElapsed": 0,
+          "grapesStarted": false,
+          "candlesStarted": false,
+          "dinerStarted": false
+        },
+        "completed": false,
+        "campaign": {
+          "collectedPieceIds": [],
+          "restoredPieceIds": []
+        },
+        "updateCount": 160,
+        "renderCount": 381,
+        "sketch": {
+          "mode": "bay",
+          "field": "walls",
+          "bay": "walls",
+          "study": "mechanics",
+          "entryLeg": null,
+          "liftId": null,
+          "lifts": [],
+          "leg": null,
+          "stage": null,
+          "section": null,
+          "transit": null,
+          "onDeck": null,
+          "ride": null,
+          "camera": {
+            "x": 15.057889243544661,
+            "y": 7.045568836898182,
+            "width": 26.666666666666664,
+            "height": 15
+          },
+          "nails": 1,
+          "available": 1,
+          "budget": 2,
+          "pickup": false,
+          "pickupOffered": false,
+          "reach": 10,
+          "freePlacement": false,
+          "queue": [
+            {
+              "nailId": "nail-1-0",
+              "targetId": "walls-freeze-a",
+              "sequence": 0
+            }
+          ],
+          "oldest": "walls-freeze-a",
+          "motion": {
+            "state": "wall-slide",
+            "wall": "walls-board-a",
+            "wallTransfer": true,
+            "swingTarget": "",
+            "swingAngle": 0
+          },
+          "completed": false,
+          "elapsed": 2.666666666666662,
+          "recovering": false,
+          "targets": [
+            {
+              "id": "walls-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Climb board A",
+              "x": 13.5,
+              "y": 6.859830932338794,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": "nail-1-0",
+              "oldest": true,
+              "distance": 2.2624846973526105,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 565.2213163098563,
+                "y": 368.9154194188506,
+                "visible": true
+              }
+            },
+            {
+              "id": "walls-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Climb board B",
+              "x": 19,
+              "y": 10.079385241571813,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 8.527896089175531,
+              "reason": "",
+              "screen": {
+                "x": 829.2213163098563,
+                "y": 214.3768125756657,
+                "visible": true
+              }
+            },
+            {
+              "id": "walls-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Climb board C",
+              "x": 24.5,
+              "y": 7.6437047985323865,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 12.682205913329277,
+              "reason": "Out of reach.",
+              "screen": {
+                "x": 1093.2213163098563,
+                "y": 331.28947384155816,
+                "visible": true
+              }
+            }
+          ],
+          "grips": [],
+          "nailSurfaces": [],
+          "boards": [
+            {
+              "id": "walls-board-a",
+              "x": 13.5,
+              "left": 12.4,
+              "right": 14.6,
+              "top": 6.859830932338794,
+              "bottom": 2.459830932338794,
+              "pinned": true
+            },
+            {
+              "id": "walls-board-b",
+              "x": 19,
+              "left": 17.9,
+              "right": 20.1,
+              "top": 10.079385241571813,
+              "bottom": 5.679385241571814,
+              "pinned": false
+            },
+            {
+              "id": "walls-board-c",
+              "x": 24.5,
+              "left": 23.4,
+              "right": 25.6,
+              "top": 7.6437047985323865,
+              "bottom": 3.243704798532386,
+              "pinned": false
+            }
+          ],
+          "axes": [],
+          "dangerBounds": [],
+          "surfaces": [
+            {
+              "id": "walls-ground",
+              "left": -2,
+              "right": 12,
+              "top": 0
+            },
+            {
+              "id": "walls-step",
+              "left": 10,
+              "right": 12.6,
+              "top": 2.2
+            },
+            {
+              "id": "walls-goal",
+              "left": 28.5,
+              "right": 37.5,
+              "top": 9.6
+            },
+            {
+              "id": "walls-board-a",
+              "left": 12.4,
+              "right": 14.600000000000001,
+              "top": 6.859830932338794
+            },
+            {
+              "id": "walls-board-b",
+              "left": 17.9,
+              "right": 20.099999999999998,
+              "top": 10.079385241571813
+            },
+            {
+              "id": "walls-board-c",
+              "left": 23.4,
+              "right": 25.599999999999998,
+              "top": 7.6437047985323865
+            }
+          ]
+        },
+        "geometryCount": 46,
+        "canvasCount": 1,
+        "textureCount": 1,
+        "lowQuality": false,
+        "pixelRatio": 1,
+        "audio": {
+          "activated": true,
+          "paused": false,
+          "scene": "royal-supper",
+          "ownedSounds": 11,
+          "playing": true,
+          "volume": 0.7,
+          "playedCues": {}
+        }
+      }
+    },
+    {
+      "event": "S1 kick and recall",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=mechanics&bay=walls",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "state": {
+        "scene": "unfinished-sketch",
+        "transitioning": false,
+        "paused": false,
+        "body": {
+          "x": 11.416666666666666,
+          "y": 4.985833333333334,
+          "width": 0.65,
+          "height": 1.25,
+          "vx": -5.499999999999999,
+          "vy": 9.750000000000002,
+          "grounded": false
+        },
+        "museum": null,
+        "session": {
+          "artworkId": "royal-supper",
+          "checkpointId": "basket-start",
+          "fork": "upright",
+          "forkElapsed": 0,
+          "grapeElapsed": 0,
+          "candleElapsed": 0,
+          "dinerElapsed": 0,
+          "grapesStarted": false,
+          "candlesStarted": false,
+          "dinerStarted": false
+        },
+        "completed": false,
+        "campaign": {
+          "collectedPieceIds": [],
+          "restoredPieceIds": []
+        },
+        "updateCount": 164,
+        "renderCount": 390,
+        "sketch": {
+          "mode": "bay",
+          "field": "walls",
+          "bay": "walls",
+          "study": "mechanics",
+          "entryLeg": null,
+          "liftId": null,
+          "lifts": [],
+          "leg": null,
+          "stage": null,
+          "section": null,
+          "transit": null,
+          "onDeck": null,
+          "ride": null,
+          "camera": {
+            "x": 15.18148838076332,
+            "y": 7.242514082233551,
+            "width": 26.666666666666664,
+            "height": 15
+          },
+          "nails": 0,
+          "available": 2,
+          "budget": 2,
+          "pickup": false,
+          "pickupOffered": false,
+          "reach": 10,
+          "freePlacement": false,
+          "queue": [],
+          "oldest": null,
+          "motion": {
+            "state": "normal",
+            "wall": "",
+            "wallTransfer": false,
+            "swingTarget": "",
+            "swingAngle": 0
+          },
+          "completed": false,
+          "elapsed": 2.7333333333333285,
+          "recovering": false,
+          "targets": [
+            {
+              "id": "walls-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Climb board A",
+              "x": 13.5,
+              "y": 8.344833918449194,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 3.2506146050439413,
+              "reason": "",
+              "screen": {
+                "x": 559.2885577233607,
+                "y": 307.0886478616492,
+                "visible": true
+              }
+            },
+            {
+              "id": "walls-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Climb board B",
+              "x": 19,
+              "y": 10.122523391876635,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 8.54627111447655,
+              "reason": "",
+              "screen": {
+                "x": 823.2885577233607,
+                "y": 221.75955313713197,
+                "visible": true
+              }
+            },
+            {
+              "id": "walls-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Climb board C",
+              "x": 24.5,
+              "y": 7.685361004935864,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 12.925893953792485,
+              "reason": "Out of reach.",
+              "screen": {
+                "x": 1087.2885577233606,
+                "y": 338.743347710289,
+                "visible": true
+              }
+            }
+          ],
+          "grips": [],
+          "nailSurfaces": [],
+          "boards": [
+            {
+              "id": "walls-board-a",
+              "x": 13.5,
+              "left": 12.4,
+              "right": 14.6,
+              "top": 8.344833918449194,
+              "bottom": 3.944833918449194,
+              "pinned": false
+            },
+            {
+              "id": "walls-board-b",
+              "x": 19,
+              "left": 17.9,
+              "right": 20.1,
+              "top": 10.122523391876635,
+              "bottom": 5.722523391876635,
+              "pinned": false
+            },
+            {
+              "id": "walls-board-c",
+              "x": 24.5,
+              "left": 23.4,
+              "right": 25.6,
+              "top": 7.685361004935864,
+              "bottom": 3.2853610049358632,
+              "pinned": false
+            }
+          ],
+          "axes": [],
+          "dangerBounds": [],
+          "surfaces": [
+            {
+              "id": "walls-ground",
+              "left": -2,
+              "right": 12,
+              "top": 0
+            },
+            {
+              "id": "walls-step",
+              "left": 10,
+              "right": 12.6,
+              "top": 2.2
+            },
+            {
+              "id": "walls-goal",
+              "left": 28.5,
+              "right": 37.5,
+              "top": 9.6
+            },
+            {
+              "id": "walls-board-a",
+              "left": 12.4,
+              "right": 14.600000000000001,
+              "top": 8.344833918449194
+            },
+            {
+              "id": "walls-board-b",
+              "left": 17.9,
+              "right": 20.099999999999998,
+              "top": 10.122523391876635
+            },
+            {
+              "id": "walls-board-c",
+              "left": 23.4,
+              "right": 25.599999999999998,
+              "top": 7.685361004935864
+            }
+          ]
+        },
+        "geometryCount": 46,
+        "canvasCount": 1,
+        "textureCount": 1,
+        "lowQuality": false,
+        "pixelRatio": 1,
+        "audio": {
+          "activated": true,
+          "paused": false,
+          "scene": "royal-supper",
+          "ownedSounds": 11,
+          "playing": true,
+          "volume": 0.7,
+          "playedCues": {}
+        }
+      }
+    },
+    {
+      "event": "S1 real wall contact",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=mechanics&bay=walls",
+      "size": {
+        "width": 960,
+        "height": 540
+      },
+      "state": {
+        "scene": "unfinished-sketch",
+        "transitioning": false,
+        "paused": false,
+        "body": {
+          "x": 11.75,
+          "y": 4.477500000000002,
+          "width": 0.65,
+          "height": 1.25,
+          "vx": 0,
+          "vy": -0.03333333333333155,
+          "grounded": false
+        },
+        "museum": null,
+        "session": {
+          "artworkId": "royal-supper",
+          "checkpointId": "basket-start",
+          "fork": "upright",
+          "forkElapsed": 0,
+          "grapeElapsed": 0,
+          "candleElapsed": 0,
+          "dinerElapsed": 0,
+          "grapesStarted": false,
+          "candlesStarted": false,
+          "dinerStarted": false
+        },
+        "completed": false,
+        "campaign": {
+          "collectedPieceIds": [],
+          "restoredPieceIds": []
+        },
+        "updateCount": 159,
+        "renderCount": 383,
+        "sketch": {
+          "mode": "bay",
+          "field": "walls",
+          "bay": "walls",
+          "study": "mechanics",
+          "entryLeg": null,
+          "liftId": null,
+          "lifts": [],
+          "leg": null,
+          "stage": null,
+          "section": null,
+          "transit": null,
+          "onDeck": null,
+          "ride": null,
+          "camera": {
+            "x": 15.061636647266894,
+            "y": 7.001193969998456,
+            "width": 26.666666666666664,
+            "height": 15
+          },
+          "nails": 1,
+          "available": 1,
+          "budget": 2,
+          "pickup": false,
+          "pickupOffered": false,
+          "reach": 10,
+          "freePlacement": false,
+          "queue": [
+            {
+              "nailId": "nail-1-0",
+              "targetId": "walls-freeze-a",
+              "sequence": 0
+            }
+          ],
+          "oldest": "walls-freeze-a",
+          "motion": {
+            "state": "wall-slide",
+            "wall": "walls-board-a",
+            "wallTransfer": true,
+            "swingTarget": "",
+            "swingAngle": 0
+          },
+          "completed": false,
+          "elapsed": 2.6499999999999955,
+          "recovering": false,
+          "targets": [
+            {
+              "id": "walls-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Climb board A",
+              "x": 13.5,
+              "y": 6.829918814030525,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": "nail-1-0",
+              "oldest": true,
+              "distance": 2.239330426504008,
+              "reason": "A nail is already here.",
+              "screen": {
+                "x": 423.7810806983918,
+                "y": 276.1659056148455,
+                "visible": true
+              }
+            },
+            {
+              "id": "walls-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Climb board B",
+              "x": 19,
+              "y": 10.067160852994398,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 8.520767711025519,
+              "reason": "",
+              "screen": {
+                "x": 621.7810806983917,
+                "y": 159.62519221214606,
+                "visible": true
+              }
+            },
+            {
+              "id": "walls-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Climb board C",
+              "x": 24.5,
+              "y": 7.635425498542621,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 12.68054953782238,
+              "reason": "Out of reach.",
+              "screen": {
+                "x": 819.7810806983919,
+                "y": 247.16766497241005,
+                "visible": true
+              }
+            }
+          ],
+          "grips": [],
+          "nailSurfaces": [],
+          "boards": [
+            {
+              "id": "walls-board-a",
+              "x": 13.5,
+              "left": 12.4,
+              "right": 14.6,
+              "top": 6.829918814030525,
+              "bottom": 2.4299188140305246,
+              "pinned": true
+            },
+            {
+              "id": "walls-board-b",
+              "x": 19,
+              "left": 17.9,
+              "right": 20.1,
+              "top": 10.067160852994398,
+              "bottom": 5.667160852994399,
+              "pinned": false
+            },
+            {
+              "id": "walls-board-c",
+              "x": 24.5,
+              "left": 23.4,
+              "right": 25.6,
+              "top": 7.635425498542621,
+              "bottom": 3.2354254985426207,
+              "pinned": false
+            }
+          ],
+          "axes": [],
+          "dangerBounds": [],
+          "surfaces": [
+            {
+              "id": "walls-ground",
+              "left": -2,
+              "right": 12,
+              "top": 0
+            },
+            {
+              "id": "walls-step",
+              "left": 10,
+              "right": 12.6,
+              "top": 2.2
+            },
+            {
+              "id": "walls-goal",
+              "left": 28.5,
+              "right": 37.5,
+              "top": 9.6
+            },
+            {
+              "id": "walls-board-a",
+              "left": 12.4,
+              "right": 14.600000000000001,
+              "top": 6.829918814030525
+            },
+            {
+              "id": "walls-board-b",
+              "left": 17.9,
+              "right": 20.099999999999998,
+              "top": 10.067160852994398
+            },
+            {
+              "id": "walls-board-c",
+              "left": 23.4,
+              "right": 25.599999999999998,
+              "top": 7.635425498542621
+            }
+          ]
+        },
+        "geometryCount": 46,
+        "canvasCount": 1,
+        "textureCount": 1,
+        "lowQuality": false,
+        "pixelRatio": 1,
+        "audio": {
+          "activated": true,
+          "paused": false,
+          "scene": "royal-supper",
+          "ownedSounds": 11,
+          "playing": true,
+          "volume": 0.7,
+          "playedCues": {}
+        }
+      }
+    },
+    {
+      "event": "S1 kick and recall",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=mechanics&bay=walls",
+      "size": {
+        "width": 960,
+        "height": 540
+      },
+      "state": {
+        "scene": "unfinished-sketch",
+        "transitioning": false,
+        "paused": false,
+        "body": {
+          "x": 11.416666666666666,
+          "y": 4.985833333333335,
+          "width": 0.65,
+          "height": 1.25,
+          "vx": -5.499999999999999,
+          "vy": 9.750000000000002,
+          "grounded": false
+        },
+        "museum": null,
+        "session": {
+          "artworkId": "royal-supper",
+          "checkpointId": "basket-start",
+          "fork": "upright",
+          "forkElapsed": 0,
+          "grapeElapsed": 0,
+          "candleElapsed": 0,
+          "dinerElapsed": 0,
+          "grapesStarted": false,
+          "candlesStarted": false,
+          "dinerStarted": false
+        },
+        "completed": false,
+        "campaign": {
+          "collectedPieceIds": [],
+          "restoredPieceIds": []
+        },
+        "updateCount": 163,
+        "renderCount": 392,
+        "sketch": {
+          "mode": "bay",
+          "field": "walls",
+          "bay": "walls",
+          "study": "mechanics",
+          "entryLeg": null,
+          "liftId": null,
+          "lifts": [],
+          "leg": null,
+          "stage": null,
+          "section": null,
+          "transit": null,
+          "onDeck": null,
+          "ride": null,
+          "camera": {
+            "x": 15.179582537385478,
+            "y": 7.219094467290115,
+            "width": 26.666666666666664,
+            "height": 15
+          },
+          "nails": 0,
+          "available": 2,
+          "budget": 2,
+          "pickup": false,
+          "pickupOffered": false,
+          "reach": 10,
+          "freePlacement": false,
+          "queue": [],
+          "oldest": null,
+          "motion": {
+            "state": "normal",
+            "wall": "",
+            "wallTransfer": false,
+            "swingTarget": "",
+            "swingAngle": 0
+          },
+          "completed": false,
+          "elapsed": 2.716666666666662,
+          "recovering": false,
+          "targets": [
+            {
+              "id": "walls-freeze-a",
+              "kind": "freeze-platform",
+              "label": "Climb board A",
+              "x": 13.5,
+              "y": 8.325659143724529,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 3.2345038710561655,
+              "reason": "",
+              "screen": {
+                "x": 419.53502865412275,
+                "y": 230.16367164836112,
+                "visible": true
+              }
+            },
+            {
+              "id": "walls-freeze-b",
+              "kind": "freeze-platform",
+              "label": "Climb board B",
+              "x": 19,
+              "y": 10.11260951192607,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 8.541041595726062,
+              "reason": "",
+              "screen": {
+                "x": 617.5350286541228,
+                "y": 165.83345839310562,
+                "visible": true
+              }
+            },
+            {
+              "id": "walls-freeze-c",
+              "kind": "freeze-platform",
+              "label": "Climb board C",
+              "x": 24.5,
+              "y": 7.67367486640468,
+              "width": 1,
+              "height": 0.4,
+              "occupiedBy": null,
+              "oldest": false,
+              "distance": 12.92402354667495,
+              "reason": "Out of reach.",
+              "screen": {
+                "x": 815.5350286541228,
+                "y": 253.6351056318757,
+                "visible": true
+              }
+            }
+          ],
+          "grips": [],
+          "nailSurfaces": [],
+          "boards": [
+            {
+              "id": "walls-board-a",
+              "x": 13.5,
+              "left": 12.4,
+              "right": 14.6,
+              "top": 8.325659143724529,
+              "bottom": 3.925659143724528,
+              "pinned": false
+            },
+            {
+              "id": "walls-board-b",
+              "x": 19,
+              "left": 17.9,
+              "right": 20.1,
+              "top": 10.11260951192607,
+              "bottom": 5.712609511926069,
+              "pinned": false
+            },
+            {
+              "id": "walls-board-c",
+              "x": 24.5,
+              "left": 23.4,
+              "right": 25.6,
+              "top": 7.67367486640468,
+              "bottom": 3.2736748664046793,
+              "pinned": false
+            }
+          ],
+          "axes": [],
+          "dangerBounds": [],
+          "surfaces": [
+            {
+              "id": "walls-ground",
+              "left": -2,
+              "right": 12,
+              "top": 0
+            },
+            {
+              "id": "walls-step",
+              "left": 10,
+              "right": 12.6,
+              "top": 2.2
+            },
+            {
+              "id": "walls-goal",
+              "left": 28.5,
+              "right": 37.5,
+              "top": 9.6
+            },
+            {
+              "id": "walls-board-a",
+              "left": 12.4,
+              "right": 14.600000000000001,
+              "top": 8.325659143724529
+            },
+            {
+              "id": "walls-board-b",
+              "left": 17.9,
+              "right": 20.099999999999998,
+              "top": 10.11260951192607
+            },
+            {
+              "id": "walls-board-c",
+              "left": 23.4,
+              "right": 25.599999999999998,
+              "top": 7.67367486640468
+            }
+          ]
+        },
+        "geometryCount": 46,
+        "canvasCount": 1,
+        "textureCount": 1,
+        "lowQuality": false,
+        "pixelRatio": 1,
+        "audio": {
+          "activated": true,
+          "paused": false,
+          "scene": "royal-supper",
+          "ownedSounds": 11,
+          "playing": true,
+          "volume": 0.7,
+          "playedCues": {}
+        }
+      }
+    }
+  ]
+}

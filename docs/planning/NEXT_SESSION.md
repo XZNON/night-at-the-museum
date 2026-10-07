@@ -1,4 +1,17 @@
-# Next session — review Sketch S4L (vertical lifts), then S4D
+# Next session — review Sketch S4D (Layers 1–3, final S4 gate), then S5
+
+**Current handoff, 2026-10-07 (S4D implemented):** S4D is at its playable review gate and S4's automated gate has passed. Stop for user review; S5 (moving-socket finale, sun, campaign/ending) needs its own request and plan/prompt. All S4D changes are uncommitted over the accepted S4L checkpoint `d0856d1`; commit/push only if the user authorizes it. No generation, dependencies, publishing or sub-agents are authorized.
+
+Play after `npm run dev`: [Layers 1–3](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layers-1-3). Route: Layer 1 pendulums (A, B; Q for C; Q for D) → step onto the lift → Layer 2 boards/axes leftward (A, B; Q for C) → walk onto the second lift → on arrival walk right over the third-nail pickup and climb the six walls → the ledge takes the third nail back → nail strip F, bars M1/M2 and swing onto the end ledge. Each section retries at its own entrance; Restart Layers 1–3 returns to the Layer 1 start. [S4D evidence](../validation/sketch-s4/s4d/README.md) has the data-keyed fixes, recovery table, results and captures.
+
+Implemented: `sketchLayersOneToThree` (`layers-1-3`) composing the accepted `layer-3` field with cloned legs (`layer-2` → `l3-walls` on the second lift); optional `leg.arrivalCue`; hazard/arrival/endpoint texts and Layer 3 restore/HUD rules keyed on data, older studies unchanged; wall letters keyed on leg targets; menu/eyebrow/tag/pause; compact HUD on Layer 3 via `data-layer`. Tests: 214/214 unit (13 new), build; `tests/browser/sketch-layer3-full.spec.ts` 4/4 in runs 1 and 3 (run 2 lost the 960 case to a real OS focus pause; test fixed); regressions S3 14/14, S4C 7/7, S4A 8/8, S4B 8/8, S1 12/12, S4L 8/8, S2 12/12 + 1/1. Shared browser helpers: `tests/browser/sketch-layer2-controls.ts`, `tests/browser/sketch-layer3-controls.ts`.
+
+Review questions: does the full run (about 1.5 min for the bot, longer for a person) feel like one picture, and is the arrival cue enough to send you right over the pickup? Other sections' nail rings are hidden in this study (outlines stay visible as context), unlike `layers-1-2` where they show small; keep that? A fall during Layer 1/2 retries only that layer; a Layer 3 fall restarts the climb (not Layer 2). Anything to tune before S5 should go back to its owning block (no silent retune here).
+
+Next after acceptance: plan S5 (moving-socket finale differentiated from the S4B bars, sun, campaign/museum entry and ending) on its own request.
+
+## S4D request handoff (executed)
+
 
 **S4L accepted, 2026-10-07:** the user accepted S4L and authorized committing/pushing this checkpoint to origin/main. Next is **S4D** on its own request: paste the [S4D prompt](../gameplay/SKETCH_S4_PROMPTS.md#s4d--full-route-through-s4) and read the [S4D plan](../gameplay/SKETCH_S4D_PLAN.md) (its S4L note lists the delivered lift facts).
 

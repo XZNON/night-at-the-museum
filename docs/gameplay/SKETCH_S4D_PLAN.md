@@ -2,6 +2,8 @@
 
 > Update 2026-10-07: the wall climb has three nails (pickup at the Layer 3 start), taken back on the post-climb ground; the second section is now the [free-placement moving-swing crossing](SKETCH_S4B_PLAN.md) with two nails. Read glue/fixed-swing references below accordingly. See [S4 plan update](SKETCH_S4_PLAN.md).
 
+> **S4D delivered (2026-10-07, at review):** `layers-1-3` as specified below; see the [S4D evidence](../validation/sketch-s4/s4d/README.md) for the data-keyed fixes, recovery table and results.
+
 ## Revision for the delivered S4A/S4B/S4C (2026-10-07, supersedes conflicting text below)
 
 > **Order change (user, 2026-10-07):** both escalators become vertical lifts in a separate block, [S4L](SKETCH_S4L_PLAN.md), which runs **before** S4D. Wherever this plan says escalator, ride pad, treads, boarding with E, `l1-escalator`/`l2-escalator` or `escalatorPosition`, use the delivered S4L lifts (`l1-lift`/`l2-lift`, step on to ride, invisible walls, one-way) and its evidence. The second lift arrives beside `l3-arrival`, so the climb entrance (4.2, 24.4) is unchanged.
@@ -99,10 +101,10 @@ Run typecheck/all focused/build and proposed `tests/browser/sketch-layer3-full.s
 
 Evidence: `docs/validation/sketch-s4/s4d/README.md`, verification/observations, both-size second-ride boarding/transit/wall arrival, L3 connection and final-ground captures. Link the preserved A/B measurement files rather than copying their results as fresh. Browser feasibility is not measured human difficulty/duration or representative-machine performance.
 
-- [ ] Continuous Layer1→S4 endpoint and independent studies pass their real-control gates.
-- [ ] Checkpoint/session/input/resource contracts hold across rides and same-layer transitions.
-- [ ] Earlier challenge geometry and production/save isolation are preserved.
-- [ ] S4 status/evidence accurately state completion; no S5 or final art is started.
+- [x] Continuous Layer1→S4 endpoint and independent studies pass their real-control gates.
+- [x] Checkpoint/session/input/resource contracts hold across rides and same-layer transitions.
+- [x] Earlier challenge geometry and production/save isolation are preserved.
+- [x] S4 status/evidence accurately state completion; no S5 or final art is started.
 
 ## If D needs more time
 

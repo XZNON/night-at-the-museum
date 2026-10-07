@@ -1,5 +1,7 @@
 # Decisions — The Last Curator
 
+S4D implementation choices, 2026-10-07 (routine, within the S4D plan; at the S4D review gate): `layers-1-3` reuses the accepted `layer-3` field and clones the four legs; only the clone of `layer-2` changes its link (`nextLegId: 'l3-walls'`, arrival section `l3-walls`). An optional `leg.arrivalCue` names the climb on arrival. Route-id keyed behavior now follows data without changing any older study: hazard cue by what was hit, Layer 3 restore/HUD rules by the active leg's layer, crossing texts by legs entered through a grounded handoff; `layers-1-3` snapshots must carry their route id. The HUD switches to the compact Layer 3 layout when the full route reaches Layer 3. Other sections' rings stay hidden in `layers-1-3` (rule keyed on the field's nailable surfaces, as in the Layer 3 studies); their targets are refused either way. See [S4D evidence](../validation/sketch-s4/s4d/README.md).
+
 S4L acceptance, 2026-10-07: the user accepted the vertical lifts as implemented (including the in-place arrival, the Layer 1 deck under the landing opening and blur returning to the exit) and authorized committing/pushing that checkpoint. Next is S4D on its own request.
 
 Latest checkpoint decision, 2026-10-06: the user confirmed Slice 3 is made and explicitly authorized its completed S3A/S3B checkpoint commit/push to origin/main. Next is S4 under a separate implementation request. Earlier S3B review-only/commit restrictions are superseded for this checkpoint; gameplay rules and future authorization boundaries are unchanged.

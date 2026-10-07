@@ -1,0 +1,161 @@
+{
+  "status": "passed",
+  "events": [
+    {
+      "event": "capture layer-2-entrance-parked-l1",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-2",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "tick": 34,
+      "body": {
+        "x": 64.2,
+        "y": 15.2,
+        "width": 0.65,
+        "height": 1.25,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true
+      },
+      "stage": "traversal",
+      "leg": "layer-2",
+      "transit": 0,
+      "ride": 0,
+      "lifts": [
+        {
+          "id": "l1-lift",
+          "state": "parked",
+          "progress": 1,
+          "walls": false,
+          "active": false,
+          "left": 63,
+          "right": 66.5,
+          "top": 15.2
+        },
+        {
+          "id": "l2-lift",
+          "state": "bottom",
+          "progress": 0,
+          "walls": false,
+          "active": true,
+          "left": -2.6,
+          "right": 0,
+          "top": 16.3
+        }
+      ],
+      "camera": {
+        "x": 57.025000000000006,
+        "y": 18.224999999999998,
+        "width": 32,
+        "height": 18
+      },
+      "paused": false,
+      "canvasCount": 1
+    },
+    {
+      "event": "capture layer-3-walls-entrance-parked-l2",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-3-walls",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "tick": 32,
+      "body": {
+        "x": 4.2,
+        "y": 24.4,
+        "width": 0.65,
+        "height": 1.25,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true
+      },
+      "stage": "traversal",
+      "leg": "l3-walls",
+      "transit": 0,
+      "ride": 0,
+      "lifts": [
+        {
+          "id": "l1-lift",
+          "state": "parked",
+          "progress": 1,
+          "walls": false,
+          "active": false,
+          "left": 63,
+          "right": 66.5,
+          "top": 15.2
+        },
+        {
+          "id": "l2-lift",
+          "state": "parked",
+          "progress": 1,
+          "walls": false,
+          "active": false,
+          "left": -2.6,
+          "right": 0,
+          "top": 24.4
+        }
+      ],
+      "camera": {
+        "x": 11.333333333333332,
+        "y": 29.5,
+        "width": 42.666666666666664,
+        "height": 24
+      },
+      "paused": false,
+      "canvasCount": 1
+    },
+    {
+      "event": "capture layer-3-entrance-parked-l2",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-3",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "tick": 32,
+      "body": {
+        "x": 4.2,
+        "y": 24.4,
+        "width": 0.65,
+        "height": 1.25,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true
+      },
+      "stage": "traversal",
+      "leg": "l3-walls",
+      "transit": 0,
+      "ride": 0,
+      "lifts": [
+        {
+          "id": "l1-lift",
+          "state": "parked",
+          "progress": 1,
+          "walls": false,
+          "active": false,
+          "left": 63,
+          "right": 66.5,
+          "top": 15.2
+        },
+        {
+          "id": "l2-lift",
+          "state": "parked",
+          "progress": 1,
+          "walls": false,
+          "active": false,
+          "left": -2.6,
+          "right": 0,
+          "top": 24.4
+        }
+      ],
+      "camera": {
+        "x": 11.333333333333332,
+        "y": 29.5,
+        "width": 42.666666666666664,
+        "height": 24
+      },
+      "paused": false,
+      "canvasCount": 1
+    }
+  ]
+}

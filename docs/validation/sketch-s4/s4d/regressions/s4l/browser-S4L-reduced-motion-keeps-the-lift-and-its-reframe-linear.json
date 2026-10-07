@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "events": [
+    {
+      "event": "capture l1-reduced-motion-mid",
+      "url": "http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-1",
+      "size": {
+        "width": 1280,
+        "height": 720
+      },
+      "tick": 895,
+      "body": {
+        "x": 63.06444444444466,
+        "y": 14.392187499999995,
+        "width": 0.65,
+        "height": 1.25,
+        "vx": 0,
+        "vy": 0,
+        "grounded": true
+      },
+      "stage": "transit",
+      "leg": "layer-1",
+      "transit": 0.7552083333333317,
+      "ride": 2.8166666666666615,
+      "lifts": [
+        {
+          "id": "l1-lift",
+          "state": "rising",
+          "progress": 0.7552083333333317,
+          "walls": true,
+          "active": true,
+          "left": 63,
+          "right": 66.5,
+          "top": 14.392187499999995
+        }
+      ],
+      "camera": {
+        "x": 67.99999999999999,
+        "y": 13.070115255992054,
+        "width": 32,
+        "height": 18
+      },
+      "paused": false,
+      "canvasCount": 1
+    }
+  ]
+}

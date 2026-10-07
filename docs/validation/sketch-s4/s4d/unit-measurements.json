@@ -1,0 +1,72 @@
+{
+  "secondArrival": {
+    "x": -0.718,
+    "y": 24.4,
+    "cue": "Layer 3 reached. Two nails; pick up the third on your way to the walls.",
+    "liftDeck": "-2.6..0"
+  },
+  "fromSecondArrival": {
+    "frames": 912,
+    "seconds": 15.2,
+    "walkFrames": 57,
+    "climbFrames": 309,
+    "climbLog": [
+      "pickup",
+      "pinc",
+      "a26.6",
+      "b30.7",
+      "c34.8",
+      "Q",
+      "pind",
+      "d38.9",
+      "Q",
+      "pine",
+      "e43.0",
+      "Q",
+      "pinf",
+      "f47.1",
+      "Q",
+      "handoff"
+    ],
+    "climbOrder": [
+      "A",
+      "B",
+      "C",
+      "Q",
+      "D",
+      "Q",
+      "E",
+      "Q",
+      "F",
+      "Q"
+    ],
+    "crossOrder": [
+      "F",
+      "M1",
+      "Q",
+      "M2",
+      "Q"
+    ],
+    "crossParams": {
+      "wait": 4,
+      "second": 16,
+      "pump": 0,
+      "angle": 15,
+      "jump": 18,
+      "p2": 0,
+      "a2": 0,
+      "j2": 6
+    }
+  },
+  "recovery": {
+    "layer-1": "Layer 1 start (1.5, 0)",
+    "first ride": "Layer 1 exit (55.7, 11.9)",
+    "layer-2": "Layer 2 start (64.2, 15.2)",
+    "second ride": "Layer 2 exit (27.5, 16.3)",
+    "climb": "climb entrance (4.2, 24.4), pickup back",
+    "crossing": "swing start (17.2, 49.5), climb kept",
+    "end ledge": "end ledge (59, 54)",
+    "restart": "Layer 1 start",
+    "refusedSnapshots": 13
+  }
+}

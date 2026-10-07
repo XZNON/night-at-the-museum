@@ -375,7 +375,9 @@ export class UnfinishedSketchScene implements GameScene {
         }
       }
       if (m.kind === 'pendulum') this.buildSuspension(m);
-      if ((this.field.id === 'layer-3-walls' || this.field.id === 'layer-3') && m.id.startsWith('l3-wall-')) {
+      // Lettered where a leg of this route climbs them (not as crossing context).
+      if (this.mode.kind === 'route' && m.id.startsWith('l3-wall-') &&
+        this.mode.field.legs.some(l => l.targetIds.includes(`${m.id}-pin`))) {
         this.letter(m.id.slice(-1).toUpperCase(), rig).position.set(0, 1.05, 1.5);
       }
     }

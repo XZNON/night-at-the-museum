@@ -20,11 +20,14 @@ export const step = (m: SketchRouteModel, f: Frame) => {
 export interface ClimbOptions {
   dwell?: number; hold?: 'into' | 'none' | 'away'; omit?: string; field?: SketchRoute;
   pickup?: boolean; entry?: 'single' | 'double';
+  /** Climb on from this model (S4D: just after the second lift's arrival). */
+  model?: SketchRouteModel;
 }
 export function climb(o: ClimbOptions = {}) {
   const { dwell = 0, hold = 'none', omit = '', field = sketchLayerThreeWalls, pickup = true, entry = 'single' } = o;
   const frames: Frame[] = []; const log: string[] = [];
-  const m = new SketchRouteModel(field, sketchTuning);
+  const m = o.model ?? new SketchRouteModel(field, sketchTuning);
+  const startLeg = m.legId;
   const go = (f: Frame) => { frames.push(f); step(m, f); if (m.pickupCollected && !log.includes('pickup')) log.push('pickup'); };
   const pin = (l: string): SketchCommand[] => omit === l ? [] : [{ type: 'place', targetId: `l3-wall-${l}-pin` }];
   go({ input: {}, cmds: [] });
@@ -69,7 +72,7 @@ export function climb(o: ClimbOptions = {}) {
     go({ input: { axis, jumpHeld: held, jumpPressed: press, jumpReleased: press }, cmds });
     if (m.recoveryRemaining) { log.push('fall'); break; } if (m.completed) { log.push('done'); break; }
     // Joined Layer 3 (S4C): the landing hands over to the next section instead.
-    if (m.legId !== field.entryLegId) { log.push('handoff'); break; }
+    if (m.legId !== startLeg) { log.push('handoff'); break; }
   }
   return { m, log, frames };
 }

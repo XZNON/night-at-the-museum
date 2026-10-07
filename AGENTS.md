@@ -2,6 +2,8 @@
 
 ## Purpose and current state
 
+S4D implemented at its playable review gate, 2026-10-07: `study=layers-1-3` runs Layer 1 → lift → Layer 2 → lift → joined Layer 3 (climb, handoff, crossing) to one endpoint; the second arrival starts the climb; each section retries at its own entrance; Restart returns to Layer 1. S4's automated gate passed (see docs/validation/sketch-s4/s4d/README.md and NEXT_SESSION). Uncommitted over `d0856d1`; stop for user review; S5 needs its own request. No commit/push, generation or sub-agents authorized.
+
 S4L accepted by the user on 2026-10-07 and committed/pushed at their request; next is S4D (Layers 1-3, final S4 gate) on its own request. No S4D code, generation or sub-agents are authorized by the acceptance.
 
 S4L implemented at its playable review gate, 2026-10-07: both escalators are vertical lifts (step fully onto the deck after clearing the layer, invisible walls while riding, straight up, step off right; arrival commits in place; decks stay parked). See docs/validation/sketch-s4/s4l/README.md and NEXT_SESSION. Uncommitted over `98a213c`; stop for user review; S4D needs its own request. No commit/push, generation or sub-agents authorized.

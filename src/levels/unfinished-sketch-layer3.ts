@@ -1,6 +1,6 @@
 import type { SketchMechanism, SketchRoute } from './unfinished-sketch';
-import { l2Lift, sketchLayerTwo } from './unfinished-sketch-layer2';
-import { l1Lift } from './unfinished-sketch-route';
+import { l2Lift, sketchJoinedRoute, sketchLayerTwo } from './unfinished-sketch-layer2';
+import { l1Lift, sketchRoute } from './unfinished-sketch-route';
 
 const wall = (letter: string, x: number, y: number, period: number, height = 6.3): SketchMechanism => ({
   id: `l3-wall-${letter}`, kind: 'board', centre: { x, y }, travel: { x: 0, y: 0.5 },
@@ -157,4 +157,30 @@ export const sketchLayerThree: SketchRoute = {
   ],
   // From the ledge's left edge to the crossing's start spot.
   sectionBlend: { from: 'l3-walls', to: 'l3-swings', x0: START.x, x1: sketchLayerThreeSwings.spawn.x },
+};
+
+/**
+ * S4D: the whole picture so far. The accepted joined Layers 1/2 ride straight
+ * into the accepted joined Layer 3: the second lift, which ends on safe
+ * ground in the older studies, here starts the climb on arrival. Every leg is
+ * a clone, so no older study's links, endpoints or data change. Layers 1/2
+ * keep the field's defaults (no pickup, reach 10, air braking); the Layer 3
+ * legs keep their S4C settings.
+ */
+export const sketchLayersOneToThree: SketchRoute = {
+  ...sketchLayerThree, id: 'layers-1-3', entryLegId: 'layer-1',
+  name: 'Layers 1–3 · The full route',
+  hint: sketchRoute.hint,
+  goal: 'Climb the pendulums, cross the boards and axes, ride up, climb the walls and cross the swings to the end ledge. Stop for S4D review.',
+  spawn: { ...sketchRoute.spawn }, deathY: sketchRoute.deathY,
+  // Both lifts are played here, so neither starts parked.
+  parkedLifts: undefined,
+  sectionOrder: ['layer-1', 'layer-2', 'l3-walls', 'l3-swings'],
+  legs: [
+    { ...sketchJoinedRoute.legs[0] },
+    { ...sketchJoinedRoute.legs[1], nextLegId: 'l3-walls', arrivalSectionId: 'l3-walls' },
+    { ...sketchLayerThree.legs[0],
+      arrivalCue: 'Layer 3 reached. Two nails; pick up the third on your way to the walls.' },
+    { ...sketchLayerThree.legs[1] },
+  ],
 };

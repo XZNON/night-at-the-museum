@@ -469,14 +469,16 @@ export abstract class SketchPlayfield {
     if (this.recoveryRemaining > 0) return;
     const b = this.controller.body;
     if (b.y < this.deathY) { this.onFall(); return; }
-    if (this.field.hazards.some(h => overlaps(b, h)) || views.some(view => {
+    const glued = this.field.hazards.some(h => overlaps(b, h));
+    if (glued || views.some(view => {
       const m = this.mechanism(view.id)!;
       if (!m.hazard) return false;
       return m.sweptBlade ? sweptBladeContact(beforeBody, b, this.elapsed - dt, dt, m.period, m.length, m.size.height,
         time => this.centreAt(m, time)) : overlaps(b, m.kind === 'axe' ? this.axeHazard(m, view) :
           { x: view.x - view.width / 2, y: view.y - view.height / 2, width: view.width, height: view.height });
     })) {
-      this.recover(this.field.hazards.length ? 'Glue! Quick retry.' : 'Caught by the axe. Watch its sweep.'); return;
+      // Named by what was hit: a joined field holds both glue and axes.
+      this.recover(glued ? 'Glue! Quick retry.' : 'Caught by the axe. Watch its sweep.'); return;
     }
     const pickup = this.nailPickup;
     if (pickup && !this.pickupCollected && overlaps(b, pickup)) {
@@ -648,14 +650,17 @@ export class SketchRouteModel extends SketchPlayfield {
   /** A joined preset's leg owns its feel; isolated presets keep the field's. */
   protected override get fieldSettings(): SketchLegSettings { return this.leg.settings ?? this.field; }
   override get freePlacement(): boolean { return !!this.leg.surfaceIds?.length; }
-  /** Layer 3 sections (S4A walls, S4B swings, S4C joined) share entrance-only re-entry. */
-  private get layerThree(): boolean {
-    return this.route.id === 'layer-3-walls' || this.route.id === 'layer-3-swings' || this.route.id === 'layer-3';
+  /** Whether a leg of this route plays on Layer 3 (S4A walls, S4B swings). */
+  private legOnLayerThree(id: SketchRouteLegId): boolean {
+    const leg = this.route.legs.find(l => l.id === id);
+    return !!leg && this.route.sections[leg.sectionId]?.layer === 3;
   }
+  /** Layer 3 sections share entrance-only re-entry and their HUD; Layers 1/2 keep S3's (S4D). */
+  private get layerThree(): boolean { return this.legOnLayerThree(this.legId); }
   /** A same-layer leg that hands over on its exit ground instead of ending (S4C). */
   private get continuesOnGround(): boolean { return !this.leg.lift && !!this.leg.nextLegId; }
-  /** True once the joined Layer 3 has moved past its entry leg. */
-  private get laterSection(): boolean { return this.route.id === 'layer-3' && this.legId !== this.route.entryLegId; }
+  /** True in a section entered by a grounded handoff: the crossing after the climb. */
+  private get laterSection(): boolean { return this.route.legs.some(l => l.nextLegId === this.legId && !l.lift); }
 
   stage: SketchRouteStage = 'traversal';
   private transitElapsed = 0;
@@ -674,8 +679,12 @@ export class SketchRouteModel extends SketchPlayfield {
    * the transit started from, so nobody re-enters in midair.
    */
   restoreSession(session: SketchRouteSession): void {
+    // Layer 3 studies, and a Layer 3 leg of the full route, restore only their
+    // own entrance-or-exit snapshots; the full route never had legacy ones.
+    const strict = this.legOnLayerThree(this.route.entryLegId) || this.legOnLayerThree(session.legId);
     if ((session.routeId !== undefined && session.routeId !== this.route.id) ||
-      (this.layerThree && (session.routeId !== this.route.id ||
+      (this.route.id === 'layers-1-3' && session.routeId !== this.route.id) ||
+      (strict && (session.routeId !== this.route.id ||
         !['traversal', 'exit'].includes(session.stage) || !Number.isFinite(session.elapsed) ||
         session.elapsed < 0 || !Number.isFinite(session.sequence)))) { this.restartAdventure(); return; }
     // S3A traversal re-entry is a deterministic entrance retry. Preserve the
@@ -910,7 +919,7 @@ export class SketchRouteModel extends SketchPlayfield {
       this.legId = this.leg.nextLegId;
       this.restartLeg();
       this.controller.respawn(at.x, at.y);
-      this.notify(`Layer ${this.section.layer} reached. Three boards, two nails; the axes stay active.`);
+      this.notify(this.leg.arrivalCue ?? `Layer ${this.section.layer} reached. Three boards, two nails; the axes stay active.`);
       return;
     }
     this.settleArrival(at);
@@ -963,7 +972,8 @@ export class SketchRouteModel extends SketchPlayfield {
       this.notify(this.leg.lift ? `Layer ${this.section.layer} clear. Safe checkpoint reached — step onto the lift to ride up.` :
         this.route.id === 'layer-3-walls' ? 'S4A endpoint. Fixed post-climb ground reached.'
           : this.route.id === 'layer-3-swings' ? 'S4B endpoint. Landed on the fixed end ledge.'
-          : this.route.id === 'layer-3' ? 'S4C endpoint. Layer 3 crossed: landed on the fixed end ledge.' : 'Layer 2 clear. S3A endpoint reached on fixed ground.');
+          : this.route.id === 'layer-3' ? 'S4C endpoint. Layer 3 crossed: landed on the fixed end ledge.'
+          : this.route.id === 'layers-1-3' ? 'S4D endpoint. Layers 1–3 complete: landed on the fixed end ledge.' : 'Layer 2 clear. S3A endpoint reached on fixed ground.');
     }
     // Stepping fully onto the waiting deck starts the ride (never on a hop
     // across it, never while recovering, never before the layer is clear).
@@ -1041,7 +1051,8 @@ export class SketchRouteModel extends SketchPlayfield {
       prompt: this.liftPrompt(),
       endpoint: this.completed ? (this.route.id === 'layer-3-walls' ? 'S4A endpoint reached · Wall climb clear · Stop for review'
         : this.route.id === 'layer-3-swings' ? 'S4B endpoint reached · Swing crossing clear · Stop for review'
-        : this.route.id === 'layer-3' ? 'S4C endpoint reached · Wall climb and swing crossing clear · Stop for review' : this.section.layer === 3 ? 'S3 endpoint reached · Safe Layer 3 ground · Stop for review' : this.leg.lift ? 'Slice 2 endpoint reached · Layer 2 content follows in S3' :
+        : this.route.id === 'layer-3' ? 'S4C endpoint reached · Wall climb and swing crossing clear · Stop for review'
+        : this.route.id === 'layers-1-3' ? 'S4D endpoint reached · Layers 1–3 complete · Stop for review' : this.section.layer === 3 ? 'S3 endpoint reached · Safe Layer 3 ground · Stop for review' : this.leg.lift ? 'Slice 2 endpoint reached · Layer 2 content follows in S3' :
         'S3A endpoint reached · Layer 2 clear') : '',
     };
   }

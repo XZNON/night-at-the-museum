@@ -142,10 +142,10 @@ export interface SketchBay extends SketchPlayfieldData {
 }
 
 /** Development entry values for the save-isolated Sketch scene. */
-export type SketchRouteId = 'layer-1' | 'layer-2' | 'layers-1-2' | 'layer-3-walls' | 'layer-3-swings' | 'layer-3';
+export type SketchRouteId = 'layer-1' | 'layer-2' | 'layers-1-2' | 'layer-3-walls' | 'layer-3-swings' | 'layer-3' | 'layers-1-3';
 export type SketchStudy = 'mechanics' | SketchRouteId;
 
-export const sketchStudies: readonly SketchStudy[] = ['mechanics', 'layer-1', 'layer-2', 'layers-1-2', 'layer-3-walls', 'layer-3-swings', 'layer-3'];
+export const sketchStudies: readonly SketchStudy[] = ['mechanics', 'layer-1', 'layer-2', 'layers-1-2', 'layer-3-walls', 'layer-3-swings', 'layer-3', 'layers-1-3'];
 
 export const isSketchStudy = (value: string | null | undefined): value is SketchStudy =>
   !!value && (sketchStudies as readonly string[]).includes(value);
@@ -235,6 +235,8 @@ export interface SketchRouteLeg {
   settings?: SketchLegSettings;
   /** Section hint in a joined preset; absent keeps the route hint. */
   hint?: string;
+  /** Cue when a lift's arrival starts this leg (S4D); absent keeps the Layer 2 cue. */
+  arrivalCue?: string;
   sectionId: string;
   targetIds: string[];
   /** Nailable surfaces this leg owns (S4B); absent means none. */

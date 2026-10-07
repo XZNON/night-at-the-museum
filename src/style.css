@@ -77,8 +77,8 @@ h2.compact { font-size: 56px; }
 .sketch-status [id="sketch-oldest"] { color: #ffd166; }
 .sketch-status [id="sketch-motion"] { color: #9fe6ff; }
 .sketch-status [id="sketch-layer"] { color: #ffd7a1; }
-#sketch-hud[data-study="layer-3-walls"] .sketch-status, #sketch-hud[data-study="layer-3-swings"] .sketch-status, #sketch-hud[data-study="layer-3"] .sketch-status { width: 240px; max-width: 240px; right: 20px; justify-content: flex-start; }
-#sketch-hud[data-study="layer-3-walls"] .section-hint, #sketch-hud[data-study="layer-3-swings"] .section-hint, #sketch-hud[data-study="layer-3"] .section-hint { top: 170px; left: 24px; max-width: 225px; font-size: 11px; }
+#sketch-hud[data-study="layer-3-walls"] .sketch-status, #sketch-hud[data-study="layer-3-swings"] .sketch-status, #sketch-hud[data-study="layer-3"] .sketch-status, #sketch-hud[data-study="layers-1-3"][data-layer="3"] .sketch-status { width: 240px; max-width: 240px; right: 20px; justify-content: flex-start; }
+#sketch-hud[data-study="layer-3-walls"] .section-hint, #sketch-hud[data-study="layer-3-swings"] .section-hint, #sketch-hud[data-study="layer-3"] .section-hint, #sketch-hud[data-study="layers-1-3"][data-layer="3"] .section-hint { top: 170px; left: 24px; max-width: 225px; font-size: 11px; }
 .sketch-endpoint { position: absolute; bottom: 176px; left: 50%; transform: translateX(-50%); max-width: 74%; text-align: center; font-size: 12px; color: #123022; padding: 9px 18px; border-radius: 4px; background: #8ef0a8e6; border: 1px solid #4fbf78; }
 #sketch-hud .section-hint { max-width: 470px; line-height: 1.5; }
 #sketch-hud .section-hint { top: 132px; left: 34px; max-width: 620px; color: #fdf0d2; }
