@@ -13,7 +13,8 @@ test('sound requires a gesture, pauses, follows volume and unloads on isolated s
   await page.keyboard.down('Space'); await page.waitForTimeout(180); await page.keyboard.up('Space');
   await expect.poll(async () => (await audio()).playedCues.jump ?? 0).toBeGreaterThan(0);
   await page.keyboard.press('Escape'); expect((await audio()).playing).toBe(false);
-  await page.getByLabel('Master volume').press('Home'); expect((await audio()).volume).toBe(0);
+  await page.getByRole('button', { name: 'Settings' }).click(); await page.getByLabel('Volume').press('Home'); expect((await audio()).volume).toBe(0);
+  await page.getByRole('button', { name: 'Back' }).click();
   await page.getByRole('button', { name: 'Resume', exact: false }).click();
   await expect.poll(async () => (await audio()).playing).toBe(true);
   await page.evaluate(() => window.dispatchEvent(new Event('blur'))); expect((await audio()).playing).toBe(false);

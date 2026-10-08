@@ -1,0 +1,9 @@
+Expanded section reached before-butter 23.3
+Expanded section reached after-butter 70.7
+Expanded section reached before-fork 90.7
+Expanded section reached after-fork 95.1
+Expanded section reached after-candle 102.2
+Expanded section reached after-diner 121.9
+Expanded section reached pear 133.0
+  ✓  1 tests\browser\sketch-ending.spec.ts:234:1 › S5C full campaign from New Game to the ending with real controls 1280 (4.6m)
+  1 passed (4.7m)

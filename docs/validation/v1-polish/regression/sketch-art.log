@@ -1,0 +1,6 @@
+  ✓  1 tests\browser\sketch-art.spec.ts:32:1 › static framings of every study and bay at 1280 and 960 (26.2s)
+  ✓  2 tests\browser\sketch-art.spec.ts:58:1 › full adventure with skins: real keys and clicks to the claimed light (1.1m)
+  ✓  3 tests\browser\sketch-art.spec.ts:93:1 › moving mechanisms are drawn smoothly on every display frame (3.5s)
+  ✓  4 tests\browser\sketch-art.spec.ts:117:1 › the Sketch plays its own rock/metallic loop after the first gesture (1.8s)
+  ✓  5 tests\browser\sketch-art.spec.ts:132:1 › the museum Sketch frame shows the garage painting, then the shut toolbox once the light is taken (10.3s)
+  5 passed (1.8m)

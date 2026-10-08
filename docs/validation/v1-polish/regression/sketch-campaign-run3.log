@@ -1,0 +1,6 @@
+  ✓  1 tests\browser\sketch-campaign.spec.ts:103:1 › S5B campaign route: first claim, persistence, return, re-entry and reload 1280 (1.7m)
+  ✘  2 tests\browser\sketch-campaign.spec.ts:154:1 › S5B denied writes, first claim in memory, then a replay claim adds nothing 960 (2.4m)
+    Error: Timeout l3-bar-m2 0.5 in reach: {"body":{"x":36.66758147131999,"y":52.77593758087517,"width":0.65,"height":1.25,"vx":1.4308626645076572,"vy":-0.013946173412904272,"grounded":false},"leg":"l3-swings","stage":"traversal","motion":{"state":"swing","wall":"","wallTransfer":true,"swingTarget":"l3-bar-m1#1","swingAngle":-1.961567325956096}}
+    test-results\sketch-campaign-S5B-denied-85b33-play-claim-adds-nothing-960\test-failed-1.png
+  1 failed
+  1 passed (4.8m)

@@ -170,6 +170,97 @@
       "loop": true,
       "sha256": "d5a90c7e26a76809b4cde7e28930ceecd8dfd1f7f14841ae75be86009828368c",
       "creditsSpent": 0
+    },
+    {
+      "id": "ui-move",
+      "runtimePath": "public/assets/audio/ui-move.wav",
+      "source": "scripts/make-ui-audio.py",
+      "creator": "The Last Curator project \u2014 original procedural synthesis",
+      "license": "Original project audio; no external samples",
+      "description": "Tiny crystal tink for moving through menus; played at pentatonic rates so steps climb a scale",
+      "seconds": 0.446,
+      "sampleRate": 44100,
+      "loop": false,
+      "sha256": "a1cd41ab3b88e0ff2cba1ce9b69682eed2ef10c94501e83fe1c9d4dfea295b30",
+      "creditsSpent": 0
+    },
+    {
+      "id": "ui-select",
+      "runtimePath": "public/assets/audio/ui-select.wav",
+      "source": "scripts/make-ui-audio.py",
+      "creator": "The Last Curator project \u2014 original procedural synthesis",
+      "license": "Original project audio; no external samples",
+      "description": "Crystal two-bell chime over a rising airy shimmer for confirming a choice",
+      "seconds": 1.09,
+      "sampleRate": 44100,
+      "loop": false,
+      "sha256": "68a30902ec3c187a47fcb0f4232c6a9051cafa3169397385d2fbe61d5a5a7f8b",
+      "creditsSpent": 0
+    },
+    {
+      "id": "ui-back",
+      "runtimePath": "public/assets/audio/ui-back.wav",
+      "source": "scripts/make-ui-audio.py",
+      "creator": "The Last Curator project \u2014 original procedural synthesis",
+      "license": "Original project audio; no external samples",
+      "description": "Reversed glass bell, an in-breath that stops short, for going back",
+      "seconds": 0.664,
+      "sampleRate": 44100,
+      "loop": false,
+      "sha256": "35a2b7c64cb35b684d8da15ace10ef7d135c22545ff5e61d39dade67685c1138",
+      "creditsSpent": 0
+    },
+    {
+      "id": "ui-pause",
+      "runtimePath": "public/assets/audio/ui-pause.wav",
+      "source": "scripts/make-ui-audio.py",
+      "creator": "The Last Curator project \u2014 original procedural synthesis",
+      "license": "Original project audio; no external samples",
+      "description": "Low beating singing bowl under a falling crystal glitter, time stilling, for pausing",
+      "seconds": 2.068,
+      "sampleRate": 44100,
+      "loop": false,
+      "sha256": "075db6fdf040091de8a18b773f825ebb51a7e77690d7efb3bf38ff53660ce1fc",
+      "creditsSpent": 0
+    },
+    {
+      "id": "ui-resume",
+      "runtimePath": "public/assets/audio/ui-resume.wav",
+      "source": "scripts/make-ui-audio.py",
+      "creator": "The Last Curator project \u2014 original procedural synthesis",
+      "license": "Original project audio; no external samples",
+      "description": "Reversed airy shimmer swelling into one bright crystal tink, for resuming",
+      "seconds": 0.944,
+      "sampleRate": 44100,
+      "loop": false,
+      "sha256": "0863661bdbfe57c13e3b2e3568552d384f91472dc27e3dd0d16c5fc1e1d457b2",
+      "creditsSpent": 0
+    },
+    {
+      "id": "ui-toggle",
+      "runtimePath": "public/assets/audio/ui-toggle.wav",
+      "source": "scripts/make-ui-audio.py",
+      "creator": "The Last Curator project \u2014 original procedural synthesis",
+      "license": "Original project audio; no external samples",
+      "description": "Two soft glass ticks for switching a setting",
+      "seconds": 0.248,
+      "sampleRate": 44100,
+      "loop": false,
+      "sha256": "38602b91962a964b06974a12f3fa0cc16807d53acc73379fae6710494a1619fd",
+      "creditsSpent": 0
+    },
+    {
+      "id": "ui-start",
+      "runtimePath": "public/assets/audio/ui-start.wav",
+      "source": "scripts/make-ui-audio.py",
+      "creator": "The Last Curator project \u2014 original procedural synthesis",
+      "license": "Original project audio; no external samples",
+      "description": "Reversed swell blooming into a shimmering chord of glass bells, for starting or continuing the game",
+      "seconds": 3.879,
+      "sampleRate": 44100,
+      "loop": false,
+      "sha256": "9698f2934acbe86d944934fd0d068260aba5edce4fd2321a1d8ce3c823717927",
+      "creditsSpent": 0
     }
   ]
 }

@@ -1,0 +1,2 @@
+  ✓  1 tests\browser\sketch-campaign.spec.ts:154:1 › S5B denied writes, first claim in memory, then a replay claim adds nothing 960 (2.1m)
+  1 passed (2.1m)

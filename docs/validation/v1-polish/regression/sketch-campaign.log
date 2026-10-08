@@ -1,0 +1,14 @@
+  ✓  1 tests\browser\sketch-campaign.spec.ts:24:1 › S5B locked frame, opening after the pear is restored, and transition spam (30.1s)
+  ✘  2 tests\browser\sketch-campaign.spec.ts:103:1 › S5B campaign route: first claim, persistence, return, re-entry and reload 1280 (2.1m)
+  ✘  3 tests\browser\sketch-campaign.spec.ts:154:1 › S5B denied writes, first claim in memory, then a replay claim adds nothing 960 (20.5m)
+  ✓  4 tests\browser\sketch-campaign.spec.ts:188:1 › S5B fully denied storage keeps the museum playable and the frame locked (6.9s)
+  ✘  5 tests\browser\sketch-campaign.spec.ts:202:1 › S5B production: seeded saves show the frame state, objective and inventory; study= is ignored (9.2s)
+    Error: expect(locator).toContainText(expected) failed
+    test-results\sketch-campaign-S5B-campai-ae2f8-rn-re-entry-and-reload-1280\test-failed-1.png
+    Error: no crossing in four real-control attempts
+    Error: End of central directory record signature not found. Either not a zip file, or file is truncated.
+    test-results\sketch-campaign-S5B-denied-85b33-play-claim-adds-nothing-960\test-failed-1.png
+    Error: expect(locator).toContainText(expected) failed
+    test-results\sketch-campaign-S5B-produc-17637--inventory-study-is-ignored\test-failed-1.png
+  3 failed
+  2 passed (24.2m)

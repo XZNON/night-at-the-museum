@@ -14,7 +14,7 @@ import { DEV, PROD, KEY, PEAR_OWNED, PEAR_RESTORED, LIGHT_OWNED, OPEN_PROMPT, LO
 // answers in placement words; the light's inventory icon is its piece art.
 // Evidence goes to DIR; rerun outputs for S5C are moved out of s5b/ afterwards.
 test.use({ headless: false });
-const DIR = 'docs/validation/sketch-s5/s5b';
+const DIR = process.env.EVIDENCE_DIR ?? 'docs/validation/sketch-s5/s5b';
 evidence.dir = DIR; l2Evidence.dir = DIR;
 test.beforeAll(() => mkdirSync(DIR, { recursive: true }));
 test.beforeEach(() => { events.length = 0; measurements.length = 0; });
@@ -27,7 +27,7 @@ test('S5B locked frame, opening after the pear is restored, and transition spam'
   await page.goto(DEV); await page.evaluate(() => localStorage.clear()); await page.reload();
   await expect(page.locator('#modal')).not.toContainText(/mountain/i);
   await newMuseum(page, false);
-  await expect(page.locator('.build-tag')).toHaveText('THE LAST CURATOR');
+  await expect(page.locator('.build-tag')).toHaveCount(0);
   await expect(page.locator('#objective')).toHaveText('Inspect the masterpiece · Find its missing pear in Royal Supper');
   await toSketchFrame(page);
   await expect(page.locator('#museum-prompt')).toHaveText(LOCKED_PROMPT);
@@ -74,7 +74,7 @@ test('S5B locked frame, opening after the pear is restored, and transition spam'
   expect([d.scene, d.sketch.study, d.canvasCount]).toEqual(['unfinished-sketch', 'campaign', 1]);
   expect(d.body).toMatchObject(layerOneStart);
   await expect(page.locator('#sketch-eyebrow')).toHaveText('The Last Curator');
-  await expect(page.locator('.build-tag')).toHaveText('THE LAST CURATOR');
+  await expect(page.locator('.build-tag')).toHaveCount(0);
   await noDevWords(page, 'first entry');
   await capture(page, 'campaign-entry');
   // Pause menu in campaign words; a double click on Return lands once, in front of the frame.
@@ -103,7 +103,7 @@ test('S5B locked frame, opening after the pear is restored, and transition spam'
 test('S5B campaign route: first claim, persistence, return, re-entry and reload 1280', async ({ page }) => {
   const errors: string[] = []; page.on('pageerror', e => errors.push(String(e)));
   await seedAndOpen(page, DEV, PEAR_RESTORED); await newMuseum(page, true);
-  await expect(page.locator('#inventory')).toHaveText('Inventory · Empty');
+  await expect(page.locator('#inventory')).toHaveText('');
   await toSketchFrame(page); await enterSketch(page);
   expect((await debug(page)).sketch.study).toBe('campaign');
   const tries = await toEndLedge(page);
@@ -123,7 +123,7 @@ test('S5B campaign route: first claim, persistence, return, re-entry and reload 
   // Return to Museum: in front of the Sketch frame, the light in the inventory.
   await page.keyboard.press('Escape'); await page.locator('[data-action="leave"]').click();
   await expectSketchReturn(page);
-  await expect(page.locator('#inventory')).toHaveText('Inventory · Enchanted light');
+  await expect(page.locator('#inventory')).toHaveText('Enchanted light');
   await expect(page.locator('#inventory .piece-icon')).toBeVisible();
   await expect(page.locator('#objective')).toHaveText('Bring the light to the masterpiece');
   expect((await debug(page)).campaignSketch).toEqual({ leg: 'l3-swings', light: true });
@@ -140,7 +140,7 @@ test('S5B campaign route: first claim, persistence, return, re-entry and reload 
   await page.reload();
   await expect(page.getByRole('button', { name: 'Continue', exact: true })).toBeVisible();
   await newMuseum(page, true);
-  await expect(page.locator('#inventory')).toHaveText('Inventory · Enchanted light');
+  await expect(page.locator('#inventory')).toHaveText('Enchanted light');
   expect((await debug(page)).campaignSketch).toBeNull();
   await toSketchFrame(page); await enterSketch(page);
   s = await debug(page);
@@ -166,7 +166,7 @@ test('S5B denied writes, first claim in memory, then a replay claim adds nothing
   expect(await savedJson(page)).toEqual(PEAR_RESTORED);
   await page.locator('#modal [data-action="leave"]').click();
   await expectSketchReturn(page);
-  await expect(page.locator('#inventory')).toHaveText('Inventory · Enchanted light');
+  await expect(page.locator('#inventory')).toHaveText('Enchanted light');
   // Replay: Restart adventure from Layer 1 and claim again: "already yours", no duplicate.
   await enterSketch(page);
   await page.keyboard.press('Escape'); await page.locator('[data-action="replay"]').click();
@@ -204,10 +204,10 @@ test('S5B production: seeded saves show the frame state, objective and inventory
   page.on('pageerror', e => errors.push(String(e)));
   page.on('response', r => { if (r.status() >= 400) failures.push(r.url()); });
   const cases = [
-    { save: null, objective: 'Inspect the masterpiece · Find its missing pear in Royal Supper', inventory: 'Inventory · Empty', prompt: LOCKED_PROMPT },
-    { save: PEAR_OWNED, objective: 'Bring the golden pear to the masterpiece', inventory: 'Inventory · Golden pear', prompt: LOCKED_PROMPT },
-    { save: PEAR_RESTORED, objective: 'Claim the enchanted light in the Unfinished Sketch', inventory: 'Inventory · Empty', prompt: OPEN_PROMPT },
-    { save: LIGHT_OWNED, objective: 'Bring the light to the masterpiece', inventory: 'Inventory · Enchanted light', prompt: OPEN_PROMPT },
+    { save: null, objective: 'Inspect the masterpiece · Find its missing pear in Royal Supper', inventory: '', prompt: LOCKED_PROMPT },
+    { save: PEAR_OWNED, objective: 'Bring the golden pear to the masterpiece', inventory: 'Golden pear', prompt: LOCKED_PROMPT },
+    { save: PEAR_RESTORED, objective: 'Claim the enchanted light in the Unfinished Sketch', inventory: '', prompt: OPEN_PROMPT },
+    { save: LIGHT_OWNED, objective: 'Bring the light to the masterpiece', inventory: 'Enchanted light', prompt: OPEN_PROMPT },
   ];
   for (const c of cases) {
     await page.goto(PROD);
@@ -216,8 +216,9 @@ test('S5B production: seeded saves show the frame state, objective and inventory
     await page.goto(PROD + '?scene=unfinished-sketch&study=adventure');
     expect(await page.evaluate(() => '__curatorDebug' in window)).toBe(false);
     await expect(page.locator('#modal')).not.toContainText(/mountain|S5A|Claim the light/i);
-    await expect(page.locator('#modal')).toContainText('Royal Supper and the Unfinished Sketch are playable');
-    await expect(page.locator('.build-tag')).toHaveText('THE LAST CURATOR');
+    // v1 polish: the title screen names the game; the old note is gone.
+    await expect(page.locator('#modal')).toContainText('The Last Curator');
+    await expect(page.locator('.build-tag')).toHaveCount(0);
     await newMuseum(page, c.save !== null);
     await expect(page.locator('#objective')).toHaveText(c.objective);
     await expect(page.locator('#inventory')).toHaveText(c.inventory);

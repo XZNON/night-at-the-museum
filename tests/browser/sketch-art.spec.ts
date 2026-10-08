@@ -8,7 +8,7 @@ import { evidence, events, state, until, capture, climb, cross } from './sketch-
 // through the real camera. Static framings of every study and S1 bay, then the
 // full adventure with real keys and clicks (shared helpers) to show the skins
 // in play and that the route still completes unchanged.
-const DIR = 'docs/validation/sketch-art/part1';
+const DIR = process.env.EVIDENCE_DIR ?? 'docs/validation/sketch-art/part1';
 evidence.dir = DIR; l2Evidence.dir = DIR;
 const DEV = 'http://127.0.0.1:5173/';
 const STUDIES = ['layer-1', 'layer-2', 'layer-3-walls', 'layer-3-swings', 'adventure'] as const;
@@ -75,7 +75,7 @@ test('full adventure with skins: real keys and clicks to the claimed light', asy
   await capture(page, 'end-ledge');
   // Walk right to the torch unless the last swing already claimed the light;
   // the claim opens the success screen over the settled picture.
-  const success = page.getByRole('heading', { name: 'The enchanted light.' });
+  const success = page.getByRole('heading', { name: 'Enchanted Light' });
   if (!(await success.isVisible())) {
     await page.keyboard.down('KeyD');
     await expect(success).toBeVisible({ timeout: 8000 });

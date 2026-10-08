@@ -1,7 +1,8 @@
 The WAV files in this folder are original deterministic procedural audio created
 for The Last Curator. No external recordings, samples or compositions were used.
 The sources are scripts/make-audio.py and, for the Sketch's rock/metallic
-loop sketch.wav, scripts/make-sketch-music.py; provenance and hashes are recorded in
+loop sketch.wav, scripts/make-sketch-music.py, and for the menu and interface
+sounds ui-*.wav, scripts/make-ui-audio.py; provenance and hashes are recorded in
 asset-sources/audio-manifest.json. They may be used and distributed with the game.
 
 Howler.js 2.2.4 is used under the MIT license. See assets/THIRD_PARTY_NOTICES.txt.

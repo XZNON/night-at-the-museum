@@ -9,6 +9,7 @@ import { museum } from '../levels/museum';
 import type { SketchHud } from '../gameplay/sketch-model';
 import type { SketchBayId, SketchStudy } from '../levels/unfinished-sketch';
 import { sketchBayList } from '../levels/unfinished-sketch';
+import type { UiSound } from '../core/audio';
 
 export interface UiActions {
   start(): void; replay(): void; resume(): void; leave(): void;
@@ -19,6 +20,8 @@ export interface UiActions {
   ending(): void; stay(): void;
   look(): void; volume(value: number): void;
   retry(): void; back(): void;
+  /** Menu and interface sounds; `rate` shifts the pitch. */
+  sound(kind: UiSound, rate?: number): void;
   sketchBay(id: SketchBayId): void;
 }
 
@@ -35,45 +38,64 @@ export class GameUi {
   private context: 'museum' | 'supper' | 'sketch' = 'supper';
   /** The Sketch is the campaign's second adventure (S5B), not a dev study. */
   private sketchCampaign = false;
+  private objectiveTimer = 0;
+  private readonly flashTimers = new Map<string, number>();
+  private lastHint = '';
+  private pipsCache = '';
+  private shownAt = 0;
+  private lastFocus: Element | null = null;
+  private lastTick = 0;
+  private inventoryTimer = 0;
+  private controlsTimer = 0;
 
   constructor(root: HTMLElement, private readonly actions: UiActions, private readonly direct: boolean,
     private readonly study: 'supper' | 'sketch' = 'supper', private sketchMode: SketchStudy = 'mechanics') {
+    // Campaign HUDs carry no titles: the game's name lives on the title screen.
+    // Dev studies keep their identifying header and tag.
+    const devHeader = (eyebrow: string, title: string, nameId: string, eyebrowId?: string) => `<header class="dev-header" ${direct ? '' : 'hidden'}>
+      <span ${eyebrowId ? `id="${eyebrowId}" ` : ''}class="eyebrow">${eyebrow}</span><h1>${title}</h1><span id="${nameId}" class="section-name"></span></header>`;
+    const corner = (look: boolean) => `<div class="hud-corner">${look ? `<button data-action="look" class="icon-button" aria-label="Mouse look" title="Mouse look">${icons.mouse}</button>` : ''}
+      <button data-action="pause" class="icon-button" aria-label="Pause" title="Pause · Esc">${icons.pause}</button></div>`;
+    // Key glyphs and a short verb, no panel; they show on arrival, then fade out.
+    const controls = (rows: [string[], string][]) => `<div class="controls">${rows.map(([keys, label]) =>
+      `<span>${keys.map(k => k.startsWith('<svg') ? `<span class="key-icon">${k}</span>` : `<kbd>${k}</kbd>`).join('')} ${label}</span>`).join('')}</div>`;
     root.innerHTML = `
       <canvas id="world" tabindex="0" aria-label="Royal Supper. A or D to move, Space to jump, E to interact, R for checkpoint, Escape to pause."></canvas>
       <div class="vignette" aria-hidden="true"></div>
       <section id="hud" class="hud" hidden aria-label="Adventure status">
-        <header class="hud-top"><div><span class="eyebrow">The Last Curator</span><h1>Royal Supper</h1><span id="section-name" class="section-name"></span></div>
-          <button data-action="pause" class="quiet">Pause <kbd>Esc</kbd></button></header>
+        ${devHeader('The Last Curator', 'Royal Supper', 'section-name')}${corner(false)}
         <div class="route-status"><span id="fork-state"></span><span id="candle-state"></span><span id="diner-state"></span><span id="jump-state"></span></div>
         <p id="section-hint" class="section-hint"></p>
-        <div class="bottom-hud"><div class="controls"><span><kbd>A</kbd><kbd>D</kbd> move</span><span><kbd>Space</kbd> jump ×2</span><span><kbd>E</kbd> interact</span><span><kbd>R</kbd> checkpoint</span></div>
+        <div class="bottom-hud">${controls([[['A', 'D'], 'Move'], [['Space'], 'Jump ×2'], [['E'], 'Use'], [['R'], 'Checkpoint']])}
           <span id="checkpoint" class="checkpoint"></span></div>
-        <div id="prompt" class="prompt" hidden></div><div id="cue" class="cue" role="status" aria-live="polite"></div>
+        <div id="prompt" class="prompt" hidden></div><div id="prompt-view" class="prompt-view" aria-hidden="true" hidden></div><div id="cue" class="cue" role="status" aria-live="polite"></div>
       </section>
       <section id="sketch-hud" class="hud" hidden aria-label="Sketch status">
-        <header class="hud-top"><div><span id="sketch-eyebrow" class="eyebrow">The Last Curator</span><h1>Unfinished Sketch</h1><span id="sketch-bay-name" class="section-name"></span></div><button data-action="pause" class="quiet">Pause <kbd>Esc</kbd></button></header>
+        ${devHeader('The Last Curator', 'Unfinished Sketch', 'sketch-bay-name', 'sketch-eyebrow')}${corner(false)}
+        <div id="nail-pips" class="nail-pips" aria-hidden="true"></div>
         <div class="sketch-status"><span id="sketch-layer"></span><span id="sketch-nails"></span><span id="sketch-oldest"></span><span id="sketch-nearest"></span><span id="sketch-motion"></span></div>
         <p id="sketch-hint" class="section-hint"></p>
         <div id="sketch-bays" class="sketch-bays">${sketchBayList.map((bay, i) => `<button class="quiet" data-action="bay" data-bay="${bay.id}">${i + 1} ${bay.name.split(' · ')[1]}</button>`).join('')}</div>
-        <div class="bottom-hud"><div class="controls"><span><kbd>A</kbd><kbd>D</kbd> move / pump</span><span><kbd>Space</kbd> jump · kick · release</span><span>Left click pins a nail</span><span><kbd>Q</kbd> recall oldest</span><span><kbd>E</kbd> grab a nail</span><span><kbd>R</kbd> retry</span></div><span id="sketch-goal" class="checkpoint"></span></div>
+        <div class="bottom-hud">${controls([[['A', 'D'], 'Move'], [['Space'], 'Jump'], [[icons.click], 'Nail'], [['Q'], 'Recall'], [['E'], 'Grab'], [['R'], 'Retry']])}<span id="sketch-goal" class="checkpoint"></span></div>
         <span id="sketch-endpoint" class="sketch-endpoint" hidden></span>
-        <div id="sketch-prompt" class="prompt" hidden></div><div id="sketch-cue" class="cue" role="status" aria-live="polite"></div>
+        <div id="sketch-prompt" class="prompt" hidden></div><div id="sketch-prompt-view" class="prompt-view" aria-hidden="true" hidden></div><div id="sketch-cue" class="cue" role="status" aria-live="polite"></div>
       </section>
       <section id="modal" class="modal" aria-label="Game menu"></section>
       <section id="museum-hud" class="hud" hidden aria-label="Museum status">
-        <header class="hud-top"><div><span class="eyebrow">The Last Curator</span><h1>The quiet gallery</h1><span id="objective" class="section-name"></span></div><div><button data-action="look" class="quiet">Mouse look</button><button data-action="pause" class="quiet">Pause <kbd>Esc</kbd></button></div></header>
-        <div class="reticle" aria-hidden="true">+</div><div id="museum-prompt" class="prompt" hidden></div>
-        <div class="bottom-hud"><div class="controls"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> walk</span><span>Drag to look · Click / <kbd>E</kbd> frame</span></div><span id="inventory" class="inventory"></span></div>
+        <p id="objective" class="objective-banner" role="status"></p>${corner(true)}
+        <div class="reticle" aria-hidden="true">+</div><div id="museum-prompt" class="prompt" hidden></div><div id="museum-prompt-view" class="prompt-view museum-prompt-view" aria-hidden="true" hidden></div>
+        <div class="bottom-hud">${controls([[['W', 'A', 'S', 'D'], 'Walk'], [[icons.drag], 'Look'], [['E'], 'Use']])}<div id="inventory" class="inventory" aria-label="Inventory"></div></div>
       </section>
       <aside id="save-notice" class="save-notice" role="status" hidden></aside>
       <aside id="diagnostics" class="diagnostics" hidden></aside>
-      <span class="build-tag">${this.tagLabel()}</span>`;
+      ${direct ? `<span class="build-tag">${this.tagLabel()}</span>` : ''}`;
     this.canvas = root.querySelector<HTMLCanvasElement>('#world')!;
     this.modal = root.querySelector<HTMLElement>('#modal')!;
     this.hud = root.querySelector<HTMLElement>('#hud')!;
     root.addEventListener('click', event => {
       const target = (event.target as HTMLElement).closest<HTMLElement>('[data-action]');
       if (!target) return;
+      this.clickSound(target);
       switch (target.dataset.action) {
         case 'bay': this.actions.sketchBay(target.dataset.bay as SketchBayId); break;
         case 'start': this.actions.start(); break;
@@ -98,11 +120,12 @@ export class GameUi {
         case 'invalid-drop': if (this.selectedPiece) this.actions.place(this.selectedPiece, ''); break;
         case 'see-ending': this.actions.ending(); break;
         case 'stay': this.actions.stay(); break;
+        case 'pause-view': this.pauseView(target.dataset.view ?? 'main'); break;
       }
     }, { signal: this.controller.signal });
     root.addEventListener('change', event => {
       const target = event.target as HTMLInputElement;
-      if (target.id === 'low-quality') this.actions.quality(target.checked);
+      if (target.id === 'low-quality') { this.actions.quality(target.checked); this.actions.sound('toggle'); }
       if (target.id === 'master-volume') this.actions.volume(Number(target.value));
     }, { signal: this.controller.signal });
     root.addEventListener('dragstart', event => {
@@ -119,8 +142,44 @@ export class GameUi {
       this.actions.place(event.dataTransfer?.getData('text/plain') ?? '', target?.dataset.target ?? '');
     }, { signal: this.controller.signal });
     root.addEventListener('keydown', event => {
+      if (this.mode !== 'pause' || event.key !== 'Escape') return;
+      const main = this.modal.querySelector<HTMLElement>('.pause-panel[data-view="main"]');
+      if (!main || !main.hidden) return;
+      event.preventDefault(); event.stopPropagation(); this.actions.sound('back'); this.pauseView('main');
+    }, { signal: this.controller.signal });
+    // Moving between menu items rings a crystal tink that climbs a pentatonic scale down the list.
+    root.addEventListener('focusin', event => {
+      const el = event.target as HTMLElement;
+      if (this.mode === 'none' || el === this.lastFocus || !this.modal.contains(el) || !el.matches('button, input')) return;
+      this.lastFocus = el;
+      if (performance.now() - this.shownAt < 150) return;
+      const items = [...this.modal.querySelectorAll<HTMLElement>('button:not(:disabled), input')].filter(visible);
+      this.actions.sound('move', PENTATONIC[Math.max(0, items.indexOf(el)) % PENTATONIC.length]);
+    }, { signal: this.controller.signal });
+    // The volume slider ticks at a pitch that follows its value.
+    root.addEventListener('input', event => {
+      const el = event.target as HTMLInputElement;
+      if (el.id !== 'master-volume' || performance.now() - this.lastTick < 70) return;
+      this.lastTick = performance.now(); this.actions.volume(Number(el.value)); this.actions.sound('move', 0.6 + Number(el.value) * 0.9);
+    }, { signal: this.controller.signal });
+    // Menus move with the arrow keys like a game menu; a range input keeps its arrows.
+    root.addEventListener('keydown', event => {
+      if (this.mode === 'none' || (event.key !== 'ArrowDown' && event.key !== 'ArrowUp')) return;
+      if (document.activeElement instanceof HTMLInputElement) return;
+      const buttons = [...this.modal.querySelectorAll<HTMLElement>('button:not(:disabled)')].filter(visible);
+      if (!buttons.length) return;
+      event.preventDefault();
+      const index = buttons.indexOf(document.activeElement as HTMLElement);
+      const step = event.key === 'ArrowDown' ? 1 : -1;
+      buttons[index < 0 ? 0 : (index + step + buttons.length) % buttons.length].focus();
+    }, { signal: this.controller.signal });
+    root.addEventListener('pointermove', event => {
+      const button = (event.target as HTMLElement).closest<HTMLElement>('.menu-button');
+      if (button && this.modal.contains(button)) button.focus({ preventScroll: true });
+    }, { signal: this.controller.signal });
+    root.addEventListener('keydown', event => {
       if (this.mode === 'none' || event.key !== 'Tab') return;
-      const focusable = [...this.modal.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), a[href]')];
+      const focusable = [...this.modal.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), a[href]')].filter(visible);
       const first = focusable[0]; const last = focusable.at(-1);
       if (!first || !last) return;
       if (event.shiftKey && (document.activeElement === first || !this.modal.contains(document.activeElement))) { event.preventDefault(); last.focus(); }
@@ -143,24 +202,41 @@ export class GameUi {
       : this.sketchMode === 'layer-1' ? 'UNFINISHED SKETCH · LAYER 1 (SLICE 2)' : 'UNFINISHED SKETCH · SLICE 1 PLAYGROUND';
     return `${base}${this.direct ? ' · ISOLATED DEV SESSION' : ''}`;
   }
-  private show(mode: typeof this.mode, content: string): void {
+  private show(mode: typeof this.mode, content: string, variant: 'card' | 'title' | 'pause' | 'reward' | 'ending' | 'inspect' = 'card'): void {
     this.mode = mode;
     this.hud.hidden = true;
     document.getElementById('museum-hud')!.hidden = true;
     document.getElementById('sketch-hud')!.hidden = true;
-    this.modal.classList.remove('inspection-modal', 'ending-modal');
+    this.modal.classList.remove('inspection-modal', 'ending-modal', 'title-modal', 'pause-modal', 'reward-modal', 'inspect-modal');
     this.modal.hidden = false;
-    this.modal.innerHTML = `<div class="menu-card">${content}</div>`;
+    if (variant !== 'card') this.modal.classList.add(`${variant}-modal`);
+    this.modal.innerHTML = variant === 'card' ? `<div class="menu-card">${content}</div>` : `<div class="title-screen">${content}</div>`;
     this.modal.setAttribute('role', 'dialog');
     this.modal.setAttribute('aria-modal', 'true');
+    this.shownAt = performance.now(); this.lastFocus = null;
     this.modal.querySelector<HTMLElement>('button')?.focus();
+  }
+  /** Which sound a click makes: going back sounds like an in-breath, choosing like a chime. */
+  private clickSound(target: HTMLElement): void {
+    const action = target.dataset.action;
+    if (action === 'start') this.actions.sound('start');
+    else if (action === 'look') this.actions.sound('toggle');
+    else if (action === 'close-inspection' || action === 'cancel-reset' || action === 'back' || action === 'stay'
+      || (action === 'pause-view' && target.dataset.view === 'main')) this.actions.sound('back');
+    // Pause and resume are voiced by the game; a placement attempt by its result.
+    else if (action !== 'pause' && action !== 'resume' && action !== 'target' && action !== 'invalid-drop') this.actions.sound('select');
   }
   menu(remembered: boolean, complete = false): void {
     this.hud.hidden = true;
     document.getElementById('museum-hud')!.hidden = true;
     document.getElementById('sketch-hud')!.hidden = true;
     if (!this.direct) {
-      this.show('menu', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / A restoration study</p><h2>The garden<br><em>before dawn.</em></h2><p class="intro">A quiet museum.<br>A borrowed golden pear.<br>A garden waiting for colour.</p><p class="menu-description">Walk to the frames, step into the paintings and bring the missing pieces home.</p><button class="primary" data-action="start" aria-label="${remembered ? 'Continue' : 'New Game'}">${remembered ? 'Continue' : 'New Game'} <span>→</span></button>${remembered ? '<button class="quiet" data-action="reset">New Game / reset progress</button>' : ''}<div class="menu-controls"><kbd>WASD</kbd> Walk · Drag to look · Click frame</div><p class="small-note">${complete ? 'The Garden Before Dawn is complete. Both paintings stay open to replay.' : 'Royal Supper and the Unfinished Sketch are playable.<br>Restore the masterpiece to reach the ending.'}</p>`);
+      const label = remembered ? 'Continue' : 'New Game';
+      this.show('menu', `<div class="title-art" aria-hidden="true" style="background-image:url('${masterpieceImage(complete ? 2 : 0)}')"></div>
+        <div class="title-block"><p class="title-kicker">${complete ? 'The Garden Before Dawn · restored' : 'The Garden Before Dawn'}</p>
+        <h2 class="game-title">The Last <br>Curator</h2></div>
+        <nav class="title-menu" aria-label="Main menu"><button class="menu-button" data-action="start" aria-label="${label}">${label}</button>
+        ${remembered ? '<button class="menu-button" data-action="reset">New Game</button>' : ''}</nav>`, 'title');
       return;
     }
     if (this.study === 'sketch') {
@@ -273,9 +349,21 @@ export class GameUi {
     this.canvas.setAttribute('aria-label', context === 'museum' ? 'Museum. WASD to walk, drag to look, click or E on a nearby frame, Escape to pause.' : context === 'sketch' ? 'Unfinished Sketch. A/D move or pump, Space jump or release, E grip or board, click pin, Q recalls oldest, R retry, Escape pause.' : 'Royal Supper. A or D to move, Space to jump, E to interact, R for checkpoint, Escape to pause.');
     this.canvas.focus({ preventScroll: true });
   }
+  /** Called after a scene opens: its controls show for a few seconds, then the view is clear. */
+  hintControls(): void {
+    const hud = document.getElementById(this.context === 'museum' ? 'museum-hud' : this.context === 'sketch' ? 'sketch-hud' : 'hud')!;
+    const row = hud.querySelector<HTMLElement>('.controls');
+    if (!row) return;
+    document.querySelectorAll('.controls.show').forEach(el => el.classList.remove('show'));
+    row.classList.add('show');
+    window.clearTimeout(this.controlsTimer);
+    this.controlsTimer = window.setTimeout(() => row.classList.remove('show'), CONTROLS_MS);
+    if (this.context !== 'museum') this.flash(this.context === 'sketch' ? 'sketch-hint' : 'section-hint', HINT_MS);
+  }
   markSketch(mode: SketchStudy, bayId: SketchBayId, campaign = false): void {
     this.sketchMode = mode; this.sketchCampaign = campaign;
     document.getElementById('sketch-hud')!.dataset.study = mode;
+    document.getElementById('sketch-hud')!.toggleAttribute('data-campaign', campaign);
     document.getElementById('sketch-eyebrow')!.textContent = campaign ? 'The Last Curator' : mode === 'adventure' ? 'Unfinished Sketch / S5A / The light' : mode === 'layers-1-3' ? 'Unfinished Sketch / S4D / Layers 1–3' : mode === 'layer-3' ? 'Unfinished Sketch / S4C / Joined Layer 3' : mode === 'layer-3-swings' ? 'Unfinished Sketch / S4B / Layer 3 swings' : mode === 'layer-3-walls' ? 'Unfinished Sketch / S4A / Layer 3 walls' : mode === 'layers-1-2' ? 'Unfinished Sketch / S3 / Joined layers' : mode === 'layer-2' ? 'Unfinished Sketch / S3 · Layer 2' : mode === 'layer-1'
       ? 'The Last Curator · Slice 2 · Layer 1 of the unfinished picture' : 'The Last Curator · Slice 1 mechanics playground';
     document.getElementById('sketch-bays')!.hidden = mode !== 'mechanics';
@@ -302,47 +390,82 @@ export class GameUi {
     // The full route switches to the compact Layer 3 layout once it gets there.
     document.getElementById('sketch-hud')!.dataset.layer = state.layer?.charAt(0) ?? '';
     text('sketch-endpoint', state.endpoint ?? ''); document.getElementById('sketch-endpoint')!.hidden = !state.endpoint;
-    text('sketch-prompt', state.prompt ?? ''); document.getElementById('sketch-prompt')!.hidden = !state.prompt;
+    this.setPrompt('sketch-prompt', state.prompt ?? '');
     text('sketch-cue', state.cue); this.markBay(state.bay as SketchBayId);
+    // A cue that repeats the hint on screen is left to the hint caption.
+    document.getElementById('sketch-cue')!.classList.toggle('echo', state.cue === state.hint);
+    if (state.hint !== this.lastHint) { this.lastHint = state.hint; this.flash('sketch-hint', HINT_MS); }
+    const pips = `${state.nailsAvailable}/${state.nailBudget}`;
+    if (pips !== this.pipsCache) {
+      this.pipsCache = pips;
+      document.getElementById('nail-pips')!.innerHTML = Array.from({ length: state.nailBudget },
+        (_, i) => `<span class="nail-pip${i < state.nailsAvailable ? '' : ' used'}">${icons.nail}</span>`).join('');
+    }
   }
   pause(lowQuality: boolean, reason: string, settings?: Settings): void {
     const sketch = this.context === 'sketch';
     const adventure = this.context === 'supper' || sketch;
     const route = sketch && this.sketchMode !== 'mechanics';
-    this.show('pause', `<p class="eyebrow">A moment between brushstrokes</p><h2 class="compact">Paused.</h2>
-      <p class="menu-description">${reason}</p><button class="primary" data-action="resume">Resume <span>→</span></button>
-      ${adventure ? `<button class="secondary" data-action="checkpoint">${route ? 'Back to the last safe checkpoint' : sketch ? 'Restart bay' : 'Restart from checkpoint'}</button>
-      <button class="quiet" data-action="replay">${route ? this.sketchCampaign ? 'Restart adventure' : this.sketchMode === 'adventure' ? 'Restart the Sketch' : `Restart ${this.sketchMode === 'layers-1-3' ? 'Layers 1–3' : this.sketchMode === 'layer-3' ? 'Layer 3' : this.sketchMode === 'layer-3-swings' ? 'swing crossing' : this.sketchMode === 'layer-3-walls' ? 'wall climb' : this.sketchMode === 'layers-1-2' ? 'Layers 1 &amp; 2' : this.sketchMode === 'layer-2' ? 'Layer 2' : 'Layer 1'}` : 'Restart adventure'}</button><button class="quiet" data-action="leave">${this.direct ? 'Leave painting' : 'Return to Museum'}</button>` : ''}
-      <label class="setting"><input type="checkbox" id="low-quality" ${lowQuality ? 'checked' : ''}> Low rendering quality</label>
-      <label class="setting">Master volume <input id="master-volume" type="range" min="0" max="1" step="0.05" value="${settings?.masterVolume ?? 0.7}"></label>
-      ${!this.direct ? '<button class="quiet" data-action="reset">Reset progress</button>' : ''}
-      ${import.meta.env.DEV ? '<button class="quiet" data-action="debug">Toggle collision view · F3</button>' : ''}
-      <p class="small-note">${route ? 'Retries are unlimited. Falling or R returns to the last safe checkpoint. Leaving and re-entering resumes that checkpoint; reloading restarts the route.' : sketch ? 'Every retry resets the current bay to two available nails and an empty queue.' : this.context === 'supper' ? 'Unlimited retries. Each hard section ends at a checkpoint. Falls keep the fork; timed hazards restart. Restart adventure preserves your pear.' : 'Drag to look or use Mouse look for pointer lock.'}<br>Sound follows Master volume. Visual cues work with sound muted.</p>`);
+    const replay = route ? this.sketchCampaign ? 'Restart adventure' : this.sketchMode === 'adventure' ? 'Restart the Sketch'
+      : `Restart ${this.sketchMode === 'layers-1-3' ? 'Layers 1–3' : this.sketchMode === 'layer-3' ? 'Layer 3' : this.sketchMode === 'layer-3-swings' ? 'swing crossing' : this.sketchMode === 'layer-3-walls' ? 'wall climb' : this.sketchMode === 'layers-1-2' ? 'Layers 1 &amp; 2' : this.sketchMode === 'layer-2' ? 'Layer 2' : 'Layer 1'}`
+      : 'Restart adventure';
+    const back = '<button class="menu-button back" data-action="pause-view" data-view="main">Back</button>';
+    const key = (k: string) => k.startsWith('<svg') ? `<span class="key-icon">${k}</span>` : `<kbd>${k}</kbd>`;
+    this.show('pause', `<div class="pause-panel" data-view="main"><h2 class="screen-title">Paused</h2>
+        ${reason ? `<p class="screen-note">${reason}</p>` : ''}
+        <nav class="title-menu" aria-label="Pause menu"><button class="menu-button" data-action="resume">Resume</button>
+        ${adventure ? `<button class="menu-button" data-action="checkpoint">${sketch && !route ? 'Restart bay' : 'Restart from checkpoint'}</button>
+        <button class="menu-button" data-action="replay">${replay}</button>` : ''}
+        <button class="menu-button" data-action="pause-view" data-view="controls">Controls</button>
+        <button class="menu-button" data-action="pause-view" data-view="settings">Settings</button>
+        ${adventure ? `<button class="menu-button" data-action="leave">${this.direct ? 'Leave painting' : 'Return to Museum'}</button>` : ''}</nav></div>
+      <div class="pause-panel" data-view="settings" hidden><h2 class="screen-title">Settings</h2>
+        <label class="setting-row"><span>Volume</span><input id="master-volume" type="range" min="0" max="1" step="0.05" value="${settings?.masterVolume ?? 0.7}"></label>
+        <label class="setting-row"><span>Low quality</span><input type="checkbox" class="toggle" id="low-quality" ${lowQuality ? 'checked' : ''}></label>
+        <nav class="title-menu" aria-label="Settings">${!this.direct ? '<button class="menu-button danger" data-action="reset">Reset progress</button>' : ''}
+        ${import.meta.env.DEV ? '<button class="menu-button" data-action="debug">Collision view (F3)</button>' : ''}${back}</nav></div>
+      <div class="pause-panel" data-view="controls" hidden><h2 class="screen-title">Controls</h2>
+        <dl class="controls-list">${this.controlRows().map(([keys, label]) => `<dt>${keys.map(key).join('')}</dt><dd>${label}</dd>`).join('')}</dl>
+        <nav class="title-menu" aria-label="Controls">${back}</nav></div>`, 'pause');
+  }
+  /** The full control list for the pause menu's Controls page. */
+  private controlRows(): [string[], string][] {
+    if (this.context === 'museum') return [[['W', 'A', 'S', 'D'], 'Walk'], [[icons.drag], 'Drag to look around'], [[icons.mouse], 'Mouse look (top right)'], [['E', icons.click], 'Use a frame'], [['Esc'], 'Pause']];
+    if (this.context === 'sketch') return [[['A', 'D'], 'Move · pump a swing'], [['Space'], 'Jump · kick off a wall · let go'], [[icons.click], 'Drive a nail'], [['Q'], 'Recall the oldest nail'], [['E'], 'Grab a nail'], [['R'], 'Retry from checkpoint'], [['Esc'], 'Pause']];
+    return [[['A', 'D'], 'Move'], [['Space'], 'Jump · press again in the air'], [['E'], 'Use'], [['R'], 'Back to checkpoint'], [['Esc'], 'Pause']];
+  }
+  /** Pause menu pages; Escape on a sub-page goes back to the main page. */
+  private pauseView(view: string): void {
+    for (const panel of this.modal.querySelectorAll<HTMLElement>('.pause-panel')) panel.hidden = panel.dataset.view !== view;
+    this.modal.querySelector<HTMLElement>(`.pause-panel[data-view="${view}"] button, .pause-panel[data-view="${view}"] input`)?.focus();
   }
   success(result: CampaignResult): void {
     this.collection = result;
-    this.show('success', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">A piece recovered</p><h2 class="compact">The golden<br><em>pear.</em></h2>
-      <p class="menu-description">${result.changed ? 'The king’s dessert belongs in the masterpiece. The golden pear is now in your inventory.' : 'A lovely return visit. The golden pear is already yours; replay adds no duplicate.'}</p>
-      <button class="primary" data-action="leave" aria-label="${this.direct ? 'Finish blockout' : 'Return to Museum'}">${this.direct ? 'Finish blockout' : 'Return to Museum'} <span>→</span></button>
-      <button class="secondary" data-action="resume">Continue exploring</button><p class="small-note">${this.direct ? 'Isolated development session. Campaign saves are untouched.'
-        : result.restoredPieceIds.includes('golden-pear') ? 'The golden pear already hangs in the masterpiece.' : 'Your pear is in inventory. Walk to the masterpiece to place it.'}</p>`);
+    this.reward('restoration.pear', 'Golden Pear', result.changed ? 'The king’s dessert belongs in the masterpiece. The golden pear is now in your inventory.'
+      : 'The golden pear is already yours; replay adds no duplicate.',
+      `<button class="menu-button" data-action="leave" aria-label="${this.direct ? 'Finish blockout' : 'Return to Museum'}">${this.direct ? 'Finish blockout' : 'Return to Museum'}</button>
+      <button class="menu-button" data-action="resume">Continue exploring</button>`,
+      this.direct ? 'Isolated development session. Campaign saves are untouched.'
+        : result.restoredPieceIds.includes('golden-pear') ? 'The golden pear already hangs in the masterpiece.' : '');
   }
   /**
    * The light is claimed. The isolated study (no result) has no campaign award
    * to report; the campaign reports whether the claim added the piece.
    */
   sketchSuccess(result?: CampaignResult): void {
-    if (result) {
-      this.show('success', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">A piece recovered</p><h2 class="compact">The enchanted<br><em>light.</em></h2>
-      <p class="menu-description">${result.changed ? 'The light leaves the torch and is yours. Carry it to the masterpiece: it will light the garden’s dawn sky.' : 'A lovely return visit. The enchanted light is already yours; replay adds no duplicate.'}</p>
-      <button class="primary" data-action="leave" aria-label="Return to Museum">Return to Museum <span>→</span></button>
-      <button class="secondary" data-action="resume">Keep exploring</button><p class="small-note">${result.changed ? 'The enchanted light is in your inventory.' : 'Nothing new was added to your inventory.'}</p>`);
-      return;
-    }
-    this.show('success', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">A piece recovered</p><h2 class="compact">The enchanted<br><em>light.</em></h2>
-      <p class="menu-description">The light leaves the torch and is yours. The unfinished picture settles.</p>
-      <button class="primary" data-action="leave" aria-label="Return">Return <span>→</span></button>
-      <button class="secondary" data-action="resume">Keep exploring</button><p class="small-note">Isolated study · Campaign saves are untouched.</p>`);
+    const fresh = !result || result.changed;
+    this.reward('restoration.light', 'Enchanted Light', fresh ? 'The light leaves the torch and is yours. Carry it to the masterpiece’s dark sky.'
+      : 'The enchanted light is already yours; replay adds no duplicate.',
+      `<button class="menu-button" data-action="leave" aria-label="${result ? 'Return to Museum' : 'Return'}">${result ? 'Return to Museum' : 'Return'}</button>
+      <button class="menu-button" data-action="resume">Keep exploring</button>`,
+      result ? '' : 'Isolated study · Campaign saves are untouched.');
+  }
+  /** A recovered piece: its art held up in a warm glow, a short line and the way on. */
+  private reward(art: ArtId, name: string, line: string, buttons: string, note: string): void {
+    this.show('success', `<div class="reward-art" aria-hidden="true"><span class="reward-rays"></span><img src="${artUrl(art)}" alt=""></div>
+      <p class="eyebrow title-kicker">A piece recovered</p><h2 class="screen-title">${name}</h2>
+      <p class="screen-line">${line}</p><nav class="title-menu centred" aria-label="Next">${buttons}</nav>
+      ${note ? `<p class="screen-small">${note}</p>` : ''}`, 'reward');
   }
   finished(): void {
     this.hud.hidden = true;
@@ -353,10 +476,17 @@ export class GameUi {
   }
   error(message: string): void {
     this.hud.hidden = true;
-    this.show('menu', '<p class="eyebrow">The painting could not open</p><h2 class="compact">A blank canvas.</h2><p class="menu-description" id="error-message"></p><button class="primary" data-action="retry">Retry <span>→</span></button><button class="secondary" data-action="back">Back</button>');
+    this.show('menu', `<div class="pause-panel"><h2 class="screen-title">A blank canvas</h2><p class="screen-note">The painting could not open.</p>
+      <p class="screen-line left" id="error-message"></p><nav class="title-menu" aria-label="Error">
+      <button class="menu-button" data-action="retry">Retry</button><button class="menu-button" data-action="back">Back</button></nav></div>`, 'pause');
     this.modal.querySelector('#error-message')!.textContent = message;
   }
-  loading(): void { this.show('loading', '<p class="eyebrow">Opening a painting</p><h2 class="compact">Between<br><em>brushstrokes.</em></h2><p class="menu-description" role="status">Preparing the artwork…</p>'); }
+  loading(): void {
+    // The next adventure shows its first hint again.
+    this.lastHint = '';
+    this.show('loading', `<div class="loading" role="status"><span class="sr-only">Preparing the artwork…</span>
+      <span class="loading-dots" aria-hidden="true"><i></i><i></i><i></i></span></div>`, 'pause');
+  }
   updateHud(state: SupperHud): void {
     const serialized = JSON.stringify(state);
     if (serialized === this.hudCache) return;
@@ -372,8 +502,9 @@ export class GameUi {
     document.getElementById('candle-state')!.hidden = !state.section.includes('candles');
     document.getElementById('diner-state')!.hidden = !state.section.includes('diner');
     text('checkpoint', `Checkpoint / ${state.checkpoint.replaceAll('-', ' ')}`);
-    text('prompt', state.prompt); document.getElementById('prompt')!.hidden = !state.prompt;
+    this.setPrompt('prompt', state.prompt);
     text('cue', state.cue);
+    if (state.hint !== this.lastHint) { this.lastHint = state.hint; this.flash('section-hint', HINT_MS); }
   }
   diagnostics(text: string | null): void {
     const el = document.getElementById('diagnostics')!; el.hidden = text === null;
@@ -386,14 +517,28 @@ export class GameUi {
     const lightRestored = state.restoredPieceIds.includes('sun-disc');
     const light = state.collectedPieceIds.includes('sun-disc') && !lightRestored;
     // Player-facing: the stage-2 piece `sun-disc` is the enchanted light.
-    const items = [owned ? 'Golden pear' : '', light ? `<img class="piece-icon" src="${artUrl('restoration.light')}" alt="">Enchanted light` : ''].filter(Boolean);
-    document.getElementById('inventory')!.innerHTML = `Inventory · ${items.length ? items.join(' · ') : 'Empty'}`;
-    document.getElementById('objective')!.textContent = isComplete(state) ? 'The Garden Before Dawn is complete'
+    const items: [string, ArtId][] = [];
+    if (owned) items.push(['Golden pear', 'restoration.pear']);
+    if (light) items.push(['Enchanted light', 'restoration.light']);
+    const inventory = document.getElementById('inventory')!;
+    const html = items.map(([name, art]) => `<span class="inv-item" tabindex="0" aria-label="${name}"><img class="piece-icon" src="${artUrl(art)}" alt=""><span class="inv-tip" aria-hidden="true">${name}</span></span>`).join('');
+    if (inventory.innerHTML !== html) {
+      // A newly held piece shows its name for a moment, then only the icon remains.
+      const fresh = items.length > inventory.querySelectorAll('.inv-item').length;
+      inventory.innerHTML = html;
+      if (fresh) { inventory.classList.add('fresh'); window.clearTimeout(this.inventoryTimer); this.inventoryTimer = window.setTimeout(() => inventory.classList.remove('fresh'), FRESH_MS); }
+    }
+    const objective = document.getElementById('objective')!;
+    objective.textContent = isComplete(state) ? 'The Garden Before Dawn is complete'
       : light ? 'Bring the light to the masterpiece'
       : restored ? 'Claim the enchanted light in the Unfinished Sketch'
       : owned ? 'Bring the golden pear to the masterpiece' : 'Inspect the masterpiece · Find its missing pear in Royal Supper';
+    // The objective shows for a few seconds on arrival and after each change, then the view is clear.
+    objective.classList.add('show');
+    window.clearTimeout(this.objectiveTimer);
+    this.objectiveTimer = window.setTimeout(() => objective.classList.remove('show'), OBJECTIVE_MS);
   }
-  museumPrompt(text: string): void { const el = document.getElementById('museum-prompt')!; el.textContent = text; el.hidden = !text; }
+  museumPrompt(text: string): void { this.setPrompt('museum-prompt', text); }
   /**
    * The masterpiece up close for every campaign state. Only the next stage's
    * owned piece is offered; `animate` plays the colour restore (never under
@@ -409,43 +554,82 @@ export class GameUi {
     const held = next.reason === null ? next.stage.pieceId : null;
     const pear = museum.targets.pear; const sun = museum.targets.sun;
     const style = (t: typeof pear | typeof sun) => `left:${t.left}%;top:${t.top}%;width:${t.width}%;height:${t.height}%`;
-    const piece = (id: string, art: ArtId, label: string) => `<button class="piece-button" data-action="piece" data-piece="${id}" draggable="true" aria-pressed="false"><img class="inventory-art" src="${artUrl(art)}" alt="" draggable="false"> ${label}</button>`;
+    const centre = (t: typeof pear | typeof sun) => `left:${t.left + t.width / 2}%;top:${t.top + t.height / 2}%`;
+    const piece = (id: string, art: ArtId, label: string) => `<button class="piece-button" data-action="piece" data-piece="${id}" draggable="true" aria-pressed="false" aria-label="${label}"><img class="inventory-art" src="${artUrl(art)}" alt="" draggable="false"><span class="inv-tip" aria-hidden="true">${label}</span></button>`;
     const message = complete ? 'The enchanted light rises as the garden’s sun. The Garden Before Dawn is complete.'
-      : held === 'sun-disc' ? 'Drag the enchanted light into the dark sky, or select it and activate the sky. Tab / Enter also works.'
-      : pearRestored ? 'Colour restored. Next: climb the Unfinished Sketch on the left wall and claim its enchanted light.'
-      : held === 'golden-pear' ? 'Drag the pear onto its silhouette, or select it and activate the target. Tab / Enter also works.'
+      : held === 'sun-disc' ? 'Drag the enchanted light into the dark sky.'
+      : pearRestored ? 'Colour restored. Next: the Unfinished Sketch on the left wall holds an enchanted light.'
+      : held === 'golden-pear' ? 'Drag the golden pear onto its place on the tree.'
       : 'The king has borrowed the golden pear. Look inside Royal Supper.';
     const alt = complete ? 'A traveller under a pear tree in a garden at dawn, its sun risen and every colour restored.'
       : `A traveller under a pear tree in a garden before dawn, its sky still waiting for light. ${pearRestored ? 'The tree and garden have regained colour.' : 'The pear and garden are grey.'}`;
-    this.show('inspection', `<p class="eyebrow">Masterpiece / Close inspection</p><h2 class="compact">The Garden Before Dawn</h2>
-      <div class="painting-study ${animate ? 'restoring' : ''}" data-action="invalid-drop"><img alt="${alt}" src="${masterpieceImage(count)}">
-      ${animate && lightRestored ? `<span class="sun-glow" aria-hidden="true" style="left:${sun.left + sun.width / 2}%;top:${sun.top + sun.height / 2}%"></span>` : ''}
-      <button id="pear-target" class="restoration-target ${pearRestored ? 'placed' : ''}" data-action="target" data-target="golden-pear" style="${style(pear)}" aria-label="Pear silhouette" ${pearRestored ? 'disabled' : ''}>${pearRestored ? 'Pear restored' : 'Pear'}</button>
-      <button id="sky-target" class="restoration-target sun-target ${lightRestored ? 'placed' : ''}" data-action="target" data-target="sun-disc" style="${style(sun)}" aria-label="${lightRestored ? 'Sun restored' : 'Sky silhouette for the enchanted light'}" ${lightRestored ? 'disabled' : ''}>${lightRestored ? 'Sun restored' : 'Sky'}</button></div>
-      <div class="inspection-inventory" aria-label="Inventory">${held === 'golden-pear' ? piece('golden-pear', 'restoration.pear', 'Golden pear')
-        : held === 'sun-disc' ? piece('sun-disc', 'restoration.light', 'Enchanted light') : '<span>Inventory · Empty</span>'}</div>
-      <p id="placement-message" class="placement-message" role="status" aria-live="polite">${message}</p>
-      ${complete ? '<button class="primary" data-action="see-ending">See the ending <span>→</span></button>' : ''}
-      <button class="secondary" data-action="close-inspection">Back to Museum <kbd>Esc</kbd></button>`);
+    // The piece just placed bursts into sparks where it landed (never under reduced motion).
+    const placed = animate ? lightRestored ? sun : pear : null;
+    const sparks = placed ? `<span class="burst" aria-hidden="true" style="${centre(placed)}">${Array.from({ length: 14 }, (_, i) => `<i style="--a:${i * 360 / 14}deg;--d:${50 + (i % 3) * 22}px"></i>`).join('')}</span>` : '';
+    this.show('inspection', `<h2 class="inspect-title">The Garden Before Dawn</h2>
+      <div class="painting-study ${animate ? 'restoring' : ''} ${held ? 'armed' : ''}" data-action="invalid-drop"><img alt="${alt}" src="${masterpieceImage(count)}">
+      ${animate && lightRestored ? `<span class="sun-glow" aria-hidden="true" style="${centre(sun)}"></span>` : ''}${sparks}
+      <button id="pear-target" class="restoration-target ${pearRestored ? 'placed' : held === 'golden-pear' ? 'wanted' : ''}" data-action="target" data-target="golden-pear" style="${style(pear)}" aria-label="Pear silhouette" ${pearRestored ? 'disabled' : ''}><span class="sr-only">${pearRestored ? 'Pear restored' : 'Pear'}</span></button>
+      <button id="sky-target" class="restoration-target sun-target ${lightRestored ? 'placed' : held === 'sun-disc' ? 'wanted' : ''}" data-action="target" data-target="sun-disc" style="${style(sun)}" aria-label="${lightRestored ? 'Sun restored' : 'Sky silhouette for the enchanted light'}" ${lightRestored ? 'disabled' : ''}><span class="sr-only">${lightRestored ? 'Sun restored' : 'Sky'}</span></button></div>
+      <div class="inspect-bar"><div class="inspection-inventory" aria-label="Inventory">${held === 'golden-pear' ? piece('golden-pear', 'restoration.pear', 'Golden pear')
+        : held === 'sun-disc' ? piece('sun-disc', 'restoration.light', 'Enchanted light') : ''}</div>
+      <p id="placement-message" class="placement-message" role="status" aria-live="polite">${message}</p></div>
+      <nav class="title-menu row" aria-label="Masterpiece">${complete ? '<button class="menu-button" data-action="see-ending">See the ending</button>' : ''}
+      <button class="menu-button" data-action="close-inspection" aria-label="Back to Museum">Back <kbd>Esc</kbd></button></nav>`, 'inspect');
     this.modal.classList.add('inspection-modal');
     if (animate) this.modal.querySelector<HTMLElement>(complete ? '[data-action="see-ending"]' : '[data-action="close-inspection"]')?.focus();
   }
   /** S5C: the campaign ending, shown after the light is placed or from the complete inspection. */
   ending(): void {
-    this.show('ending', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Garden Before Dawn</p><h2 class="compact">Restored.</h2>
-      <img class="ending-art" src="${masterpieceImage(2)}" alt="The Garden Before Dawn, complete: the pear on its tree and the sun risen over the garden.">
-      <p class="menu-description">The golden pear, home from Royal Supper.<br>The enchanted light, carried out of the Unfinished Sketch, rises as the garden’s sun.</p>
-      <p class="ending-close">The gallery is quiet again. The garden has its dawn.</p>
-      <button class="primary" data-action="stay">Stay in the museum <span>→</span></button>
-      <button class="quiet" data-action="reset">New game (reset progress)</button>
-      <p class="small-note">Royal Supper and the Unfinished Sketch stay open to replay.</p>`);
+    this.show('ending', `<img class="ending-art" src="${masterpieceImage(2)}" alt="The Garden Before Dawn, complete: the pear on its tree and the sun risen over the garden.">
+      <span class="ending-motes" aria-hidden="true">${Array.from({ length: 18 }, (_, i) => `<i style="--x:${(i * 53) % 100}%;--t:${6 + (i % 5) * 1.7}s;--w:${-(i * 0.9)}s"></i>`).join('')}</span>
+      <div class="title-block"><p class="title-kicker">The Garden Before Dawn</p><h2 class="game-title">Restored.</h2>
+      <p class="ending-lines">The golden pear, home from Royal Supper.<br>The enchanted light, carried out of the Unfinished Sketch, rises as the garden’s sun.</p></div>
+      <nav class="title-menu" aria-label="Ending"><button class="menu-button" data-action="stay">Stay in the museum</button>
+      <button class="menu-button" data-action="reset">New game (reset progress)</button></nav>`, 'title');
     this.modal.classList.add('ending-modal');
   }
   placementMessage(text: string): void { const el = document.getElementById('placement-message'); if (el) el.textContent = text; }
   resetConfirmation(): void {
-    this.show('reset', '<p class="eyebrow">Start again</p><h2 class="compact">Reset progress?</h2><p class="menu-description">This clears this game’s pear, restoration, settings and current adventure. Other stored data is kept.</p><button class="secondary" data-action="cancel-reset">Keep progress</button><button class="primary" data-action="confirm-reset">Confirm reset / New Game</button>');
+    this.show('reset', `<div class="pause-panel"><h2 class="screen-title">Reset progress?</h2>
+      <p class="screen-line left">This clears the pear, the light, the restored picture and your settings.</p>
+      <nav class="title-menu" aria-label="Reset"><button class="menu-button" data-action="cancel-reset">Keep progress</button>
+      <button class="menu-button danger" data-action="confirm-reset">Confirm reset / New Game</button></nav></div>`, 'pause');
   }
-  dispose(): void { this.controller.abort(); }
+  dispose(): void { this.controller.abort(); window.clearTimeout(this.objectiveTimer); window.clearTimeout(this.inventoryTimer); window.clearTimeout(this.controlsTimer); this.flashTimers.forEach(t => window.clearTimeout(t)); }
+  /** Shows a caption for a few seconds, then lets it fade. */
+  private flash(id: string, ms: number): void {
+    const el = document.getElementById(id);
+    if (!el || !el.textContent) return;
+    el.classList.add('show');
+    window.clearTimeout(this.flashTimers.get(id));
+    this.flashTimers.set(id, window.setTimeout(() => el.classList.remove('show'), ms));
+  }
+  /**
+   * The accessible prompt text stays as written ("Click / E — Inspect the
+   * masterpiece"); the visible copy draws its key as a glyph beside the verb.
+   */
+  private setPrompt(id: string, text: string): void {
+    const el = document.getElementById(id)!; el.textContent = text; el.hidden = !text;
+    const view = document.getElementById(`${id}-view`)!; view.hidden = !text;
+    const match = /^(?:Click \/ )?([A-Z]) — (.+)$/.exec(text);
+    const html = match ? `<kbd>${match[1]}</kbd><span>${escapeHtml(match[2])}</span>` : `<span>${escapeHtml(text)}</span>`;
+    if (view.innerHTML !== html) view.innerHTML = html;
+  }
 }
 
 const artUrl = (id: ArtId): string => runtimeAssetUrl(runtimeAssets[id].path);
+const OBJECTIVE_MS = 5000;
+const PENTATONIC = [1, 9 / 8, 5 / 4, 3 / 2, 5 / 3, 2];
+const visible = (el: HTMLElement): boolean => el.offsetParent !== null;
+const HINT_MS = 7000;
+const escapeHtml = (text: string): string => text.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+const CONTROLS_MS = 9000;
+const FRESH_MS = 3500;
+const icons = {
+  pause: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.6"/><rect x="14" y="5" width="4" height="14" rx="1.6"/></svg>',
+  click: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a5.5 5.5 0 0 0-5.5 5.5v6a5.5 5.5 0 0 0 11 0V9A5.5 5.5 0 0 0 12 3.5Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5A5.5 5.5 0 0 0 6.5 9v1.5H12Z"/></svg>',
+  drag: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18M3 12l3.5-3.5M3 12l3.5 3.5M21 12l-3.5-3.5M21 12l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+  nail: '<svg viewBox="0 0 24 32" aria-hidden="true"><rect x="3" y="2" width="18" height="5.5" rx="2.2"/><path d="M9.3 7.5h5.4l-1.4 18.5L12 30.5l-1.3-4.5Z"/></svg>',
+  mouse: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="3.5" width="11" height="17" rx="5.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="11" y="7" width="2" height="4" rx="1"/></svg>',
+};

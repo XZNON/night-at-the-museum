@@ -8,6 +8,10 @@ The deadline is not a reason to include unfinished systems. Verify the live jam 
 
 ## Current status
 
+**Latest, 2026-10-08: v1 polish implemented and regression-checked; committed and pushed on the user's request.** The user's list, one change at a time with screenshots: a title screen and a clean game screen; key-glyph controls (fading) and an icon-only inventory; no status text (hints as fading captions, Sketch nails as icons); a new pause menu with Controls and Settings pages; restyled restoration screens (gilded close-up, sparks, piece-recovered rays, full-screen restored ending); the masterpiece centred on the back wall with the Sketch left and Royal Supper right; a room that warms with each restored piece; and original mystical UI sounds (`scripts/make-ui-audio.py`). Bundled Fredoka font (OFL). Gameplay, collision, level data and saves unchanged. Unit 241/241; browser campaign, audio, S5B, S5C and Sketch-art specs all pass, some after reruns of known bot flakes ([evidence](../validation/v1-polish/README.md)). Next: the museum polish pass (user, 2026-10-08), then release prep (build, preview smoke, itch.io zip, submission text).
+
+**Latest, 2026-10-08: S6 human check recorded; v1 polish session.** The user played the full game New Game → Royal Supper → golden pear → Unfinished Sketch → enchanted light → ending (art pass part 2 committed/pushed at `064196e`). This session: the user's UI/sound/polish list one change at a time, then a production build, production-preview campaign smoke test, itch.io zip of `dist/` and submission text (no upload/publish/submit). Royal Supper art/animation rework is deferred by the user. The jam cutoff (October 12 per the invitation) must be verified live before submitting.
+
 **Latest implementation, 2026-10-08: Sketch art pass part 1 — approved references cut out and integrated, at review.** After S5C was committed and pushed (`7c5e06a`), on the user's request `scripts/prepare-sketch-skins.py` cut the approved Sketch references into 27 skins (`public/assets/sketch/`, 0 credits, manifest `sketch.*`); the Sketch scene draws planks, boards, rulers, workbench ground, glue pool and bottle, double-bit axes, hydraulic lifts, yardstick/dowels/trolley/rail, nails, pickup and background tools, all sized from level data; collision and gameplay cues unchanged. 238/238 unit tests; Chromium static framings and the full adventure with real input pass ([evidence](../validation/sketch-art/part1/README.md)). Committed and pushed on the user's request (2026-10-08); next: discuss the backdrop and remaining art with the user. Part 2 (DreamLayer: final backdrop, museum Sketch entrance) needs its own go-ahead and a credit check.
 
 **Latest implementation, 2026-10-07: S5C — the light becomes the sun and the ending, at its playable review gate; S5 complete at the automated gate.** With the enchanted light owned, the masterpiece's inspection offers it as a draggable piece (local cutout of the painted sun, `restoration.light`, 0 credits); drag, click-then-sky or Tab/Enter places it in the dark sky through progression; the save is written first, the picture turns complete (`complete.webp`, museum frame too) with a warm glow, then the ending opens (Stay in the museum / New game through the reset confirmation). After completion: objective/menu/inspection read complete with See the ending, the Sketch frame shows an empty torch, replays add nothing; no "later update" text remains. Unit 238/238 (`--testTimeout=30000`; the accepted S4B grip test exceeded 5 s again), build; S5C browser 5/5 including one dev full campaign New Game → ending with real controls at 1280 and production drag/click/keyboard/reload/denied-writes/960 cases; regressions campaign 5/5, S5B 5/5 and S5A 4/4 after one rerun each of a known Sketch-route bot flake ([S5C evidence](../validation/sketch-s5/s5c/README.md)). Stop for user review; S6 and the Sketch art pass need their own requests. Committed and pushed to origin/main on the user's request (2026-10-08); the user chose the game art as the next block.
@@ -83,7 +87,7 @@ M3 generation steering (2026-10-06): after persistent DreamLayer 503 failures th
 - [x] M4 S3 board/axe layer/escalator (S3A + S3B complete for the user-requested origin/main checkpoint).
 - [x] M4 S4 Layer 3 wall climb and swing crossing (S4A/B/C/L accepted; S4D full-route gate passed 2026-10-07, awaiting user review).
 - [x] M4 S5 sun and campaign ending (no finale section: user, 2026-10-07; S5A/S5B committed; S5C at its review gate 2026-10-07 with the full New Game → ending gate passed; awaiting user review).
-- [ ] M4 S6 refinement and complete gameplay regression.
+- [ ] M4 S6 refinement and complete gameplay regression (human check done: the user played New Game → Royal Supper → golden pear → Unfinished Sketch → enchanted light → ending, 2026-10-08; v1 polish list and final regression in progress).
 - [ ] Required Sketch references/production art and final art/audio camera validation (separate follow-up).
 
 M0–M3 are implemented, including the expanded museum → supper → pear restoration loop, approved DreamLayer slice/restoration art, 14 user-authorized ImageGen props and original Howler audio. Node v22.14.0/npm v10.9.2 were re-verified on 2026-10-06. Main/origin were synchronized at baseline 605bee4 before the completed-M3 snapshot. Known delivered DreamLayer costs remain 7 reference + 3 production credits; latest successful balance was 90, with failed-job costs unknown. Provider provenance remains separate. No mountain or ending exists yet. Representative-machine profiling and measured human duration remain release follow-ups. See the latest log and docs/planning/NEXT_SESSION.md.
@@ -766,3 +770,42 @@ S5C was committed and pushed on the user's request (`7c5e06a`). The user then ch
 ### 2026-10-08 — Art pass part 1 review revision: poppy colours, smooth motion, no lift frame
 
 User review of part 1: too dull/whitewashed, occasional lag or skipped frames, backdrop to change later, drop the lift frame. Skins re-prepared with a saturation/contrast lift and shadow-free decor; saturated bands (violet/mint/pink), shadow separators, near-opaque decor, inked rings; lift frame removed when skinned. Stutter cause: mechanisms/targets/nails/grips/lift decks were drawn at the latest fixed step while player and camera were interpolated (233/400 frozen display frames at 144 Hz); now interpolated (0/400). `SceneManager` pre-compiles materials and uploads textures, hidden ones included, at scene entry. Typecheck, build, 238/238 unit tests, `sketch-art.spec.ts` 3/3; Royal Supper and museum smoke-checked. Evidence: [part 1 README](../validation/sketch-art/part1/README.md#review-revision-2026-10-08). Committed and pushed on the user's request (2026-10-08); next: discuss the backdrop and remaining art with the user.
+
+### 2026-10-08 — S6 human check; v1 polish session start
+
+User, 2026-10-08: played the whole game New Game → Royal Supper → golden pear → Unfinished Sketch → enchanted light → ending; recorded as the S6 human check. Royal Supper's art/animation rework is deferred (not this session). Session scope: the user's UI/sound/polish list, one change at a time with a screenshot/link each; gameplay, collision, level data, saves and save IDs unchanged unless asked; audio stays original/procedural and new audio is recorded in `asset-sources/audio-manifest.json`; no DreamLayer generation without explicit OK and balance check (last 54). Then production build, preview smoke test, itch.io zip and submission text; no upload/publish/submit. Environment: HEAD `064196e` clean, Node v22.14.0, npm v10.9.2, dev server 5173 and preview 4173 from this checkout.
+
+### 2026-10-08 — v1 polish: UI, museum layout, restoration ambience, UI sounds
+
+On the user's requests, one change at a time with screenshots, all on HEAD `064196e`:
+
+- **Title screen, clean HUD:** the game name lives on a new title screen; the HUD titles, build tag and Pause/Mouse look text are gone (now round icons); the objective is a 5 s banner.
+- **Controls and inventory:** key glyphs with no panel (9 s per scene, full list on the pause menu); an icon-only inventory with a name on hover.
+- **No status text:** status readouts are visually hidden but kept for screen readers and tests; hints are fading captions; the Sketch's nails are icons.
+- **Pause menu:** Controls and Settings pages.
+- **Restoration screens:** restyled to match.
+- **Museum layout:** masterpiece centred on the back wall, Sketch on the left wall, Royal Supper on the right wall, spawn near the entrance.
+- **Restoration ambience:** the room warms with each restored piece.
+- **UI sounds:** `scripts/make-ui-audio.py`, 7 `ui-*.wav` files recorded in `asset-sources/audio-manifest.json`; `make-audio.py` and `make-sketch-music.py` were not rerun and no existing audio file changed.
+- **Font:** Fredoka via `@fontsource-variable/fredoka` 5.3.0 (OFL, licence in THIRD_PARTY_NOTICES).
+
+Code:
+- `src/ui/game-ui.ts`, `src/style.css`, `src/main.ts`: screens, captions, sounds.
+- `src/scenes/museum.ts`: ambience.
+- `src/levels/museum.ts`: layout.
+- `src/core/audio.ts`: interface bank.
+- `src/gameplay/sketch-model.ts`: two HUD number fields.
+
+Tests:
+- Unit: `tests/audio.test.ts` (interface bank) and `tests/campaign-sketch.test.ts` (layout).
+- Browser specs: updated for the new layout, labels and pages; the S5B/S5C/art specs take `EVIDENCE_DIR`.
+
+Validation:
+- Typecheck and build pass; unit 241/241 (`--testTimeout=30000`).
+- Browser: campaign 5/5, audio pass, S5B 5/5 (the 960 case passed on run 4 after three different Sketch-bot failures), S5C 5/5 (the full campaign passed on run 3 after two Supper butter-bot failures), Sketch-art 5/5.
+- The butter flake reproduces on a clean HEAD build and on unchanged code. Claude Code stopped background shells twice for low memory, and the worst runs coincided with that pressure.
+- Evidence: [v1 polish](../validation/v1-polish/README.md).
+
+Not verified: representative-machine performance, other browsers, the itch.io iframe.
+
+Next: the museum polish pass, then release prep.

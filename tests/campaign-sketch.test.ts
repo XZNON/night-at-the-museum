@@ -93,4 +93,19 @@ describe('S5B campaign stage 2: the Unfinished Sketch', () => {
     // The frame stays clear of the back-wall frames.
     expect(frame.z - frame.width / 2).toBeGreaterThan(-museum.depth / 2 + 0.5);
   });
+
+  it('centres the masterpiece on the back wall and hangs Royal Supper on the right wall, its return pose facing it', () => {
+    const masterpiece = museum.artworks.find(a => a.id === 'masterpiece')!;
+    expect(masterpiece).toMatchObject({ x: 0, facing: 0 });
+    expect(masterpiece.z).toBeCloseTo(-museum.depth / 2 + 0.18);
+    const frame = museum.artworks.find(a => a.id === 'royal-supper')!;
+    expect(frame).toMatchObject({ facing: -Math.PI / 2 });
+    expect(frame.x).toBeCloseTo(museum.width / 2 - 0.18);
+    const pose = museum.returnPose;
+    const forward = { x: -Math.sin(pose.yaw), z: -Math.cos(pose.yaw) };
+    const toFrame = { x: frame.x - pose.x, z: frame.z - pose.z };
+    const distance = Math.hypot(toFrame.x, toFrame.z);
+    expect(distance).toBeLessThan(museum.interactionRange);
+    expect((forward.x * toFrame.x + forward.z * toFrame.z) / distance).toBeCloseTo(1, 5);
+  });
 });

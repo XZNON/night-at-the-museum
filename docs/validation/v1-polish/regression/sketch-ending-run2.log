@@ -1,0 +1,7 @@
+Expanded section reached before-butter 23.3
+  ✘  1 tests\browser\sketch-ending.spec.ts:234:1 › S5C full campaign from New Game to the ending with real controls 1280 (2.5m)
+    Error: Expanded section after-butter
+    > 58 |     expect(reached, `Expanded section ${stage.checkpoint}`).toBe(true);
+      59 |     console.log('Expanded section reached', stage.checkpoint, ((Date.now() - began) / 1000).toFixed(1));
+    test-results\sketch-ending-S5C-full-cam-db751-ing-with-real-controls-1280\test-failed-1.png
+  1 failed

@@ -77,6 +77,8 @@ export interface TargetView {
 export interface SketchHud {
   bay: string; bayName: string; hint: string; goal: string;
   nails: string; oldest: string; nearest: string;
+  /** The nail budget as numbers, for the HUD's nail icons. */
+  nailsAvailable: number; nailBudget: number;
   cue: string; motion: string; swing: string;
   completed: boolean; recovering: boolean; elapsed: number;
   /** Route-only fields; absent in the Slice 1 bay playground. */
@@ -572,6 +574,7 @@ export abstract class SketchPlayfield {
     return {
       bay: id, bayName: name, hint, goal,
       nails: `${this.placements.length}/${this.nailBudget} placed · ${this.availableNails} available`,
+      nailsAvailable: this.availableNails, nailBudget: this.nailBudget,
       oldest: oldestTarget ? `Q recalls: ${oldestTarget.label}` : 'Q recalls: nothing yet',
       nearest: nearest ? `Click target: ${nearest.label} (${nearest.distance.toFixed(1)}u)`
         : this.freePlacement ? 'Click wood (strip or bar) to drive a nail' : 'No target in reach',

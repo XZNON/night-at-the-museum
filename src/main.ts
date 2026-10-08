@@ -93,6 +93,7 @@ const ui = new GameUi(root, {
   sketchBay: bay => { void startSketch(true, bay); },
   reset: requestReset, confirmReset, cancelReset, closeInspection, place, ending: showEnding, stay,
   look: () => { ui.canvas.focus(); activeMuseum()?.requestLook(); },
+  sound: (kind, rate) => audio.uiSound(kind, rate),
   retry: () => { if (retryAction) retryAction(); else void (sketchStudy ? startSketch(false) : isolated ? startSupper(false) : enterMuseum()); },
   back: () => { if (manager?.active) { overlay = 'none'; resume(); } else { overlay = 'menu'; ui.menu(remembered, isComplete(progression.snapshot)); } },
 }, isolated, study, sketchMode);
@@ -131,12 +132,15 @@ function setPaused(value: boolean): void {
   activeSketch()?.model.clearCommands();
   activeSketch()?.setInteractive(!value && performance.now() >= inputReadyAt);
 }
-function pause(reason = 'Take a moment. The gallery will wait.'): void {
+function pause(reason = ''): void {
   if (!manager?.active || manager.transitioning || paused) return;
   setPaused(true); overlay = 'pause'; ui.pause(settings.quality === 'low', reason, settings);
+  // Only a pause the player asked for is voiced; focus and tab pauses stay quiet.
+  if (!reason) audio.uiSound('pause');
 }
 function resume(): void {
   if (!manager?.active || manager.transitioning || document.hidden || overlay === 'reset' || overlay === 'inspection' || overlay === 'ending') return;
+  if (overlay === 'pause' || overlay === 'success') audio.uiSound('resume');
   overlay = 'none';
   const museumActive = activeMuseum() !== null;
   ui.play(museumActive ? 'museum' : activeSketch() ? 'sketch' : 'supper');
@@ -144,6 +148,7 @@ function resume(): void {
 }
 function togglePause(): void {
   if (manager?.transitioning) return;
+  if (overlay === 'reset' || overlay === 'inspection' || overlay === 'ending') audio.uiSound('back');
   if (overlay === 'reset') { cancelReset(); return; }
   if (overlay === 'inspection') { closeInspection(); return; }
   if (overlay === 'ending') { stay(); return; }
@@ -192,7 +197,7 @@ async function enterMuseum(pose: MuseumPose = museum.spawn): Promise<void> {
       () => !paused && !manager?.transitioning && performance.now() >= inputReadyAt,
       id => { if (id === 'masterpiece') inspect(); else if (id === royalSupper.id) void startSupper(false); else if (id === sketchStage.artworkId) void startSketchAdventure(false); },
       text => ui.museumPrompt(text), await loadArtSet(museumArtIds)));
-    if (changed) { audio.setScene('museum'); inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS; remembered = true; ui.museumState(progression.snapshot); ui.museumPrompt(''); resume(); }
+    if (changed) { audio.setScene('museum'); inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS; remembered = true; ui.museumState(progression.snapshot); ui.museumPrompt(''); resume(); ui.hintControls(); }
   } catch (error) { showError(error); }
 }
 async function startSupper(restart: boolean, preserveLane = false): Promise<void> {
@@ -209,7 +214,7 @@ async function startSupper(restart: boolean, preserveLane = false): Promise<void
         cue => audio.play(cue), art);
       scene.debug.visible = debugEnabled; return scene;
     });
-    if (changed) { audio.setScene('royal-supper'); inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS; remembered = true; resume(); }
+    if (changed) { audio.setScene('royal-supper'); inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS; remembered = true; resume(); ui.hintControls(); }
   } catch (error) { showError(error); }
 }
 /** One Sketch scene with the shared heroine poses; studies and the campaign differ only in mode and callbacks. */
@@ -264,7 +269,7 @@ async function startSketch(restart: boolean, bayId?: SketchBayId): Promise<void>
       inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS;
       // Placement clicks stay refused until the settle window has passed.
       created.scene.armInteraction(inputReadyAt);
-      remembered = true; ui.markSketch(sketchMode, sketchBay); resume();
+      remembered = true; ui.markSketch(sketchMode, sketchBay); resume(); ui.hintControls();
     }
   } catch (error) { showError(error); }
 }
@@ -298,7 +303,7 @@ async function startSketchAdventure(restart: boolean): Promise<void> {
       audio.setScene('sketch');
       inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS;
       created.scene.armInteraction(inputReadyAt);
-      remembered = true; ui.markSketch('adventure', sketchBay, true); resume();
+      remembered = true; ui.markSketch('adventure', sketchBay, true); resume(); ui.hintControls();
     }
   } catch (error) { showError(error); }
 }
@@ -367,9 +372,9 @@ function resize(): void {
 window.addEventListener('resize', resize, { signal: lifetime.signal });
 // A real blur mid-ride sends the Sketch rider back to the departure exit with
 // the lift deck reset (S4L); an Escape pause only freezes the ride.
-window.addEventListener('blur', () => { activeSketch()?.routeModel?.cancelRide(); input.clear(); audio.setPaused(true); pause('Focus was lost. Resume when you are ready.'); }, { signal: lifetime.signal });
-document.addEventListener('visibilitychange', () => { if (document.hidden) { activeSketch()?.routeModel?.cancelRide(); input.clear(); audio.setPaused(true); pause('The game paused while this tab was hidden.'); } }, { signal: lifetime.signal });
-document.addEventListener('pointerlockchange', () => { if (!document.pointerLockElement && activeMuseum()) pause('Mouse look released. Resume to continue; dragging also works.'); }, { signal: lifetime.signal });
+window.addEventListener('blur', () => { activeSketch()?.routeModel?.cancelRide(); input.clear(); audio.setPaused(true); pause('Paused when the window lost focus.'); }, { signal: lifetime.signal });
+document.addEventListener('visibilitychange', () => { if (document.hidden) { activeSketch()?.routeModel?.cancelRide(); input.clear(); audio.setPaused(true); pause('Paused while the tab was hidden.'); } }, { signal: lifetime.signal });
+document.addEventListener('pointerlockchange', () => { if (!document.pointerLockElement && activeMuseum()) pause('Mouse look released. Dragging also works.'); }, { signal: lifetime.signal });
 // Bay hotkeys are contextual to the isolated playground and reset through the
 // same safe transition as the selector buttons.
 window.addEventListener('keydown', event => {

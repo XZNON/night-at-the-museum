@@ -13,20 +13,32 @@ async function newMuseum(page: Page, continueSave = false): Promise<void> {
   await page.getByRole('button', { name: continueSave ? 'Continue' : 'New Game', exact: true }).click();
   await expect(page.locator('#museum-hud')).toBeVisible();
 }
+/** A real left drag on the canvas turns the view; dx > 0 turns right. */
+async function drag(page: Page, dx: number): Promise<void> {
+  const x = dx < 0 ? 1220 : 60;
+  await page.mouse.move(x, 360); await page.mouse.down(); await page.mouse.move(x + dx, 360, { steps: 12 }); await page.mouse.up();
+  await page.waitForTimeout(60);
+}
+// Royal Supper hangs on the right wall: strafe right, walk up the room and turn to face it.
 async function approachSupper(page: Page): Promise<void> {
-  await walk(page, 'KeyA', 800); await walk(page, 'KeyW', 1350);
+  await walk(page, 'KeyD', 760); await walk(page, 'KeyW', 1740); await drag(page, 523);
   await expect(page.locator('#museum-prompt')).toHaveText('Click / E — Enter Royal Supper');
 }
+// The masterpiece is centred on the back wall, straight ahead of the spawn.
 async function inspectFromSpawn(page: Page): Promise<void> {
-  await walk(page, 'KeyD', 740); await walk(page, 'KeyW', 1350);
+  await walk(page, 'KeyW', 2400);
   await expect(page.locator('#museum-prompt')).toHaveText('Click / E — Inspect the masterpiece');
   await page.locator('#world').click({ position: { x: 640, y: 360 } });
   await expect(page.getByRole('button', { name: 'Pear silhouette' })).toBeVisible();
 }
+// From in front of Royal Supper (facing the right wall): turn to the back wall, step left and walk up to the masterpiece.
 async function inspectFromReturn(page: Page): Promise<void> {
-  await page.keyboard.down('KeyD');
+  // Wait until the museum takes input (the return lands facing Royal Supper) before turning.
+  await expect(page.locator('#museum-prompt')).toHaveText('Click / E — Enter Royal Supper'); await page.waitForTimeout(350);
+  await drag(page, -523); await walk(page, 'KeyA', 300);
+  await page.keyboard.down('KeyW');
   await expect(page.locator('#museum-prompt')).toHaveText('Click / E — Inspect the masterpiece');
-  await page.keyboard.up('KeyD');
+  await page.keyboard.up('KeyW');
   await page.locator('#world').click({ position: { x: 640, y: 360 } });
   await expect(page.getByRole('button', { name: 'Pear silhouette' })).toBeVisible();
 }
@@ -85,7 +97,7 @@ test('production museum → supper → pear → return → click placement → r
   await newMuseum(page);
   await page.screenshot({ path: 'test-results/museum-start.png' });
   // Distant frames do not activate, even with click/E.
-  await page.locator('#world').click({ position: { x: 830, y: 338 } }); await page.keyboard.press('KeyE');
+  await page.locator('#world').click({ position: { x: 640, y: 330 } }); await page.keyboard.press('KeyE');
   await expect(page.locator('#museum-hud')).toBeVisible();
   await approachSupper(page);
   await page.locator('#world').click({ position: { x: 640, y: 360 } });
@@ -98,12 +110,12 @@ test('production museum → supper → pear → return → click placement → r
   // A real double click keeps its screen coordinates after the first click
   // removes the button. Avoid locator retries against the departed scene.
   await page.mouse.click(returnButton.x + returnButton.width / 2, returnButton.y + returnButton.height / 2, { clickCount: 2 });
-  await expect(page.locator('#inventory')).toHaveText('Inventory · Golden pear');
+  await expect(page.locator('#inventory')).toHaveText('Golden pear');
   await expect(page.locator('#museum-prompt')).toHaveText('Click / E — Enter Royal Supper');
   await page.screenshot({ path: 'test-results/museum-return.png' });
   await inspectFromReturn(page);
   await page.reload(); await newMuseum(page, true);
-  await expect(page.locator('#inventory')).toHaveText('Inventory · Golden pear');
+  await expect(page.locator('#inventory')).toHaveText('Golden pear');
   await inspectFromSpawn(page);
   await page.getByRole('button', { name: 'Golden pear', exact: false }).click();
   await page.getByRole('button', { name: 'Sky silhouette for the enchanted light' }).click();
@@ -116,12 +128,12 @@ test('production museum → supper → pear → return → click placement → r
   await page.screenshot({ path: 'test-results/pear-restoration-production.png' });
   // Reload during the animation: restoration was saved synchronously.
   await page.reload(); await newMuseum(page, true);
-  await expect(page.locator('#inventory')).toHaveText('Inventory · Empty');
+  await expect(page.locator('#inventory')).toHaveText('');
   await expect(page.locator('#objective')).toHaveText('Claim the enchanted light in the Unfinished Sketch');
   await inspectFromSpawn(page); await expect(page.locator('#pear-target')).toBeDisabled();
   await page.screenshot({ path: 'test-results/pear-restoration-production.png' });
   await page.keyboard.press('Escape');
-  await walk(page, 'KeyA', 1540); await expect(page.locator('#museum-prompt')).toHaveText('Click / E — Enter Royal Supper');
+  await page.reload(); await newMuseum(page, true); await approachSupper(page);
   await page.keyboard.press('KeyE'); await supperRoute(page);
   await expect(page.locator('#modal')).toContainText('replay adds no duplicate');
   // S5C: the replay note no longer tells a restored pear to go to the masterpiece.
@@ -136,12 +148,14 @@ test('production museum → supper → pear → return → click placement → r
     await expect(page.locator('#museum-prompt')).toHaveText('Click / E — Enter Royal Supper');
   }
   await page.evaluate(() => localStorage.setItem('another-game', 'keep'));
-  await page.keyboard.press('Escape'); await page.getByRole('button', { name: 'Reset progress', exact: true }).click();
+  await page.keyboard.press('Escape'); await page.getByRole('button', { name: 'Settings' }).click();
+  await page.getByRole('button', { name: 'Reset progress', exact: true }).click();
   await page.getByRole('button', { name: 'Keep progress' }).click();
   expect((await saved(page)).restoredPieceIds).toEqual(['golden-pear']);
+  await page.getByRole('button', { name: 'Settings' }).click();
   await page.getByRole('button', { name: 'Reset progress', exact: true }).click();
   await page.getByRole('button', { name: 'Confirm reset / New Game' }).click();
-  await expect(page.locator('#inventory')).toHaveText('Inventory · Empty');
+  await expect(page.locator('#inventory')).toHaveText('');
   expect(await page.evaluate(key => localStorage.getItem(key), saveKey)).toBeNull();
   expect(await page.evaluate(() => localStorage.getItem('another-game'))).toBe('keep');
   await page.reload(); await expect(page.getByRole('button', { name: 'New Game', exact: true })).toBeVisible();
@@ -176,12 +190,13 @@ test('production malformed saves and denied storage stay playable; settings pers
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await page.goto(production); await page.evaluate(key => localStorage.setItem(key, '{broken'), saveKey); await page.reload();
   await expect(page.locator('#save-notice')).toContainText('Safe progress'); await newMuseum(page, true);
-  await page.keyboard.press('Escape'); await page.getByLabel('Low rendering quality').check();
-  await page.getByLabel('Master volume').press('Home');
-  for (let i = 0; i < 7; i++) await page.getByLabel('Master volume').press('ArrowRight');
+  await page.keyboard.press('Escape'); await page.getByRole('button', { name: 'Settings' }).click();
+  await page.getByLabel('Low quality').check();
+  await page.getByLabel('Volume').press('Home');
+  for (let i = 0; i < 7; i++) await page.getByLabel('Volume').press('ArrowRight');
   expect((await saved(page)).settings).toEqual({ quality: 'low', masterVolume: 0.35 });
-  await page.reload(); await newMuseum(page, true); await page.keyboard.press('Escape');
-  await expect(page.getByLabel('Low rendering quality')).toBeChecked(); await expect(page.getByLabel('Master volume')).toHaveValue('0.35');
+  await page.reload(); await newMuseum(page, true); await page.keyboard.press('Escape'); await page.getByRole('button', { name: 'Settings' }).click();
+  await expect(page.getByLabel('Low quality')).toBeChecked(); await expect(page.getByLabel('Volume')).toHaveValue('0.35');
   await page.addInitScript(() => {
     Storage.prototype.getItem = () => { throw new DOMException('Storage blocked', 'SecurityError'); };
     Storage.prototype.setItem = () => { throw new DOMException('Storage full', 'QuotaExceededError'); };
@@ -205,14 +220,14 @@ test('museum input contexts, room bounds, drag look and pointer lock release/fal
   expect((await pose()).museum.rotation[1]).not.toBe(initial.museum.rotation[1]);
   expect((await pose()).museum.position).toEqual(initial.museum.position);
   await page.mouse.down(); await page.mouse.move(640, 360, { steps: 6 }); await page.mouse.up();
-  await walk(page, 'KeyW', 3000);
+  await walk(page, 'KeyW', 3600);
   expect((await pose()).museum.position[2]).toBeCloseTo(-5.6);
   await walk(page, 'KeyD', 5000);
   expect((await pose()).museum.position[0]).toBeCloseTo(5.6);
   await page.reload(); await newMuseum(page);
   await page.keyboard.down('KeyW'); await page.waitForTimeout(120);
   await page.evaluate(() => window.dispatchEvent(new Event('blur')));
-  await expect(page.getByRole('heading', { name: 'Paused.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Paused' })).toBeVisible();
   const blurred = await pose(); await page.waitForTimeout(150);
   expect((await pose()).museum.position).toEqual(blurred.museum.position);
   await page.getByRole('button', { name: 'Resume', exact: false }).click(); await page.keyboard.up('KeyW');
@@ -224,7 +239,7 @@ test('museum input contexts, room bounds, drag look and pointer lock release/fal
   await page.getByRole('button', { name: 'Mouse look', exact: true }).click();
   await expect.poll(() => page.evaluate(() => document.pointerLockElement?.id)).toBe('world');
   await page.keyboard.press('Escape');
-  await expect(page.getByRole('heading', { name: 'Paused.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Paused' })).toBeVisible();
   expect(await page.evaluate(() => document.pointerLockElement)).toBeNull();
   await page.getByRole('button', { name: 'Resume', exact: false }).click();
   // Simulate a browser/embedding permission denial; drag look stays usable.

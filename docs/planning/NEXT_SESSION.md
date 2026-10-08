@@ -1,4 +1,21 @@
-# Next session — Sketch art pass part 1 at review; then part 2 and S6
+# Next session — v1 polish before the jam submission
+
+**Latest, 2026-10-08: v1 polish done and regression-checked; committed and pushed on the user's request.** See the PLAN log and the [v1 polish evidence](../validation/v1-polish/README.md). The user chose **the museum polish pass next**. Candidate ideas, to agree with the user first:
+- real gilded frames with depth;
+- a brass lamp over each frame that lights once that adventure is open;
+- wainscot panelling, a dado rail and skirting;
+- wood plank variation and a carpet runner with a gold border;
+- rope stanchions, a bench and entrance doors;
+- small ceiling lights;
+- brass plaques in the new font;
+- a shimmer on the next frame to visit;
+- procedural footsteps and room tone.
+
+Code-built first. Any DreamLayer texture needs the user's OK and a balance check (last recorded: 54). Then release prep: production build, preview smoke test of the full campaign, itch.io zip of `dist/` and submission text (add a favicon; the browser currently gets a 404). No upload, publish or submit. Verify the live jam cutoff (October 12 per the invitation). Royal Supper's art rework stays deferred.
+
+Running the browser specs: restart the preview after each build. The Supper butter and Sketch route bots are timing-sensitive and flaky under machine load (see the evidence). Point `EVIDENCE_DIR` at a new folder so the accepted S5B/S5C/art evidence stays untouched.
+
+**Current, 2026-10-08: S6 human check recorded; v1 polish session.** The user played the full game New Game → ending. This session works through the user's UI/sound/polish list one change at a time (gameplay, collision, level data, saves unchanged unless asked), then a production build, preview campaign smoke test, itch.io zip of `dist/` and short submission text. No upload/publish/submit; the user does that after verifying the live jam cutoff (October 12 per the invitation). Royal Supper art/animation rework is deferred. No generation without explicit OK and a balance check (last 54).
 
 **Art pass part 2, 2026-10-08 (committed and pushed on the user's request):** generated torch, museum garage painting (lit/taken) and toolbox backdrop (5 credits, balance 54) are integrated: the route sits inside the toolbox with wall-mounted ledges. Before that, **v6 backdrop trial + Sketch music:** the approved v6 toolbox wall is shown as a camera-following stage backdrop (0 credits; balance 59) with clean layer edges, and the Sketch plays a new original rock/metallic loop (`scripts/make-sketch-music.py`); see the [part 1 README](../validation/sketch-art/part1/README.md#v6-backdrop-trial-2026-10-08). Next: the user's verdict, then the backdrop/entrance/torch discussion.
 

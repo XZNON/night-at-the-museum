@@ -4,6 +4,8 @@ Start with the [current handoff](planning/NEXT_SESSION.md), then the [build plan
 
 ## Current work
 
+Latest, 2026-10-08: **v1 polish done** (title screen, clean HUD, pause menu, restoration screens, museum layout and ambience, UI sounds; [evidence](validation/v1-polish/README.md)). Next: museum polish, then release prep ([handoff](planning/NEXT_SESSION.md)).
+
 Latest, 2026-10-07: **next is S5B** (Sketch frame in the museum, campaign claim of the light); the enchanted light acts as the sun in the campaign (user). Prompt: [NEXT_SESSION](planning/NEXT_SESSION.md).
 
 Latest, 2026-10-08: **Sketch art pass part 1 is implemented at its review gate**: the approved references are cut locally into 27 skins and drawn in the Sketch scene from level data; gameplay unchanged ([evidence](validation/sketch-art/part1/README.md), [assets](art/SKETCH_ASSETS.md)). S5C committed/pushed at `7c5e06a`. Part 2 (backdrop, museum entrance) needs its own request.

@@ -11,12 +11,12 @@ import { DEV, PROD, KEY, LIGHT_OWNED, PEAR_OWNED, PEAR_RESTORED, OPEN_PROMPT, LO
 // the UI alone; the dev case plays the whole campaign with real keys, drags
 // and clicks from New Game, reading debug state back (never writing it).
 test.use({ headless: false });
-const DIR = 'docs/validation/sketch-s5/s5c';
+const DIR = process.env.EVIDENCE_DIR ?? 'docs/validation/sketch-s5/s5c';
 evidence.dir = DIR; l2Evidence.dir = DIR;
 const COMPLETE = seed(['golden-pear', 'sun-disc'], ['golden-pear', 'sun-disc']);
 const SKY = 'Sky silhouette for the enchanted light';
 const COMPLETE_OBJECTIVE = 'The Garden Before Dawn is complete';
-const COMPLETE_NOTE = 'The Garden Before Dawn is complete. Both paintings stay open to replay.';
+const COMPLETE_NOTE = 'The Garden Before Dawn · restored';
 const sky = (page: Page) => page.getByRole('button', { name: SKY });
 const light = (page: Page) => page.locator('[data-piece="sun-disc"]');
 const ending = (page: Page) => page.getByRole('heading', { name: 'Restored.' });
@@ -56,7 +56,7 @@ async function expectEnding(page: Page) {
 async function expectCompleteMuseum(page: Page) {
   await expect(page.locator('#museum-hud')).toBeVisible();
   await expect(page.locator('#objective')).toHaveText(COMPLETE_OBJECTIVE);
-  await expect(page.locator('#inventory')).toHaveText('Inventory · Empty');
+  await expect(page.locator('#inventory')).toHaveText('');
 }
 /** The complete inspection: both targets restored, no piece, See the ending. */
 async function expectCompleteInspection(page: Page) {
@@ -64,7 +64,7 @@ async function expectCompleteInspection(page: Page) {
   await expect(page.locator('#pear-target')).toBeDisabled();
   await expect(page.locator('#sky-target')).toBeDisabled();
   await expect(page.locator('#sky-target')).toHaveAttribute('aria-label', 'Sun restored');
-  await expect(page.locator('.inspection-inventory')).toHaveText('Inventory · Empty');
+  await expect(page.locator('.inspection-inventory')).toHaveText('');
   await expect(page.getByRole('button', { name: 'See the ending' })).toBeVisible();
   expect(await page.locator('#modal').innerText()).not.toMatch(/later update/i);
 }
@@ -84,7 +84,7 @@ async function walkTo(page: Page, x: number, z: number) {
   await axis(p[0] < x ? 'KeyD' : 'KeyA', q => p[0] < x ? q[0] >= x : q[0] <= x);
 }
 async function inspectMasterpieceDev(page: Page) {
-  await walkTo(page, 2.6, -2.7);
+  await walkTo(page, 0, -3);
   await expect(page.locator('#museum-prompt')).toHaveText('Click / E — Inspect the masterpiece');
   await page.keyboard.press('KeyE');
   await expect(page.locator('.painting-study')).toBeVisible();
@@ -154,7 +154,7 @@ test('S5C production drag placement, wrong drops, ending, reload complete, Keep 
   await page.getByRole('button', { name: 'Confirm reset / New Game' }).click();
   await expect(page.locator('#museum-hud')).toBeVisible();
   await expect(page.locator('#objective')).toHaveText('Inspect the masterpiece · Find its missing pear in Royal Supper');
-  await expect(page.locator('#inventory')).toHaveText('Inventory · Empty');
+  await expect(page.locator('#inventory')).toHaveText('');
   expect(await saved(page)).toBeNull();
   expect(await page.evaluate(() => localStorage.getItem('another-game'))).toBe('keep');
   await page.waitForTimeout(350); await toSketchFrameBlind(page);
@@ -239,7 +239,7 @@ test('S5C full campaign from New Game to the ending with real controls 1280', as
   await page.evaluate(() => localStorage.clear()); await page.reload();
   await newMuseum(page, false);
   // Royal Supper: the pear.
-  await hold(page, 'KeyA', 800); await hold(page, 'KeyW', 1350);
+  await hold(page, 'KeyD', 760); await hold(page, 'KeyW', 1740); await drag(page, 523);
   await expect(page.locator('#museum-prompt')).toHaveText('Click / E — Enter Royal Supper');
   await page.keyboard.press('KeyE'); await expect(page.locator('#hud')).toBeVisible();
   const supperStart = Date.now();
@@ -248,7 +248,7 @@ test('S5C full campaign from New Game to the ending with real controls 1280', as
   await expect(page.locator('#modal')).toContainText('The golden pear is now in your inventory');
   expect(await savedJson(page)).toEqual(PEAR_OWNED);
   await page.getByRole('button', { name: 'Return to Museum', exact: true }).click();
-  await expect(page.locator('#inventory')).toHaveText('Inventory · Golden pear');
+  await expect(page.locator('#inventory')).toHaveText('Golden pear');
   // The pear, by drag.
   await inspectMasterpieceDev(page);
   await page.locator('[data-piece="golden-pear"]').dragTo(page.getByRole('button', { name: 'Pear silhouette' }));
@@ -266,7 +266,7 @@ test('S5C full campaign from New Game to the ending with real controls 1280', as
   expect(await savedJson(page)).toEqual(LIGHT_OWNED);
   await page.locator('#modal [data-action="leave"]').click();
   await expectSketchReturn(page);
-  await expect(page.locator('#inventory')).toHaveText('Inventory · Enchanted light');
+  await expect(page.locator('#inventory')).toHaveText('Enchanted light');
   await expect(page.locator('#objective')).toHaveText('Bring the light to the masterpiece');
   await shot(page, 'sketch-frame-empty-torch', false);
   // The light, by click, in the sky.
@@ -293,7 +293,7 @@ test('S5C full campaign from New Game to the ending with real controls 1280', as
   await page.locator('#modal [data-action="leave"]').click();
   await expectSketchReturn(page); await expectCompleteMuseum(page);
   // New game through the confirmation: a fresh museum, the frame locked.
-  await page.keyboard.press('Escape');
+  await page.keyboard.press('Escape'); await page.getByRole('button', { name: 'Settings' }).click();
   await page.getByRole('button', { name: 'Reset progress', exact: true }).click();
   await page.getByRole('button', { name: 'Confirm reset / New Game' }).click();
   await expect(page.locator('#museum-hud')).toBeVisible(); await page.waitForTimeout(350);

@@ -12,6 +12,7 @@
     "test:browser": "playwright test"
   },
   "dependencies": {
+    "@fontsource-variable/fredoka": "5.3.0",
     "howler": "2.2.4",
     "three": "0.186.1"
   },

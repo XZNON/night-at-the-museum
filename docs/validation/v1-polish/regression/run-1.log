@@ -1,0 +1,30 @@
+=== sketch-campaign
+  ✓  1 tests\browser\sketch-campaign.spec.ts:24:1 › S5B locked frame, opening after the pear is restored, and transition spam (24.2s)
+  ✘  2 tests\browser\sketch-campaign.spec.ts:103:1 › S5B campaign route: first claim, persistence, return, re-entry and reload 1280 (55.1s)
+  ✘  3 tests\browser\sketch-campaign.spec.ts:154:1 › S5B denied writes, first claim in memory, then a replay claim adds nothing 960 (57.2s)
+  ✓  4 tests\browser\sketch-campaign.spec.ts:188:1 › S5B fully denied storage keeps the museum playable and the frame locked (5.4s)
+  ✘  5 tests\browser\sketch-campaign.spec.ts:202:1 › S5B production: seeded saves show the frame state, objective and inventory; study= is ignored (9.2s)
+    Error: l3-wall-c-pin is clickable outside #sketch-hud .section-hint
+    test-results\sketch-campaign-S5B-campai-ae2f8-rn-re-entry-and-reload-1280\test-failed-1.png
+    Error: l3-wall-c-pin is clickable outside #sketch-hud .section-hint
+    test-results\sketch-campaign-S5B-denied-85b33-play-claim-adds-nothing-960\test-failed-1.png
+    Error: expect(locator).toContainText(expected) failed
+    test-results\sketch-campaign-S5B-produc-17637--inventory-study-is-ignored\test-failed-1.png
+  3 failed
+  2 passed (2.9m)
+=== sketch-ending
+  ✘  1 tests\browser\sketch-ending.spec.ts:98:1 › S5C production drag placement, wrong drops, ending, reload complete, Keep progress and Confirm reset (16.8s)
+  ✓  2 tests\browser\sketch-ending.spec.ts:166:1 › S5C production click placement and reload right after placement keeps it complete (8.3s)
+  ✘  3 tests\browser\sketch-ending.spec.ts:185:1 › S5C production keyboard placement; the sky before the pear and before the light; denied writes (23.8s)
+  ✘  4 tests\browser\sketch-ending.spec.ts:215:1 › S5C 960x540 keyboard placement and ending layout (16.0s)
+  ✘  5 tests\browser\sketch-ending.spec.ts:234:1 › S5C full campaign from New Game to the ending with real controls 1280 (3.1m)
+    Error: expect(locator).toContainText(expected) failed
+    test-results\sketch-ending-S5C-producti-29f2e--progress-and-Confirm-reset\test-failed-1.png
+    Error: expect(locator).toContainText(expected) failed
+    test-results\sketch-ending-S5C-producti-8a8b2-ore-the-light-denied-writes\test-failed-1.png
+    Error: expect(locator).toContainText(expected) failed
+    test-results\sketch-ending-S5C-960x540--6bfd8-placement-and-ending-layout\test-failed-1.png
+    Error: l3-wall-c-pin is clickable outside #sketch-hud .section-hint
+    test-results\sketch-ending-S5C-full-cam-db751-ing-with-real-controls-1280\test-failed-1.png
+  4 failed
+  1 passed (4.8m)

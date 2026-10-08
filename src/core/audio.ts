@@ -10,7 +10,12 @@ const beds: Record<AudioScene, { file: string; volume: number }> = {
 };
 export type AudioCue = 'jump' | 'bounce' | 'slide' | 'hazard' | 'attention' | 'fork' | 'fan' | 'collect' | 'return' | 'restore';
 const cues: AudioCue[] = ['jump', 'bounce', 'slide', 'hazard', 'attention', 'fork', 'fan', 'collect', 'return', 'restore'];
+/** Menu and interface sounds (scripts/make-ui-audio.py): one bank for the whole session, independent of the scene and of pause. */
+export type UiSound = 'move' | 'select' | 'back' | 'pause' | 'resume' | 'toggle' | 'start';
+const uiSounds: Record<UiSound, number> = { move: 0.32, select: 0.5, back: 0.42, pause: 0.5, resume: 0.42, toggle: 0.4, start: 0.55 };
 export class GameAudio {
+  private ui = new Map<UiSound, Howl>();
+  private playedUi: Partial<Record<UiSound, number>> = {};
   private activated = false;
   private paused = true;
   private disposed = false;
@@ -26,6 +31,10 @@ export class GameAudio {
     if (this.disposed || this.activated) return;
     this.activated = true;
     void Howler.ctx?.resume().catch(() => {});
+    for (const [sound, volume] of Object.entries(uiSounds) as [UiSound, number][]) {
+      this.ui.set(sound, new Howl({ src: [runtimeAssetUrl(`assets/audio/ui-${sound}.wav`)], volume,
+        onplay: () => { this.playedUi[sound] = (this.playedUi[sound] ?? 0) + 1; } }));
+    }
     if (!this.ambience && this.scene) this.createBank();
     this.sync();
   }
@@ -68,10 +77,23 @@ export class GameAudio {
       });
     }
   }
+  /**
+   * An interface sound, also while paused. `rate` shifts its pitch (menu steps
+   * climb a scale). A sound still loading plays when ready, except the quick
+   * menu tink, which would only arrive late.
+   */
+  uiSound(sound: UiSound, rate = 1): void {
+    if (!this.activated || this.disposed) return;
+    const howl = this.ui.get(sound);
+    if (!howl) return;
+    const start = () => { const id = howl.play(); howl.rate(rate, id); };
+    if (howl.state() === 'loaded') start();
+    else if (sound !== 'move') howl.once('load', () => { if (!this.disposed) start(); });
+  }
   private unload(): void {
     this.ambience?.unload(); this.ambience = null; this.ambienceId = undefined;
     for (const effect of this.effects.values()) effect.unload(); this.effects.clear();
   }
-  dispose(): void { this.disposed = true; this.unload(); this.scene = null; }
-  get diagnostics() { return { activated: this.activated, paused: this.paused, scene: this.scene, ownedSounds: this.effects.size + Number(!!this.ambience), playing: this.ambience?.playing() ?? false, volume: Howler.volume(), playedCues: { ...this.playedCues } }; }
+  dispose(): void { this.disposed = true; this.unload(); for (const howl of this.ui.values()) howl.unload(); this.ui.clear(); this.scene = null; }
+  get diagnostics() { return { activated: this.activated, paused: this.paused, scene: this.scene, ownedSounds: this.effects.size + Number(!!this.ambience), playing: this.ambience?.playing() ?? false, volume: Howler.volume(), playedCues: { ...this.playedCues }, uiSounds: this.ui.size, playedUi: { ...this.playedUi } }; }
 }

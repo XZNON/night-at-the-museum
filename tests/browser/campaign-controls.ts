@@ -67,12 +67,14 @@ export async function toSketchFrame(page: Page) {
 }
 /** Production: the same walk from the museum spawn by timing alone (no debug readback). */
 export async function toSketchFrameBlind(page: Page) {
-  await hold(page, 'KeyA', 760); await hold(page, 'KeyW', 1000); await drag(page, -523);
+  // From the spawn near the entrance (z 4.6) up to the frame's depth (z −1.5).
+  await hold(page, 'KeyA', 760); await hold(page, 'KeyW', 1740); await drag(page, -523);
 }
 /** A raw click at the view centre: no actionability wait, so it also lands during a transition. */
 export const centreClick = (page: Page) => page.mouse.click(page.viewportSize()!.width / 2, page.viewportSize()!.height / 2);
 export async function inspectFromSpawn(page: Page) {
-  await hold(page, 'KeyD', 740); await hold(page, 'KeyW', 1350);
+  // The masterpiece is centred on the back wall, straight ahead of the spawn.
+  await hold(page, 'KeyW', 2400);
   await expect(page.locator('#museum-prompt')).toHaveText('Click / E — Inspect the masterpiece');
   await page.locator('#world').click({ position: { x: page.viewportSize()!.width / 2, y: page.viewportSize()!.height / 2 } });
   await expect(page.getByRole('button', { name: 'Pear silhouette' })).toBeVisible();
@@ -117,7 +119,7 @@ export async function claim(page: Page, changed: boolean) {
     await noDevWords(page, 'end ledge before the light');
     await page.keyboard.down('KeyD'); await expect(page.locator('#modal')).toBeVisible({ timeout: 10000 }); await release(page);
   }
-  await expect(page.locator('#modal')).toContainText('The enchanted');
+  await expect(page.locator('#modal')).toContainText('Enchanted Light');
   await expect(page.locator('#modal')).toContainText(changed ? 'The light leaves the torch and is yours' : 'already yours; replay adds no duplicate');
   await expect(page.locator('#modal [data-action="leave"]')).toHaveText(/Return to Museum/);
   await expect(page.locator('#modal [data-action="resume"]')).toHaveText('Keep exploring');

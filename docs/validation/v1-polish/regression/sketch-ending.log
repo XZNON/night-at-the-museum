@@ -1,0 +1,12 @@
+  ✓  1 tests\browser\sketch-ending.spec.ts:98:1 › S5C production drag placement, wrong drops, ending, reload complete, Keep progress and Confirm reset (30.8s)
+  ✓  2 tests\browser\sketch-ending.spec.ts:166:1 › S5C production click placement and reload right after placement keeps it complete (9.8s)
+  ✓  3 tests\browser\sketch-ending.spec.ts:185:1 › S5C production keyboard placement; the sky before the pear and before the light; denied writes (24.6s)
+  ✓  4 tests\browser\sketch-ending.spec.ts:215:1 › S5C 960x540 keyboard placement and ending layout (8.8s)
+Expanded section reached before-butter 23.3
+  ✘  5 tests\browser\sketch-ending.spec.ts:234:1 › S5C full campaign from New Game to the ending with real controls 1280 (2.5m)
+    Error: Expanded section after-butter
+    > 58 |     expect(reached, `Expanded section ${stage.checkpoint}`).toBe(true);
+      59 |     console.log('Expanded section reached', stage.checkpoint, ((Date.now() - began) / 1000).toFixed(1));
+    test-results\sketch-ending-S5C-full-cam-db751-ing-with-real-controls-1280\test-failed-1.png
+  1 failed
+  4 passed (4.7m)

@@ -1,0 +1,11 @@
+  ✓  1 tests\browser\sketch-campaign.spec.ts:24:1 › S5B locked frame, opening after the pear is restored, and transition spam (25.1s)
+  ✘  2 tests\browser\sketch-campaign.spec.ts:103:1 › S5B campaign route: first claim, persistence, return, re-entry and reload 1280 (2.0m)
+  ✘  3 tests\browser\sketch-campaign.spec.ts:154:1 › S5B denied writes, first claim in memory, then a replay claim adds nothing 960 (1.0m)
+  ✓  4 tests\browser\sketch-campaign.spec.ts:188:1 › S5B fully denied storage keeps the museum playable and the frame locked (7.2s)
+  ✓  5 tests\browser\sketch-campaign.spec.ts:202:1 › S5B production: seeded saves show the frame state, objective and inventory; study= is ignored (31.2s)
+    Error: expect(locator).toHaveText(expected) failed
+    test-results\sketch-campaign-S5B-campai-ae2f8-rn-re-entry-and-reload-1280\test-failed-1.png
+    Error: expect(received).toBe(expected) // Object.is equality
+    test-results\sketch-campaign-S5B-denied-85b33-play-claim-adds-nothing-960\test-failed-1.png
+  2 failed
+  3 passed (5.2m)

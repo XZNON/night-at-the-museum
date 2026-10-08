@@ -29,6 +29,17 @@ export class MuseumScene implements GameScene {
   private drawMasterpiecePlaque: ((line: string) => void) | null = null;
   private sketchUnlocked = false;
   private art: MuseumArtState;
+  // Restoration ambience: the room warms and the masterpiece is lit a little more with each restored piece.
+  private readonly hemi: THREE.HemisphereLight;
+  private readonly lamp: THREE.PointLight;
+  private readonly spot: THREE.SpotLight;
+  private readonly halo: THREE.MeshBasicMaterial;
+  private readonly motes: THREE.Points;
+  private readonly moteSpeeds: Float32Array;
+  private readonly reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  private glow = -1;
+  private glowTarget = 0;
+  private lastSeconds = 0;
 
   constructor(private readonly canvas: HTMLCanvasElement, pose: MuseumPose, art: MuseumArtState,
     private readonly enabled: () => boolean, private readonly activate: (id: string) => void,
@@ -38,8 +49,42 @@ export class MuseumScene implements GameScene {
     this.camera.position.set(pose.x, museum.eyeHeight, pose.z);
     this.camera.rotation.order = 'YXZ';
     this.world.background = new THREE.Color(0x291c24);
-    this.world.add(new THREE.HemisphereLight(0xffdfac, 0x393440, 2.1));
-    const light = new THREE.PointLight(0xffd8a0, 38, 15); light.position.set(0, 3.5, -3); this.world.add(light);
+    this.hemi = new THREE.HemisphereLight(0xffdfac, 0x393440, 2.1); this.world.add(this.hemi);
+    this.lamp = new THREE.PointLight(0xffd8a0, 38, 15); this.lamp.position.set(0, 3.5, -3); this.world.add(this.lamp);
+    const centrepiece = museum.artworks.find(a => a.id === 'masterpiece')!;
+    this.spot = new THREE.SpotLight(0xffd59a, 0, 12, 0.55, 0.65, 1.2);
+    this.spot.position.set(centrepiece.x, museum.height - 0.25, centrepiece.z + 3.4);
+    this.spot.target.position.set(centrepiece.x, centrepiece.y, centrepiece.z);
+    this.world.add(this.spot, this.spot.target);
+    // A warm halo on the wall behind the masterpiece's frame.
+    const haloCanvas = document.createElement('canvas'); haloCanvas.width = haloCanvas.height = 256;
+    const hctx = haloCanvas.getContext('2d')!;
+    const gradient = hctx.createRadialGradient(128, 128, 20, 128, 128, 128);
+    gradient.addColorStop(0, 'rgba(255,214,140,0.9)'); gradient.addColorStop(0.45, 'rgba(255,190,110,0.35)'); gradient.addColorStop(1, 'rgba(255,180,100,0)');
+    hctx.fillStyle = gradient; hctx.fillRect(0, 0, 256, 256);
+    const haloTexture = new THREE.CanvasTexture(haloCanvas); haloTexture.colorSpace = THREE.SRGBColorSpace;
+    const haloGeometry = new THREE.PlaneGeometry(centrepiece.width * 2, centrepiece.height * 2.2);
+    this.halo = new THREE.MeshBasicMaterial({ map: haloTexture, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false });
+    this.resources.add(haloTexture); this.resources.add(haloGeometry); this.resources.add(this.halo);
+    const halo = new THREE.Mesh(haloGeometry, this.halo); halo.position.set(centrepiece.x, centrepiece.y, centrepiece.z - 0.065); this.world.add(halo);
+    // Gold motes drift up in front of the complete masterpiece.
+    const count = 80; const positions = new Float32Array(count * 3); this.moteSpeeds = new Float32Array(count);
+    for (let i = 0; i < count; i++) {
+      positions[i * 3] = centrepiece.x + (Math.random() - 0.5) * centrepiece.width * 1.6;
+      positions[i * 3 + 1] = 0.3 + Math.random() * 3.6;
+      positions[i * 3 + 2] = centrepiece.z + 0.4 + Math.random() * 2.6;
+      this.moteSpeeds[i] = 0.08 + Math.random() * 0.16;
+    }
+    const moteGeometry = new THREE.BufferGeometry(); moteGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    // Each mote is a soft round glow, not a square point.
+    const dot = document.createElement('canvas'); dot.width = dot.height = 32;
+    const dctx = dot.getContext('2d')!; const soft = dctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+    soft.addColorStop(0, 'rgba(255,255,255,1)'); soft.addColorStop(0.4, 'rgba(255,240,200,0.6)'); soft.addColorStop(1, 'rgba(255,230,180,0)');
+    dctx.fillStyle = soft; dctx.fillRect(0, 0, 32, 32);
+    const dotTexture = new THREE.CanvasTexture(dot);
+    const moteMaterial = new THREE.PointsMaterial({ color: 0xffe0a0, map: dotTexture, size: 0.07, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false });
+    this.resources.add(moteGeometry); this.resources.add(moteMaterial); this.resources.add(dotTexture);
+    this.motes = new THREE.Points(moteGeometry, moteMaterial); this.motes.visible = false; this.world.add(this.motes);
     const box = (w: number, h: number, d: number, x: number, y: number, z: number, color: number, solid = false) => {
       const g = new THREE.BoxGeometry(w, h, d); const m = new THREE.MeshStandardMaterial({ color, roughness: 0.85 });
       this.resources.add(g); this.resources.add(m); const mesh = new THREE.Mesh(g, m); mesh.position.set(x, y, z); this.world.add(mesh);
@@ -97,6 +142,10 @@ export class MuseumScene implements GameScene {
   get restoredCount(): number { return this.art.restored; }
   private applyArt(): void {
     const { restored, lightTaken } = this.art;
+    this.glowTarget = Math.min(restored, 2) / 2;
+    // The room opens at its current state; a restore during play eases in.
+    if (this.glow < 0 || this.reducedMotion) this.applyGlow(this.glowTarget);
+    this.motes.visible = restored >= 2;
     this.sketchUnlocked = restored >= 1;
     this.sketchMaterial?.color.set(this.sketchUnlocked ? 0xffffff : 0x5d5862);
     this.drawSketchPlaque?.(!this.sketchUnlocked ? 'Restore the golden pear first' : restored >= 2 ? 'Its light now rises over the garden'
@@ -176,13 +225,37 @@ export class MuseumScene implements GameScene {
     const text = this.enabled() ? this.pick(new THREE.Vector2(), input.interactPressed) : '';
     if (text !== this.lastPrompt) { this.lastPrompt = text; this.prompt(text); }
   }
-  render(): void { this.camera.rotation.set(this.pitch, this.yaw, 0, 'YXZ'); }
+  render(_alpha = 1, seconds = this.lastSeconds): void {
+    this.camera.rotation.set(this.pitch, this.yaw, 0, 'YXZ');
+    const dt = Math.min(0.1, Math.max(0, seconds - this.lastSeconds)); this.lastSeconds = seconds;
+    if (this.glow !== this.glowTarget) this.applyGlow(this.glow + Math.sign(this.glowTarget - this.glow) * Math.min(Math.abs(this.glowTarget - this.glow), dt / GLOW_SECONDS));
+    if (this.motes.visible && !this.reducedMotion && dt > 0) {
+      const positions = this.motes.geometry.getAttribute('position') as THREE.BufferAttribute;
+      for (let i = 0; i < positions.count; i++) {
+        let y = positions.getY(i) + this.moteSpeeds[i] * dt;
+        if (y > 3.9) y = 0.3;
+        positions.setY(i, y);
+      }
+      positions.needsUpdate = true;
+    }
+  }
+  /** 0 = damaged gallery, 0.5 = pear restored, 1 = complete: warmer, brighter, the masterpiece spotlit. */
+  private applyGlow(level: number): void {
+    this.glow = level;
+    this.hemi.intensity = 2.1 + level * 0.7;
+    this.lamp.intensity = 38 + level * 16;
+    this.lamp.color.setHex(level >= 1 ? 0xffe2b0 : 0xffd8a0);
+    this.spot.intensity = level * 60;
+    this.halo.opacity = level * 0.75;
+  }
   resize(width: number, height: number): void { this.camera.aspect = width / Math.max(1, height); this.camera.updateProjectionMatrix(); }
   exit(): void {
     this.lifetime.abort(); this.suspend();
   }
   dispose(): void { this.exit(); for (const r of this.resources) r.dispose(); this.resources.clear(); this.world.clear(); }
 }
+
+const GLOW_SECONDS = 2.4;
 
 /**
  * Cartoon placeholder for the Sketch frame, drawn in code until the art task
