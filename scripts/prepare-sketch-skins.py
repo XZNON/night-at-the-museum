@@ -191,6 +191,40 @@ for prop, box in cells.items():
     save(f'sketch.decor-{prop}', crop(decor, box), 'sketch.decor.reference-v1', list(box),
          f'Background toolbox prop ({prop}).', max_side=256)
 
+# --- art pass part 2 (user, 2026-10-08): torch, museum painting, toolbox backdrop --
+# Generated with DreamLayer for this pass (manifest sketch.*.reference-v1/v2).
+# The v6 stage-backdrop trial is superseded by the toolbox enclosure below.
+save('sketch.torch', trim(cutout('torch-v1')), 'sketch.torch.reference-v1', None,
+     'Empty upright torch; the scene draws the enchanted light above its cup.', max_side=512)
+
+# The museum frame is 14:9; both states share one crop so the light simply goes.
+lit = Image.open(REFS / 'entrance-v1.png').convert('RGB').crop((160, 0, 2400, 1440)).resize((1120, 720), Image.LANCZOS)
+path = OUT / 'entrance.webp'; lit.save(path, quality=90, method=6)
+outputs['sketch.entrance'] = dict(path=path, reference='sketch.entrance.reference-v1', box=[160, 0, 2400, 1440], size=lit.size,
+    notes='Museum Sketch frame: a car in a night garage, light peeking out of the toolbox. Centre crop to the 14:9 frame.')
+empty = Image.open(REFS / 'entrance-empty-v2.png').convert('RGB')
+k = empty.width / 2560   # edit of the lit painting padded to a 2560 square (rows 560..2000)
+empty = empty.crop((round(160 * k), round(560 * k), round(2400 * k), round(2000 * k))).resize((1120, 720), Image.LANCZOS)
+path = OUT / 'entrance-empty.webp'; empty.save(path, quality=90, method=6)
+outputs['sketch.entrance-empty'] = dict(path=path, reference='sketch.entrance-empty.reference-v2', box=None, size=empty.size,
+    notes='The same painting once the light is taken: lid shut, no glow; same crop as sketch.entrance.')
+
+backdrop = Image.open(REFS / 'toolbox-backdrop-v1.png').convert('RGB')
+# The upper zone came out salmon, nearly the box walls' red, so Layer 3 read as
+# all red: on the back wall only, its reds shift toward the pink of the
+# earlier bands (hue, lighter, softer); stickers and ink are untouched.
+hsv = np.asarray(backdrop.convert('HSV')).astype(float)
+zone = np.zeros(hsv.shape[:2], bool); zone[110:445, 330:2233] = True
+reds = zone & ((hsv[..., 0] > 235) | (hsv[..., 0] < 12)) & (hsv[..., 1] > 70) & (hsv[..., 2] > 150)
+hsv[..., 0] = np.where(reds, (hsv[..., 0] - 16) % 256, hsv[..., 0])
+hsv[..., 1] = np.where(reds, hsv[..., 1] * 0.62, hsv[..., 1])
+hsv[..., 2] = np.where(reds, np.minimum(255, hsv[..., 2] * 1.08), hsv[..., 2])
+backdrop = Image.fromarray(hsv.astype('uint8'), 'HSV').convert('RGB')
+backdrop = ImageEnhance.Color(backdrop).enhance(1.1)
+path = OUT / 'toolbox.webp'; backdrop.save(path, quality=90, method=6)
+outputs['sketch.toolbox'] = dict(path=path, reference='sketch.toolbox-backdrop.reference-v1', box=None, size=backdrop.size,
+    notes='Inside the open toolbox: red riveted walls, floor and lid around honey/blue/rose zones; the scene maps each zone to its layer.')
+
 # Flat colours sampled for the code-drawn bodies that continue a skin.
 palette = {
     'groundBody': colour('ground-v1', 800, 795),
@@ -222,7 +256,8 @@ for asset_id, o in outputs.items():
                      referenceIds=[o['reference']], executionId=None, creditsSpent=0, approved=False)
         m['assets'].append(entry)
     rel = o['path'].relative_to(ROOT).as_posix()
-    entry.update(status='prepared', sourcePath=f'asset-sources/references/sketch/{o["reference"].split(".")[1]}-v1.png',
+    version = o['reference'].rsplit('-', 1)[1]
+    entry.update(status='prepared', sourcePath=f'asset-sources/references/sketch/{o["reference"].split(".")[1]}-{version}.png',
                  runtimePath=rel, preparedPixelSize={'width': o['size'][0], 'height': o['size'][1]}, cropBox=o['box'],
                  preparationNotes=o['notes'] + ' Local script scripts/prepare-sketch-skins.py, no generation.',
                  runtimeSha256=hashlib.sha256(o['path'].read_bytes()).hexdigest())

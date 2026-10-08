@@ -15,8 +15,9 @@ remain authored code, independent of generated image pixels.
 
 Unfinished Sketch: the toolbox mechanisms, ground, glue, lifts, nails, pickup
 and background tools (assets/sketch/) are cut locally from user-approved
-DreamLayer reference sheets by scripts/prepare-sketch-skins.py, with no further
-generation. Their sizes come from the level data; collision, hazards and
+DreamLayer reference sheets by scripts/prepare-sketch-skins.py. The toolbox
+backdrop, torch and museum garage painting were generated with DreamLayer for
+the art pass on 2026-10-08 and prepared by the same script. Their sizes come from the level data; collision, hazards and
 gameplay cues remain authored code.
 
 Detailed sources, prompts, hashes and provider-specific cost evidence are in the

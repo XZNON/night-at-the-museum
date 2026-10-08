@@ -3216,6 +3216,260 @@
       ],
       "preparationNotes": "Background toolbox prop (screws). Local script scripts/prepare-sketch-skins.py, no generation.",
       "runtimeSha256": "521351124dbf6b1633f5c4a90276f80eef70f653567fa591cb147ce8e192f3e4"
+    },
+    {
+      "id": "sketch.torch.reference-v1",
+      "status": "generated",
+      "world": "unfinished-sketch",
+      "purpose": "Sketch art pass part 2 (user-requested 2026-10-08)",
+      "referenceIds": [],
+      "operation": "text_to_image",
+      "parentPath": null,
+      "sourcePath": "asset-sources/references/sketch/torch-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/sketch-torch.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-sketch-torch-reference-v1",
+      "generatedAt": "2026-10-08T08:34:03.322Z",
+      "executionId": "ebee8dc3-e4ea-4bff-b41a-8c3c270226bf",
+      "creditsSpent": 1,
+      "balanceBefore": 59,
+      "balanceAfter": 58,
+      "pixelSize": {
+        "width": 2048,
+        "height": 2048
+      },
+      "preparationNotes": "Generated for art pass part 2; prepared locally by scripts/prepare-sketch-skins.py. Awaiting user review.",
+      "approved": false,
+      "conversationId": "193dfd1a-414d-4b97-9410-bae3c919f8d2",
+      "outputAssetId": "9bb6668a-5b72-4890-b9a1-651efc1546cb",
+      "sourceSha256": "08a000e81fe68e101636303c3fcd9c51b6676c645127a599819d2ac740735527",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "sketch.entrance.reference-v1",
+      "status": "generated",
+      "world": "unfinished-sketch",
+      "purpose": "Sketch art pass part 2 (user-requested 2026-10-08)",
+      "referenceIds": [],
+      "operation": "text_to_image",
+      "parentPath": null,
+      "sourcePath": "asset-sources/references/sketch/entrance-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/sketch-entrance.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-sketch-entrance-reference-v1",
+      "generatedAt": "2026-10-08T08:34:38.087Z",
+      "executionId": "e456b8a1-95f8-4557-9b17-03dc55c911b5",
+      "creditsSpent": 1,
+      "balanceBefore": 58,
+      "balanceAfter": 57,
+      "pixelSize": {
+        "width": 2560,
+        "height": 1440
+      },
+      "preparationNotes": "Generated for art pass part 2; prepared locally by scripts/prepare-sketch-skins.py. Awaiting user review.",
+      "approved": false,
+      "conversationId": "752d6326-bd72-443e-9354-0dd84ce109c0",
+      "outputAssetId": "c2940731-e5d6-4ecf-aa44-ac9e89519986",
+      "sourceSha256": "e40a6e2390507405f9166cf1c60836f5b0f083ec8fa66326a1b03c55aef64946",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "sketch.toolbox-backdrop.reference-v1",
+      "status": "generated",
+      "world": "unfinished-sketch",
+      "purpose": "Sketch art pass part 2 (user-requested 2026-10-08)",
+      "referenceIds": [],
+      "operation": "text_to_image",
+      "parentPath": null,
+      "sourcePath": "asset-sources/references/sketch/toolbox-backdrop-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/sketch-toolbox-backdrop.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-sketch-toolbox-backdrop-reference-v1",
+      "generatedAt": "2026-10-08T08:35:08.393Z",
+      "executionId": "7d199cbb-07fe-4341-a0ec-3a607d9d48bf",
+      "creditsSpent": 1,
+      "balanceBefore": 57,
+      "balanceAfter": 56,
+      "pixelSize": {
+        "width": 2560,
+        "height": 1440
+      },
+      "preparationNotes": "Generated for art pass part 2; prepared locally by scripts/prepare-sketch-skins.py. Awaiting user review.",
+      "approved": false,
+      "conversationId": "e53634b1-b42f-4538-a5be-a429fcb974f4",
+      "outputAssetId": "9d12777c-0236-478c-afa8-38058ba3704d",
+      "sourceSha256": "15b507ecc4fd89509fbf7286d496333cea2063b8af0c83e8a3b5d2aab92e2d85",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "sketch.entrance-empty.reference-v1",
+      "status": "generated",
+      "world": "unfinished-sketch",
+      "purpose": "Sketch art pass part 2 (user-requested 2026-10-08)",
+      "referenceIds": [
+        "sketch.entrance.reference-v1"
+      ],
+      "operation": "image_to_image",
+      "parentPath": "asset-sources/references/sketch/entrance-v1.png",
+      "sourcePath": "asset-sources/references/sketch/entrance-empty-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/sketch-entrance-empty.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-sketch-entrance-empty-reference-v1",
+      "generatedAt": "2026-10-08T08:37:15.178Z",
+      "executionId": "7d3096b7-8b0c-4ffd-824a-ec1d74be5e4e",
+      "creditsSpent": 1,
+      "balanceBefore": 56,
+      "balanceAfter": 55,
+      "pixelSize": {
+        "width": 2048,
+        "height": 2048
+      },
+      "preparationNotes": "Rejected by the agent: the edit came back square and recomposed with a crayon texture, so swapping states would jump. Superseded by v2 (edit of the lit painting padded to a square).",
+      "approved": false,
+      "conversationId": "ba20cce0-da56-49e7-ade6-c58794b4e8d7",
+      "outputAssetId": "0507ed93-479d-4ddd-af72-6b402588f6af",
+      "sourceSha256": "fc9da4d30ce9cae742a241528fab2a95c772e72ee2272e6ca83205fd0c4e5bfc",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "sketch.entrance-empty.reference-v2",
+      "status": "generated",
+      "world": "unfinished-sketch",
+      "purpose": "Sketch art pass part 2 (user-requested 2026-10-08)",
+      "referenceIds": [
+        "sketch.entrance-square.reference-v1"
+      ],
+      "operation": "image_to_image",
+      "parentPath": "asset-sources/references/sketch/entrance-square-v1.png",
+      "sourcePath": "asset-sources/references/sketch/entrance-empty-v2.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/sketch-entrance-empty-v2.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-sketch-entrance-empty-reference-v2",
+      "generatedAt": "2026-10-08T08:39:13.980Z",
+      "executionId": "bf6bd1ca-c279-4b4f-8c59-c744accc32e8",
+      "creditsSpent": 1,
+      "balanceBefore": 55,
+      "balanceAfter": 54,
+      "pixelSize": {
+        "width": 2048,
+        "height": 2048
+      },
+      "preparationNotes": "Generated for art pass part 2; prepared locally by scripts/prepare-sketch-skins.py. Awaiting user review.",
+      "approved": false,
+      "conversationId": "8d2015d0-cef7-46a4-9b18-7802b3122c12",
+      "outputAssetId": "8f38d5ed-17da-49a5-9961-b68cc421b694",
+      "sourceSha256": "94daa6f774564dd5a2fa2e800daa4ddbc5c3cbba783927000bf112648c64c821",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "sketch.torch",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.torch.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/torch-v1.png",
+      "runtimePath": "public/assets/sketch/torch.png",
+      "preparedPixelSize": {
+        "width": 214,
+        "height": 512
+      },
+      "cropBox": null,
+      "preparationNotes": "Empty upright torch; the scene draws the enchanted light above its cup. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "1156ae2e608158c97f0e05e051c6b41fb560676a6a1af3164cd3b4e4f0b0aa21"
+    },
+    {
+      "id": "sketch.entrance",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.entrance.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/entrance-v1.png",
+      "runtimePath": "public/assets/sketch/entrance.webp",
+      "preparedPixelSize": {
+        "width": 1120,
+        "height": 720
+      },
+      "cropBox": [
+        160,
+        0,
+        2400,
+        1440
+      ],
+      "preparationNotes": "Museum Sketch frame: a car in a night garage, light peeking out of the toolbox. Centre crop to the 14:9 frame. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "0ae4c23bc697130586088b98c253b370befd962b3b080b9cab56db6d20348455"
+    },
+    {
+      "id": "sketch.entrance-empty",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.entrance-empty.reference-v2"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/entrance-empty-v2.png",
+      "runtimePath": "public/assets/sketch/entrance-empty.webp",
+      "preparedPixelSize": {
+        "width": 1120,
+        "height": 720
+      },
+      "cropBox": null,
+      "preparationNotes": "The same painting once the light is taken: lid shut, no glow; same crop as sketch.entrance. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "0b5ff4d432a469be83954c6126e958961cbb56c034870fe20d9db74f48b26105"
+    },
+    {
+      "id": "sketch.toolbox",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.toolbox-backdrop.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/toolbox-backdrop-v1.png",
+      "runtimePath": "public/assets/sketch/toolbox.webp",
+      "preparedPixelSize": {
+        "width": 2560,
+        "height": 1440
+      },
+      "cropBox": null,
+      "preparationNotes": "Inside the open toolbox: red riveted walls, floor and lid around honey/blue/rose zones; the scene maps each zone to its layer. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "9088bc602699c17a6e76597fc0a67f5629949d1238cff536dd76deca05350f87"
+    },
+    {
+      "id": "sketch.entrance-square.local-v1",
+      "world": "unfinished-sketch",
+      "provider": "local",
+      "operation": "local_preparation",
+      "sourcePath": "asset-sources/references/sketch/entrance-v1.png",
+      "runtimePath": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "preparationNotes": "entrance-v1 padded to a 2560 square with its paper colour (painting at rows 560..2000) as the input of the entrance-empty v2 edit."
     }
   ],
   "balanceAfterReferences": {

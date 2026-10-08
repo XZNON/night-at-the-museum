@@ -105,3 +105,80 @@ colourful; (2) sometimes lags or frames skip; (3) the backdrop changes later;
   no page errors after the pre-warm change. Captures in this folder were
   refreshed. Frame-time numbers are from this Chromium session, not a
   representative-machine profile.
+
+## v6 backdrop trial, 2026-10-08
+
+User: "Lets try it with v6 backdrop, do it and let me see" (balance checked
+first: 59 credits; nothing spent, no generation). The approved
+`backdrop-v6.png` is prepared as `public/assets/sketch/backdrop.webp`
+(central divider strips faded into the bands with a smoothed fill so they no
+longer read as ledges; saturation x1.3, contrast x1.04; manifest
+`sketch.backdrop`). The scene shows it as a stage backdrop behind the camera,
+1.6x the view's width so its calm centre frames play and the tool-crowded
+sides slide in at the route's ends (parallax); the picture row at the view's
+centre follows the camera height: honey floor in Layer 1, blue wall in
+Layer 2, rose band rising to the ceiling across Layer 3, scrolling during lift
+rides. With it the flat colour bands and scattered decor props are not drawn
+(fallback unchanged). A first try that stretched one band per layer made the
+tools giant and crowded the play space; a 1.18x width still put the angry tools
+behind pendulum A and the Layer 2 boards; both were replaced before review.
+`sketch-art.spec.ts` 3/3 and 238/238 unit tests pass; captures refreshed.
+
+## Layer edges and Sketch music, 2026-10-08
+
+User: "why are there like hues where levels mix?" and "we need some rock /
+metallic type bg music".
+
+- Hues: the old flat-band shadow lines and dashed rules were still drawn at
+  each world layer edge, and the faded dividers left a soft gradient strip in
+  the picture; with a camera-following backdrop the two never line up. With
+  the backdrop both world-space strips are gone, and each faded divider is now
+  a clean colour change (3 px soft edge) instead of a gradient.
+- Music: `scripts/make-sketch-music.py` synthesizes `public/assets/audio/sketch.wav`
+  (original, deterministic, no samples; 13.714 s seamless 8-bar loop, 140 BPM,
+  E minor, 22.05 kHz mono, 605 KB): rock drums with crashes and a snare roll
+  into the loop, palm-muted distorted power chords (E E G A E E C B), saw
+  bass, and inharmonic anvil/wrench clangs with a ratchet fill. Ringing tails
+  fold onto the start, so the seam is exact (its only step is the downbeat
+  kick). Record in `asset-sources/audio-manifest.json`; other audio untouched.
+  `GameAudio` gains a `sketch` scene (bed volume 0.16, below the 0.3 beds,
+  because the loop is about ten times louder at source); both Sketch entries
+  (studies and campaign) use it. Not listened to by the agent: level, mix and
+  feel need the user's ears.
+- Verification: 239/239 unit tests (new: the Sketch loads its own quieter
+  loop and unloads it on scene change); `sketch-art.spec.ts` 4/4 (new: after
+  the first key the Sketch's bed is playing with scene `sketch`, and pauses on
+  Escape) and `audio.spec.ts` pass; build passes.
+
+## Art pass part 2: torch, museum painting, toolbox backdrop (2026-10-08)
+
+User: "make the torch, the museum painting (a car in a garage with a toolbox
+where some glowing light is peeking out) and do the fresh backdrop; it should
+not look like platforms are floating in the air, more like this is happening
+inside the toolbox." DreamLayer, 1 credit each, balance 59 -> 54 (manifest
+`sketch.*.reference-v1/v2`, prompts `asset-sources/prompts/sketch-{torch,entrance,entrance-empty,toolbox-backdrop}*.txt`):
+
+- `torch-v1` (empty upright brass cup on a wooden handle) -> `sketch.torch`;
+  the scene draws the light and sparkles over its cup, so claiming empties it.
+- `entrance-v1` (red car, night garage, light and sparkles peeking from the
+  toolbox) -> `sketch.entrance`; the light-taken state `entrance-empty-v2` is
+  an edit of the lit painting padded to a square (the first edit, v1, came
+  back square and recomposed, so it was rejected) -> `sketch.entrance-empty`,
+  same 14:9 crop. The museum frame swaps between them by the save's
+  light-taken state; the code-drawn placeholder remains the fallback.
+- `toolbox-backdrop-v1` (inside an open red riveted toolbox, honey/blue/salmon
+  zones, angry tools along the floor) -> `sketch.toolbox`; its upper zone was
+  shifted from salmon to pink at preparation so Layer 3 no longer reads as the
+  box's red walls. It replaces the v6 trial and is pinned to the world, not
+  the camera: the box floor under Layer 1's ground, honey behind Layer 1, blue
+  behind Layer 2, pink behind Layer 3 (a plain strip repeats up the tall
+  layer), the lid above; both tool-crowded ends keep the picture's scale and
+  the plain middle stretches to the route's width. No sky, sun or clouds
+  inside the box.
+- Not floating: raised ledges get two plum wall brackets and a soft contact
+  shadow on the back wall; blocks resting on the floor or another block get
+  only the shadow. Lift pistons stand on whatever is below the deck, or the
+  box floor. Presentation only.
+- Verification: build, 239/239 unit tests, `sketch-art.spec.ts` 5/5 (new:
+  museum frame in both light states) and `audio.spec.ts`; captures refreshed
+  (`museum-sketch-frame-*.png`, static and in-play captures).

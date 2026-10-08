@@ -50,7 +50,7 @@ for later cutout):
 | `sketch.nail-pickup` | Third-nail pickup (edit of the nail reference) | Layer 3 start | v1 approved reference |
 | `sketch.backdrop` | Giant toolbox interior, three colour bands, angry living background tools | Scene | v6 approved direction; final size after S5 |
 | `sketch.decor` | Paint tin, pencil, screwdriver, spanner, tape, screws/nut sheet | Scene | v1 approved reference |
-| `sketch.entrance` | Framed Sketch picture for the museum | Museum (S5) | planned, after S5 |
+| `sketch.entrance` | Framed Sketch picture for the museum (lit + light-taken) | Museum | generated 2026-10-08 (part 2), integrated |
 
 Derived locally, not generated: the sun's in-world and inventory cutout comes
 from the approved `public/assets/restoration/complete.webp` with `sun-mask.png`
@@ -262,3 +262,16 @@ at the latest step only, so on a 144 Hz display a moving board held still on
 233 of 400 frames, 0 after the fix), and the scene manager pre-compiles every
 material and uploads every texture, hidden ones included, at scene entry (the
 first pin no longer stalls a frame). Evidence in the part 1 README.
+
+### v6 backdrop trial (2026-10-08)
+
+At the user's request the approved v6 backdrop is in the game as a
+camera-following stage backdrop (no generation); see the part 1 README. Awaiting
+the user's verdict before any fresh backdrop generation.
+
+### Art pass part 2 (2026-10-08)
+
+Generated at the user's request (5 credits, 59 -> 54): torch, museum garage
+painting (lit and light-taken), and the toolbox enclosure backdrop that
+replaces the v6 trial; integrated with wall brackets/contact shadows so
+ledges read as mounted inside the box. See the part 1 README, part 2 section.

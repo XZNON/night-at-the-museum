@@ -113,3 +113,28 @@ test('moving mechanisms are drawn smoothly on every display frame', async ({ pag
     frameMs: { p50: sorted[150], max: sorted[sorted.length - 1] } });
   expect(frozen).toBeLessThanOrEqual(3);
 });
+
+test('the Sketch plays its own rock/metallic loop after the first gesture', async ({ page }) => {
+  // User request 2026-10-08: rock / metallic background music in the Sketch.
+  const failures: string[] = [];
+  page.on('response', r => { if (r.status() >= 400 && !/favicon/.test(r.url())) failures.push(r.url()); });
+  await open(page, 'study=adventure');
+  const audio = () => page.evaluate(() => (window as unknown as { __curatorDebug: () => { audio: { scene: string; playing: boolean; activated: boolean } } }).__curatorDebug().audio);
+  await page.keyboard.down('KeyD'); await page.waitForTimeout(200); await page.keyboard.up('KeyD');
+  await expect.poll(async () => (await audio()).playing).toBe(true);
+  const a = await audio();
+  events.push({ event: 'sketch music', audio: a });
+  expect(a.scene).toBe('sketch');
+  await page.keyboard.press('Escape'); expect((await audio()).playing).toBe(false);
+  expect(failures).toEqual([]);
+});
+
+test('the museum Sketch frame shows the garage painting, then the shut toolbox once the light is taken', async ({ page }) => {
+  // Art pass part 2: a car in a garage, light peeking out of the toolbox.
+  const { seedAndOpen, newMuseum, toSketchFrame, PEAR_RESTORED, LIGHT_OWNED } = await import('./campaign-controls');
+  for (const [label, save] of [['light-waiting', PEAR_RESTORED], ['light-taken', LIGHT_OWNED]] as const) {
+    await seedAndOpen(page, DEV, save); await newMuseum(page, true);
+    await toSketchFrame(page); await page.waitForTimeout(300);
+    await page.screenshot({ path: `${DIR}/museum-sketch-frame-${label}-1280.png` });
+  }
+});

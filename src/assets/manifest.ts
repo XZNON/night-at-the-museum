@@ -71,11 +71,17 @@ export const runtimeAssets = {
   'sketch.decor-spanner': { path: 'assets/sketch/decor-spanner.png', provider: 'DreamLayer' },
   'sketch.decor-tape': { path: 'assets/sketch/decor-tape.png', provider: 'DreamLayer' },
   'sketch.decor-screws': { path: 'assets/sketch/decor-screws.png', provider: 'DreamLayer' },
+  // Art pass part 2: inside the open toolbox, the torch and the museum painting.
+  'sketch.toolbox': { path: 'assets/sketch/toolbox.webp', provider: 'DreamLayer' },
+  'sketch.torch': { path: 'assets/sketch/torch.png', provider: 'DreamLayer' },
+  'sketch.entrance': { path: 'assets/sketch/entrance.webp', provider: 'DreamLayer' },
+  'sketch.entrance-empty': { path: 'assets/sketch/entrance-empty.webp', provider: 'DreamLayer' },
 } as const;
 export type ArtId = keyof typeof runtimeAssets;
 export const supperArtIds = Object.keys(runtimeAssets).filter(id => id.startsWith('player.') ||
   (id.startsWith('royal-supper.') && id !== 'royal-supper.entrance') || id === 'restoration.pear') as ArtId[];
 export const museumArtIds: ArtId[] = ['royal-supper.entrance', 'masterpiece.damaged', 'masterpiece.pear-restored', 'masterpiece.complete',
-  'restoration.pear', 'restoration.light'];
-export const sketchArtIds = Object.keys(runtimeAssets).filter(id => id.startsWith('player.') || id.startsWith('sketch.')) as ArtId[];
+  'restoration.pear', 'restoration.light', 'sketch.entrance', 'sketch.entrance-empty'];
+export const sketchArtIds = Object.keys(runtimeAssets).filter(id => id.startsWith('player.') ||
+  (id.startsWith('sketch.') && !id.startsWith('sketch.entrance'))) as ArtId[];
 export const runtimeAssetUrl = (path: string): string => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;

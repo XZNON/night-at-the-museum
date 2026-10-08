@@ -9,7 +9,7 @@ import type {
 } from '../levels/unfinished-sketch';
 import { LIFT_WALL_HEIGHT, LIFT_WALL_THICKNESS } from '../levels/unfinished-sketch';
 import type { ArtId } from '../assets/manifest';
-import { sketchDecor, sketchSkin, sketchSkinPalette as P, sketchSkinSize as S } from '../assets/sketch-skins';
+import { sketchDecor, sketchSkin, sketchSupports, sketchToolbox as TB, sketchTorch, sketchSkinPalette as P, sketchSkinSize as S } from '../assets/sketch-skins';
 
 // Fully cartoon presentation: flat colour areas, simple cel-style shading and
 // bold outlines. Mechanisms, ground, glue, lifts and nails wear skins cut from
@@ -115,6 +115,8 @@ export class UnfinishedSketchScene implements GameScene {
    */
   private readonly before = new Map<string, { x: number; y: number; angle: number }>();
   private alpha = 1;
+  /** The toolbox backdrop, when loaded; the whole route sits inside it. */
+  private stage: THREE.Mesh | null = null;
   private elapsed = 0;
   private interactive = false;
   private interactFrom = 0;
@@ -146,10 +148,12 @@ export class UnfinishedSketchScene implements GameScene {
     // Side-on orthographic view: Z is scenery depth only.
     this.camera.position.set(0, 6, 30);
     this.camera.lookAt(0, 6, 0);
-    const sun = new THREE.Group(); sun.position.set(-30, 18, -9); this.world.add(sun);
+    // Inside the toolbox there is no sky: no sun or clouds behind it.
+    const enclosed = mode.kind === 'route' && this.has(TB.id);
+    const sun = new THREE.Group(); sun.position.set(-30, 18, -9); if (!enclosed) this.world.add(sun);
     this.disc(6.5, 6.5, 1, 0xffe27a, sun);
     this.disc(8.4, 8.4, 1, 0xfff3b8, sun).position.set(-1.4, 1.4, -0.2);
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < (enclosed ? 0 : 7); i++) {
       const cloud = new THREE.Group();
       cloud.position.set(-24 + i * 9.5, 9 + (i % 3) * 2.6, -8);
       for (let j = 0; j < 3; j++) {
@@ -201,6 +205,28 @@ export class UnfinishedSketchScene implements GameScene {
   }
   private center(mesh: THREE.Mesh, rect: { x: number; y: number; width: number; height: number }, z = 0): void {
     mesh.position.set(rect.x + rect.width / 2, rect.y + rect.height / 2, z);
+  }
+
+  /**
+   * Inside the toolbox a raised ledge is mounted on the back wall, not
+   * floating: a soft contact shadow on the wall and two plum brackets under
+   * it. Blocks standing on the box floor or on another block get neither.
+   * Presentation only; nothing here collides.
+   */
+  private mountOnWall(s: Rect): void {
+    const resting = s.y <= TB.floorY + 0.05 || this.field.solids.some(o => o !== s &&
+      o.y < s.y && o.y + o.height >= s.y - 0.05 && o.x < s.x + s.width && o.x + o.width > s.x);
+    const { drop, opacity } = sketchSupports.shadow;
+    const shadow = this.slab(s.width + 0.3, s.height + 0.2, 0.05, C.ink, this.world, opacity, false);
+    shadow.position.set(s.x + s.width / 2 + 0.15, s.y + s.height / 2 - drop, -7.5);
+    if (resting) return;
+    const { width, height } = sketchSupports.bracket;
+    const xs = s.width < 2.4 ? [s.x + s.width / 2] : [s.x + Math.min(1, s.width * 0.2), s.x + s.width - Math.min(1, s.width * 0.2)];
+    for (const x of xs) {
+      const bracket = this.slab(width, height, 0.4, C.bracket, this.world);
+      bracket.position.set(x, s.y - height / 2 + 0.05, -0.6);
+      this.disc(0.07, 0.04, 10, C.ink, bracket).position.set(0, -height / 4, 0.25);
+    }
   }
 
   /**
@@ -290,7 +316,10 @@ export class UnfinishedSketchScene implements GameScene {
    */
   private buildLayerBands(): void {
     const route = this.mode.field as SketchRoute;
+    if (this.has(TB.id)) this.stage = this.buildToolbox(route);
     for (const region of route.layers) {
+      // The toolbox carries its own zone colours, one per layer.
+      if (this.stage) continue;
       const tone = ROW_TONES[region.layer - 1];
       const band = this.slab(region.bounds.width + 8, region.bounds.height, 1, tone, this.world, 1, false);
       this.center(band, region.bounds, -6.5);
@@ -300,10 +329,67 @@ export class UnfinishedSketchScene implements GameScene {
     }
     // A soft haze between rows stops the pale paper of one layer bleeding into
     // the next, which is what made the stacks read as separate screens.
-    for (const region of route.layers.slice(1)) {
+    for (const region of this.stage ? [] : route.layers.slice(1)) {
       const haze = this.slab(region.bounds.width + 8, 0.6, 1, C.ink, this.world, 0.18, false);
       haze.position.set(region.bounds.x + region.bounds.width / 2, region.bounds.y + 0.1, -6.2);
     }
+  }
+
+  /**
+   * Inside the open toolbox, pinned to the world (art pass part 2): one mesh
+   * of picture patches. Rows: the box floor under Layer 1's ground, the honey
+   * zone stretched over Layer 1, blue over Layer 2, then rose rising through
+   * Layer 3 (a plain strip repeats so rivets keep their shape) to the lid.
+   * Columns: both tool-crowded ends at the picture's own scale, the plain
+   * middle stretched to the route's width. Presentation only.
+   */
+  private buildToolbox(route: SketchRoute): THREE.Mesh {
+    const { width: W, height: H, scale, rows, cols } = TB;
+    const left = Math.min(...route.layers.map(l => l.bounds.x)) - TB.margin;
+    const right = Math.max(...route.layers.map(l => l.bounds.x + l.bounds.width));
+    const x0 = left - cols.wallLeft / scale;
+    const x3 = right + (W - cols.wallRight) / scale;
+    const columns: [number, number, number, number][] = [
+      [0, cols.plainLeft, x0, x0 + cols.plainLeft / scale],
+      [cols.plainLeft, cols.plainRight, x0 + cols.plainLeft / scale, x3 - (W - cols.plainRight) / scale],
+      [cols.plainRight, W, x3 - (W - cols.plainRight) / scale, x3],
+    ];
+    const [l1, l2, l3] = route.layers;
+    const top = l3.bounds.y + l3.bounds.height;
+    const strip = (rows.roseRepeat[1] - rows.roseRepeat[0]) / scale;
+    const lidBottom = top + 2;
+    // [row from, row to (picture, top-down), world y bottom, world y top]
+    const bands: [number, number, number, number][] = [
+      [rows.floor, H, TB.floorY - (H - rows.floor) / scale, TB.floorY],
+      [rows.honeyTop, rows.floor, TB.floorY, l2.bounds.y],
+      [rows.blueTop, rows.honeyTop, l2.bounds.y, l3.bounds.y],
+      [rows.roseRepeat[1], rows.blueTop, l3.bounds.y, l3.bounds.y + (rows.blueTop - rows.roseRepeat[1]) / scale],
+    ];
+    for (let y = bands[3][3]; y < lidBottom - 1e-3; y += strip) {
+      const h = Math.min(strip, lidBottom - y);
+      bands.push([rows.roseRepeat[1] - h * scale, rows.roseRepeat[1], y, y + h]);
+    }
+    bands.push([0, rows.lidPart, lidBottom, lidBottom + rows.lidPart / scale]);
+    void l1;
+    const positions: number[] = []; const uvs: number[] = []; const index: number[] = [];
+    for (const [u0, u1, xa, xb] of columns) {
+      for (const [r0, r1, ya, yb] of bands) {
+        const k = positions.length / 3;
+        positions.push(xa, ya, 0, xb, ya, 0, xa, yb, 0, xb, yb, 0);
+        uvs.push(u0 / W, 1 - r1 / H, u1 / W, 1 - r1 / H, u0 / W, 1 - r0 / H, u1 / W, 1 - r0 / H);
+        index.push(k, k + 1, k + 2, k + 1, k + 3, k + 2);
+      }
+    }
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+    geometry.setIndex(index); this.resources.add(geometry);
+    const material = new THREE.MeshBasicMaterial({ map: this.texture(TB.id) }); this.resources.add(material);
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.z = -8; this.world.add(mesh);
+    // Beyond the picture: the toolbox's own red, never a sky.
+    this.world.background = new THREE.Color(0x8e2a36);
+    return mesh;
   }
 
   /** A dashed construction rule, drawn flat like pencil guides. */
@@ -424,9 +510,12 @@ export class UnfinishedSketchScene implements GameScene {
   }
 
   private buildGround(): void {
-    const backdrop = this.slab(this.field.bounds.width + 40, 2, 1, C.paper);
-    backdrop.position.set(this.field.bounds.x + this.field.bounds.width / 2,
-      this.field.bounds.y + this.field.bounds.height - 3, -7);
+    // The paper strip at the top belongs to the open-sky placeholder only.
+    if (!this.stage) {
+      const backdrop = this.slab(this.field.bounds.width + 40, 2, 1, C.paper);
+      backdrop.position.set(this.field.bounds.x + this.field.bounds.width / 2,
+        this.field.bounds.y + this.field.bounds.height - 3, -7);
+    }
     for (const s of this.field.solids) {
       // Bay bounds read as scenery walls so they never compete with platforms.
       const wall = /left|right|bound/.test(s.id);
@@ -435,6 +524,7 @@ export class UnfinishedSketchScene implements GameScene {
       this.center(mesh, s);
       if (bench) {
         this.inkBacking(mesh, s.width, s.height);
+        if (this.stage) this.mountOnWall(s);
         // Workbench top board on the exact landing edge; the flat body below
         // continues its apron colour so blocks of any height tile straight.
         const top = this.skin(sketchSkin.groundTop, s.width + 0.12, Math.min(S.groundTop, s.height), mesh, 'x');
@@ -818,9 +908,17 @@ export class UnfinishedSketchScene implements GameScene {
     if (!light) return;
     const torch = new THREE.Group();
     torch.position.set(light.x + light.width / 2, light.y, 1.3);
-    this.slab(0.22, 1, 0.22, C.torchWood, torch).position.y = 0.5;
-    this.slab(0.6, 0.24, 0.34, C.torchCup, torch).position.y = 1.08;
-    const glow = new THREE.Group(); glow.position.y = 1.52; torch.add(glow);
+    const glow = new THREE.Group(); torch.add(glow);
+    if (this.has(sketchSkin.torch)) {
+      // The generated torch, standing on the ledge; the light sits in its cup.
+      const h = sketchTorch.height;
+      this.skin(sketchSkin.torch, h * this.aspectOf(sketchSkin.torch), h, torch).position.set(0, h / 2, -0.1);
+      glow.position.y = h * sketchTorch.cup;
+    } else {
+      this.slab(0.22, 1, 0.22, C.torchWood, torch).position.y = 0.5;
+      this.slab(0.6, 0.24, 0.34, C.torchCup, torch).position.y = 1.08;
+      glow.position.y = 1.52;
+    }
     const halo = new THREE.CircleGeometry(0.52, 32); this.resources.add(halo);
     const haloMesh = new THREE.Mesh(halo, this.flat(C.lightHalo, 0.45)); haloMesh.position.z = -0.05; glow.add(haloMesh);
     const orb = new THREE.CircleGeometry(0.3, 32); this.resources.add(orb);
@@ -898,7 +996,12 @@ export class UnfinishedSketchScene implements GameScene {
       // with the rise and its pump, both below walking level in the shaft.
       this.skin(sketchSkin.liftDeck, deck.width, S.liftDeck, group, 'x').position.set(0, -S.liftDeck / 2, 0.9);
       if (this.has(sketchSkin.liftPiston)) {
-        const base = deck.y - S.pistonBase;
+        // Inside the toolbox the piston stands on whatever is below the deck
+        // (another block or the box floor); otherwise a short stub.
+        const cxDeck = deck.x + deck.width / 2;
+        const below = this.field.solids.filter(o => o.x <= cxDeck && o.x + o.width >= cxDeck && o.y + o.height <= deck.y + 0.01)
+          .map(o => o.y + o.height);
+        const base = this.stage ? Math.max(TB.floorY, ...below) : deck.y - S.pistonBase;
         const cx = deck.x + deck.width / 2;
         const capHeight = S.liftPiston / this.aspectOf(sketchSkin.liftPiston) * 0.08;
         this.skin(sketchSkin.liftPiston, S.liftPiston, capHeight, this.world, null, 1, [0, 0, 1, 0.08])
@@ -1277,6 +1380,7 @@ export class UnfinishedSketchScene implements GameScene {
     this.camera.position.x = THREE.MathUtils.lerp(this.previousCamera.x, this.cameraPosition.x, alpha);
     this.camera.position.y = THREE.MathUtils.lerp(this.previousCamera.y, this.cameraPosition.y, alpha);
   }
+
 
   /** Placed free nails and the hover ghost (S4B only). */
   private renderFreeNails(): void {

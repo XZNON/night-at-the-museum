@@ -37,6 +37,14 @@ describe('audio activation and ownership', () => {
     expect(audio.diagnostics.ownedSounds).toBe(11); audio.dispose(); expect(audio.diagnostics.ownedSounds).toBe(0);
     expect(fake.sounds.every(s => s.unload.mock.calls.length === 1)).toBe(true);
   });
+  it('gives the Sketch its own rock/metallic loop, quieter than the banquet bed, and swaps it out cleanly', () => {
+    const audio = new GameAudio(vi.fn()); audio.activate(); audio.setScene('sketch');
+    const bed = fake.sounds.find(s => s.options.loop);
+    expect(bed.options.src[0]).toMatch(/\/sketch\.wav$/); expect(bed.options.volume).toBeLessThan(0.3);
+    audio.setScene('museum'); expect(bed.unload).toHaveBeenCalledTimes(1);
+    expect(fake.sounds.filter(s => s.options.loop).at(-1).options.src[0]).toMatch(/\/museum\.wav$/);
+    audio.dispose();
+  });
   it('applies saved volume including mute and stops effects on pause', () => {
     const audio = new GameAudio(vi.fn()); audio.volume(0); expect(audio.diagnostics.volume).toBe(0);
     audio.activate(); audio.setScene('museum'); audio.setPaused(false);

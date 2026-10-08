@@ -1,5 +1,7 @@
 # Next session — Sketch art pass part 1 at review; then part 2 and S6
 
+**Art pass part 2, 2026-10-08 (committed and pushed on the user's request):** generated torch, museum garage painting (lit/taken) and toolbox backdrop (5 credits, balance 54) are integrated: the route sits inside the toolbox with wall-mounted ledges. Before that, **v6 backdrop trial + Sketch music:** the approved v6 toolbox wall is shown as a camera-following stage backdrop (0 credits; balance 59) with clean layer edges, and the Sketch plays a new original rock/metallic loop (`scripts/make-sketch-music.py`); see the [part 1 README](../validation/sketch-art/part1/README.md#v6-backdrop-trial-2026-10-08). Next: the user's verdict, then the backdrop/entrance/torch discussion.
+
 **Current handoff, 2026-10-08 (art pass part 1 implemented):** S5C is committed and pushed (`7c5e06a`). On the user's request the approved Sketch references were cut locally into 27 skins (`scripts/prepare-sketch-skins.py`, 0 credits) and integrated into the Sketch scene, sized from level data with gameplay unchanged; see [part 1 evidence](../validation/sketch-art/part1/README.md) and [SKETCH_ASSETS](../art/SKETCH_ASSETS.md). Committed and pushed on the user's request (2026-10-08); next: discuss the backdrop and remaining art with the user.
 
 Play after `npm run dev`: [full adventure](http://127.0.0.1:5173/?scene=unfinished-sketch&study=adventure) or the campaign from the [normal entry](http://127.0.0.1:5173/).

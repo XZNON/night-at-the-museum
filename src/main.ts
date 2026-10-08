@@ -260,7 +260,7 @@ async function startSketch(restart: boolean, bayId?: SketchBayId): Promise<void>
       return created.scene;
     });
     if (changed && created.scene) {
-      audio.setScene('royal-supper');
+      audio.setScene('sketch');
       inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS;
       // Placement clicks stay refused until the settle window has passed.
       created.scene.armInteraction(inputReadyAt);
@@ -295,7 +295,7 @@ async function startSketchAdventure(restart: boolean): Promise<void> {
       return created.scene;
     });
     if (changed && created.scene) {
-      audio.setScene('royal-supper');
+      audio.setScene('sketch');
       inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS;
       created.scene.armInteraction(inputReadyAt);
       remembered = true; ui.markSketch('adventure', sketchBay, true); resume();

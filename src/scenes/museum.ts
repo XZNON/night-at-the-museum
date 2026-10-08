@@ -58,14 +58,18 @@ export class MuseumScene implements GameScene {
       // Each frame hangs in its own group, turned to face into the room.
       const frame = new THREE.Group(); frame.position.set(art.x, art.y, art.z); frame.rotation.y = art.facing; this.world.add(frame);
       frame.add(box(art.width + 0.28, art.height + 0.28, 0.18, 0, 0, -0.06, 0xad8550));
-      const image: HTMLImageElement | HTMLCanvasElement = art.id === 'unfinished-sketch' ? sketchPlaceholder(document.createElement('canvas'), !this.art.lightTaken)
+      // The Sketch frame shows the generated garage painting (light peeking
+      // out of the toolbox, or the shut toolbox once taken) when it is loaded.
+      const painted = art.id === 'unfinished-sketch' && this.sketchPainting(this.art.lightTaken);
+      const image: HTMLImageElement | HTMLCanvasElement = art.id === 'unfinished-sketch'
+        ? painted || sketchPlaceholder(document.createElement('canvas'), !this.art.lightTaken)
         : artImages[art.id === 'masterpiece' ? masterpieceStageArt(this.art.restored) : 'royal-supper.entrance']!;
       const g = new THREE.PlaneGeometry(art.width, Math.min(art.height, art.width * image.height / image.width));
-      const texture = art.id === 'unfinished-sketch' ? new THREE.CanvasTexture(image) : new THREE.Texture(image); texture.needsUpdate = true;
+      const texture = art.id === 'unfinished-sketch' && !painted ? new THREE.CanvasTexture(image) : new THREE.Texture(image); texture.needsUpdate = true;
       texture.colorSpace = THREE.SRGBColorSpace;
       if (art.id === 'masterpiece') this.masterpieceTexture = texture;
       const m = new THREE.MeshBasicMaterial({ map: texture });
-      if (art.id === 'unfinished-sketch') { this.sketchMaterial = m; this.sketchCanvas = image as HTMLCanvasElement; this.sketchTexture = texture; }
+      if (art.id === 'unfinished-sketch') { this.sketchMaterial = m; this.sketchCanvas = painted ? null : image as HTMLCanvasElement; this.sketchTexture = texture; }
       this.resources.add(g); this.resources.add(m); this.resources.add(texture);
       const mesh = new THREE.Mesh(g, m); mesh.position.set(0, 0, 0.04); mesh.userData.artworkId = art.id;
       frame.add(mesh); this.solids.push(mesh);
@@ -84,6 +88,10 @@ export class MuseumScene implements GameScene {
     }
     this.applyArt();
   }
+  /** The garage painting for the light's state, or null to draw the placeholder. */
+  private sketchPainting(lightTaken: boolean): HTMLImageElement | null {
+    return this.artImages[lightTaken ? 'sketch.entrance-empty' : 'sketch.entrance'] ?? null;
+  }
   /** The Sketch frame opens once the pear is restored; while locked it is dimmed and never enters. */
   get sketchOpen(): boolean { return this.sketchUnlocked; }
   get restoredCount(): number { return this.art.restored; }
@@ -100,8 +108,11 @@ export class MuseumScene implements GameScene {
     if (this.masterpieceTexture && art.restored !== this.art.restored) {
       this.masterpieceTexture.image = this.artImages[masterpieceStageArt(art.restored)]!; this.masterpieceTexture.needsUpdate = true;
     }
-    if (this.sketchCanvas && this.sketchTexture && art.lightTaken !== this.art.lightTaken) {
-      sketchPlaceholder(this.sketchCanvas, !art.lightTaken); this.sketchTexture.needsUpdate = true;
+    if (this.sketchTexture && art.lightTaken !== this.art.lightTaken) {
+      const painted = this.sketchPainting(art.lightTaken);
+      if (painted) this.sketchTexture.image = painted;
+      else if (this.sketchCanvas) sketchPlaceholder(this.sketchCanvas, !art.lightTaken);
+      this.sketchTexture.needsUpdate = true;
     }
     this.art = { ...art };
     this.applyArt();

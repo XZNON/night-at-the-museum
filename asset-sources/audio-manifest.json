@@ -157,6 +157,19 @@
       "loop": true,
       "sha256": "3afd7ad90b196ea1fc7ee0bcb18264f8381978173fa33a45966f3462cca10e81",
       "creditsSpent": 0
+    },
+    {
+      "id": "sketch",
+      "runtimePath": "public/assets/audio/sketch.wav",
+      "source": "scripts/make-sketch-music.py",
+      "creator": "The Last Curator project \u2014 original procedural synthesis",
+      "license": "Original project audio; no external samples",
+      "description": "Original rock/metallic loop for the Unfinished Sketch: drums, distorted power chords, bass and toolbox clangs (140 BPM, E minor, 8 bars)",
+      "seconds": 13.714,
+      "sampleRate": 22050,
+      "loop": true,
+      "sha256": "d5a90c7e26a76809b4cde7e28930ceecd8dfd1f7f14841ae75be86009828368c",
+      "creditsSpent": 0
     }
   ]
 }
