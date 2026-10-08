@@ -1,0 +1,47 @@
+{
+  "status": "passed",
+  "duration": 21213,
+  "events": [
+    {
+      "event": "sky refused",
+      "save": {
+        "schemaVersion": 1,
+        "campaignId": "garden-before-dawn",
+        "collectedPieceIds": [
+          "golden-pear"
+        ],
+        "restoredPieceIds": [],
+        "settings": {
+          "masterVolume": 0.7,
+          "quality": "normal"
+        }
+      },
+      "text": "The pear comes first: restore the golden pear."
+    },
+    {
+      "event": "sky refused",
+      "save": {
+        "schemaVersion": 1,
+        "campaignId": "garden-before-dawn",
+        "collectedPieceIds": [
+          "golden-pear"
+        ],
+        "restoredPieceIds": [
+          "golden-pear"
+        ],
+        "settings": {
+          "masterVolume": 0.7,
+          "quality": "normal"
+        }
+      },
+      "text": "Claim the enchanted light in the Unfinished Sketch first."
+    },
+    {
+      "event": "production-keyboard: placed, saved complete, ending shown"
+    },
+    {
+      "event": "denied writes: complete in memory, stored save unchanged"
+    }
+  ],
+  "layerTwo": []
+}

@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "events": [
+    {
+      "event": "sketch music",
+      "audio": {
+        "activated": true,
+        "paused": false,
+        "scene": "sketch",
+        "ownedSounds": 11,
+        "playing": true,
+        "volume": 0.7,
+        "playedCues": {},
+        "uiSounds": 7,
+        "playedUi": {},
+        "museumSounds": 0,
+        "roomTone": false,
+        "playedSteps": 0
+      }
+    }
+  ]
+}

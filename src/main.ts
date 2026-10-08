@@ -50,6 +50,8 @@ const sketchStage = campaign.stages[1];
 let campaignSketchSession: SketchRouteSession | null = null;
 let campaignGeneration = 0;
 let progression = new Progression();
+// Set when the masterpiece's inspection closes; cleared by a reset. See museumArt().
+let masterpieceSeen = false;
 let settings = defaultSettings();
 let session = createSupperSession();
 let paused = true;
@@ -113,10 +115,18 @@ if (store) {
 }
 audio.volume(settings.masterVolume);
 function persist(): void { store?.write(progression.snapshot, settings); }
-/** What the museum room shows: the restored count and whether the Sketch's light has left its torch. */
+/**
+ * What the museum room shows: the restored count, whether the Sketch's light has
+ * left its torch, and whether the masterpiece has been opened (this session, or
+ * implied by any owned piece; never stored), which lights and opens the side frames.
+ */
 function museumArt(): MuseumArtState {
   const state = progression.snapshot;
-  return { restored: state.restoredPieceIds.length, lightTaken: state.collectedPieceIds.includes('sun-disc') };
+  const opened = masterpieceSeen || state.collectedPieceIds.length > 0;
+  // The frame to visit next: the masterpiece first and whenever a piece waits to be placed, else the next stage's painting.
+  const holding = state.collectedPieceIds.length > state.restoredPieceIds.length;
+  const next = isComplete(state) ? null : !opened || holding ? 'masterpiece' : campaign.stages[state.restoredPieceIds.length].artworkId;
+  return { restored: state.restoredPieceIds.length, lightTaken: state.collectedPieceIds.includes('sun-disc'), opened, next };
 }
 function clearEndingTimer(): void { if (endingTimer) window.clearTimeout(endingTimer); endingTimer = 0; }
 function activeSupper(): RoyalSupperScene | null { return manager?.active instanceof RoyalSupperScene ? manager.active : null; }
@@ -196,8 +206,8 @@ async function enterMuseum(pose: MuseumPose = museum.spawn): Promise<void> {
     const changed = await manager.transition(async () => new MuseumScene(ui.canvas, pose, museumArt(),
       () => !paused && !manager?.transitioning && performance.now() >= inputReadyAt,
       id => { if (id === 'masterpiece') inspect(); else if (id === royalSupper.id) void startSupper(false); else if (id === sketchStage.artworkId) void startSketchAdventure(false); },
-      text => ui.museumPrompt(text), await loadArtSet(museumArtIds)));
-    if (changed) { audio.setScene('museum'); inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS; remembered = true; ui.museumState(progression.snapshot); ui.museumPrompt(''); resume(); ui.hintControls(); }
+      text => ui.museumPrompt(text), await loadArtSet(museumArtIds), surface => audio.footstep(surface)));
+    if (changed) { audio.setScene('museum'); inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS; remembered = true; ui.museumState(progression.snapshot, museumArt().opened); ui.museumPrompt(''); resume(); ui.hintControls(); }
   } catch (error) { showError(error); }
 }
 async function startSupper(restart: boolean, preserveLane = false): Promise<void> {
@@ -319,7 +329,11 @@ function inspect(): void {
   if (!activeMuseum() || paused || manager?.transitioning) return;
   setPaused(true); overlay = 'inspection'; ui.inspection(progression.snapshot);
 }
-function closeInspection(): void { if (overlay !== 'inspection') return; clearEndingTimer(); overlay = 'none'; resume(); }
+function closeInspection(): void {
+  if (overlay !== 'inspection') return; clearEndingTimer(); overlay = 'none'; resume();
+  // The first look at the masterpiece opens the side frames; their lamps come on as the player steps back.
+  if (!masterpieceSeen) { masterpieceSeen = true; activeMuseum()?.setRestored(museumArt()); ui.museumState(progression.snapshot, museumArt().opened); }
+}
 /**
  * Places the next stage's piece in the masterpiece (S5C, generalised from the
  * pear). Only progression restores; the save is written before any animation,
@@ -333,7 +347,7 @@ function place(piece: string, target: string): void {
   const result = progression.applyCampaignCommand({ action: 'restore', artworkId: check.stage.artworkId, pieceId: check.stage.pieceId });
   if (!result.ok || !result.changed) return;
   persist(); audio.play('restore', true);
-  activeMuseum()?.setRestored(museumArt()); ui.museumState(progression.snapshot);
+  activeMuseum()?.setRestored(museumArt()); ui.museumState(progression.snapshot, museumArt().opened);
   if (!result.complete) { ui.inspection(progression.snapshot, !reducedMotion); return; }
   if (reducedMotion) { overlay = 'ending'; ui.ending(); return; }
   ui.inspection(progression.snapshot, true);
@@ -362,7 +376,7 @@ function cancelReset(): void {
 }
 function confirmReset(): void {
   if (overlay !== 'reset' || manager?.transitioning || isolated) return;
-  clearEndingTimer(); ui.notice(''); store?.reset(); progression = new Progression(); campaignSketchSession = null; campaignGeneration++; settings = defaultSettings(); audio.volume(settings.masterVolume); session = createSupperSession(); remembered = false; resize();
+  clearEndingTimer(); ui.notice(''); store?.reset(); progression = new Progression(); masterpieceSeen = false; campaignSketchSession = null; campaignGeneration++; settings = defaultSettings(); audio.volume(settings.masterVolume); session = createSupperSession(); remembered = false; resize();
   overlay = 'none'; void enterMuseum();
 }
 function showError(error: unknown): void { setPaused(true); overlay = 'menu'; ui.error(error instanceof Error ? error.message : String(error)); }
@@ -404,7 +418,7 @@ if (import.meta.env.DEV) {
       scene: manager?.active?.id ?? null, transitioning: manager?.transitioning ?? false, paused,
       body: body ? { ...body } : null,
       museum: activeMuseum() ? { position: activeMuseum()!.camera.position.toArray(), rotation: activeMuseum()!.camera.rotation.toArray(),
-        sketchOpen: activeMuseum()!.sketchOpen, restored: activeMuseum()!.restoredCount } : null,
+        sketchOpen: activeMuseum()!.sketchOpen, supperOpen: activeMuseum()!.supperOpen, next: activeMuseum()!.nextFrame, restored: activeMuseum()!.restoredCount } : null,
       overlay, campaignComplete: isComplete(progression.snapshot),
       campaignSketch: campaignSketchSession ? { leg: campaignSketchSession.legId, light: campaignSketchSession.lightClaimed ?? null } : null,
       session: { ...session }, completed: supper?.model.completed ?? false, campaign: progression.snapshot, updateCount, renderCount,

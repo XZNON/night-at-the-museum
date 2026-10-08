@@ -8,6 +8,8 @@ The deadline is not a reason to include unfinished systems. Verify the live jam 
 
 ## Current status
 
+**Latest, 2026-10-09: museum polish implemented and regression-checked; uncommitted.** The user's museum list, one change at a time with screenshots: gilded frames; wainscot, dado rail, skirting, cornice, faint wallpaper and a plank floor; a bordered velvet runner; brass picture lamps; a shimmer on the frame to visit next; procedural footsteps (wood/carpet) and room tone (`scripts/make-museum-audio.py`, 0 credits). Two user-requested changes beyond decoration: the museum camera is now interpolated (walking stuttered on 144 Hz displays), and **a new game opens with the masterpiece first** — Royal Supper and the Sketch are greyed out under dark lamps and Royal Supper is locked until the masterpiece has been opened once (never stored; see DECISIONS). Save identities unchanged. Unit 242/242; browser campaign 6/6 (new museum-polish case), audio, S5B 5/5, S5C 5/5 and Sketch-art 5/5, three Supper-bot flakes passing on one rerun each ([evidence](../validation/museum-polish/README.md)). Next: commit/push on the user's request, then release prep (prompt in NEXT_SESSION).
+
 **Latest, 2026-10-08: v1 polish implemented and regression-checked; committed and pushed on the user's request.** The user's list, one change at a time with screenshots: a title screen and a clean game screen; key-glyph controls (fading) and an icon-only inventory; no status text (hints as fading captions, Sketch nails as icons); a new pause menu with Controls and Settings pages; restyled restoration screens (gilded close-up, sparks, piece-recovered rays, full-screen restored ending); the masterpiece centred on the back wall with the Sketch left and Royal Supper right; a room that warms with each restored piece; and original mystical UI sounds (`scripts/make-ui-audio.py`). Bundled Fredoka font (OFL). Gameplay, collision, level data and saves unchanged. Unit 241/241; browser campaign, audio, S5B, S5C and Sketch-art specs all pass, some after reruns of known bot flakes ([evidence](../validation/v1-polish/README.md)). Next: the museum polish pass (user, 2026-10-08), then release prep (build, preview smoke, itch.io zip, submission text).
 
 **Latest, 2026-10-08: S6 human check recorded; v1 polish session.** The user played the full game New Game → Royal Supper → golden pear → Unfinished Sketch → enchanted light → ending (art pass part 2 committed/pushed at `064196e`). This session: the user's UI/sound/polish list one change at a time, then a production build, production-preview campaign smoke test, itch.io zip of `dist/` and submission text (no upload/publish/submit). Royal Supper art/animation rework is deferred by the user. The jam cutoff (October 12 per the invitation) must be verified live before submitting.
@@ -813,3 +815,25 @@ Next: the museum polish pass, then release prep.
 Handoff (user request, 2026-10-08): the paste-ready museum polish prompt is in NEXT_SESSION; REQUIREMENTS now records the museum layout and the Volume label. Planning only; the museum pass needs its own session.
 
 Handoff (user request, 2026-10-08): the paste-ready release prep prompt, for the session after the museum polish, is in NEXT_SESSION too. It covers release fixes (favicon, title and meta), the regression, the production and itch-embed smoke tests, the itch.io zip and the submission materials. Planning only.
+
+### 2026-10-08/09 — Museum polish: frames, walls, runner, lamps, masterpiece-first opening, shimmer, sound
+
+On the user's requests, one change at a time with screenshots (0 DreamLayer credits; balance 54):
+- Gilded frames (moulding, bead, sight edge, corner bosses), hugging each painting.
+- Wainscot with raised panels, dado rail (under the side frames, stopping around the masterpiece), skirting, cornice, faint wallpaper; seamless plank floor texture.
+- Velvet runner with a gold diamond border and fringes.
+- Brass picture lamps with a faked light wash (no real lights added).
+- Walking stutter fixed: the museum camera is interpolated with the loop alpha; measured even per-frame steps at 144 Hz, frame time unchanged.
+- Masterpiece first (user decision, DECISIONS): only the masterpiece lit on a new game; Royal Supper and the Sketch greyed out (shader luminance mix) and Royal Supper locked until the first inspection closes; then both lamps light and Royal Supper opens; the Sketch stays locked until the pear. Never stored.
+- Shimmer on the next frame (sweeping glint; still glow under reduced motion).
+- Footsteps (4 wood, 3 carpet variants, one per 1.1 m walked) and a 16 s room-tone loop from `scripts/make-museum-audio.py`, owned by the museum audio bank; manifest additions only.
+
+Validation:
+- Typecheck and build pass; unit 242/242 (`--testTimeout=30000`; one audio test added, one assertion updated).
+- Browser: campaign 6/6 including a new museum-polish case, audio pass, S5B 5/5, S5C 5/5, Sketch-art 5/5. Specs updated for the masterpiece-first opening. Three Royal Supper route-bot failures (butter ×2, diner ×1), all after the museum steps had passed, each passed on one rerun; no Supper code changed.
+- Evidence: [museum polish](../validation/museum-polish/README.md).
+
+Not verified: the footstep/room-tone mix by ear (user to listen), representative-machine performance, other browsers, the itch.io iframe.
+
+Next: commit/push when the user asks; then release prep (prompt in NEXT_SESSION).
+

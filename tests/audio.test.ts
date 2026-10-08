@@ -9,6 +9,7 @@ vi.mock('howler', () => ({
     stop = vi.fn(() => { this.running = false; });
     unload = vi.fn(() => { this.running = false; });
     rate = vi.fn();
+    volume = vi.fn(() => this.options.volume);
     constructor(readonly options: any) { fake.sounds.push(this); }
     once(event: string, callback: () => void) { this.callbacks.set(event, callback); }
     state() { return this.ready ? 'loaded' : 'loading'; }
@@ -44,8 +45,25 @@ describe('audio activation and ownership', () => {
     const bed = fake.sounds.find(s => s.options.loop);
     expect(bed.options.src[0]).toMatch(/\/sketch\.wav$/); expect(bed.options.volume).toBeLessThan(0.3);
     audio.setScene('museum'); expect(bed.unload).toHaveBeenCalledTimes(1);
-    expect(fake.sounds.filter(s => s.options.loop).at(-1).options.src[0]).toMatch(/\/museum\.wav$/);
+    expect(fake.sounds.filter(s => s.options.loop && !s.unload.mock.calls.length).map(s => s.options.src[0].split('/').at(-1))).toEqual(['museum.wav', 'room.wav']);
     audio.dispose();
+  });
+  it('gives only the museum its room tone and footsteps, pausing and unloading them with the scene', () => {
+    const audio = new GameAudio(vi.fn()); audio.activate(); audio.setScene('royal-supper');
+    expect(audio.diagnostics.museumSounds).toBe(0);
+    audio.setScene('museum'); audio.setPaused(false);
+    expect(audio.diagnostics.museumSounds).toBe(8); expect(audio.diagnostics.ownedSounds).toBe(11);
+    const room = fake.sounds.find(s => s.options.src[0].endsWith('/room.wav'));
+    expect(room.options.loop).toBe(true); room.loaded(); expect(room.running).toBe(true);
+    const wood = fake.sounds.filter(s => /\/step-wood-\d\.wav$/.test(s.options.src[0]));
+    const carpet = fake.sounds.filter(s => /\/step-carpet-\d\.wav$/.test(s.options.src[0]));
+    expect(wood).toHaveLength(4); expect(carpet).toHaveLength(3);
+    // Unloaded variants are skipped, never queued.
+    audio.footstep('carpet'); expect(audio.diagnostics.playedSteps).toBe(0);
+    carpet[1].loaded(); audio.footstep('carpet'); expect(carpet[1].play).toHaveBeenCalledTimes(1); expect(wood.every(s => !s.play.mock.calls.length)).toBe(true);
+    audio.setPaused(true); expect(room.running).toBe(false); audio.footstep('carpet'); expect(carpet[1].play).toHaveBeenCalledTimes(1);
+    audio.setScene('sketch'); expect([room, ...wood, ...carpet].every(s => s.unload.mock.calls.length === 1)).toBe(true);
+    expect(audio.diagnostics.museumSounds).toBe(0); audio.dispose();
   });
   it('applies saved volume including mute and stops effects on pause', () => {
     const audio = new GameAudio(vi.fn()); audio.volume(0); expect(audio.diagnostics.volume).toBe(0);

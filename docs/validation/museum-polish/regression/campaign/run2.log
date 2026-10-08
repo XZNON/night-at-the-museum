@@ -1,0 +1,34 @@
+
+Running 2 tests using 1 worker
+
+Expanded section reached before-butter 23.2
+Expanded section reached after-butter 38.9
+Expanded section reached before-fork 59.4
+Expanded section reached after-fork 65.2
+Expanded section reached after-candle 81.1
+Expanded section reached after-diner 105.5
+Expanded section reached pear 117.1
+Expanded route elapsed seconds / retries 117.815 0
+Expanded section reached before-butter 23.3
+Retry stage 1 0 Checkpoint / before butter A slip, not a setback. Returning to checkpoint…
+Expanded section reached after-butter 55.0
+Expanded section reached before-fork 75.6
+Expanded section reached after-fork 81.5
+Expanded section reached after-candle 97.4
+Expanded section reached after-diner 121.9
+Expanded section reached pear 133.5
+Expanded route elapsed seconds / retries 134.169 1
+  ✓  1 tests\browser\campaign.spec.ts:97:1 › production museum → supper → pear → return → click placement → reload → replay → confirmed reset (4.7m)
+Expanded section reached before-butter 23.2
+Expanded section reached after-butter 38.9
+Expanded section reached before-fork 59.4
+Expanded section reached after-fork 65.2
+Expanded section reached after-candle 81.3
+Expanded section reached after-diner 105.6
+Expanded section reached pear 117.2
+Expanded route elapsed seconds / retries 117.918 0
+  ✓  2 tests\browser\campaign.spec.ts:196:1 › production malformed saves and denied storage stay playable; settings persist (2.2m)
+
+  Slow test file: tests\browser\campaign.spec.ts (6.9m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  2 passed (6.9m)

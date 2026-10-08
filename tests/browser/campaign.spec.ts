@@ -31,6 +31,12 @@ async function inspectFromSpawn(page: Page): Promise<void> {
   await page.locator('#world').click({ position: { x: 640, y: 360 } });
   await expect(page.getByRole('button', { name: 'Pear silhouette' })).toBeVisible();
 }
+// New game: Royal Supper stays locked until the masterpiece has been opened once. Open and close it, then walk back to the spawn.
+async function openMasterpieceFirst(page: Page): Promise<void> {
+  await inspectFromSpawn(page); await page.keyboard.press('Escape');
+  await expect(page.locator('#objective')).toHaveText('Find the golden pear in Royal Supper');
+  await walk(page, 'KeyS', 2400);
+}
 // From in front of Royal Supper (facing the right wall): turn to the back wall, step left and walk up to the masterpiece.
 async function inspectFromReturn(page: Page): Promise<void> {
   // Wait until the museum takes input (the return lands facing Royal Supper) before turning.
@@ -99,6 +105,7 @@ test('production museum → supper → pear → return → click placement → r
   // Distant frames do not activate, even with click/E.
   await page.locator('#world').click({ position: { x: 640, y: 330 } }); await page.keyboard.press('KeyE');
   await expect(page.locator('#museum-hud')).toBeVisible();
+  await openMasterpieceFirst(page);
   await approachSupper(page);
   await page.locator('#world').click({ position: { x: 640, y: 360 } });
   await expect(page.locator('#hud')).toBeVisible();
@@ -203,7 +210,7 @@ test('production malformed saves and denied storage stay playable; settings pers
     Storage.prototype.removeItem = () => { throw new DOMException('Storage blocked', 'SecurityError'); };
   });
   await page.reload(); await expect(page.locator('#save-notice')).toContainText('Storage is unavailable'); await newMuseum(page);
-  await approachSupper(page); await page.keyboard.press('KeyE'); await supperRoute(page);
+  await openMasterpieceFirst(page); await approachSupper(page); await page.keyboard.press('KeyE'); await supperRoute(page);
   await expect(page.locator('#save-notice')).toContainText('Progress remains in memory');
   await page.getByRole('button', { name: 'Return to Museum', exact: true }).click(); await inspectFromReturn(page);
   await page.getByRole('button', { name: 'Golden pear', exact: false }).click(); await page.getByRole('button', { name: 'Pear silhouette' }).click();
@@ -250,7 +257,7 @@ test('museum input contexts, room bounds, drag look and pointer lock release/fal
   expect((await pose()).museum.rotation[1]).not.toBe(fallback.museum.rotation[1]);
   await page.setViewportSize({ width: 960, height: 540 }); await page.screenshot({ path: 'test-results/museum-small.png' });
   await page.setViewportSize({ width: 1280, height: 720 });
-  await page.reload(); await newMuseum(page); await approachSupper(page);
+  await page.reload(); await newMuseum(page); await openMasterpieceFirst(page); await approachSupper(page);
   const initialResources = await pose();
   let returnResources: { geometryCount: number; textureCount: number } | null = null;
   for (let i = 0; i < 3; i++) {
@@ -268,4 +275,62 @@ test('museum input contexts, room bounds, drag look and pointer lock release/fal
     } else returnResources = returned;
   }
   expect(await page.locator('canvas').count()).toBe(1); expect(errors).toEqual([]);
+});
+
+test('museum polish: masterpiece first, lamps/shimmer target, smooth walking, footsteps and room tone', async ({ page }) => {
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  type Polish = { museum: { position: number[]; supperOpen: boolean; sketchOpen: boolean; next: string | null } | null; scene: string | null;
+    audio: { roomTone: boolean; playedSteps: number; museumSounds: number } };
+  const state = () => page.evaluate(() => (window as unknown as { __curatorDebug: () => Polish }).__curatorDebug());
+  await page.goto('http://127.0.0.1:5173/'); await page.evaluate(() => localStorage.clear()); await page.reload();
+  await newMuseum(page); await page.waitForTimeout(350);
+  // New game: only the masterpiece is open and shimmering; Royal Supper is locked.
+  await expect(page.locator('#objective')).toHaveText('Inspect the masterpiece');
+  let s = await state();
+  expect([s.museum!.supperOpen, s.museum!.sketchOpen, s.museum!.next]).toEqual([false, false, 'masterpiece']);
+  await expect.poll(async () => (await state()).audio.roomTone).toBe(true);
+  expect((await state()).audio.museumSounds).toBe(8);
+  // Walking draws the camera on every display frame (no repeated poses between 60 Hz steps).
+  await page.keyboard.down('KeyD'); await page.waitForTimeout(200);
+  const deltas = await page.evaluate(() => new Promise<number[]>(resolve => {
+    const xs: number[] = []; const frame = () => { xs.push((window as unknown as { __curatorDebug: () => Polish }).__curatorDebug().museum!.position[0]);
+      if (xs.length < 30) requestAnimationFrame(frame); else resolve(xs.slice(1).map((x, i) => x - xs[i])); };
+    requestAnimationFrame(frame);
+  }));
+  await page.keyboard.up('KeyD'); await page.waitForTimeout(80);
+  expect(deltas.filter(d => d <= 1e-6)).toEqual([]);
+  const pos = async () => (await state()).museum!.position;
+  const walkUntil = async (key: string, done: (p: number[]) => boolean) => {
+    if (done(await pos())) return;
+    await page.keyboard.down(key);
+    await expect.poll(async () => done(await pos()), { timeout: 8000, intervals: [16] }).toBe(true);
+    await page.keyboard.up(key); await page.waitForTimeout(80);
+  };
+  // Footsteps follow distance walked; pushing into a wall adds none.
+  const stepsBefore = (await state()).audio.playedSteps;
+  expect(stepsBefore).toBeGreaterThan(0);
+  await walkUntil('KeyD', p => p[0] >= 2.6); await walkUntil('KeyW', p => p[2] <= -1.5); await drag(page, 523);
+  await expect(page.locator('#museum-prompt')).toHaveText('Inspect the masterpiece first');
+  expect((await state()).audio.playedSteps).toBeGreaterThan(stepsBefore);
+  await walk(page, 'KeyW', 1500); const atWall = (await state()).audio.playedSteps;
+  await walk(page, 'KeyW', 800); expect((await state()).audio.playedSteps).toBe(atWall);
+  await walkUntil('KeyS', p => p[0] <= 3);
+  await expect(page.locator('#museum-prompt')).toHaveText('Inspect the masterpiece first');
+  await page.keyboard.press('KeyE'); await page.locator('#world').click({ position: { x: 640, y: 360 } }); await page.waitForTimeout(400);
+  expect((await state()).scene).toBe('museum');
+  // Open the masterpiece once: Royal Supper opens and becomes the next frame; the Sketch stays locked.
+  await drag(page, -523); await walkUntil('KeyA', p => p[0] <= 0.1); await page.keyboard.down('KeyW');
+  await expect(page.locator('#museum-prompt')).toHaveText('Click / E — Inspect the masterpiece'); await page.keyboard.up('KeyW');
+  await page.keyboard.press('KeyE'); await expect(page.getByRole('button', { name: 'Pear silhouette' })).toBeVisible();
+  expect((await state()).museum!.supperOpen).toBe(false);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#objective')).toHaveText('Find the golden pear in Royal Supper');
+  s = await state();
+  expect([s.museum!.supperOpen, s.museum!.sketchOpen, s.museum!.next]).toEqual([true, false, 'royal-supper']);
+  await page.screenshot({ path: 'test-results/museum-polish-opened.png' });
+  // Never stored: a reload with nothing owned shows the masterpiece-only museum again.
+  expect(await saved(page)).toBeNull();
+  await page.reload(); await newMuseum(page); await page.waitForTimeout(350);
+  s = await state(); expect([s.museum!.supperOpen, s.museum!.next]).toEqual([false, 'masterpiece']);
+  expect(errors).toEqual([]);
 });

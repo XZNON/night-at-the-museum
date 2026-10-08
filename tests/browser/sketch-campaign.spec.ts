@@ -28,7 +28,7 @@ test('S5B locked frame, opening after the pear is restored, and transition spam'
   await expect(page.locator('#modal')).not.toContainText(/mountain/i);
   await newMuseum(page, false);
   await expect(page.locator('.build-tag')).toHaveCount(0);
-  await expect(page.locator('#objective')).toHaveText('Inspect the masterpiece · Find its missing pear in Royal Supper');
+  await expect(page.locator('#objective')).toHaveText('Inspect the masterpiece');
   await toSketchFrame(page);
   await expect(page.locator('#museum-prompt')).toHaveText(LOCKED_PROMPT);
   expect((await debug(page)).museum!.sketchOpen).toBe(false);
@@ -204,7 +204,7 @@ test('S5B production: seeded saves show the frame state, objective and inventory
   page.on('pageerror', e => errors.push(String(e)));
   page.on('response', r => { if (r.status() >= 400) failures.push(r.url()); });
   const cases = [
-    { save: null, objective: 'Inspect the masterpiece · Find its missing pear in Royal Supper', inventory: '', prompt: LOCKED_PROMPT },
+    { save: null, objective: 'Inspect the masterpiece', inventory: '', prompt: LOCKED_PROMPT },
     { save: PEAR_OWNED, objective: 'Bring the golden pear to the masterpiece', inventory: 'Golden pear', prompt: LOCKED_PROMPT },
     { save: PEAR_RESTORED, objective: 'Claim the enchanted light in the Unfinished Sketch', inventory: '', prompt: OPEN_PROMPT },
     { save: LIGHT_OWNED, objective: 'Bring the light to the masterpiece', inventory: 'Enchanted light', prompt: OPEN_PROMPT },

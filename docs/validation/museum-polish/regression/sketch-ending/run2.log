@@ -1,0 +1,14 @@
+
+Running 1 test using 1 worker
+
+Expanded section reached before-butter 23.3
+Expanded section reached after-butter 38.4
+Expanded section reached before-fork 58.3
+Expanded section reached after-fork 62.8
+Expanded section reached after-candle 69.9
+Expanded section reached after-diner 89.5
+Expanded section reached pear 100.6
+Expanded route elapsed seconds / retries 100.853 0
+  ✓  1 tests\browser\sketch-ending.spec.ts:234:1 › S5C full campaign from New Game to the ending with real controls 1280 (4.1m)
+
+  1 passed (4.1m)

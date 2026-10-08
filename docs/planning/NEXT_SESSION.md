@@ -1,4 +1,6 @@
-# Next session — museum polish, then release prep
+# Next session — release prep
+
+**Latest, 2026-10-09: museum polish done and regression-checked; uncommitted (commit/push only on the user's request).** Gilded frames, wainscot and plank floor, velvet runner, brass lamps, next-frame shimmer, footsteps and room tone, interpolated museum walking, and the user's masterpiece-first opening (Royal Supper greyed out and locked until the masterpiece has been opened once; never stored). See the [museum polish evidence](../validation/museum-polish/README.md) and DECISIONS. Next is release prep: use the paste-ready release prep prompt below. Note for it: new-game browser flows must open and close the masterpiece before entering Royal Supper.
 
 **Latest, 2026-10-08: v1 polish done and regression-checked; committed and pushed on the user's request.** See the PLAN log and the [v1 polish evidence](../validation/v1-polish/README.md). The user chose **the museum polish pass next**. Candidate ideas, to agree with the user first:
 - real gilded frames with depth;

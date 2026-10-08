@@ -153,7 +153,7 @@ test('S5C production drag placement, wrong drops, ending, reload complete, Keep 
   await page.getByRole('button', { name: 'New game (reset progress)' }).click();
   await page.getByRole('button', { name: 'Confirm reset / New Game' }).click();
   await expect(page.locator('#museum-hud')).toBeVisible();
-  await expect(page.locator('#objective')).toHaveText('Inspect the masterpiece · Find its missing pear in Royal Supper');
+  await expect(page.locator('#objective')).toHaveText('Inspect the masterpiece');
   await expect(page.locator('#inventory')).toHaveText('');
   expect(await saved(page)).toBeNull();
   expect(await page.evaluate(() => localStorage.getItem('another-game'))).toBe('keep');
@@ -238,6 +238,9 @@ test('S5C full campaign from New Game to the ending with real controls 1280', as
   await page.goto(DEV); await page.waitForLoadState('networkidle');
   await page.evaluate(() => localStorage.clear()); await page.reload();
   await newMuseum(page, false);
+  // Museum polish: Royal Supper opens once the masterpiece has been looked at.
+  await inspectFromSpawn(page); await page.keyboard.press('Escape');
+  await expect(page.locator('#objective')).toHaveText('Find the golden pear in Royal Supper'); await hold(page, 'KeyS', 2400);
   // Royal Supper: the pear.
   await hold(page, 'KeyD', 760); await hold(page, 'KeyW', 1740); await drag(page, 523);
   await expect(page.locator('#museum-prompt')).toHaveText('Click / E — Enter Royal Supper');
@@ -297,7 +300,7 @@ test('S5C full campaign from New Game to the ending with real controls 1280', as
   await page.getByRole('button', { name: 'Reset progress', exact: true }).click();
   await page.getByRole('button', { name: 'Confirm reset / New Game' }).click();
   await expect(page.locator('#museum-hud')).toBeVisible(); await page.waitForTimeout(350);
-  await expect(page.locator('#objective')).toHaveText('Inspect the masterpiece · Find its missing pear in Royal Supper');
+  await expect(page.locator('#objective')).toHaveText('Inspect the masterpiece');
   expect(await saved(page)).toBeNull();
   d = await debug(page);
   expect([d.campaignComplete, d.museum!.restored, d.museum!.sketchOpen]).toEqual([false, 0, false]);

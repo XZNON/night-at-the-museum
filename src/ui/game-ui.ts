@@ -511,7 +511,8 @@ export class GameUi {
     if (text !== null) el.textContent = text;
   }
   notice(text: string): void { const el = document.getElementById('save-notice')!; el.textContent = text; el.hidden = !text; }
-  museumState(state: CampaignState): void {
+  /** `opened`: the masterpiece has been looked at, so Royal Supper is open. */
+  museumState(state: CampaignState, opened: boolean): void {
     const restored = state.restoredPieceIds.includes('golden-pear');
     const owned = state.collectedPieceIds.includes('golden-pear') && !restored;
     const lightRestored = state.restoredPieceIds.includes('sun-disc');
@@ -532,7 +533,7 @@ export class GameUi {
     objective.textContent = isComplete(state) ? 'The Garden Before Dawn is complete'
       : light ? 'Bring the light to the masterpiece'
       : restored ? 'Claim the enchanted light in the Unfinished Sketch'
-      : owned ? 'Bring the golden pear to the masterpiece' : 'Inspect the masterpiece · Find its missing pear in Royal Supper';
+      : owned ? 'Bring the golden pear to the masterpiece' : opened ? 'Find the golden pear in Royal Supper' : 'Inspect the masterpiece';
     // The objective shows for a few seconds on arrival and after each change, then the view is clear.
     objective.classList.add('show');
     window.clearTimeout(this.objectiveTimer);

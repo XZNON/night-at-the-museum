@@ -1,0 +1,59 @@
+
+Running 5 tests using 1 worker
+
+  ✓  1 tests\browser\sketch-ending.spec.ts:98:1 › S5C production drag placement, wrong drops, ending, reload complete, Keep progress and Confirm reset (24.2s)
+  ✓  2 tests\browser\sketch-ending.spec.ts:166:1 › S5C production click placement and reload right after placement keeps it complete (8.2s)
+  ✓  3 tests\browser\sketch-ending.spec.ts:185:1 › S5C production keyboard placement; the sky before the pear and before the light; denied writes (21.5s)
+  ✓  4 tests\browser\sketch-ending.spec.ts:215:1 › S5C 960x540 keyboard placement and ending layout (6.9s)
+Expanded section reached before-butter 23.3
+Retry stage 1 0 Checkpoint / before butter 
+Retry stage 1 1 Checkpoint / before butter 
+Expanded section reached after-butter 70.8
+Expanded section reached before-fork 90.8
+Expanded section reached after-fork 95.3
+Expanded section reached after-candle 102.4
+Retry stage 5 0 Checkpoint / after candle Caught in the diner’s gaze. Keep your whole body inside cover.
+Retry stage 5 1 Checkpoint / after candle Caught in the diner’s gaze. Keep your whole body inside cover.
+Retry stage 5 2 Checkpoint / after candle Caught in the diner’s gaze. Keep your whole body inside cover.
+Retry stage 5 3 Checkpoint / after candle Caught in the diner’s gaze. Keep your whole body inside cover.
+  ✘  5 tests\browser\sketch-ending.spec.ts:234:1 › S5C full campaign from New Game to the ending with real controls 1280 (3.7m)
+
+
+  1) tests\browser\sketch-ending.spec.ts:234:1 › S5C full campaign from New Game to the ending with real controls 1280 
+
+    Error: Expanded section after-diner
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+       at expanded-route.ts:58
+
+      56 |       }
+      57 |     }
+    > 58 |     expect(reached, `Expanded section ${stage.checkpoint}`).toBe(true);
+         |                                                             ^
+      59 |     console.log('Expanded section reached', stage.checkpoint, ((Date.now() - began) / 1000).toFixed(1));
+      60 |     if (onStage) await onStage(index);
+      61 |     if (index >= endStage) break;
+        at expandedRoute (C:\Users\XZNON\DreamLayer\tests\browser\expanded-route.ts:58:61)
+        at C:\Users\XZNON\DreamLayer\tests\browser\sketch-ending.spec.ts:249:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\sketch-ending-S5C-full-cam-db751-ing-with-real-controls-1280\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\sketch-ending-S5C-full-cam-db751-ing-with-real-controls-1280\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\sketch-ending-S5C-full-cam-db751-ing-with-real-controls-1280\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\sketch-ending-S5C-full-cam-db751-ing-with-real-controls-1280\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    tests\browser\sketch-ending.spec.ts:234:1 › S5C full campaign from New Game to the ending with real controls 1280 
+  4 passed (5.2m)

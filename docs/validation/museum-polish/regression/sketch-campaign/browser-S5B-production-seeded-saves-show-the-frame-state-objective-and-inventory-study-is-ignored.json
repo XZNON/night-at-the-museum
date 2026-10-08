@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "duration": 27533,
+  "events": [
+    {
+      "event": "production new",
+      "objective": "Inspect the masterpiece",
+      "inventory": "",
+      "prompt": "Restore the golden pear first"
+    },
+    {
+      "event": "production pear-owned",
+      "objective": "Bring the golden pear to the masterpiece",
+      "inventory": "Golden pear",
+      "prompt": "Restore the golden pear first"
+    },
+    {
+      "event": "production pear-restored",
+      "objective": "Claim the enchanted light in the Unfinished Sketch",
+      "inventory": "",
+      "prompt": "Click / E — Enter the Unfinished Sketch"
+    },
+    {
+      "event": "production light-owned",
+      "objective": "Bring the light to the masterpiece",
+      "inventory": "Enchanted light",
+      "prompt": "Click / E — Enter the Unfinished Sketch"
+    }
+  ],
+  "layerTwo": []
+}

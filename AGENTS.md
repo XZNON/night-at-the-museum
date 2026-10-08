@@ -2,6 +2,8 @@
 
 ## Purpose and current state
 
+Museum polish implemented, 2026-10-09 (user's list, one change at a time): gilded frames, wainscot/plank floor, velvet runner, brass lamps, next-frame shimmer, footsteps and room tone (scripts/make-museum-audio.py, 0 credits), interpolated museum walking, and a masterpiece-first opening (Royal Supper greyed out and locked until the masterpiece has been opened once; never stored; see DECISIONS). Unit 242/242; museum/campaign specs pass (Supper-bot flakes passed on rerun). See docs/validation/museum-polish/README.md. Uncommitted: commit/push only on the user's request. Next: release prep (prompt in NEXT_SESSION).
+
 v1 polish committed/pushed on the user's request, 2026-10-08: title screen and clean HUD, key-glyph controls, an icon inventory, a new pause menu (Controls/Settings), restyled restoration screens, the masterpiece centred with the Sketch left and Royal Supper right, restoration ambience in the room, original UI sounds (scripts/make-ui-audio.py) and the bundled Fredoka font; gameplay and saves unchanged. See docs/validation/v1-polish/README.md. Next: the museum polish pass (user), then release prep. Later commits, generation and sub-agents need new authorization.
 
 S6 human check recorded, 2026-10-08 (user played New Game → Royal Supper → pear → Unfinished Sketch → light → ending). Current session: v1 polish (the user's UI/sound/polish list, one change at a time), then production build, preview smoke test, itch.io zip and submission text; no upload/publish/submit. Royal Supper art/animation rework deferred. Commits/pushes, generation and sub-agents need the user's request.
