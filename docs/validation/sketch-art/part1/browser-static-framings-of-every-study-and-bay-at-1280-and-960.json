@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "events": [
+    {
+      "event": "static framings",
+      "errors": [],
+      "failed": [],
+      "textures": 8,
+      "geometries": 26
+    }
+  ]
+}

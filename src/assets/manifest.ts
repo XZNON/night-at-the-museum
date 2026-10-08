@@ -43,10 +43,39 @@ export const runtimeAssets = {
   'masterpiece.damaged': { path: 'assets/restoration/damaged.webp', provider: 'DreamLayer' },
   'masterpiece.pear-restored': { path: 'assets/restoration/pear-restored.webp', provider: 'DreamLayer' },
   'masterpiece.complete': { path: 'assets/restoration/complete.webp', provider: 'DreamLayer' },
+  // Sketch skins: local cutouts of the approved DreamLayer references.
+  'sketch.plank': { path: 'assets/sketch/plank.png', provider: 'DreamLayer' },
+  'sketch.board': { path: 'assets/sketch/board.png', provider: 'DreamLayer' },
+  'sketch.ruler': { path: 'assets/sketch/ruler.png', provider: 'DreamLayer' },
+  'sketch.ground-top': { path: 'assets/sketch/ground-top.png', provider: 'DreamLayer' },
+  'sketch.axe-head': { path: 'assets/sketch/axe-head.png', provider: 'DreamLayer' },
+  'sketch.axe-handle': { path: 'assets/sketch/axe-handle.png', provider: 'DreamLayer' },
+  'sketch.axe-bolt': { path: 'assets/sketch/axe-bolt.png', provider: 'DreamLayer' },
+  'sketch.lift-deck': { path: 'assets/sketch/lift-deck.png', provider: 'DreamLayer' },
+  'sketch.lift-piston': { path: 'assets/sketch/lift-piston.png', provider: 'DreamLayer' },
+  'sketch.lift-pump': { path: 'assets/sketch/lift-pump.png', provider: 'DreamLayer' },
+  'sketch.yardstick': { path: 'assets/sketch/yardstick.png', provider: 'DreamLayer' },
+  'sketch.dowel': { path: 'assets/sketch/dowel.png', provider: 'DreamLayer' },
+  'sketch.trolley': { path: 'assets/sketch/trolley.png', provider: 'DreamLayer' },
+  'sketch.rail': { path: 'assets/sketch/rail.png', provider: 'DreamLayer' },
+  'sketch.glue-top': { path: 'assets/sketch/glue-top.png', provider: 'DreamLayer' },
+  'sketch.glue-bottle': { path: 'assets/sketch/glue-bottle.png', provider: 'DreamLayer' },
+  'sketch.nail-head': { path: 'assets/sketch/nail-head.png', provider: 'DreamLayer' },
+  'sketch.nail-cap': { path: 'assets/sketch/nail-cap.png', provider: 'DreamLayer' },
+  'sketch.nail-shaft': { path: 'assets/sketch/nail-shaft.png', provider: 'DreamLayer' },
+  'sketch.nail-side': { path: 'assets/sketch/nail-side.png', provider: 'DreamLayer' },
+  'sketch.nail-pickup': { path: 'assets/sketch/nail-pickup.png', provider: 'DreamLayer' },
+  'sketch.decor-tin': { path: 'assets/sketch/decor-tin.png', provider: 'DreamLayer' },
+  'sketch.decor-pencil': { path: 'assets/sketch/decor-pencil.png', provider: 'DreamLayer' },
+  'sketch.decor-screwdriver': { path: 'assets/sketch/decor-screwdriver.png', provider: 'DreamLayer' },
+  'sketch.decor-spanner': { path: 'assets/sketch/decor-spanner.png', provider: 'DreamLayer' },
+  'sketch.decor-tape': { path: 'assets/sketch/decor-tape.png', provider: 'DreamLayer' },
+  'sketch.decor-screws': { path: 'assets/sketch/decor-screws.png', provider: 'DreamLayer' },
 } as const;
 export type ArtId = keyof typeof runtimeAssets;
 export const supperArtIds = Object.keys(runtimeAssets).filter(id => id.startsWith('player.') ||
   (id.startsWith('royal-supper.') && id !== 'royal-supper.entrance') || id === 'restoration.pear') as ArtId[];
 export const museumArtIds: ArtId[] = ['royal-supper.entrance', 'masterpiece.damaged', 'masterpiece.pear-restored', 'masterpiece.complete',
   'restoration.pear', 'restoration.light'];
+export const sketchArtIds = Object.keys(runtimeAssets).filter(id => id.startsWith('player.') || id.startsWith('sketch.')) as ArtId[];
 export const runtimeAssetUrl = (path: string): string => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;

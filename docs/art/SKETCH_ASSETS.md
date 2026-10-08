@@ -3,8 +3,10 @@
 Created 2026-10-07 at the user's request. This is the Sketch art asset list and
 the record of the DreamLayer reference pass. It follows the fully cartoon,
 modern 2.5D Sketch direction in [ART_DIRECTION.md](ART_DIRECTION.md) and the
-provider rules in [ASSETS.md](ASSETS.md). Nothing here is integrated into the
-game; generated images are **references only** until the user approves them.
+provider rules in [ASSETS.md](ASSETS.md). Generated images are **references
+only** until the user approves them. Art pass part 1 (2026-10-08) cut the
+approved mechanism, ground, glue, lift, nail, pickup and decor references into
+runtime skins locally and integrated them; see the part 1 section below.
 
 ## Setting — user-selected 2026-10-07
 
@@ -19,9 +21,11 @@ working concept.
 
 1. Mechanism style references: done 2026-10-07 (11 approved, plus the
    backdrop direction).
-2. Remaining layout-independent mechanism skins, sized from the typed level data.
-3. Background/scenery layers after the S5 finale fixes the stacked-world bounds.
-4. Museum entrance artwork when Sketch gets its frame in S5.
+2. Mechanism skins sized from the typed level data: done 2026-10-08 as art
+   pass part 1, cut locally from the approved references (0 credits).
+3. Background/scenery layers: the final full-size backdrop still needs one
+   fresh DreamLayer generation (art pass part 2).
+4. Museum entrance artwork for the Sketch frame (art pass part 2).
 
 Player: reuse the existing teal restorer unless a reference shows a clear clash.
 Generation of anything beyond the current step needs a further user request.
@@ -41,7 +45,7 @@ for later cutout):
 | `sketch.glue` | Tipped glue bottle + glue pool | Layer 3 crossing | v1 approved reference |
 | `sketch.lift` | Hydraulic car lift: striped deck + amber lamp, stretchable chrome piston, pump box (replaces escalator, S4L) | Both layer transitions | v1 approved reference |
 | `sketch.ground` | Thick workbench-top ground/ledge piece (tileable) | All layers | v1 approved reference |
-| `sketch.swing-socket` | Moving swing socket/bracket | Finale (S5) | planned, after S5 |
+| `sketch.swing-socket` | Moving swing socket/bracket | Finale (S5) | not needed: the moving-socket finale was dropped |
 | `sketch.nail` | Nail head + shaft, side and head-on views | All | v1 approved reference |
 | `sketch.nail-pickup` | Third-nail pickup (edit of the nail reference) | Layer 3 start | v1 approved reference |
 | `sketch.backdrop` | Giant toolbox interior, three colour bands, angry living background tools | Scene | v6 approved direction; final size after S5 |
@@ -64,8 +68,10 @@ ink outlines, broad flat colour areas, simple two-tone cel shading, one soft
 highlight. Visible board thickness (top face plus front face) for the 2.5D feel.
 Playful pencil construction marks allowed; no photographic grain, realistic
 wood grain, metal texture or charcoal scans. Perfectly flat, horizontal landing
-top. Palette continues the placeholder palette: warm cream/honey (Layer 1),
-pale blue (Layer 2), rose (Layer 3), dark plum-ink outlines.
+top. Dark plum-ink outlines. Poppy and colourful, never whitewashed (user,
+2026-10-08): saturated layer bands (violet, mint, pink) replace the earlier
+cream/pale-blue/rose placeholder palette, and skins get a saturation lift at
+preparation.
 
 ## Reference pass log
 
@@ -225,3 +231,34 @@ typecheck and 214 unit tests pass, not yet checked in a browser.
   console 404 is the pre-existing missing /favicon.ico). At the user's request
   the Sketch placeholder ink box (collider outline) around the player is
   removed; re-checked in the browser.
+
+## Art pass part 1 — skins integrated (2026-10-08)
+
+At the user's request ("cut out and integrate the approved references
+first"), `scripts/prepare-sketch-skins.py` cut the approved references into 27
+runtime skins in `public/assets/sketch/` (0 credits; manifest `sketch.*`
+entries, review board `asset-sources/production/sketch-v1/skins-review.png`).
+Review issues were handled at preparation: plank rod/cap painted out, axe
+mirrored into a double bit, ground reduced to its top board over a flat body,
+glue pool turned into a seamless surface tile. `src/assets/sketch-skins.ts`
+maps families to skins and sizes; the scene sizes every skin from the level
+data and keeps gameplay cues in code. Evidence:
+[docs/validation/sketch-art/part1](../validation/sketch-art/part1/README.md).
+
+Still to do (part 2, DreamLayer generation, needs the user's go-ahead and a
+credit check): the final full-size backdrop from the v6 direction and the
+museum's Sketch entrance picture. The torch has no reference yet.
+
+### Part 1 review revision (2026-10-08)
+
+The user found the result too dull ("whitewashed"), saw occasional lag or
+skipped frames, and asked to drop the lift's frame; the backdrop will change
+later. Changes: skins prepared with saturation x1.45 and contrast x1.08; decor
+shadows flood-keyed out so they do not read as white smudges; saturated bands
+and a soft shadow separator; decor at 0.88 opacity; inked target rings; lift
+rails/beam/rungs removed when skinned. Smoothness: moving mechanisms, targets,
+nails, grips and lift decks are now drawn between fixed steps (they were drawn
+at the latest step only, so on a 144 Hz display a moving board held still on
+233 of 400 frames, 0 after the fix), and the scene manager pre-compiles every
+material and uploads every texture, hidden ones included, at scene entry (the
+first pin no longer stalls a frame). Evidence in the part 1 README.

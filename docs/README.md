@@ -6,7 +6,9 @@ Start with the [current handoff](planning/NEXT_SESSION.md), then the [build plan
 
 Latest, 2026-10-07: **next is S5B** (Sketch frame in the museum, campaign claim of the light); the enchanted light acts as the sun in the campaign (user). Prompt: [NEXT_SESSION](planning/NEXT_SESSION.md).
 
-Latest, 2026-10-07: **S5C is implemented at its playable review gate; S5 is complete at the automated gate**: the enchanted light placed in the sky becomes the sun, the complete masterpiece and the ending; one real-control New Game → ending run passed ([evidence](validation/sketch-s5/s5c/README.md)). Stop for user review; S6 and the Sketch art pass need their own requests.
+Latest, 2026-10-08: **Sketch art pass part 1 is implemented at its review gate**: the approved references are cut locally into 27 skins and drawn in the Sketch scene from level data; gameplay unchanged ([evidence](validation/sketch-art/part1/README.md), [assets](art/SKETCH_ASSETS.md)). S5C committed/pushed at `7c5e06a`. Part 2 (backdrop, museum entrance) needs its own request.
+
+Earlier, 2026-10-07: **S5C is implemented at its playable review gate; S5 is complete at the automated gate**: the enchanted light placed in the sky becomes the sun, the complete masterpiece and the ending; one real-control New Game → ending run passed ([evidence](validation/sketch-s5/s5c/README.md)). Stop for user review; S6 and the Sketch art pass need their own requests.
 
 Earlier, 2026-10-07: S5B committed and pushed (`31ad72e`); **S5C planned** ([plan](gameplay/SKETCH_S5C_PLAN.md), prompt in [NEXT_SESSION](planning/NEXT_SESSION.md)). Next: S5C on its own request.
 

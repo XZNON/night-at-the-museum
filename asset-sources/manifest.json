@@ -2492,6 +2492,730 @@
         "referencesApproved": true,
         "evidence": "S5C: inspected in the museum frame, the inspection and the ending at 1280x720 and 960x540 in production Chromium runs (docs/validation/sketch-s5/s5c). Output approval remains distinct from user-approved references."
       }
+    },
+    {
+      "id": "sketch.plank",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.pendulum-plank.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/pendulum-plank-v1.png",
+      "runtimePath": "public/assets/sketch/plank.png",
+      "preparedPixelSize": {
+        "width": 512,
+        "height": 71
+      },
+      "cropBox": [
+        250,
+        1172,
+        1795,
+        1392
+      ],
+      "preparationNotes": "Layer 1 pendulum plank only; rod, cap and rod hole painted out from neighbouring plank columns. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "58262f1f0b513b272a1b41daa7cf08b7e2afb317233c5a0be4061cc189c99706"
+    },
+    {
+      "id": "sketch.board",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.moving-board.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/moving-board-v1.png",
+      "runtimePath": "public/assets/sketch/board.png",
+      "preparedPixelSize": {
+        "width": 512,
+        "height": 102
+      },
+      "cropBox": [
+        660,
+        540,
+        1950,
+        820
+      ],
+      "preparationNotes": "Layer 2 moving board; wider opening drops a stray construction stroke. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "ee2d1bea4a5d6e0fde3a5ee7191712e3889d8891543ab6b5b560a99b76408a86"
+    },
+    {
+      "id": "sketch.ruler",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.climb-board.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/climb-board-v1.png",
+      "runtimePath": "public/assets/sketch/ruler.png",
+      "preparedPixelSize": {
+        "width": 149,
+        "height": 512
+      },
+      "cropBox": [
+        820,
+        320,
+        1230,
+        1690
+      ],
+      "preparationNotes": "Upright ruler block for the Layer 3 walls. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "db422147f15daa5aea4d2dcf2ffa1cbea557bc468b0e2c13dfd91c16ac6f20d5"
+    },
+    {
+      "id": "sketch.ground-top",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.ground.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/ground-v1.png",
+      "runtimePath": "public/assets/sketch/ground-top.png",
+      "preparedPixelSize": {
+        "width": 512,
+        "height": 25
+      },
+      "cropBox": [
+        470,
+        680,
+        2100,
+        766
+      ],
+      "preparationNotes": "Workbench top board only; the inset apron is replaced by a flat body drawn in code so ground tiles straight. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "6ccf8dda0d0a80286fb6b5450be4e07fb91acff20d697cd69d1a3aab1c9776c1"
+    },
+    {
+      "id": "sketch.axe-bolt",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.axe.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/axe-v1.png",
+      "runtimePath": "public/assets/sketch/axe-bolt.png",
+      "preparedPixelSize": {
+        "width": 256,
+        "height": 113
+      },
+      "cropBox": [
+        780,
+        120,
+        1260,
+        325
+      ],
+      "preparationNotes": "Pivot bolt and bracket bar. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "d95f97f0a30edb893e6a93b9f24e10c2336abefda7297b798dfafc88b0c36e8f"
+    },
+    {
+      "id": "sketch.axe-handle",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.axe.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/axe-v1.png",
+      "runtimePath": "public/assets/sketch/axe-handle.png",
+      "preparedPixelSize": {
+        "width": 106,
+        "height": 512
+      },
+      "cropBox": [
+        860,
+        300,
+        1100,
+        1440
+      ],
+      "preparationNotes": "Handle rod between bolt and head. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "77bff9f17aa311073613a6fe05ebd148a618601740e46cc7c6829982536a843d"
+    },
+    {
+      "id": "sketch.axe-head",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.axe.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/axe-v1.png",
+      "runtimePath": "public/assets/sketch/axe-head.png",
+      "preparedPixelSize": {
+        "width": 512,
+        "height": 325
+      },
+      "cropBox": [
+        968,
+        1425,
+        1312,
+        1860
+      ],
+      "preparationNotes": "Double-bit head: the right half of the hatchet head mirrored about the handle centre. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "af72714771efa8b409a7e62e8cf70bdcf7daec1623badc3134466c092baf9b24"
+    },
+    {
+      "id": "sketch.lift-deck",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.lift.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/lift-v1.png",
+      "runtimePath": "public/assets/sketch/lift-deck.png",
+      "preparedPixelSize": {
+        "width": 512,
+        "height": 137
+      },
+      "cropBox": [
+        300,
+        600,
+        1080,
+        1250
+      ],
+      "preparationNotes": "Hazard-striped deck with its amber lamp. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "8657082675e2d2ff3f81d41556eb76a95f91ee1aca6bf54ad2b0e4bf11f6f845"
+    },
+    {
+      "id": "sketch.lift-piston",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.lift.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/lift-v1.png",
+      "runtimePath": "public/assets/sketch/lift-piston.png",
+      "preparedPixelSize": {
+        "width": 93,
+        "height": 512
+      },
+      "cropBox": [
+        1440,
+        160,
+        1660,
+        1250
+      ],
+      "preparationNotes": "Chrome piston; the scene stretches its plain middle with the rise. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "99539f7bc9d86d3417650dde8c60ef3854d1f6d302904e0814056618231348dd"
+    },
+    {
+      "id": "sketch.lift-pump",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.lift.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/lift-v1.png",
+      "runtimePath": "public/assets/sketch/lift-pump.png",
+      "preparedPixelSize": {
+        "width": 256,
+        "height": 189
+      },
+      "cropBox": [
+        1860,
+        700,
+        2310,
+        1250
+      ],
+      "preparationNotes": "Pump housing with hose and gauge; scenery beside the piston base. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "5bcc52d904305b7dce23f58d1ff8780b5b41355a617082e38d7ad707b554fed5"
+    },
+    {
+      "id": "sketch.yardstick",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.nailable-strip.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/nailable-strip-v1.png",
+      "runtimePath": "public/assets/sketch/yardstick.png",
+      "preparedPixelSize": {
+        "width": 512,
+        "height": 61
+      },
+      "cropBox": [
+        240,
+        1060,
+        2370,
+        1200
+      ],
+      "preparationNotes": "Yardstick strip F. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "364bdc499281d7e0c25f3160613eee6834d850e887521e5547d139b56247185d"
+    },
+    {
+      "id": "sketch.dowel",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.nailable-strip.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/nailable-strip-v1.png",
+      "runtimePath": "public/assets/sketch/dowel.png",
+      "preparedPixelSize": {
+        "width": 512,
+        "height": 44
+      },
+      "cropBox": [
+        900,
+        822,
+        1690,
+        895
+      ],
+      "preparationNotes": "Dowel bar for moving bars M1/M2 (hanger loops cropped off). Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "cbcb7ce68f0e44a7bde0fa10ce19e9ed0be3ff279024528f892d9e9a2b858bc6"
+    },
+    {
+      "id": "sketch.trolley",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.nailable-strip.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/nailable-strip-v1.png",
+      "runtimePath": "public/assets/sketch/trolley.png",
+      "preparedPixelSize": {
+        "width": 256,
+        "height": 190
+      },
+      "cropBox": [
+        1170,
+        244,
+        1435,
+        445
+      ],
+      "preparationNotes": "Wheel trolley with the rail section it rides on. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "41d7c029c4b223c6567abf708e95c78e60487998665841c7f53184d721f964ae"
+    },
+    {
+      "id": "sketch.rail",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.nailable-strip.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/nailable-strip-v1.png",
+      "runtimePath": "public/assets/sketch/rail.png",
+      "preparedPixelSize": {
+        "width": 512,
+        "height": 16
+      },
+      "cropBox": [
+        250,
+        304,
+        2356,
+        360
+      ],
+      "preparationNotes": "Ceiling rail with the trolley section removed, so it stretches cleanly. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "51fba71a1aa58b468410fb194557e91ff3a8b5a16c9d9cb9b24d98ac79eac83d"
+    },
+    {
+      "id": "sketch.glue-bottle",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.glue.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/glue-v1.png",
+      "runtimePath": "public/assets/sketch/glue-bottle.png",
+      "preparedPixelSize": {
+        "width": 512,
+        "height": 304
+      },
+      "cropBox": [
+        160,
+        470,
+        1140,
+        1060
+      ],
+      "preparationNotes": "Tipped glue bottle and spill; scenery at the pool edge. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "becf1912f9f6c9799b86a041485e03fd348cb15d9ea6bbbb2f9725c6dad48736"
+    },
+    {
+      "id": "sketch.glue-top",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.glue.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/glue-v1.png",
+      "runtimePath": "public/assets/sketch/glue-top.png",
+      "preparedPixelSize": {
+        "width": 768,
+        "height": 189
+      },
+      "cropBox": [
+        1275,
+        566,
+        2365,
+        800
+      ],
+      "preparationNotes": "Seamless tile of the pool surface and drips; the body below is a flat glue fill drawn in code. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "c11a0d00ecd1e14d4ce2f3f39336a5e21476d65de17ead105649f3379e86be88"
+    },
+    {
+      "id": "sketch.nail-head",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.nail.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/nail-v1.png",
+      "runtimePath": "public/assets/sketch/nail-head.png",
+      "preparedPixelSize": {
+        "width": 256,
+        "height": 252
+      },
+      "cropBox": [
+        1390,
+        450,
+        2010,
+        1030
+      ],
+      "preparationNotes": "Head-on nail head for pins driven into the picture. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "b14baa9419c632ee8e131027713c558eb39fdf1821f5bd1d69073a0c3f9becc6"
+    },
+    {
+      "id": "sketch.nail-cap",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.nail.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/nail-v1.png",
+      "runtimePath": "public/assets/sketch/nail-cap.png",
+      "preparedPixelSize": {
+        "width": 256,
+        "height": 92
+      },
+      "cropBox": [
+        585,
+        280,
+        1065,
+        446
+      ],
+      "preparationNotes": "Side-view head: the standing top of a foothold nail. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "dcd96b1a234cb954b75ea41eead155c2026ec70537fe98d3734c91aa0b984a87"
+    },
+    {
+      "id": "sketch.nail-shaft",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.nail.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/nail-v1.png",
+      "runtimePath": "public/assets/sketch/nail-shaft.png",
+      "preparedPixelSize": {
+        "width": 97,
+        "height": 256
+      },
+      "cropBox": [
+        680,
+        446,
+        970,
+        1215
+      ],
+      "preparationNotes": "Side-view shaft and tip below the head. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "437dca50aeb7ea0ebc4accfd5fdb43949c809acbdfdd7ca8c3d3ab0d3f04d946"
+    },
+    {
+      "id": "sketch.nail-side",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.nail.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/nail-v1.png",
+      "runtimePath": "public/assets/sketch/nail-side.png",
+      "preparedPixelSize": {
+        "width": 127,
+        "height": 256
+      },
+      "cropBox": [
+        585,
+        280,
+        1065,
+        1215
+      ],
+      "preparationNotes": "Whole side-view nail for swing sockets. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "1e1a09a00707b886e10c2dd8e7e835cb591653524a03c2b0854cb8fbb974a65b"
+    },
+    {
+      "id": "sketch.nail-pickup",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.nail-pickup.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/nail-pickup-v1.png",
+      "runtimePath": "public/assets/sketch/nail-pickup.png",
+      "preparedPixelSize": {
+        "width": 211,
+        "height": 256
+      },
+      "cropBox": null,
+      "preparationNotes": "Third-nail pickup with sparkles and halo ring. Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "6228c015f31f6293601b74ec14269fc255b9e9d2ca3da1e87cc0f39e442112ee"
+    },
+    {
+      "id": "sketch.decor-tin",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.decor.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/decor-v1.png",
+      "runtimePath": "public/assets/sketch/decor-tin.png",
+      "preparedPixelSize": {
+        "width": 256,
+        "height": 251
+      },
+      "cropBox": [
+        200,
+        220,
+        790,
+        630
+      ],
+      "preparationNotes": "Background toolbox prop (tin). Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "d59f070ea729a56e299b7bbc84d146f4d8be0a1d1687b6c89db45517277b2492"
+    },
+    {
+      "id": "sketch.decor-pencil",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.decor.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/decor-v1.png",
+      "runtimePath": "public/assets/sketch/decor-pencil.png",
+      "preparedPixelSize": {
+        "width": 256,
+        "height": 145
+      },
+      "cropBox": [
+        960,
+        220,
+        1560,
+        630
+      ],
+      "preparationNotes": "Background toolbox prop (pencil). Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "55183cc1d63c480eff3bbdf63ed35c24f0cbfcfb553d955238528bd46eb1c62f"
+    },
+    {
+      "id": "sketch.decor-screwdriver",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.decor.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/decor-v1.png",
+      "runtimePath": "public/assets/sketch/decor-screwdriver.png",
+      "preparedPixelSize": {
+        "width": 256,
+        "height": 165
+      },
+      "cropBox": [
+        1740,
+        220,
+        2350,
+        630
+      ],
+      "preparationNotes": "Background toolbox prop (screwdriver). Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "c68a0b213bdedf9bf0792f886037c28a7f98ff0604022465f6590f6d0bddd852"
+    },
+    {
+      "id": "sketch.decor-spanner",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.decor.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/decor-v1.png",
+      "runtimePath": "public/assets/sketch/decor-spanner.png",
+      "preparedPixelSize": {
+        "width": 256,
+        "height": 163
+      },
+      "cropBox": [
+        200,
+        800,
+        790,
+        1240
+      ],
+      "preparationNotes": "Background toolbox prop (spanner). Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "d5fde6977f41aa9c12196a78280a8479c5e631882ca7bd168f163752e1b606e1"
+    },
+    {
+      "id": "sketch.decor-tape",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.decor.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/decor-v1.png",
+      "runtimePath": "public/assets/sketch/decor-tape.png",
+      "preparedPixelSize": {
+        "width": 223,
+        "height": 256
+      },
+      "cropBox": [
+        960,
+        800,
+        1560,
+        1240
+      ],
+      "preparationNotes": "Background toolbox prop (tape). Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "8d59201a43efd77898fb29b7c011539e6306234ce1c0385cc6e71b1e4b1bba6c"
+    },
+    {
+      "id": "sketch.decor-screws",
+      "world": "unfinished-sketch",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "sketch.decor.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/sketch/decor-v1.png",
+      "runtimePath": "public/assets/sketch/decor-screws.png",
+      "preparedPixelSize": {
+        "width": 256,
+        "height": 183
+      },
+      "cropBox": [
+        1740,
+        800,
+        2350,
+        1240
+      ],
+      "preparationNotes": "Background toolbox prop (screws). Local script scripts/prepare-sketch-skins.py, no generation.",
+      "runtimeSha256": "521351124dbf6b1633f5c4a90276f80eef70f653567fa591cb147ce8e192f3e4"
     }
   ],
   "balanceAfterReferences": {

@@ -13,6 +13,12 @@ diner portrait. Runtime images are locally cropped/resized from these sheets.
 Collision geometry, landing edges, motion, flame/attention cues and gameplay
 remain authored code, independent of generated image pixels.
 
+Unfinished Sketch: the toolbox mechanisms, ground, glue, lifts, nails, pickup
+and background tools (assets/sketch/) are cut locally from user-approved
+DreamLayer reference sheets by scripts/prepare-sketch-skins.py, with no further
+generation. Their sizes come from the level data; collision, hazards and
+gameplay cues remain authored code.
+
 Detailed sources, prompts, hashes and provider-specific cost evidence are in the
 repository's asset-sources/manifest.json. Known delivered DreamLayer usage is
 seven reference plus three production credits. Failed-job costs remain unknown;

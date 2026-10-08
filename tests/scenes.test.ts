@@ -4,10 +4,10 @@ import { SceneManager } from '../src/core/scenes';
 import type { GameScene } from '../src/core/scenes';
 
 const fakeScene = (id: string): GameScene => ({
-  id, world: {} as Scene, camera: {} as Camera, enter: vi.fn(), exit: vi.fn(),
+  id, world: { traverse: vi.fn() } as unknown as Scene, camera: {} as Camera, enter: vi.fn(), exit: vi.fn(),
   dispose: vi.fn(), resize: vi.fn(), fixedUpdate: vi.fn(), render: vi.fn(),
 });
-const createManager = () => new SceneManager({ setSize: vi.fn(), clear: vi.fn(), render: vi.fn() } as unknown as WebGLRenderer, vi.fn());
+const createManager = () => new SceneManager({ setSize: vi.fn(), clear: vi.fn(), render: vi.fn(), compile: vi.fn(), initTexture: vi.fn() } as unknown as WebGLRenderer, vi.fn());
 
 describe('serialized scene lifecycle', () => {
   it('keeps loading serialized and discards a scene delivered after teardown', async () => {

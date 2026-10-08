@@ -1,4 +1,4 @@
-import type { Camera, Scene, WebGLRenderer } from 'three';
+import type { Camera, Mesh, MeshBasicMaterial, Object3D, Scene, Texture, WebGLRenderer } from 'three';
 import type { Controls } from '../gameplay/controller';
 
 export const TRANSITION_INPUT_SETTLE_MS = 250;
@@ -36,6 +36,7 @@ export class SceneManager {
       if (this.disposed) { next?.dispose(); next = null; return false; }
       next?.resize(this.width, this.height);
       next?.enter();
+      if (next) this.prewarm(next);
       this.active?.exit();
       this.active?.dispose();
       this.active = next;
@@ -44,6 +45,26 @@ export class SceneManager {
       next?.dispose();
       throw error;
     } finally { this.clearInput(); this.transitioning = false; }
+  }
+  /**
+   * Compile every material and upload every texture while the transition is
+   * still on screen, hidden objects included (`compile` alone skips them), so
+   * the first pin, nail or pickup never stalls a frame mid-play.
+   */
+  private prewarm(scene: GameScene): void {
+    const hidden: Object3D[] = [];
+    scene.world.traverse(object => { if (!object.visible) { hidden.push(object); object.visible = true; } });
+    try {
+      this.renderer.compile(scene.world, scene.camera);
+      const seen = new Set<Texture>();
+      scene.world.traverse(object => {
+        const material = (object as Mesh).material;
+        for (const m of Array.isArray(material) ? material : material ? [material] : []) {
+          const map = (m as MeshBasicMaterial).map;
+          if (map && !seen.has(map)) { seen.add(map); this.renderer.initTexture(map); }
+        }
+      });
+    } finally { for (const object of hidden) object.visible = false; }
   }
   resize(width: number, height: number): void {
     this.width = width; this.height = height;

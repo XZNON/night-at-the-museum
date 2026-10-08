@@ -23,7 +23,7 @@ import { MuseumScene, type MuseumArtState } from './scenes/museum';
 import { GameUi } from './ui/game-ui';
 import { GameAudio } from './core/audio';
 import { loadArtSet } from './assets/images';
-import { supperArtIds, museumArtIds } from './assets/manifest';
+import { supperArtIds, museumArtIds, sketchArtIds } from './assets/manifest';
 
 const root = document.querySelector<HTMLElement>('#app')!;
 const parameters = new URLSearchParams(location.search);
@@ -215,12 +215,12 @@ async function startSupper(restart: boolean, preserveLane = false): Promise<void
 /** One Sketch scene with the shared heroine poses; studies and the campaign differ only in mode and callbacks. */
 async function createSketchScene(mode: SketchSceneMode, onExit: (snapshot: SketchSession | SketchRouteSession) => void,
   onLightClaimed: () => void): Promise<UnfinishedSketchScene> {
-  // The game-wide heroine poses are reused. Sketch props are cartoon
-  // placeholders; no new asset is generated or loaded here.
-  const art = await loadArtSet(['player.idle', 'player.walk-a', 'player.walk-b', 'player.jump']);
+  // The game-wide heroine poses plus the Sketch skins cut from the approved
+  // references; nothing is generated here.
+  const art = await loadArtSet(sketchArtIds);
   const scene = new UnfinishedSketchScene(mode, sketchTuning, art['player.idle']!, state => ui.updateSketchHud(state),
     onExit, ui.canvas, () => input.clear(), onLightClaimed,
-    { 'walk-a': art['player.walk-a'], 'walk-b': art['player.walk-b'], jump: art['player.jump'] });
+    { 'walk-a': art['player.walk-a'], 'walk-b': art['player.walk-b'], jump: art['player.jump'] }, art);
   scene.attachPointer(ui.canvas);
   scene.setReducedMotion(reducedMotion);
   scene.debug.visible = debugEnabled;
@@ -417,6 +417,7 @@ if (import.meta.env.DEV) {
         onDeck: sketch.routeModel?.onLiftDeck() ?? null,
         ride: sketch.routeModel?.rideElapsed ?? null,
         camera: sketch.cameraView(),
+        drawn: sketch.drawnMechanisms(),
         nails: sketch.model.placedCount, available: sketch.model.availableNails,
         budget: sketch.model.nailBudget, pickup: sketch.model.pickupCollected,
         pickupOffered: !!sketch.model.nailPickup, reach: sketch.model.placementReach, freePlacement: sketch.model.freePlacement,

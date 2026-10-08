@@ -8,21 +8,28 @@ import type {
   SketchBay, SketchGuide, SketchLift, SketchMechanism, SketchPlayfieldData, SketchRoute, SketchTuning,
 } from '../levels/unfinished-sketch';
 import { LIFT_WALL_HEIGHT, LIFT_WALL_THICKNESS } from '../levels/unfinished-sketch';
+import type { ArtId } from '../assets/manifest';
+import { sketchDecor, sketchSkin, sketchSkinPalette as P, sketchSkinSize as S } from '../assets/sketch-skins';
 
-// Fully cartoon placeholder presentation: flat colour areas, simple cel-style
-// shading and bold outlines. No asset is generated or loaded here beyond the
-// approved existing player picture, which stays readable in silhouette.
+// Fully cartoon presentation: flat colour areas, simple cel-style shading and
+// bold outlines. Mechanisms, ground, glue, lifts and nails wear skins cut from
+// the approved references when they are loaded; every skin is sized from the
+// collider, and a missing one falls back to the code-drawn placeholder.
+// Gameplay-state cues (dashed outlines, rings, ghosts, lamps) stay in code.
 
 // Sketch is its own world and must not share the banquet's moody palette.
 const C = {
-  sky: 0x9ad7f0, cloud: 0xf2fbff, paper: 0xf6efdc, ink: 0x2b2440,
+  sky: 0x5bb8f0, cloud: 0xf2fbff, paper: 0xf6efdc, ink: 0x2b2440,
   ground: 0xc98a52, groundTop: 0xe8b06a, glue: 0x6fd4bd,
   wall: 0xa9a0c4, wallTop: 0xc4bcd8,
   goal: 0xffd86b, goalDone: 0x8ef0a8, board: 0xf4b9c6, boardEdge: 0xffffff,
   axe: 0xe0576b, handle: 0x9a7550, socket: 0xa88fd8, site: 0xc6bce0,
   nailShaft: 0xe6dfcc, nailHead: 0xf6c445, nailCap: 0xf25f5c, hand: 0xffe27a,
-  // Route-only cartoon palette.
-  rowA: 0xfbe6bb, rowB: 0xd7e9fb, rowC: 0xf7d8e6,
+  // Route-only cartoon palette: saturated bands so the picture pops (user
+  // review 2026-10-08), each chosen to contrast its layer's mechanisms
+  // (honey planks on violet, pink boards and red axes on mint, yellow
+  // rulers and green glue on pink). The final backdrop replaces them later.
+  rowA: 0xb69cff, rowB: 0x8fe3b0, rowC: 0xff9fca,
   guide: 0xb9aed6, guideEdge: 0x8d80b5, guideGlue: 0x9fd8cd,
   lift: 0x8f9fd6, liftTop: 0xfff0c2, rail: 0x6f7bb0, cab: 0x5a7fd6,
   suspension: 0x8b7cae, bracket: 0x6d5f96,
@@ -87,7 +94,9 @@ export class UnfinishedSketchScene implements GameScene {
   private torchLight: THREE.Group | null = null;
   private sparkles: THREE.Group | null = null;
   /** S4L lifts: the moving deck, its lamp and the faint cab outline. */
-  private readonly lifts = new Map<string, { deck: THREE.Group; lamp: THREE.MeshBasicMaterial; cab: THREE.Group; cue: THREE.Group; was: string; flashUntil: number }>();
+  private readonly lifts = new Map<string, { deck: THREE.Group; lamp: THREE.MeshBasicMaterial; cab: THREE.Group; cue: THREE.Group; was: string; flashUntil: number;
+    /** Skinned lifts only: the piston shaft stretched from its base to the deck. */
+    piston?: { shaft: THREE.Mesh; base: number } }>();
   private readonly scratchFocus = new THREE.Vector3();
   private hovered: string | null = null;
   /** S4B: last cursor position, re-projected each frame because bars move. */
@@ -98,6 +107,14 @@ export class UnfinishedSketchScene implements GameScene {
   private airMark: THREE.Group | null = null;
   /** Placed free nails, drawn from a small pool per surface kind. */
   private readonly freeHeads: { kind: string; rig: THREE.Group }[] = [];
+  /**
+   * Poses at the start of the latest fixed step. Moving parts are drawn
+   * between that pose and the current one with the loop's alpha, like the
+   * player and camera, so mechanisms never judder when a display frame sees
+   * zero or two simulation steps.
+   */
+  private readonly before = new Map<string, { x: number; y: number; angle: number }>();
+  private alpha = 1;
   private elapsed = 0;
   private interactive = false;
   private interactFrom = 0;
@@ -113,7 +130,9 @@ export class UnfinishedSketchScene implements GameScene {
     /** S5A: told once when the light is claimed. The owner decides what it means. */
     private readonly onLightClaimed: () => void = () => {},
     /** Optional walk/jump pictures; a missing pose falls back to the idle picture. */
-    playerPoses: Partial<Record<Exclude<PlayerPose, 'idle'>, HTMLImageElement>> = {}) {
+    playerPoses: Partial<Record<Exclude<PlayerPose, 'idle'>, HTMLImageElement>> = {},
+    /** Optional Sketch skins; each missing one keeps its code placeholder. */
+    private readonly art: Partial<Record<ArtId, HTMLImageElement>> = {}) {
     this.field = mode.field;
     this.model = mode.kind === 'bay'
       ? new SketchModel(mode.field, tuning)
@@ -184,6 +203,84 @@ export class UnfinishedSketchScene implements GameScene {
     mesh.position.set(rect.x + rect.width / 2, rect.y + rect.height / 2, z);
   }
 
+  /**
+   * A tight ink border for a skinned block: a dark plate a hair larger than
+   * the body, just behind its front face. The scaled edge outline of `slab`
+   * overhangs long blocks, which a skin's own ink line makes redundant.
+   */
+  private inkBacking(body: THREE.Mesh, width: number, height: number): void {
+    const plate = this.slab(width + 0.1, height + 0.06, 1.9, C.ink, body, 1, false);
+    plate.position.z = -0.08;
+  }
+
+  // --- skins ----------------------------------------------------------------
+  private readonly textures = new Map<ArtId, THREE.Texture>();
+  private texture(id: ArtId): THREE.Texture | null {
+    let texture = this.textures.get(id);
+    if (!texture) {
+      const image = this.art[id];
+      if (!image) return null;
+      texture = new THREE.Texture(image); texture.colorSpace = THREE.SRGBColorSpace; texture.needsUpdate = true;
+      this.textures.set(id, texture); this.resources.add(texture);
+    }
+    return texture;
+  }
+  private has(id: ArtId): boolean { return !!this.art[id]; }
+  /** Natural width/height ratio of a skin. */
+  private aspectOf(id: ArtId): number {
+    const image = this.art[id];
+    return image ? image.width / Math.max(1, image.height) : 1;
+  }
+  private skinMaterial(id: ArtId, opacity = 1): THREE.MeshBasicMaterial {
+    const material = new THREE.MeshBasicMaterial({ map: this.texture(id), transparent: true, opacity, alphaTest: 0.03 });
+    this.resources.add(material); return material;
+  }
+
+  /**
+   * A skin plane of exactly width x height. With `slice`, the two end caps keep
+   * the picture's own proportions along that axis and only the plain middle
+   * stretches, so a board of any length keeps its rounded, inked ends.
+   */
+  private skin(id: ArtId, width: number, height: number, parent: THREE.Object3D,
+    slice: 'x' | 'y' | null = null, opacity = 1, uv: [number, number, number, number] = [0, 0, 1, 1]): THREE.Mesh {
+    const cap = 0.22;
+    const along = slice === 'y' ? height : width;
+    const across = slice === 'y' ? width : height;
+    const imageRatio = slice === 'y' ? 1 / this.aspectOf(id) : this.aspectOf(id);
+    const naturalCap = cap * imageRatio * across;
+    const capWorld = slice ? Math.min(along * 0.35, naturalCap) : 0;
+    // Short spans take narrower slices (the outer end of each cap, the centre
+    // of the middle) instead of squeezing them, which would make the GPU pick
+    // a blurry mip. Long spans stretch only the plain middle.
+    const capU = cap * Math.min(1, capWorld / Math.max(1e-6, naturalCap));
+    const middle = Math.max(0, along - 2 * capWorld);
+    const half = (0.5 - cap) * Math.min(1, middle / Math.max(1e-6, (1 - 2 * cap) * imageRatio * across));
+    const stops = slice
+      ? [[-along / 2, 0], [-along / 2 + capWorld, capU], [-along / 2 + capWorld, 0.5 - half],
+        [along / 2 - capWorld, 0.5 + half], [along / 2 - capWorld, 1 - capU], [along / 2, 1]]
+      : [[-along / 2, 0], [along / 2, 1]];
+    const positions: number[] = []; const uvs: number[] = []; const index: number[] = [];
+    const [u0, v0, u1, v1] = uv;
+    for (const [s, t] of stops) {
+      for (const side of [-1, 1]) {
+        const a = side * across / 2; const b = side < 0 ? 0 : 1;
+        if (slice === 'y') { positions.push(a, s, 0); uvs.push(u0 + (u1 - u0) * b, v0 + (v1 - v0) * t); }
+        else { positions.push(s, a, 0); uvs.push(u0 + (u1 - u0) * t, v0 + (v1 - v0) * b); }
+      }
+    }
+    for (let i = 0; i < stops.length - 1; i++) {
+      const k = i * 2;
+      if (slice === 'y') index.push(k, k + 1, k + 2, k + 1, k + 3, k + 2);
+      else index.push(k, k + 2, k + 1, k + 1, k + 2, k + 3);
+    }
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+    geometry.setIndex(index); this.resources.add(geometry);
+    const mesh = new THREE.Mesh(geometry, this.skinMaterial(id, opacity));
+    parent.add(mesh); return mesh;
+  }
+
   // --- connected stacked world -------------------------------------------
   /**
    * Three vertically stacked layer bands in one scene and canvas. They are
@@ -204,7 +301,7 @@ export class UnfinishedSketchScene implements GameScene {
     // A soft haze between rows stops the pale paper of one layer bleeding into
     // the next, which is what made the stacks read as separate screens.
     for (const region of route.layers.slice(1)) {
-      const haze = this.slab(region.bounds.width + 8, 1.1, 1, 0xb7c6d8, this.world, 0.5, false);
+      const haze = this.slab(region.bounds.width + 8, 0.6, 1, C.ink, this.world, 0.18, false);
       haze.position.set(region.bounds.x + region.bounds.width / 2, region.bounds.y + 0.1, -6.2);
     }
   }
@@ -230,6 +327,22 @@ export class UnfinishedSketchScene implements GameScene {
    * as depth and never as a landing surface.
    */
   private backdropProps(bounds: Rect, layer: 1 | 2 | 3): void {
+    if (sketchDecor.every(id => this.has(id))) {
+      // Toolbox props from the approved decor sheet, washed out far behind
+      // the play plane and kept inside their own row.
+      for (let i = 0; i < 6; i++) {
+        const id = sketchDecor[(i + layer * 2) % sketchDecor.length];
+        const width = S.decor.width * (0.8 + ((i + layer) % 3) * 0.15);
+        const height = width / this.aspectOf(id);
+        const x = bounds.x + 3 + i * ((bounds.width - 6) / 5);
+        const y = bounds.y + 0.6 + height / 2 + ((i * 5 + layer * 2) % 5) * Math.min(1.2, Math.max(0.4, bounds.height / 8));
+        const prop = this.skin(id, width, height, this.world, null, S.decor.opacity);
+        prop.position.set(x, Math.min(y, bounds.y + bounds.height - height / 2 - 0.4), -4.6);
+        prop.rotation.z = (i % 2 === 0 ? 1 : -1) * (0.06 + i * 0.03);
+        (prop.material as THREE.MeshBasicMaterial).depthWrite = false;
+      }
+      return;
+    }
     const kinds = ['eraser', 'pencil', 'pot', 'scrap'] as const;
     const tints = [0xe9d7ef, 0xf6e6bd, 0xd3e9ef, 0xf1d7d2];
     for (let i = 0; i < 6; i++) {
@@ -317,16 +430,42 @@ export class UnfinishedSketchScene implements GameScene {
     for (const s of this.field.solids) {
       // Bay bounds read as scenery walls so they never compete with platforms.
       const wall = /left|right|bound/.test(s.id);
-      const mesh = this.slab(s.width, s.height, 2, wall ? C.wall : C.ground);
+      const bench = !wall && this.has(sketchSkin.groundTop);
+      const mesh = this.slab(s.width, s.height, 2, wall ? C.wall : bench ? P.groundBody : C.ground, this.world, 1, !bench);
       this.center(mesh, s);
+      if (bench) {
+        this.inkBacking(mesh, s.width, s.height);
+        // Workbench top board on the exact landing edge; the flat body below
+        // continues its apron colour so blocks of any height tile straight.
+        const top = this.skin(sketchSkin.groundTop, s.width + 0.12, Math.min(S.groundTop, s.height), mesh, 'x');
+        top.position.set(0, s.height / 2 - Math.min(S.groundTop, s.height) / 2, 1.05);
+        continue;
+      }
       const lip = new THREE.Mesh(new THREE.BoxGeometry(s.width, 0.2, 2.2), this.flat(wall ? C.wallTop : C.groundTop));
       this.resources.add(lip.geometry);
       lip.position.set(0, s.height / 2, 0.08);
       mesh.add(lip);
     }
     for (const h of this.field.hazards) {
-      const mesh = this.slab(h.width, h.height, 2, C.glue);
+      const glueArt = this.texture(sketchSkin.glueTop);
+      const mesh = this.slab(h.width, h.height, 2, glueArt ? P.glueBody : C.glue, this.world, 1, !glueArt);
       this.center(mesh, h, 0.2);
+      if (glueArt) {
+        this.inkBacking(mesh, h.width, h.height);
+        // The pool's dripping surface, tiled along its whole width.
+        glueArt.wrapS = THREE.RepeatWrapping;
+        const tile = S.glueBand * this.aspectOf(sketchSkin.glueTop);
+        const band = this.skin(sketchSkin.glueTop, h.width, S.glueBand, mesh, null, 1, [0, 0, h.width / tile, 1]);
+        band.position.set(0, h.height / 2 + S.glueRise - S.glueBand / 2, 1.05);
+        if (h.width >= S.glueBottle.minPool && this.has(sketchSkin.glueBottle)) {
+          // The tipped bottle at the far end, pouring back into the pool.
+          const w = S.glueBottle.width; const bh = w / this.aspectOf(sketchSkin.glueBottle);
+          const bottle = this.skin(sketchSkin.glueBottle, w, bh, this.world);
+          bottle.position.set(h.x + h.width - w / 2 + 0.2, h.y + h.height + bh / 2 - 0.35, -0.8);
+          bottle.scale.x = -1;
+        }
+        continue;
+      }
       for (let i = 0; i < Math.max(3, Math.floor(h.width / 2.2)); i++) {
         const bubble = new THREE.Mesh(new THREE.SphereGeometry(0.24, 8, 6), this.flat(0xc8f6ea));
         this.resources.add(bubble.geometry);
@@ -346,12 +485,15 @@ export class UnfinishedSketchScene implements GameScene {
       const rig = new THREE.Group(); this.world.add(rig); this.rigs.set(m.id, rig);
       // Nailable wood is drawn by buildSurfaces on this same moving rig.
       if (surfaceParents.has(m.id)) continue;
+      const axeArt = this.has(sketchSkin.axeHead) && this.has(sketchSkin.axeHandle) && this.has(sketchSkin.axeBolt);
       if (m.kind === 'axe') {
         if (m.sweptBlade) {
           const mount = new THREE.Group(); mount.position.set(m.pivot.x, m.pivot.y, -0.6); this.world.add(mount);
-          const cap = new THREE.Mesh(new THREE.SphereGeometry(0.38, 16, 12), this.flat(C.bracket));
-          this.resources.add(cap.geometry); mount.add(cap);
-          const post = this.slab(0.28, 2.2, 0.55, C.handle, mount); post.position.y = 1.1;
+          if (!axeArt) {
+            const cap = new THREE.Mesh(new THREE.SphereGeometry(0.38, 16, 12), this.flat(C.bracket));
+            this.resources.add(cap.geometry); mount.add(cap);
+          }
+          const post = this.slab(0.28, 2.2, 0.55, axeArt ? P.rod : C.handle, mount); post.position.y = 1.1;
           const points = Array.from({ length: 65 }, (_, i) => new THREE.Vector3(
             Math.cos(i * Math.PI / 32) * m.length, Math.sin(i * Math.PI / 32) * m.length, -0.15));
           const geometry = new THREE.BufferGeometry().setFromPoints(points);
@@ -359,9 +501,22 @@ export class UnfinishedSketchScene implements GameScene {
           this.resources.add(geometry); this.resources.add(material);
           const sweep = new THREE.Line(geometry, material); sweep.computeLineDistances(); mount.add(sweep);
         }
-        const blade = this.slab(m.length, m.size.height, 0.5, C.axe, rig); void blade;
-        const handle = this.slab(m.length, 0.32, 0.5, C.handle, rig);
-        handle.position.set(0, m.size.height * 0.6, 0);
+        if (axeArt) {
+          // The rig sits on the blade collider's centre; the pivot is half a
+          // length toward local +y. The double-bit head covers the blade
+          // rectangle, the handle runs to the pivot and the bolt caps it.
+          const radius = m.length / 2;
+          const handle = this.skin(sketchSkin.axeHandle, S.axeHandle, radius + 0.2, rig);
+          handle.position.set(0, radius / 2 + 0.1, 0.1);
+          const head = this.skin(sketchSkin.axeHead, m.length * S.axeHead.length, m.size.height * S.axeHead.thickness, rig, 'x');
+          head.position.z = 0.3;
+          const bolt = this.skin(sketchSkin.axeBolt, S.axeBolt, S.axeBolt / this.aspectOf(sketchSkin.axeBolt), rig);
+          bolt.position.set(0, radius, 0.4);
+        } else {
+          const blade = this.slab(m.length, m.size.height, 0.5, C.axe, rig); void blade;
+          const handle = this.slab(m.length, 0.32, 0.5, C.handle, rig);
+          handle.position.set(0, m.size.height * 0.6, 0);
+        }
       } else if (m.kind === 'mount') {
         const ring = this.disc(0.5, 0.17, 18, C.socket, rig);
         void ring;
@@ -371,11 +526,17 @@ export class UnfinishedSketchScene implements GameScene {
         this.slab(0.46, 0.46, 0.46, C.site, rig);
       } else {
         const solid = new THREE.Group(); rig.add(solid);
-        const board = this.slab(m.size.width, m.size.height, 1.4, C.board, solid);
-        const lip = new THREE.Mesh(new THREE.BoxGeometry(m.size.width, 0.24, 1.6), this.flat(C.boardEdge));
-        this.resources.add(lip.geometry);
-        lip.position.set(0, m.size.height / 2, 0.06);
-        board.add(lip);
+        // Tall climbable boards are rulers, pendulums planks, the rest boards.
+        const skinId = m.climbable ? sketchSkin.ruler : m.kind === 'pendulum' ? sketchSkin.plank : sketchSkin.board;
+        if (this.has(skinId)) {
+          this.skin(skinId, m.size.width, m.size.height, solid, m.climbable ? 'y' : 'x').position.z = 0.7;
+        } else {
+          const board = this.slab(m.size.width, m.size.height, 1.4, C.board, solid);
+          const lip = new THREE.Mesh(new THREE.BoxGeometry(m.size.width, 0.24, 1.6), this.flat(C.boardEdge));
+          this.resources.add(lip.geometry);
+          lip.position.set(0, m.size.height / 2, 0.06);
+          board.add(lip);
+        }
         if (m.solidWhenPinned) {
           const outline = new THREE.Group(); rig.add(outline);
           // An empty dashed volume, with no landing lip, distinguishes a
@@ -426,26 +587,46 @@ export class UnfinishedSketchScene implements GameScene {
       const length = Math.hypot(surface.to.x - surface.from.x, surface.to.y - surface.from.y);
       const angle = Math.atan2(surface.to.y - surface.from.y, surface.to.x - surface.from.x);
       const mid = { x: (surface.from.x + surface.to.x) / 2, y: (surface.from.y + surface.to.y) / 2 };
-      const plank = this.slab(length, 0.32, 0.7, C.wood, rig);
-      plank.position.set(mid.x, mid.y, -0.45); plank.rotation.z = angle;
-      const grains = Math.max(2, Math.round(length / 0.9));
-      for (let i = 1; i < grains; i++) {
-        const grain = this.slab(0.06, 0.2, 0.72, C.woodGrain, plank, 1, false);
-        grain.position.set(-length / 2 + i * (length / grains), 0, 0.02);
+      // Strip F is a yardstick and the moving bars are dowels.
+      const woodId = surface.kind === 'foothold' ? sketchSkin.yardstick : sketchSkin.dowel;
+      const woodArt = this.has(woodId);
+      if (woodArt) {
+        const wood = this.skin(woodId, length, 0.32, rig, 'x');
+        wood.position.set(mid.x, mid.y, -0.1); wood.rotation.z = angle;
+      } else {
+        const plank = this.slab(length, 0.32, 0.7, C.wood, rig);
+        plank.position.set(mid.x, mid.y, -0.45); plank.rotation.z = angle;
+        const grains = Math.max(2, Math.round(length / 0.9));
+        for (let i = 1; i < grains; i++) {
+          const grain = this.slab(0.06, 0.2, 0.72, C.woodGrain, plank, 1, false);
+          grain.position.set(-length / 2 + i * (length / grains), 0, 0.02);
+        }
       }
       if (surface.kind === 'moving-swing') {
         // Hangers to a ceiling trolley; the track spans the full travel.
+        const rise = 1.55;
         for (const end of [surface.from, surface.to]) {
-          const hanger = this.slab(0.12, 1.1, 0.12, C.suspension, rig);
-          hanger.position.set(end.x, end.y + 0.7, -0.6);
+          const hanger = this.slab(0.12, woodArt ? rise : 1.1, 0.12, woodArt ? P.hanger : C.suspension, rig);
+          hanger.position.set(end.x, end.y + (woodArt ? rise / 2 : 0.7), -0.6);
         }
-        const trolley = this.slab(Math.abs(surface.to.x - surface.from.x) + 0.6, 0.36, 0.5, C.track, rig);
-        trolley.position.set(mid.x, mid.y + 1.35, -0.6);
-        const y = m.centre.y + mid.y + 1.55;
+        const trolleyArt = woodArt && this.has(sketchSkin.trolley);
+        if (trolleyArt) {
+          // The wheel rides the track; the picture's rail line sits on it.
+          const trolley = this.skin(sketchSkin.trolley, S.trolley * this.aspectOf(sketchSkin.trolley), S.trolley, rig);
+          trolley.position.set(mid.x, mid.y + rise - S.trolley * 0.06, -0.5);
+        } else {
+          const trolley = this.slab(Math.abs(surface.to.x - surface.from.x) + 0.6, 0.36, 0.5, C.track, rig);
+          trolley.position.set(mid.x, mid.y + 1.35, -0.6);
+        }
+        const y = m.centre.y + mid.y + rise;
         const x0 = m.centre.x + Math.min(0, m.travel.x) + Math.min(surface.from.x, surface.to.x) - 0.5;
         const x1 = m.centre.x + Math.max(0, m.travel.x) + Math.max(surface.from.x, surface.to.x) + 0.5;
-        const track = this.slab(x1 - x0, 0.16, 0.4, C.track, this.world, 0.85, false);
-        track.position.set((x0 + x1) / 2, y, -0.7);
+        if (trolleyArt && this.has(sketchSkin.rail)) {
+          this.skin(sketchSkin.rail, x1 - x0, S.rail, this.world, 'x').position.set((x0 + x1) / 2, y, -0.7);
+        } else {
+          const track = this.slab(x1 - x0, 0.16, 0.4, C.track, this.world, 0.85, false);
+          track.position.set((x0 + x1) / 2, y, -0.7);
+        }
         for (const x of [x0, x1]) { const stop = this.slab(0.22, 0.6, 0.4, C.track, this.world, 0.85, false); stop.position.set(x, y, -0.7); }
       } else {
         // The strip is braced into the ledge edge it grows out of.
@@ -485,7 +666,7 @@ export class UnfinishedSketchScene implements GameScene {
   private buildSuspension(m: SketchMechanism): void {
     const bracket = this.slab(0.9, 0.5, 1.1, C.bracket, this.world);
     bracket.position.set(m.pivot.x, m.pivot.y + 0.35, -0.5);
-    const rod = this.slab(0.16, m.length, 0.16, C.suspension, this.world);
+    const rod = this.slab(0.16, m.length, 0.16, this.has(sketchSkin.plank) ? P.rod : C.suspension, this.world);
     rod.position.z = -0.4;
     this.rods.set(m.id, rod);
   }
@@ -493,6 +674,8 @@ export class UnfinishedSketchScene implements GameScene {
   private buildTargets(): void {
     for (const t of this.field.targets) {
       const ring = this.disc(0.56, 0.13, 20, KIND_COLORS[t.kind] ?? 0xffffff, this.world);
+      // A dark ink edge keeps the ring readable on any band colour.
+      this.disc(0.56, 0.21, 20, C.ink, ring).position.z = -0.3;
       this.rings.set(t.id, ring);
       const nail = this.nailRig(t.kind, t.size);
       this.world.add(nail);
@@ -509,6 +692,22 @@ export class UnfinishedSketchScene implements GameScene {
    */
   private nailRig(kind: string, size: { width: number; height: number }): THREE.Group {
     const rig = new THREE.Group();
+    if (kind === 'foothold' && this.footNail(rig, size, 1.4)) return rig;
+    if ((kind === 'fixed-swing' || kind === 'moving-swing') && this.has(sketchSkin.nailSide)) {
+      // Side view turned so the head is the grab point and the shaft runs
+      // into the socket bracket behind it.
+      const length = S.nailSide;
+      const nail = this.skin(sketchSkin.nailSide, length * this.aspectOf(sketchSkin.nailSide), length, rig);
+      nail.rotation.z = Math.PI / 2; nail.position.set(length / 2 - 0.2, 0, 0.1);
+      const bracket = this.slab(0.3, 0.8, 0.8, C.socket, rig);
+      bracket.position.set(1.5, 0, -0.3);
+      return rig;
+    }
+    if (kind !== 'foothold' && kind !== 'fixed-swing' && kind !== 'moving-swing' && this.has(sketchSkin.nailHead)) {
+      // Driven into the picture along Z: only the round head faces the camera.
+      this.skin(sketchSkin.nailHead, S.nailHead, S.nailHead, rig).position.z = 0.1;
+      return rig;
+    }
     if (kind === 'foothold') {
       // Driven in vertically: the shaft disappears into the marked site and
       // the wide head is the landable top surface.
@@ -549,6 +748,11 @@ export class UnfinishedSketchScene implements GameScene {
    */
   private freeNailRig(kind: string, size: { width: number; height: number }): THREE.Group {
     const rig = new THREE.Group();
+    if (kind === 'foothold' && this.footNail(rig, size, 0.9)) return rig;
+    if (kind !== 'foothold' && this.has(sketchSkin.nailHead)) {
+      this.skin(sketchSkin.nailHead, S.gripHead, S.gripHead, rig).position.z = 0.1;
+      return rig;
+    }
     if (kind === 'foothold') {
       const head = this.slab(size.width, size.height, 1.6, C.nailHead, rig);
       head.position.y = -size.height / 2;
@@ -565,6 +769,18 @@ export class UnfinishedSketchScene implements GameScene {
     return rig;
   }
 
+  /**
+   * A foothold nail driven straight down: the side-view head is the standing
+   * top (its top edge is the rig origin) and the shaft runs down into the
+   * wood. False when the skins are missing.
+   */
+  private footNail(rig: THREE.Group, size: { width: number; height: number }, shaft: number): boolean {
+    if (!this.has(sketchSkin.nailCap) || !this.has(sketchSkin.nailShaft)) return false;
+    this.skin(sketchSkin.nailCap, size.width, size.height, rig, 'x').position.set(0, -size.height / 2, 0.1);
+    this.skin(sketchSkin.nailShaft, S.footShaft, shaft, rig).position.set(0, -size.height - shaft / 2 + 0.05, 0);
+    return true;
+  }
+
   /** A loose cartoon nail lying in wait, side-on: shaft, head and a soft halo. */
   private buildPickup(): void {
     const p = this.field.nailPickup ??
@@ -573,6 +789,14 @@ export class UnfinishedSketchScene implements GameScene {
     if (!p) return;
     const rig = new THREE.Group();
     rig.position.set(p.x + p.width / 2, p.y + p.height / 2, 1.3);
+    if (this.has(sketchSkin.nailPickup)) {
+      // The approved pickup already leans and carries its sparkles and halo.
+      this.skin(sketchSkin.nailPickup, S.pickup * this.aspectOf(sketchSkin.nailPickup), S.pickup, rig);
+      rig.visible = this.model.nailPickup === p && !this.model.pickupCollected;
+      this.world.add(rig);
+      this.pickup = rig;
+      return;
+    }
     this.disc(0.5, 0.08, 28, C.goal, rig).position.z = -0.3;
     const shaft = this.slab(0.16, 0.8, 0.16, C.nailShaft, rig); shaft.position.y = -0.1;
     const head = this.slab(0.62, 0.18, 0.3, C.nailCap, rig); head.position.y = 0.36;
@@ -641,39 +865,66 @@ export class UnfinishedSketchScene implements GameScene {
   }
 
   /**
-   * An S4L vertical lift as a cartoon 2.5D placeholder: an open shaft frame
-   * of two guide rails and a top beam reaching the next layer, a thick deck
-   * with a bright edge and a lamp, and a faint ink cab outline that shows the
+   * An S4L vertical lift: with skins, the striped car-lift deck on a piston
+   * (placeholder: an open shaft frame of rails and a beam with a thick deck),
+   * the state lamp, and a faint ink cab outline that shows the
    * invisible walls only while they hold the rider. Collision lives in the
    * model; this only follows its live deck.
    */
   private buildLift(lift: SketchLift): void {
     const { deck } = lift;
-    const bottom = deck.y - 0.5;
-    // The frame clears a standing rider's head at the top.
-    const top = deck.y + deck.height + lift.rise + 2.6;
-    for (const x of [deck.x - 0.2, deck.x + deck.width + 0.2]) {
-      const rail = this.slab(0.3, top - bottom, 0.4, C.rail, this.world);
-      rail.position.set(x, (top + bottom) / 2, -0.9);
-    }
-    const beam = this.slab(deck.width + 0.9, 0.36, 0.5, C.rail, this.world);
-    beam.position.set(deck.x + deck.width / 2, top, -0.9);
-    // Rungs on the rails, so the shaft reads as built and not as a ladder.
-    for (let y = bottom + 1.2; y < top - 0.6; y += 1.6) {
-      const rung = this.slab(deck.width + 0.4, 0.1, 0.12, C.rail, this.world, 0.55, false);
-      rung.position.set(deck.x + deck.width / 2, y, -1.05);
+    // The skinned car lift has no shaft frame (user review 2026-10-08): the
+    // piston carries the deck. The placeholder keeps its rails and beam.
+    if (!this.has(sketchSkin.liftDeck)) {
+      const bottom = deck.y - 0.5;
+      // The frame clears a standing rider's head at the top.
+      const top = deck.y + deck.height + lift.rise + 2.6;
+      for (const x of [deck.x - 0.2, deck.x + deck.width + 0.2]) {
+        const rail = this.slab(0.3, top - bottom, 0.4, C.rail, this.world);
+        rail.position.set(x, (top + bottom) / 2, -0.9);
+      }
+      const beam = this.slab(deck.width + 0.9, 0.36, 0.5, C.rail, this.world);
+      beam.position.set(deck.x + deck.width / 2, top, -0.9);
+      // Rungs on the rails, so the shaft reads as built and not as a ladder.
+      for (let y = bottom + 1.2; y < top - 0.6; y += 1.6) {
+        const rung = this.slab(deck.width + 0.4, 0.1, 0.12, C.rail, this.world, 0.55, false);
+        rung.position.set(deck.x + deck.width / 2, y, -1.05);
+      }
     }
     const group = new THREE.Group(); this.world.add(group);
-    const slab = this.slab(deck.width, deck.height, 2.4, C.lift, group);
-    slab.position.set(0, -deck.height / 2, 0);
-    const lip = new THREE.Mesh(new THREE.BoxGeometry(deck.width, 0.16, 2.5), this.flat(C.liftTop));
-    this.resources.add(lip.geometry);
-    lip.position.set(0, -0.08, 0.04);
-    group.add(lip);
+    let piston: { shaft: THREE.Mesh; base: number } | undefined;
+    if (this.has(sketchSkin.liftDeck)) {
+      // Hydraulic car lift: the striped deck, a chrome piston that stretches
+      // with the rise and its pump, both below walking level in the shaft.
+      this.skin(sketchSkin.liftDeck, deck.width, S.liftDeck, group, 'x').position.set(0, -S.liftDeck / 2, 0.9);
+      if (this.has(sketchSkin.liftPiston)) {
+        const base = deck.y - S.pistonBase;
+        const cx = deck.x + deck.width / 2;
+        const capHeight = S.liftPiston / this.aspectOf(sketchSkin.liftPiston) * 0.08;
+        this.skin(sketchSkin.liftPiston, S.liftPiston, capHeight, this.world, null, 1, [0, 0, 1, 0.08])
+          .position.set(cx, base + capHeight / 2, -0.8);
+        const shaft = this.skin(sketchSkin.liftPiston, S.liftPiston, 1, this.world, null, 1, [0, 0.1, 1, 0.9]);
+        const rest = Math.max(0.01, deck.y + deck.height - S.liftDeck + 0.1 - base - capHeight);
+        shaft.scale.y = rest; shaft.position.set(cx, base + capHeight + rest / 2, -0.85);
+        piston = { shaft, base: base + capHeight };
+        if (this.has(sketchSkin.liftPump)) {
+          const ph = S.liftPump; const pw = ph * this.aspectOf(sketchSkin.liftPump);
+          this.skin(sketchSkin.liftPump, pw, ph, this.world).position.set(cx + S.liftPiston / 2 + pw / 2 + 0.05, base + ph / 2, -1.2);
+        }
+      }
+    } else {
+      const slab = this.slab(deck.width, deck.height, 2.4, C.lift, group);
+      slab.position.set(0, -deck.height / 2, 0);
+      const lip = new THREE.Mesh(new THREE.BoxGeometry(deck.width, 0.16, 2.5), this.flat(C.liftTop));
+      this.resources.add(lip.geometry);
+      lip.position.set(0, -0.08, 0.04);
+      group.add(lip);
+    }
     const lampMaterial = this.flat(C.goal);
     const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.17, 12, 8), lampMaterial);
     this.resources.add(lamp.geometry);
-    lamp.position.set(0, -deck.height / 2, 1.3);
+    // On a skinned deck the state lamp sits over the painted amber lamp.
+    lamp.position.set(0, piston || this.has(sketchSkin.liftDeck) ? -S.liftDeck / 2 : -deck.height / 2, 1.3);
     group.add(lamp);
     // Faint ink cab: two posts and a top rail the height of the invisible walls.
     const cab = new THREE.Group(); group.add(cab);
@@ -701,7 +952,7 @@ export class UnfinishedSketchScene implements GameScene {
     cue.position.set(lift.exitSide * (deck.width / 2 - 0.5), 0.9, 1.2);
     cue.visible = false;
     group.position.set(deck.x + deck.width / 2, deck.y + deck.height, 0);
-    this.lifts.set(lift.id, { deck: group, lamp: lampMaterial, cab, cue, was: '', flashUntil: 0 });
+    this.lifts.set(lift.id, { deck: group, lamp: lampMaterial, cab, cue, was: '', flashUntil: 0, piston });
   }
 
   // --- input --------------------------------------------------------------
@@ -844,6 +1095,11 @@ export class UnfinishedSketchScene implements GameScene {
     return this.torchLight ? { lit: this.torchLight.visible, scale: this.torchLight.scale.x, sparkles: this.sparkles?.rotation.z ?? 0 } : null;
   }
 
+  /** Read-only drawn mechanism positions (after interpolation), for the smoothness evidence. */
+  drawnMechanisms(): { id: string; x: number; y: number }[] {
+    return [...this.rigs].map(([id, rig]) => ({ id, x: rig.position.x, y: rig.position.y }));
+  }
+
   /** Read-only camera readback used by the review evidence. */
   cameraView(): { x: number; y: number; width: number; height: number } {
     const cam = this.camera as THREE.OrthographicCamera;
@@ -880,6 +1136,7 @@ export class UnfinishedSketchScene implements GameScene {
     const b = this.model.controller.body;
     this.previous.set(b.x, b.y);
     this.previousCamera.copy(this.cameraPosition);
+    this.snapshotMotion();
     if (input.recallPressed) this.model.enqueue({ type: 'recall' });
     const boundary = `${this.routeModel?.legId}/${this.routeModel?.stage}`;
     const recovering = this.model.recoveryRemaining > 0;
@@ -904,11 +1161,28 @@ export class UnfinishedSketchScene implements GameScene {
     this.refreshSurfaceHover();
     this.onHud(this.hud());
   }
+  private snapshotMotion(): void {
+    const keep = (key: string, x: number, y: number, angle = 0): void => {
+      const pose = this.before.get(key);
+      if (pose) { pose.x = x; pose.y = y; pose.angle = angle; } else this.before.set(key, { x, y, angle });
+    };
+    for (const v of this.model.mechanismView()) keep(`m:${v.id}`, v.x, v.y, v.angle);
+    for (const v of this.model.targetViews()) keep(`t:${v.id}`, v.x, v.y);
+    for (const g of this.model.grips) keep(`g:${g.id}`, g.x, g.y);
+    if (this.routeModel) for (const v of this.routeModel.liftViews()) keep(`l:${v.id}`, v.deck.x, v.deck.y);
+  }
+  /** The drawn pose: between the step's start and now, or now when unknown. */
+  private blended(key: string, x: number, y: number, angle = 0): { x: number; y: number; angle: number } {
+    const pose = this.before.get(key); const k = this.alpha;
+    return pose ? { x: lerp(pose.x, x, k), y: lerp(pose.y, y, k), angle: lerp(pose.angle, angle, k) } : { x, y, angle };
+  }
+
   private refreshSurfaceHover(): void {
     this.surfaceHover = this.pointer && this.canvas && this.interactive && this.model.freePlacement
       ? this.pickSurface(this.pointer.x, this.pointer.y, this.canvas) : null;
   }
   render(alpha: number): void {
+    this.alpha = alpha;
     if (!this.interactive && this.interactFrom > 0 && performance.now() >= this.interactFrom) this.setInteractive(true);
     const b = this.model.controller.body;
     this.player.position.set(THREE.MathUtils.lerp(this.previous.x, b.x, alpha) + b.width / 2,
@@ -927,14 +1201,15 @@ export class UnfinishedSketchScene implements GameScene {
     this.hand.visible = this.model.move.state === 'swing';
     if (this.hand.visible) {
       const grip = this.model.grips.find(g => g.id === this.model.move.swingTarget);
-      if (grip) this.hand.position.set(grip.x, grip.y, 1.7);
+      if (grip) { const at = this.blended(`g:${grip.id}`, grip.x, grip.y); this.hand.position.set(at.x, at.y, 1.7); }
     }
 
     const views = this.model.mechanismView();
-    for (const view of views) {
-      const rig = this.rigs.get(view.id);
-      const m = this.model.mechanism(view.id);
+    for (const live of views) {
+      const rig = this.rigs.get(live.id);
+      const m = this.model.mechanism(live.id);
       if (!rig || !m) continue;
+      const view = { ...live, ...this.blended(`m:${live.id}`, live.x, live.y, live.angle) };
       const ink = this.inkPlatforms.get(view.id);
       if (ink) { ink.solid.visible = view.pinned; ink.outline.visible = !view.pinned; }
       if (m.kind === 'axe') {
@@ -955,7 +1230,8 @@ export class UnfinishedSketchScene implements GameScene {
       }
     }
 
-    for (const view of this.model.targetViews()) {
+    for (const live of this.model.targetViews()) {
+      const view = { ...live, ...this.blended(`t:${live.id}`, live.x, live.y) };
       const ring = this.rings.get(view.id);
       const head = this.heads.get(view.id);
       if (ring) {
@@ -1006,9 +1282,10 @@ export class UnfinishedSketchScene implements GameScene {
   private renderFreeNails(): void {
     if (!this.field.surfaces?.length) return;
     const used = new Map<string, number>();
-    for (const view of this.model.targetViews()) {
-      const t = this.model.target(view.id);
+    for (const live of this.model.targetViews()) {
+      const t = this.model.target(live.id);
       if (!t || this.field.targets.includes(t)) continue;
+      const view = { ...live, ...this.blended(`t:${live.id}`, live.x, live.y) };
       const index = used.get(t.kind) ?? 0; used.set(t.kind, index + 1);
       let slot = this.freeHeads.filter(h => h.kind === t.kind)[index];
       if (!slot) { slot = { kind: t.kind, rig: this.freeNailRig(t.kind, t.size) }; this.world.add(slot.rig); this.freeHeads.push(slot); }
@@ -1050,7 +1327,14 @@ export class UnfinishedSketchScene implements GameScene {
       rig.was = view.state;
       const flash = this.elapsed < rig.flashUntil;
       const shudder = view.state === 'wind-up' && !this.reducedMotion ? Math.sin(this.elapsed * 70) * 0.05 : 0;
-      rig.deck.position.set(view.deck.x + view.deck.width / 2 + shudder, view.deck.y + view.deck.height, 0);
+      const deck = this.blended(`l:${view.id}`, view.deck.x, view.deck.y);
+      rig.deck.position.set(deck.x + view.deck.width / 2 + shudder, deck.y + view.deck.height, 0);
+      if (rig.piston) {
+        // Presentation only: the shaft reaches the underside of the deck art.
+        const length = Math.max(0.01, deck.y + view.deck.height - S.liftDeck + 0.1 - rig.piston.base);
+        rig.piston.shaft.scale.y = length;
+        rig.piston.shaft.position.y = rig.piston.base + length / 2;
+      }
       rig.cab.visible = view.walls;
       const ready = view.active && model.stage === 'exit';
       const blink = (Math.sin(this.elapsed * (view.state === 'wind-up' ? 18 : 4)) + 1) / 2;

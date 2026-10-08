@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "events": [
+    {
+      "event": "board l2-board-b drawn per display frame",
+      "frames": 300,
+      "frozen": 0,
+      "frameMs": {
+        "p50": 6.900000000000091,
+        "max": 7.5
+      }
+    }
+  ]
+}
