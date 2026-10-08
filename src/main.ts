@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import './style.css';
 import { campaign } from './campaign/definition';
 import { Progression } from './campaign/progression';
+import { checkPlacement, isComplete } from './campaign/placement';
 import { SaveStore, defaultSettings } from './campaign/save';
 import { Input } from './core/input';
 import { GameLoop } from './core/loop';
@@ -18,7 +19,7 @@ import { museum, type MuseumPose } from './levels/museum';
 import { RoyalSupperScene } from './scenes/royal-supper';
 import { UnfinishedSketchScene } from './scenes/unfinished-sketch';
 import type { SketchSceneMode } from './scenes/unfinished-sketch';
-import { MuseumScene } from './scenes/museum';
+import { MuseumScene, type MuseumArtState } from './scenes/museum';
 import { GameUi } from './ui/game-ui';
 import { GameAudio } from './core/audio';
 import { loadArtSet } from './assets/images';
@@ -52,7 +53,10 @@ let progression = new Progression();
 let settings = defaultSettings();
 let session = createSupperSession();
 let paused = true;
-type Overlay = 'menu' | 'none' | 'pause' | 'inspection' | 'success' | 'reset';
+type Overlay = 'menu' | 'none' | 'pause' | 'inspection' | 'ending' | 'success' | 'reset';
+// S5C: the ending opens after the restore animation (at once under reduced motion).
+const ENDING_DELAY_MS = 1700;
+let endingTimer = 0;
 let overlay: Overlay = 'menu';
 let beforeReset: Overlay = 'menu';
 let debugEnabled = import.meta.env.DEV && parameters.get('debug') === '1';
@@ -87,10 +91,10 @@ const ui = new GameUi(root, {
   volume: value => { settings.masterVolume = value; audio.volume(value); persist(); },
   debug: toggleDebug, lane: () => { lane = true; void startSupper(true, true); },
   sketchBay: bay => { void startSketch(true, bay); },
-  reset: requestReset, confirmReset, cancelReset, closeInspection, place,
+  reset: requestReset, confirmReset, cancelReset, closeInspection, place, ending: showEnding, stay,
   look: () => { ui.canvas.focus(); activeMuseum()?.requestLook(); },
   retry: () => { if (retryAction) retryAction(); else void (sketchStudy ? startSketch(false) : isolated ? startSupper(false) : enterMuseum()); },
-  back: () => { if (manager?.active) { overlay = 'none'; resume(); } else { overlay = 'menu'; ui.menu(remembered); } },
+  back: () => { if (manager?.active) { overlay = 'none'; resume(); } else { overlay = 'menu'; ui.menu(remembered, isComplete(progression.snapshot)); } },
 }, isolated, study, sketchMode);
 const audio = new GameAudio(text => ui.notice(text));
 window.addEventListener('pointerdown', event => { if (event.isTrusted) audio.activate(); }, { capture: true, signal: lifetime.signal });
@@ -104,10 +108,16 @@ const store = isolated ? null : new SaveStore({
 }, text => ui.notice(text));
 if (store) {
   const loaded = store.load(); progression = new Progression(loaded.save); settings = loaded.save.settings;
-  remembered = loaded.exists; ui.menu(remembered);
+  remembered = loaded.exists; ui.menu(remembered, isComplete(progression.snapshot));
 }
 audio.volume(settings.masterVolume);
 function persist(): void { store?.write(progression.snapshot, settings); }
+/** What the museum room shows: the restored count and whether the Sketch's light has left its torch. */
+function museumArt(): MuseumArtState {
+  const state = progression.snapshot;
+  return { restored: state.restoredPieceIds.length, lightTaken: state.collectedPieceIds.includes('sun-disc') };
+}
+function clearEndingTimer(): void { if (endingTimer) window.clearTimeout(endingTimer); endingTimer = 0; }
 function activeSupper(): RoyalSupperScene | null { return manager?.active instanceof RoyalSupperScene ? manager.active : null; }
 function activeSketch(): UnfinishedSketchScene | null { return manager?.active instanceof UnfinishedSketchScene ? manager.active : null; }
 function sketchAt(): UnfinishedSketchScene | null { return activeSketch(); }
@@ -126,7 +136,7 @@ function pause(reason = 'Take a moment. The gallery will wait.'): void {
   setPaused(true); overlay = 'pause'; ui.pause(settings.quality === 'low', reason, settings);
 }
 function resume(): void {
-  if (!manager?.active || manager.transitioning || document.hidden || overlay === 'reset' || overlay === 'inspection') return;
+  if (!manager?.active || manager.transitioning || document.hidden || overlay === 'reset' || overlay === 'inspection' || overlay === 'ending') return;
   overlay = 'none';
   const museumActive = activeMuseum() !== null;
   ui.play(museumActive ? 'museum' : activeSketch() ? 'sketch' : 'supper');
@@ -136,6 +146,7 @@ function togglePause(): void {
   if (manager?.transitioning) return;
   if (overlay === 'reset') { cancelReset(); return; }
   if (overlay === 'inspection') { closeInspection(); return; }
+  if (overlay === 'ending') { stay(); return; }
   if (paused) resume(); else pause();
 }
 function toggleDebug(): void {
@@ -177,8 +188,7 @@ async function enterMuseum(pose: MuseumPose = museum.spawn): Promise<void> {
   setPaused(true); overlay = 'none';
   retryAction = () => { void enterMuseum(pose); };
   try {
-    const changed = await manager.transition(async () => new MuseumScene(ui.canvas, pose,
-      progression.snapshot.restoredPieceIds.includes('golden-pear'),
+    const changed = await manager.transition(async () => new MuseumScene(ui.canvas, pose, museumArt(),
       () => !paused && !manager?.transitioning && performance.now() >= inputReadyAt,
       id => { if (id === 'masterpiece') inspect(); else if (id === royalSupper.id) void startSupper(false); else if (id === sketchStage.artworkId) void startSketchAdventure(false); },
       text => ui.museumPrompt(text), await loadArtSet(museumArtIds)));
@@ -297,29 +307,40 @@ async function leave(): Promise<void> {
   if (!isolated) { await enterMuseum(activeSketch() ? museum.sketchReturnPose : museum.returnPose); audio.play('return', true); return; }
   const finished = activeSupper()?.model.completed ?? false;
   setPaused(true); overlay = 'menu';
-  try { await manager.transition(() => null); audio.setScene(null); ui.diagnostics(null); if (finished) ui.finished(); else ui.menu(remembered); }
+  try { await manager.transition(() => null); audio.setScene(null); ui.diagnostics(null); if (finished) ui.finished(); else ui.menu(remembered, isComplete(progression.snapshot)); }
   catch (error) { showError(error); }
 }
 function inspect(): void {
   if (!activeMuseum() || paused || manager?.transitioning) return;
   setPaused(true); overlay = 'inspection'; ui.inspection(progression.snapshot);
 }
-function closeInspection(): void { if (overlay !== 'inspection') return; overlay = 'none'; resume(); }
+function closeInspection(): void { if (overlay !== 'inspection') return; clearEndingTimer(); overlay = 'none'; resume(); }
+/**
+ * Places the next stage's piece in the masterpiece (S5C, generalised from the
+ * pear). Only progression restores; the save is written before any animation,
+ * so a reload mid-animation already shows the new picture. Completion is
+ * derived from progression, never stored.
+ */
 function place(piece: string, target: string): void {
   if (overlay !== 'inspection' || manager?.transitioning) return;
-  // The sky's target stays inert until S5C places the enchanted light there.
-  if (piece !== 'golden-pear' && target === 'sun-disc') {
-    ui.placementMessage(progression.snapshot.collectedPieceIds.includes('sun-disc')
-      ? 'The enchanted light will become this garden’s sun. Placing it arrives in a later update; it stays in your inventory.'
-      : 'The dark sky waits for the enchanted light from the Unfinished Sketch.');
-    return;
-  }
-  if (piece !== 'golden-pear' || target !== piece) { ui.placementMessage('Choose the golden pear and its matching silhouette. Your piece stays in inventory.'); return; }
-  const result = progression.applyCampaignCommand({ action: 'restore', artworkId: royalSupper.id, pieceId: piece });
-  if (!result.ok) { ui.placementMessage('Recover the golden pear from Royal Supper first.'); return; }
-  if (!result.changed) return;
-  persist(); audio.play('restore', true); activeMuseum()?.restoreColour(); ui.museumState(progression.snapshot); ui.inspection(progression.snapshot, !reducedMotion);
+  const check = checkPlacement(progression.snapshot, piece, target);
+  if (!check.ok) { ui.placementMessage(check.message); return; }
+  const result = progression.applyCampaignCommand({ action: 'restore', artworkId: check.stage.artworkId, pieceId: check.stage.pieceId });
+  if (!result.ok || !result.changed) return;
+  persist(); audio.play('restore', true);
+  activeMuseum()?.setRestored(museumArt()); ui.museumState(progression.snapshot);
+  if (!result.complete) { ui.inspection(progression.snapshot, !reducedMotion); return; }
+  if (reducedMotion) { overlay = 'ending'; ui.ending(); return; }
+  ui.inspection(progression.snapshot, true);
+  clearEndingTimer();
+  endingTimer = window.setTimeout(() => { endingTimer = 0; if (overlay === 'inspection') showEnding(); }, ENDING_DELAY_MS);
 }
+/** The ending, from the restore or from a complete masterpiece's inspection. */
+function showEnding(): void {
+  if (overlay !== 'inspection' || manager?.transitioning || !isComplete(progression.snapshot)) return;
+  clearEndingTimer(); overlay = 'ending'; ui.ending();
+}
+function stay(): void { if (overlay !== 'ending') return; overlay = 'none'; resume(); }
 function requestReset(): void {
   if (isolated || manager?.transitioning || overlay === 'reset') return;
   beforeReset = overlay; setPaused(true); overlay = 'reset'; ui.resetConfirmation();
@@ -327,15 +348,16 @@ function requestReset(): void {
 function cancelReset(): void {
   if (overlay !== 'reset') return;
   overlay = beforeReset;
-  if (overlay === 'menu') ui.menu(remembered);
+  if (overlay === 'menu') ui.menu(remembered, isComplete(progression.snapshot));
   else if (overlay === 'inspection') ui.inspection(progression.snapshot);
+  else if (overlay === 'ending') ui.ending();
   else if (overlay === 'success') { overlay = 'pause'; ui.pause(settings.quality === 'low', 'Your progress is kept.', settings); }
   else if (overlay === 'pause') ui.pause(settings.quality === 'low', 'Your progress is kept.', settings);
   else resume();
 }
 function confirmReset(): void {
   if (overlay !== 'reset' || manager?.transitioning || isolated) return;
-  ui.notice(''); store?.reset(); progression = new Progression(); campaignSketchSession = null; campaignGeneration++; settings = defaultSettings(); audio.volume(settings.masterVolume); session = createSupperSession(); remembered = false; resize();
+  clearEndingTimer(); ui.notice(''); store?.reset(); progression = new Progression(); campaignSketchSession = null; campaignGeneration++; settings = defaultSettings(); audio.volume(settings.masterVolume); session = createSupperSession(); remembered = false; resize();
   overlay = 'none'; void enterMuseum();
 }
 function showError(error: unknown): void { setPaused(true); overlay = 'menu'; ui.error(error instanceof Error ? error.message : String(error)); }
@@ -362,7 +384,7 @@ window.addEventListener('keydown', event => {
 ui.canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); pause('Graphics context was lost. Reload if it cannot recover.'); }, { signal: lifetime.signal });
 function dispose(): void {
   if (disposed) return;
-  disposed = true; lifetime.abort(); loop?.dispose(); manager?.dispose(); audio.dispose(); input.dispose(); ui.dispose(); renderer?.dispose();
+  disposed = true; clearEndingTimer(); lifetime.abort(); loop?.dispose(); manager?.dispose(); audio.dispose(); input.dispose(); ui.dispose(); renderer?.dispose();
   if (import.meta.env.DEV) delete (window as Window & { __curatorDebug?: unknown }).__curatorDebug;
 }
 window.addEventListener('pagehide', event => { if (!(event as PageTransitionEvent).persisted) dispose(); else pause(); }, { signal: lifetime.signal });
@@ -376,7 +398,9 @@ if (import.meta.env.DEV) {
     return {
       scene: manager?.active?.id ?? null, transitioning: manager?.transitioning ?? false, paused,
       body: body ? { ...body } : null,
-      museum: activeMuseum() ? { position: activeMuseum()!.camera.position.toArray(), rotation: activeMuseum()!.camera.rotation.toArray(), sketchOpen: activeMuseum()!.sketchOpen } : null,
+      museum: activeMuseum() ? { position: activeMuseum()!.camera.position.toArray(), rotation: activeMuseum()!.camera.rotation.toArray(),
+        sketchOpen: activeMuseum()!.sketchOpen, restored: activeMuseum()!.restoredCount } : null,
+      overlay, campaignComplete: isComplete(progression.snapshot),
       campaignSketch: campaignSketchSession ? { leg: campaignSketchSession.legId, light: campaignSketchSession.lightClaimed ?? null } : null,
       session: { ...session }, completed: supper?.model.completed ?? false, campaign: progression.snapshot, updateCount, renderCount,
       sketch: sketch ? {

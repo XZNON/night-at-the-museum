@@ -38,11 +38,15 @@ export const runtimeAssets = {
   'royal-supper.holder': { path: 'assets/supper/props/holder.png', provider: 'OpenAI ImageGen' },
   'royal-supper.diner': { path: 'assets/supper/props/diner.png', provider: 'OpenAI ImageGen' },
   'restoration.pear': { path: 'assets/restoration/pear.png', provider: 'DreamLayer' },
+  // S5C: the enchanted light, cut locally from the complete picture's sun.
+  'restoration.light': { path: 'assets/restoration/light.png', provider: 'DreamLayer' },
   'masterpiece.damaged': { path: 'assets/restoration/damaged.webp', provider: 'DreamLayer' },
   'masterpiece.pear-restored': { path: 'assets/restoration/pear-restored.webp', provider: 'DreamLayer' },
+  'masterpiece.complete': { path: 'assets/restoration/complete.webp', provider: 'DreamLayer' },
 } as const;
 export type ArtId = keyof typeof runtimeAssets;
 export const supperArtIds = Object.keys(runtimeAssets).filter(id => id.startsWith('player.') ||
   (id.startsWith('royal-supper.') && id !== 'royal-supper.entrance') || id === 'restoration.pear') as ArtId[];
-export const museumArtIds: ArtId[] = ['royal-supper.entrance', 'masterpiece.damaged', 'masterpiece.pear-restored', 'restoration.pear'];
+export const museumArtIds: ArtId[] = ['royal-supper.entrance', 'masterpiece.damaged', 'masterpiece.pear-restored', 'masterpiece.complete',
+  'restoration.pear', 'restoration.light'];
 export const runtimeAssetUrl = (path: string): string => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`;

@@ -6,7 +6,11 @@ Start with the [current handoff](planning/NEXT_SESSION.md), then the [build plan
 
 Latest, 2026-10-07: **next is S5B** (Sketch frame in the museum, campaign claim of the light); the enchanted light acts as the sun in the campaign (user). Prompt: [NEXT_SESSION](planning/NEXT_SESSION.md).
 
-Latest, 2026-10-07: **S5B (the Sketch in the museum) is implemented at its playable review gate**: frame on the left wall, locked until the pear is restored; campaign claim of the enchanted light (`sun-disc`), return, Mountain removed ([evidence](validation/sketch-s5/s5b/README.md)). Stop for user review; S5C needs its own request.
+Latest, 2026-10-07: **S5C is implemented at its playable review gate; S5 is complete at the automated gate**: the enchanted light placed in the sky becomes the sun, the complete masterpiece and the ending; one real-control New Game → ending run passed ([evidence](validation/sketch-s5/s5c/README.md)). Stop for user review; S6 and the Sketch art pass need their own requests.
+
+Earlier, 2026-10-07: S5B committed and pushed (`31ad72e`); **S5C planned** ([plan](gameplay/SKETCH_S5C_PLAN.md), prompt in [NEXT_SESSION](planning/NEXT_SESSION.md)). Next: S5C on its own request.
+
+Earlier, 2026-10-07: **S5B (the Sketch in the museum) is implemented at its playable review gate**: frame on the left wall, locked until the pear is restored; campaign claim of the enchanted light (`sun-disc`), return, Mountain removed ([evidence](validation/sketch-s5/s5b/README.md)). Stop for user review; S5C needs its own request.
 
 Earlier, 2026-10-07: S5A committed (`9ce56f9`); **the reward is now an enchanted light in a torch** (user revision, at review; [evidence](validation/sketch-s5/s5a/README.md#review-revision-the-enchanted-light)).
 
@@ -57,6 +61,7 @@ S3A's reviewed hard challenge is preserved. **S3B is implemented at its playable
 | [Sketch S4C plan](gameplay/SKETCH_S4C_PLAN.md) | Joined Layer 3 and grounded section recovery (accepted; [evidence](validation/sketch-s4/s4c/README.md)) |
 | [Sketch S4L plan](gameplay/SKETCH_S4L_PLAN.md) | Vertical lifts replace both escalators (user decision; implemented at review, [evidence](validation/sketch-s4/s4l/README.md)) |
 | [Sketch S5 plan](gameplay/SKETCH_S5_PLAN.md) | Sun on the end ledge, Sketch in the museum, placement and ending (S5A/B/C); [prompts](gameplay/SKETCH_S5_PROMPTS.md) |
+| [Sketch S5C plan](gameplay/SKETCH_S5C_PLAN.md) | Placing the enchanted light as the sun, the complete masterpiece and the ending (implemented at review, [evidence](validation/sketch-s5/s5c/README.md)); prompt in [S5 prompts](gameplay/SKETCH_S5_PROMPTS.md#s5c--the-light-becomes-the-sun-and-the-ending) |
 | [Sketch S4D plan](gameplay/SKETCH_S4D_PLAN.md) | Both rides into Layer 3 and final S4 gate (implemented at review, [evidence](validation/sketch-s4/s4d/README.md)) |
 | [Sketch S4 prompts](gameplay/SKETCH_S4_PROMPTS.md) | Four paste-ready future requests; do not execute together |
 | [Opening sequence](gameplay/OPENING.md) | Deferred M6 presentation; not the current task |

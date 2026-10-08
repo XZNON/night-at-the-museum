@@ -3,6 +3,10 @@ import type { GameScene } from '../core/scenes';
 import type { Controls } from '../gameplay/controller';
 import { museum, type MuseumPose } from '../levels/museum';
 import type { ArtId } from '../assets/manifest';
+import { masterpieceStageArt } from '../ui/masterpiece';
+
+/** What the museum shows of the campaign: restored pieces (0-2) and whether the Sketch's light has left its torch. */
+export interface MuseumArtState { restored: number; lightTaken: boolean }
 
 export class MuseumScene implements GameScene {
   readonly id = museum.id;
@@ -19,12 +23,17 @@ export class MuseumScene implements GameScene {
   private lastPrompt = '';
   private masterpieceTexture: THREE.Texture | null = null;
   private sketchMaterial: THREE.MeshBasicMaterial | null = null;
+  private sketchCanvas: HTMLCanvasElement | null = null;
+  private sketchTexture: THREE.Texture | null = null;
   private drawSketchPlaque: ((line: string) => void) | null = null;
+  private drawMasterpiecePlaque: ((line: string) => void) | null = null;
   private sketchUnlocked = false;
+  private art: MuseumArtState;
 
-  constructor(private readonly canvas: HTMLCanvasElement, pose: MuseumPose, restored: boolean,
+  constructor(private readonly canvas: HTMLCanvasElement, pose: MuseumPose, art: MuseumArtState,
     private readonly enabled: () => boolean, private readonly activate: (id: string) => void,
     private readonly prompt: (text: string) => void, private readonly artImages: Partial<Record<ArtId, HTMLImageElement>>) {
+    this.art = { ...art };
     this.yaw = pose.yaw;
     this.camera.position.set(pose.x, museum.eyeHeight, pose.z);
     this.camera.rotation.order = 'YXZ';
@@ -49,14 +58,14 @@ export class MuseumScene implements GameScene {
       // Each frame hangs in its own group, turned to face into the room.
       const frame = new THREE.Group(); frame.position.set(art.x, art.y, art.z); frame.rotation.y = art.facing; this.world.add(frame);
       frame.add(box(art.width + 0.28, art.height + 0.28, 0.18, 0, 0, -0.06, 0xad8550));
-      const image: HTMLImageElement | HTMLCanvasElement = art.id === 'unfinished-sketch' ? sketchPlaceholder()
-        : artImages[art.id === 'masterpiece' ? restored ? 'masterpiece.pear-restored' : 'masterpiece.damaged' : 'royal-supper.entrance']!;
+      const image: HTMLImageElement | HTMLCanvasElement = art.id === 'unfinished-sketch' ? sketchPlaceholder(document.createElement('canvas'), !this.art.lightTaken)
+        : artImages[art.id === 'masterpiece' ? masterpieceStageArt(this.art.restored) : 'royal-supper.entrance']!;
       const g = new THREE.PlaneGeometry(art.width, Math.min(art.height, art.width * image.height / image.width));
       const texture = art.id === 'unfinished-sketch' ? new THREE.CanvasTexture(image) : new THREE.Texture(image); texture.needsUpdate = true;
       texture.colorSpace = THREE.SRGBColorSpace;
       if (art.id === 'masterpiece') this.masterpieceTexture = texture;
       const m = new THREE.MeshBasicMaterial({ map: texture });
-      if (art.id === 'unfinished-sketch') this.sketchMaterial = m;
+      if (art.id === 'unfinished-sketch') { this.sketchMaterial = m; this.sketchCanvas = image as HTMLCanvasElement; this.sketchTexture = texture; }
       this.resources.add(g); this.resources.add(m); this.resources.add(texture);
       const mesh = new THREE.Mesh(g, m); mesh.position.set(0, 0, 0.04); mesh.userData.artworkId = art.id;
       frame.add(mesh); this.solids.push(mesh);
@@ -70,16 +79,32 @@ export class MuseumScene implements GameScene {
         ctx.font = '30px Georgia'; ctx.fillText(art.label, 384, 41); ctx.font = '18px sans-serif'; ctx.fillText(line, 384, 74); t.needsUpdate = true;
       };
       if (art.id === 'unfinished-sketch') this.drawSketchPlaque = drawPlaque;
-      else drawPlaque(art.id === 'masterpiece' ? 'A garden waiting for its colour' : 'The king has borrowed the golden pear');
+      else if (art.id === 'masterpiece') this.drawMasterpiecePlaque = drawPlaque;
+      else drawPlaque('The king has borrowed the golden pear');
     }
-    this.setSketchOpen(restored);
+    this.applyArt();
   }
   /** The Sketch frame opens once the pear is restored; while locked it is dimmed and never enters. */
   get sketchOpen(): boolean { return this.sketchUnlocked; }
-  private setSketchOpen(open: boolean): void {
-    this.sketchUnlocked = open;
-    this.sketchMaterial?.color.set(open ? 0xffffff : 0x5d5862);
-    this.drawSketchPlaque?.(open ? 'An enchanted light waits inside' : 'Restore the golden pear first');
+  get restoredCount(): number { return this.art.restored; }
+  private applyArt(): void {
+    const { restored, lightTaken } = this.art;
+    this.sketchUnlocked = restored >= 1;
+    this.sketchMaterial?.color.set(this.sketchUnlocked ? 0xffffff : 0x5d5862);
+    this.drawSketchPlaque?.(!this.sketchUnlocked ? 'Restore the golden pear first' : restored >= 2 ? 'Its light now rises over the garden'
+      : lightTaken ? 'Its enchanted light is yours' : 'An enchanted light waits inside');
+    this.drawMasterpiecePlaque?.(restored >= 2 ? 'The garden at dawn, restored' : 'A garden waiting for its colour');
+  }
+  /** S5C: show a new restored count (and the light's torch state) without rebuilding the room. */
+  setRestored(art: MuseumArtState): void {
+    if (this.masterpieceTexture && art.restored !== this.art.restored) {
+      this.masterpieceTexture.image = this.artImages[masterpieceStageArt(art.restored)]!; this.masterpieceTexture.needsUpdate = true;
+    }
+    if (this.sketchCanvas && this.sketchTexture && art.lightTaken !== this.art.lightTaken) {
+      sketchPlaceholder(this.sketchCanvas, !art.lightTaken); this.sketchTexture.needsUpdate = true;
+    }
+    this.art = { ...art };
+    this.applyArt();
   }
   enter(): void {
     const signal = this.lifetime.signal;
@@ -129,11 +154,6 @@ export class MuseumScene implements GameScene {
     this.pointerStart = null;
     if (document.pointerLockElement === this.canvas) document.exitPointerLock();
   }
-  restoreColour(): void {
-    if (!this.masterpieceTexture) return;
-    this.masterpieceTexture.image = this.artImages['masterpiece.pear-restored']!; this.masterpieceTexture.needsUpdate = true;
-    this.setSketchOpen(true);
-  }
   fixedUpdate(dt: number, input: Controls): void {
     const forward = input.forward ?? 0; const length = Math.max(1, Math.hypot(input.axis, forward));
     this.camera.position.x += (Math.cos(this.yaw) * input.axis - Math.sin(this.yaw) * forward) / length * museum.speed * dt;
@@ -156,10 +176,11 @@ export class MuseumScene implements GameScene {
 /**
  * Cartoon placeholder for the Sketch frame, drawn in code until the art task
  * delivers `sketch.entrance`: a cream page with three pencilled layers, a
- * pendulum, a lift and a torch holding a pale glow. Faceless, no generated art.
+ * pendulum, a lift and a torch holding a pale glow (an empty torch once the
+ * light is taken). Faceless, no generated art.
  */
-function sketchPlaceholder(): HTMLCanvasElement {
-  const c = document.createElement('canvas'); c.width = 840; c.height = 540;
+function sketchPlaceholder(c: HTMLCanvasElement, lit: boolean): HTMLCanvasElement {
+  c.width = 840; c.height = 540;
   const ctx = c.getContext('2d')!;
   ctx.fillStyle = '#f3e9d2'; ctx.fillRect(0, 0, 840, 540);
   ctx.strokeStyle = '#d9cbb0'; ctx.lineWidth = 1;
@@ -183,10 +204,16 @@ function sketchPlaceholder(): HTMLCanvasElement {
   // The torch and its enchanted light on the top ledge.
   ctx.fillStyle = '#8a5a3a'; ctx.beginPath(); ctx.roundRect(705, 88, 14, 62, 4); ctx.fill(); ctx.lineWidth = 4; ctx.stroke();
   ctx.fillStyle = '#b07a4c'; ctx.beginPath(); ctx.moveTo(692, 80); ctx.lineTo(732, 80); ctx.lineTo(722, 96); ctx.lineTo(702, 96); ctx.closePath(); ctx.fill(); ctx.stroke();
-  const glow = ctx.createRadialGradient(712, 62, 4, 712, 62, 62);
-  glow.addColorStop(0, 'rgba(255,255,236,1)'); glow.addColorStop(0.35, 'rgba(176,236,255,0.75)'); glow.addColorStop(1, 'rgba(176,236,255,0)');
-  ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(712, 62, 62, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = '#fffbe6'; ctx.beginPath(); ctx.arc(712, 62, 15, 0, Math.PI * 2); ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#6fb7d6'; ctx.stroke();
+  if (lit) {
+    const glow = ctx.createRadialGradient(712, 62, 4, 712, 62, 62);
+    glow.addColorStop(0, 'rgba(255,255,236,1)'); glow.addColorStop(0.35, 'rgba(176,236,255,0.75)'); glow.addColorStop(1, 'rgba(176,236,255,0)');
+    ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(712, 62, 62, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#fffbe6'; ctx.beginPath(); ctx.arc(712, 62, 15, 0, Math.PI * 2); ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = '#6fb7d6'; ctx.stroke();
+  } else {
+    // The light has gone: a pencilled wisp above an empty torch cup.
+    ctx.strokeStyle = '#8b8296'; ctx.lineWidth = 2; ctx.setLineDash([5, 6]);
+    ctx.beginPath(); ctx.moveTo(712, 76); ctx.bezierCurveTo(700, 62, 724, 52, 712, 36); ctx.stroke(); ctx.setLineDash([]);
+  }
   // Loose pencil scribbles: the picture is not finished.
   ctx.strokeStyle = '#8b8296'; ctx.lineWidth = 2;
   for (const [x, y] of [[90, 120], [250, 70], [470, 95], [580, 250]]) {

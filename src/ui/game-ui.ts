@@ -3,7 +3,8 @@ import type { SupperHud } from '../scenes/royal-supper';
 import type { CampaignState } from '../campaign/progression';
 import type { Settings } from '../campaign/save';
 import { masterpieceImage } from './masterpiece';
-import { runtimeAssets, runtimeAssetUrl } from '../assets/manifest';
+import { runtimeAssets, runtimeAssetUrl, type ArtId } from '../assets/manifest';
+import { isComplete, nextPlacement } from '../campaign/placement';
 import { museum } from '../levels/museum';
 import type { SketchHud } from '../gameplay/sketch-model';
 import type { SketchBayId, SketchStudy } from '../levels/unfinished-sketch';
@@ -15,6 +16,7 @@ export interface UiActions {
   debug(): void; lane(): void;
   reset(): void; confirmReset(): void; cancelReset(): void;
   closeInspection(): void; place(piece: string, target: string): void;
+  ending(): void; stay(): void;
   look(): void; volume(value: number): void;
   retry(): void; back(): void;
   sketchBay(id: SketchBayId): void;
@@ -25,7 +27,7 @@ export class GameUi {
   private readonly modal: HTMLElement;
   private readonly hud: HTMLElement;
   private readonly controller = new AbortController();
-  private mode: 'menu' | 'pause' | 'success' | 'finished' | 'inspection' | 'reset' | 'none' | 'loading' = 'menu';
+  private mode: 'menu' | 'pause' | 'success' | 'finished' | 'inspection' | 'ending' | 'reset' | 'none' | 'loading' = 'menu';
   private collection: CampaignResult | null = null;
   private hudCache = '';
   private sketchHudCache = '';
@@ -89,9 +91,13 @@ export class GameUi {
         case 'cancel-reset': this.actions.cancelReset(); break;
         case 'close-inspection': this.actions.closeInspection(); break;
         case 'look': this.actions.look(); break;
-        case 'piece': this.selectedPiece = target.dataset.piece ?? ''; target.setAttribute('aria-pressed', 'true'); this.placementMessage('Golden pear selected. Choose the pear silhouette.'); break;
+        case 'piece': this.selectedPiece = target.dataset.piece ?? ''; target.setAttribute('aria-pressed', 'true');
+          this.placementMessage(this.selectedPiece === 'sun-disc' ? 'Enchanted light selected. Choose the dark sky’s empty sun.' : 'Golden pear selected. Choose the pear silhouette.'); break;
         case 'target': this.actions.place(this.selectedPiece, target.dataset.target ?? ''); break;
-        case 'invalid-drop': this.placementMessage('That is not the pear silhouette. Your piece stays in inventory.'); break;
+        // A click elsewhere on the painting with a piece selected keeps the piece.
+        case 'invalid-drop': if (this.selectedPiece) this.actions.place(this.selectedPiece, ''); break;
+        case 'see-ending': this.actions.ending(); break;
+        case 'stay': this.actions.stay(); break;
       }
     }, { signal: this.controller.signal });
     root.addEventListener('change', event => {
@@ -142,19 +148,19 @@ export class GameUi {
     this.hud.hidden = true;
     document.getElementById('museum-hud')!.hidden = true;
     document.getElementById('sketch-hud')!.hidden = true;
-    this.modal.classList.remove('inspection-modal');
+    this.modal.classList.remove('inspection-modal', 'ending-modal');
     this.modal.hidden = false;
     this.modal.innerHTML = `<div class="menu-card">${content}</div>`;
     this.modal.setAttribute('role', 'dialog');
     this.modal.setAttribute('aria-modal', 'true');
     this.modal.querySelector<HTMLElement>('button')?.focus();
   }
-  menu(remembered: boolean): void {
+  menu(remembered: boolean, complete = false): void {
     this.hud.hidden = true;
     document.getElementById('museum-hud')!.hidden = true;
     document.getElementById('sketch-hud')!.hidden = true;
     if (!this.direct) {
-      this.show('menu', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / A restoration study</p><h2>The garden<br><em>before dawn.</em></h2><p class="intro">A quiet museum.<br>A borrowed golden pear.<br>A garden waiting for colour.</p><p class="menu-description">Walk to the frames, step into the paintings and bring the missing pieces home.</p><button class="primary" data-action="start" aria-label="${remembered ? 'Continue' : 'New Game'}">${remembered ? 'Continue' : 'New Game'} <span>→</span></button>${remembered ? '<button class="quiet" data-action="reset">New Game / reset progress</button>' : ''}<div class="menu-controls"><kbd>WASD</kbd> Walk · Drag to look · Click frame</div><p class="small-note">Royal Supper and the Unfinished Sketch are playable.<br>Placing the enchanted light arrives in a later update.</p>`);
+      this.show('menu', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / A restoration study</p><h2>The garden<br><em>before dawn.</em></h2><p class="intro">A quiet museum.<br>A borrowed golden pear.<br>A garden waiting for colour.</p><p class="menu-description">Walk to the frames, step into the paintings and bring the missing pieces home.</p><button class="primary" data-action="start" aria-label="${remembered ? 'Continue' : 'New Game'}">${remembered ? 'Continue' : 'New Game'} <span>→</span></button>${remembered ? '<button class="quiet" data-action="reset">New Game / reset progress</button>' : ''}<div class="menu-controls"><kbd>WASD</kbd> Walk · Drag to look · Click frame</div><p class="small-note">${complete ? 'The Garden Before Dawn is complete. Both paintings stay open to replay.' : 'Royal Supper and the Unfinished Sketch are playable.<br>Restore the masterpiece to reach the ending.'}</p>`);
       return;
     }
     if (this.study === 'sketch') {
@@ -318,7 +324,8 @@ export class GameUi {
     this.show('success', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">A piece recovered</p><h2 class="compact">The golden<br><em>pear.</em></h2>
       <p class="menu-description">${result.changed ? 'The king’s dessert belongs in the masterpiece. The golden pear is now in your inventory.' : 'A lovely return visit. The golden pear is already yours; replay adds no duplicate.'}</p>
       <button class="primary" data-action="leave" aria-label="${this.direct ? 'Finish blockout' : 'Return to Museum'}">${this.direct ? 'Finish blockout' : 'Return to Museum'} <span>→</span></button>
-      <button class="secondary" data-action="resume">Continue exploring</button><p class="small-note">${this.direct ? 'Isolated development session. Campaign saves are untouched.' : 'Your pear is in inventory. Walk to the masterpiece to place it.'}</p>`);
+      <button class="secondary" data-action="resume">Continue exploring</button><p class="small-note">${this.direct ? 'Isolated development session. Campaign saves are untouched.'
+        : result.restoredPieceIds.includes('golden-pear') ? 'The golden pear already hangs in the masterpiece.' : 'Your pear is in inventory. Walk to the masterpiece to place it.'}</p>`);
   }
   /**
    * The light is claimed. The isolated study (no result) has no campaign award
@@ -379,30 +386,60 @@ export class GameUi {
     const lightRestored = state.restoredPieceIds.includes('sun-disc');
     const light = state.collectedPieceIds.includes('sun-disc') && !lightRestored;
     // Player-facing: the stage-2 piece `sun-disc` is the enchanted light.
-    const items = [owned ? 'Golden pear' : '', light ? '<span class="light-icon" aria-hidden="true"></span>Enchanted light' : ''].filter(Boolean);
+    const items = [owned ? 'Golden pear' : '', light ? `<img class="piece-icon" src="${artUrl('restoration.light')}" alt="">Enchanted light` : ''].filter(Boolean);
     document.getElementById('inventory')!.innerHTML = `Inventory · ${items.length ? items.join(' · ') : 'Empty'}`;
-    document.getElementById('objective')!.textContent = lightRestored ? 'The Garden Before Dawn is restored'
+    document.getElementById('objective')!.textContent = isComplete(state) ? 'The Garden Before Dawn is complete'
       : light ? 'Bring the light to the masterpiece'
       : restored ? 'Claim the enchanted light in the Unfinished Sketch'
       : owned ? 'Bring the golden pear to the masterpiece' : 'Inspect the masterpiece · Find its missing pear in Royal Supper';
   }
   museumPrompt(text: string): void { const el = document.getElementById('museum-prompt')!; el.textContent = text; el.hidden = !text; }
+  /**
+   * The masterpiece up close for every campaign state. Only the next stage's
+   * owned piece is offered; `animate` plays the colour restore (never under
+   * reduced motion), with a warm glow from the sun when the light was placed.
+   */
   inspection(state: CampaignState, animate = false): void {
     this.selectedPiece = '';
-    const restored = state.restoredPieceIds.includes('golden-pear');
-    const owned = state.collectedPieceIds.includes('golden-pear') && !restored;
-    const light = state.collectedPieceIds.includes('sun-disc') && !state.restoredPieceIds.includes('sun-disc');
+    const count = state.restoredPieceIds.length;
+    const complete = isComplete(state);
+    const pearRestored = state.restoredPieceIds.includes('golden-pear');
+    const lightRestored = state.restoredPieceIds.includes('sun-disc');
+    const next = nextPlacement(state);
+    const held = next.reason === null ? next.stage.pieceId : null;
     const pear = museum.targets.pear; const sun = museum.targets.sun;
     const style = (t: typeof pear | typeof sun) => `left:${t.left}%;top:${t.top}%;width:${t.width}%;height:${t.height}%`;
+    const piece = (id: string, art: ArtId, label: string) => `<button class="piece-button" data-action="piece" data-piece="${id}" draggable="true" aria-pressed="false"><img class="inventory-art" src="${artUrl(art)}" alt="" draggable="false"> ${label}</button>`;
+    const message = complete ? 'The enchanted light rises as the garden’s sun. The Garden Before Dawn is complete.'
+      : held === 'sun-disc' ? 'Drag the enchanted light into the dark sky, or select it and activate the sky. Tab / Enter also works.'
+      : pearRestored ? 'Colour restored. Next: climb the Unfinished Sketch on the left wall and claim its enchanted light.'
+      : held === 'golden-pear' ? 'Drag the pear onto its silhouette, or select it and activate the target. Tab / Enter also works.'
+      : 'The king has borrowed the golden pear. Look inside Royal Supper.';
+    const alt = complete ? 'A traveller under a pear tree in a garden at dawn, its sun risen and every colour restored.'
+      : `A traveller under a pear tree in a garden before dawn, its sky still waiting for light. ${pearRestored ? 'The tree and garden have regained colour.' : 'The pear and garden are grey.'}`;
     this.show('inspection', `<p class="eyebrow">Masterpiece / Close inspection</p><h2 class="compact">The Garden Before Dawn</h2>
-      <div class="painting-study ${animate ? 'restoring' : ''}" data-action="invalid-drop"><img alt="A traveller under a pear tree in a garden before dawn, its sky still waiting for light. ${restored ? 'The tree and garden have regained colour.' : 'The pear and garden are grey.'}" src="${masterpieceImage(restored)}">
-      <button id="pear-target" class="restoration-target ${restored ? 'placed' : ''}" data-action="target" data-target="golden-pear" style="${style(pear)}" aria-label="Pear silhouette" ${restored ? 'disabled' : ''}>${restored ? 'Pear restored' : 'Pear'}</button>
-      <button class="restoration-target sun-target" data-action="target" data-target="sun-disc" style="${style(sun)}" aria-label="Sun silhouette">Sun</button></div>
-      <div class="inspection-inventory" aria-label="Inventory">${owned ? `<button class="piece-button" data-action="piece" data-piece="golden-pear" draggable="true" aria-pressed="false"><img class="inventory-art" src="${runtimeAssetUrl(runtimeAssets['restoration.pear'].path)}" alt="" draggable="false"> Golden pear</button>` : light ? '<span class="piece-held"><span class="light-icon" aria-hidden="true"></span>Enchanted light</span>' : '<span>Inventory · Empty</span>'}</div>
-      <p id="placement-message" class="placement-message" role="status" aria-live="polite">${light ? 'The enchanted light will become this garden’s sun. Placing it in the sky arrives in a later update; it stays in your inventory.' : restored ? 'Colour restored. Next: climb the Unfinished Sketch on the left wall and claim its enchanted light.' : owned ? 'Drag the pear onto its silhouette, or select it and activate the target. Tab / Enter also works.' : 'The king has borrowed the golden pear. Look inside Royal Supper.'}</p>
+      <div class="painting-study ${animate ? 'restoring' : ''}" data-action="invalid-drop"><img alt="${alt}" src="${masterpieceImage(count)}">
+      ${animate && lightRestored ? `<span class="sun-glow" aria-hidden="true" style="left:${sun.left + sun.width / 2}%;top:${sun.top + sun.height / 2}%"></span>` : ''}
+      <button id="pear-target" class="restoration-target ${pearRestored ? 'placed' : ''}" data-action="target" data-target="golden-pear" style="${style(pear)}" aria-label="Pear silhouette" ${pearRestored ? 'disabled' : ''}>${pearRestored ? 'Pear restored' : 'Pear'}</button>
+      <button id="sky-target" class="restoration-target sun-target ${lightRestored ? 'placed' : ''}" data-action="target" data-target="sun-disc" style="${style(sun)}" aria-label="${lightRestored ? 'Sun restored' : 'Sky silhouette for the enchanted light'}" ${lightRestored ? 'disabled' : ''}>${lightRestored ? 'Sun restored' : 'Sky'}</button></div>
+      <div class="inspection-inventory" aria-label="Inventory">${held === 'golden-pear' ? piece('golden-pear', 'restoration.pear', 'Golden pear')
+        : held === 'sun-disc' ? piece('sun-disc', 'restoration.light', 'Enchanted light') : '<span>Inventory · Empty</span>'}</div>
+      <p id="placement-message" class="placement-message" role="status" aria-live="polite">${message}</p>
+      ${complete ? '<button class="primary" data-action="see-ending">See the ending <span>→</span></button>' : ''}
       <button class="secondary" data-action="close-inspection">Back to Museum <kbd>Esc</kbd></button>`);
     this.modal.classList.add('inspection-modal');
-    if (animate) this.modal.querySelector<HTMLElement>('[data-action="close-inspection"]')?.focus();
+    if (animate) this.modal.querySelector<HTMLElement>(complete ? '[data-action="see-ending"]' : '[data-action="close-inspection"]')?.focus();
+  }
+  /** S5C: the campaign ending, shown after the light is placed or from the complete inspection. */
+  ending(): void {
+    this.show('ending', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Garden Before Dawn</p><h2 class="compact">Restored.</h2>
+      <img class="ending-art" src="${masterpieceImage(2)}" alt="The Garden Before Dawn, complete: the pear on its tree and the sun risen over the garden.">
+      <p class="menu-description">The golden pear, home from Royal Supper.<br>The enchanted light, carried out of the Unfinished Sketch, rises as the garden’s sun.</p>
+      <p class="ending-close">The gallery is quiet again. The garden has its dawn.</p>
+      <button class="primary" data-action="stay">Stay in the museum <span>→</span></button>
+      <button class="quiet" data-action="reset">New game (reset progress)</button>
+      <p class="small-note">Royal Supper and the Unfinished Sketch stay open to replay.</p>`);
+    this.modal.classList.add('ending-modal');
   }
   placementMessage(text: string): void { const el = document.getElementById('placement-message'); if (el) el.textContent = text; }
   resetConfirmation(): void {
@@ -410,3 +447,5 @@ export class GameUi {
   }
   dispose(): void { this.controller.abort(); }
 }
+
+const artUrl = (id: ArtId): string => runtimeAssetUrl(runtimeAssets[id].path);

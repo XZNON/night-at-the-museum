@@ -711,14 +711,20 @@
       "executionId": null,
       "creditsSpent": 0,
       "approved": false,
-      "status": "prepared",
+      "status": "integrated",
       "runtimePath": "public/assets/restoration/complete.webp",
       "preparedPixelSize": {
         "width": 1600,
         "height": 900
       },
       "preparationNotes": "Approved reference resized; aligned full composition retained for later sun restoration.",
-      "runtimeSha256": "f67ca3001a6b07f1f00c33a75af08e35dc5f8b9f35cb4a61a836526ac0b915f5"
+      "runtimeSha256": "f67ca3001a6b07f1f00c33a75af08e35dc5f8b9f35cb4a61a836526ac0b915f5",
+      "integrationEvidence": {
+        "date": "2026-10-07",
+        "agentVerified": true,
+        "referencesApproved": true,
+        "evidence": "S5C: inspected in the museum frame, the inspection and the ending at 1280x720 and 960x540 in production Chromium runs (docs/validation/sketch-s5/s5c). Output approval remains distinct from user-approved references."
+      }
     },
     {
       "id": "masterpiece.pear-mask",
@@ -2453,6 +2459,39 @@
       ],
       "runtimeSha256": "938d649781fb2777fd5a06fd775dd45f72e61385d6605e5f57574518361d7c75",
       "preparationNotes": "Removed 1 flat ground-line/shadow component(s) below the figure. Common scale 0.15553 from the idle height; 224x272 canvas, head/torso centred, airborne, idle head height. Lanczos resize; source cutout preserved."
+    },
+    {
+      "id": "restoration.light",
+      "world": "masterpiece",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "masterpiece.reference"
+      ],
+      "sourcePath": "public/assets/restoration/complete.webp",
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "integrated",
+      "runtimePath": "public/assets/restoration/light.png",
+      "preparedPixelSize": {
+        "width": 128,
+        "height": 128
+      },
+      "cropBox": [
+        1234,
+        190,
+        1362,
+        318
+      ],
+      "preparationNotes": "Enchanted light piece (stage-2 piece sun-disc): the painted sun cut from the aligned complete.webp by sun-mask.png, widened by a feathered warm halo. Same pixels as the restored sky; local script scripts/prepare-light.py, no generation.",
+      "runtimeSha256": "7cbc15bfe1249df586bf165543d0d9bae83b7876f466b5bd66898a8aeb322c1b",
+      "integrationEvidence": {
+        "date": "2026-10-07",
+        "agentVerified": true,
+        "referencesApproved": true,
+        "evidence": "S5C: inspected in the museum frame, the inspection and the ending at 1280x720 and 960x540 in production Chromium runs (docs/validation/sketch-s5/s5c). Output approval remains distinct from user-approved references."
+      }
     }
   ],
   "balanceAfterReferences": {

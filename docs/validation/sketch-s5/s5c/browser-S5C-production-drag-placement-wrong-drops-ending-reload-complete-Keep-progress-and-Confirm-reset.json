@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "duration": 18244,
+  "events": [
+    {
+      "event": "wrong drops kept the light"
+    },
+    {
+      "event": "production-drag: placed, saved complete, ending shown"
+    },
+    {
+      "event": "confirmed reset from the ending: fresh museum, frame locked"
+    }
+  ],
+  "layerTwo": []
+}

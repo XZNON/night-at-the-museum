@@ -106,7 +106,7 @@ test('production museum → supper → pear → return → click placement → r
   await expect(page.locator('#inventory')).toHaveText('Inventory · Golden pear');
   await inspectFromSpawn(page);
   await page.getByRole('button', { name: 'Golden pear', exact: false }).click();
-  await page.getByRole('button', { name: 'Sun silhouette' }).click();
+  await page.getByRole('button', { name: 'Sky silhouette for the enchanted light' }).click();
   await expect(page.locator('#placement-message')).toContainText('stays in inventory');
   expect((await saved(page)).restoredPieceIds).toEqual([]);
   await page.getByRole('button', { name: 'Pear silhouette' }).click();
@@ -124,6 +124,8 @@ test('production museum → supper → pear → return → click placement → r
   await walk(page, 'KeyA', 1540); await expect(page.locator('#museum-prompt')).toHaveText('Click / E — Enter Royal Supper');
   await page.keyboard.press('KeyE'); await supperRoute(page);
   await expect(page.locator('#modal')).toContainText('replay adds no duplicate');
+  // S5C: the replay note no longer tells a restored pear to go to the masterpiece.
+  await expect(page.locator('#modal')).toContainText('The golden pear already hangs in the masterpiece.');
   expect((await saved(page)).collectedPieceIds).toEqual(['golden-pear']);
   expect((await saved(page)).restoredPieceIds).toEqual(['golden-pear']);
   await page.getByRole('button', { name: 'Return to Museum', exact: true }).click();
@@ -154,7 +156,7 @@ for (const mode of ['drag', 'keyboard'] as const) {
     const piece = page.getByRole('button', { name: 'Golden pear', exact: false });
     const pear = page.getByRole('button', { name: 'Pear silhouette' });
     if (mode === 'drag') {
-      await piece.dragTo(page.getByRole('button', { name: 'Sun silhouette' }));
+      await piece.dragTo(page.getByRole('button', { name: 'Sky silhouette for the enchanted light' }));
       await expect(page.locator('#placement-message')).toContainText('stays in inventory');
       await expect(piece).toBeVisible(); expect((await saved(page)).restoredPieceIds).toEqual([]);
       await piece.dragTo(pear);

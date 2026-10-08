@@ -63,13 +63,23 @@ h2.compact { font-size: 56px; }
 .piece-button { padding: 12px 24px; background: #d0ad74; border: 2px solid transparent; border-radius: 5px; color: #281b21; }
 .piece-button[aria-pressed="true"] { border-color: #fff3d8; box-shadow: 0 0 0 3px #d0ad7444; }
 .inventory-art { height: 34px; width: 28px; object-fit: contain; vertical-align: middle; margin: -8px 9px -8px -8px; }
-/* Placeholder icon for the enchanted light (S5B): a code-drawn glow, no generated art. */
-.light-icon { display: inline-block; width: 14px; height: 14px; margin: 0 8px -2px 0; border-radius: 50%; background: radial-gradient(circle, #fffbe6 0 30%, #b0ecff 55%, #b0ecff00 72%); box-shadow: 0 0 10px 3px #8fdcff88; }
-.piece-held { display: inline-flex; align-items: center; font-size: 12px; padding: 8px 14px; border: 1px solid #ad907150; }
+/* The enchanted light's piece art (S5C, cut from the complete picture's sun) in the museum inventory. */
+.piece-icon { width: 20px; height: 20px; object-fit: contain; vertical-align: middle; margin: -6px 6px -4px 0; }
+/* The placed sun stays visible: its target keeps only a faint ring over the painted sun. */
+.restoration-target.sun-target.placed { background: transparent; border-color: #ffe9b04d; color: transparent; }
+.sun-glow { position: absolute; width: 34%; aspect-ratio: 1; border-radius: 50%; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle, #fff6d8e6 0, #ffd98a80 28%, #ffd98a00 70%); animation: sun-glow 1.6s ease-out; }
+@keyframes sun-glow { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.2); } 35% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); } }
+.ending-art { display: block; width: 100%; max-height: 26vh; object-fit: cover; border: 6px solid #967243; margin: 6px 0 0; }
+.ending-close { font: italic 15px/1.6 Georgia, serif; color: #d8b279; margin: 0 0 14px; }
+.ending-modal .menu-mark { margin-bottom: 4px; }
+.ending-modal h2 { margin: 8px 0 14px; }
+.ending-modal .menu-description { margin: 14px 0 10px; }
+.ending-modal .small-note { margin-top: 10px; }
 .placement-message { min-height: 35px; font-size: 12px; line-height: 1.6; color: #decdae; margin: 10px 0; }
 .restoring { animation: restore-colour 1.2s ease-out; }
 @keyframes restore-colour { from { filter: saturate(0); } to { filter: saturate(1); } }
-@media (prefers-reduced-motion: reduce) { .restoring { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .restoring { animation: none; } .sun-glow { display: none; } }
 @media (max-width: 650px) { #museum-hud .hud-top { gap: 8px; } #museum-hud h1 { font-size: 22px; } #museum-hud .bottom-hud { font-size: 10px; } }
 
 .section-hint { position: absolute; top: 130px; left: 30px; max-width: 620px; color: #f2ddba; font-size: 13px; margin: 0; }

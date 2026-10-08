@@ -74,6 +74,8 @@ Further subdivision is allowed when a block needs more time. Never run the three
 
 ## S5C — Sun placement and the ending
 
+> **Superseded detail, 2026-10-07:** the refined S5C plan with the post-S5B code facts and the enchanted-light defaults is [SKETCH_S5C_PLAN.md](SKETCH_S5C_PLAN.md); follow it where it differs from this section.
+
 **Playable result:** with the sun in inventory, inspecting the masterpiece lets the player drag/click/keyboard-place the sun on its silhouette; colour spreads to the full picture (`complete.webp`), the museum frame updates, and the ending overlay plays. The game is complete: new game → pear → Sketch → sun → complete masterpiece/ending.
 
 **Implementation order**
