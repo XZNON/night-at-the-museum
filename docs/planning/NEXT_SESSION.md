@@ -75,6 +75,58 @@ How to work this session:
 - Keep PLAN.md, NEXT_SESSION.md and AGENTS.md up to date. Commit or push only when I ask. No sub-agents unless I ask.
 ```
 
+## Paste-ready release prep prompt (the session after the museum polish)
+
+```text
+Continue The Last Curator in C:\Users\XZNON\DreamLayer (main; check the latest pushed commit after the museum polish).
+Goal of this session: prepare v1 for the DreamLayer jam submission. No new features.
+
+Start by reading AGENTS.md, docs/README.md, docs/planning/PLAN.md, docs/planning/NEXT_SESSION.md,
+docs/planning/DECISIONS.md and docs/planning/REQUIREMENTS.md (the release acceptance criteria), plus the latest
+validation READMEs (docs/validation/v1-polish and the museum polish evidence). Check the git state and the environment
+(node/npm, dev server on 5173, preview on 4173; restart the preview after each build).
+
+State to know:
+- The full game works: New Game → Royal Supper → golden pear → Unfinished Sketch → enchanted light → ending.
+- v1 polish (title screen, clean HUD, menus, restoration screens, UI sounds) and the museum polish are done.
+- Royal Supper's art rework stays deferred.
+- The plan lists the deadline as October 12. Ask me for the live jam cutoff and time zone and record them in PLAN.
+
+Do, in order, showing me results as you go:
+1. Small release fixes only:
+   - add a favicon (it currently 404s);
+   - set the page title and meta description;
+   - make sure the production build has no failed requests, console errors, dev-only UI or debug hooks;
+   - check that relative asset paths work from a subfolder, as itch.io serves them.
+2. Production build. Run typecheck, unit tests (--testTimeout=30000) and the release-relevant browser specs:
+   campaign.spec.ts, audio.spec.ts, sketch-campaign.spec.ts, sketch-ending.spec.ts and sketch-art.spec.ts.
+   - Point EVIDENCE_DIR at docs/validation/release-v1/regression/<spec>.
+   - Rerun a failed bot case once and report reruns honestly.
+   - Restore docs/validation/sketch-s4/s4b/unit-measurements.json if a unit run changes it.
+3. A production-preview smoke test of the full campaign with real controls at 1280×720 and 960×540,
+   with saves, reload, reset and the ending.
+   - Test the game inside an iframe page that mimics itch.io's embed (focus, pointer lock, fullscreen button, resizing).
+   - If I can, I'll also spot-check Firefox/Edge; tell me what to look for.
+4. Build an itch.io-ready zip of dist/: index.html at the zip root, relative paths. Report its size and file count;
+   it must stay under itch's limits.
+   - Put it and its SHA-256 in a release folder that isn't committed, or tell me where it is.
+5. Write the submission materials in docs/release/:
+   - a short game description (pitch, controls, how long it takes);
+   - a DreamLayer asset and process note: which assets came from DreamLayer, which from ImageGen with my
+     authorization, what was prepared locally, and that the audio is original procedural synthesis;
+     use asset-sources/manifest.json and audio-manifest.json for credits used;
+   - a credits/licence list (Three.js, Howler, Fredoka);
+   - 3–5 suggested screenshots captured from the production build;
+   - a release checklist with what is verified and what isn't (representative-machine performance, other browsers).
+6. Update PLAN.md (M5/M6 status), NEXT_SESSION.md and AGENTS.md.
+
+Rules:
+- Keep gameplay, saves and save IDs unchanged.
+- No DreamLayer generation without my explicit OK and a balance check (last recorded balance: 54 credits).
+- Don't upload, publish, submit to the jam or email anyone; I'll do that.
+- Commit or push only when I ask. No sub-agents unless I ask.
+```
+
 **Current, 2026-10-08: S6 human check recorded; v1 polish session.** The user played the full game New Game → ending. This session works through the user's UI/sound/polish list one change at a time (gameplay, collision, level data, saves unchanged unless asked), then a production build, preview campaign smoke test, itch.io zip of `dist/` and short submission text. No upload/publish/submit; the user does that after verifying the live jam cutoff (October 12 per the invitation). Royal Supper art/animation rework is deferred. No generation without explicit OK and a balance check (last 54).
 
 **Art pass part 2, 2026-10-08 (committed and pushed on the user's request):** generated torch, museum garage painting (lit/taken) and toolbox backdrop (5 credits, balance 54) are integrated: the route sits inside the toolbox with wall-mounted ledges. Before that, **v6 backdrop trial + Sketch music:** the approved v6 toolbox wall is shown as a camera-following stage backdrop (0 credits; balance 59) with clean layer edges, and the Sketch plays a new original rock/metallic loop (`scripts/make-sketch-music.py`); see the [part 1 README](../validation/sketch-art/part1/README.md#v6-backdrop-trial-2026-10-08). Next: the user's verdict, then the backdrop/entrance/torch discussion.

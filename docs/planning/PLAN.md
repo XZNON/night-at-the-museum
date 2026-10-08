@@ -811,3 +811,5 @@ Not verified: representative-machine performance, other browsers, the itch.io if
 Next: the museum polish pass, then release prep.
 
 Handoff (user request, 2026-10-08): the paste-ready museum polish prompt is in NEXT_SESSION; REQUIREMENTS now records the museum layout and the Volume label. Planning only; the museum pass needs its own session.
+
+Handoff (user request, 2026-10-08): the paste-ready release prep prompt, for the session after the museum polish, is in NEXT_SESSION too. It covers release fixes (favicon, title and meta), the regression, the production and itch-embed smoke tests, the itch.io zip and the submission materials. Planning only.
