@@ -809,3 +809,5 @@ Validation:
 Not verified: representative-machine performance, other browsers, the itch.io iframe.
 
 Next: the museum polish pass, then release prep.
+
+Handoff (user request, 2026-10-08): the paste-ready museum polish prompt is in NEXT_SESSION; REQUIREMENTS now records the museum layout and the Volume label. Planning only; the museum pass needs its own session.

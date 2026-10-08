@@ -122,7 +122,7 @@ Primary player: a jam voter or hiring reviewer opening the itch.io game with key
 
 ## 5. User experience requirements
 
-- Museum: dim red ambience, wooden floorboards, red carpet and a strongly framed/lit masterpiece. Darkness must not obscure navigation or prompts.
+- Museum: dim red ambience, wooden floorboards, red carpet and a strongly framed/lit masterpiece. Darkness must not obscure navigation or prompts. Layout (user, 2026-10-08): the masterpiece is centred on the back wall facing the entrance, the Unfinished Sketch on the left wall and Royal Supper on the right wall; the room warms with each restored piece.
 - Mini-games: readable silhouettes and landing surfaces; decorative foreground cannot hide hazards or interaction points.
 - Introduce move/jump/E at the relevant first use. Show only the nearest reachable interaction prompt.
 - Royal Supper's camera follows smoothly and shows the next landing before a jump. Sketch moderately focuses its active layer while showing adjacent-layer context in the same stacked world. No blind compulsory leaps in either adventure.
@@ -130,7 +130,7 @@ Primary player: a jam voter or hiring reviewer opening the itch.io game with key
 - Return/loading/collection/placement states have visible feedback.
 - Inventory and missing targets use shape and labels as well as colour.
 - Placement supports drag, click and keyboard. Menus expose visible focus and basic keyboard navigation.
-- Master volume and low-quality option; no flashing restoration effects. Respect reduced-motion preference for nonessential camera/transition effects.
+- Master volume (labelled Volume on the pause menu's Settings page) and low-quality option; no flashing restoration effects. Respect reduced-motion preference for nonessential camera/transition effects.
 - Museum first-person mouse look has a drag-to-look fallback when pointer lock is unavailable.
 
 ## 6. Technical design summary

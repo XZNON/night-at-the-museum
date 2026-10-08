@@ -1,4 +1,4 @@
-# Next session — v1 polish before the jam submission
+# Next session — museum polish, then release prep
 
 **Latest, 2026-10-08: v1 polish done and regression-checked; committed and pushed on the user's request.** See the PLAN log and the [v1 polish evidence](../validation/v1-polish/README.md). The user chose **the museum polish pass next**. Candidate ideas, to agree with the user first:
 - real gilded frames with depth;
@@ -14,6 +14,66 @@
 Code-built first. Any DreamLayer texture needs the user's OK and a balance check (last recorded: 54). Then release prep: production build, preview smoke test of the full campaign, itch.io zip of `dist/` and submission text (add a favicon; the browser currently gets a 404). No upload, publish or submit. Verify the live jam cutoff (October 12 per the invitation). Royal Supper's art rework stays deferred.
 
 Running the browser specs: restart the preview after each build. The Supper butter and Sketch route bots are timing-sensitive and flaky under machine load (see the evidence). Point `EVIDENCE_DIR` at a new folder so the accepted S5B/S5C/art evidence stays untouched.
+
+## Paste-ready museum polish prompt (next session)
+
+```text
+Continue The Last Curator in C:\Users\XZNON\DreamLayer (main; last pushed commit is the v1 polish handoff, after 876c164).
+Goal of this session: polish the 3D museum before submitting v1 to the DreamLayer jam. The room is still mostly plain boxes.
+
+Start by reading AGENTS.md, docs/README.md, docs/planning/PLAN.md, docs/planning/NEXT_SESSION.md and docs/planning/DECISIONS.md
+(the "v1 polish" entry at the top) and docs/validation/v1-polish/README.md. Check the git state and the environment
+(node/npm, dev server on 5173, preview on 4173; restart the preview after each build).
+
+State to know:
+- v1 polish is done and pushed: title screen, clean HUD, new pause menu, restyled restoration screens, UI sounds.
+- The museum layout (user, 2026-10-08) is in src/levels/museum.ts:
+  - the masterpiece is centred on the back wall (x 0, z −5.82, 4.6 × 2.6);
+  - the Unfinished Sketch hangs on the left wall and Royal Supper on the right wall (z −1.5, facing into the room);
+  - spawn is (0, 4.6) facing the masterpiece; the return poses face their frames.
+- src/scenes/museum.ts builds the room from simple boxes (the box() helper) and canvas plaques (Georgia).
+- It also has the restoration ambience: hemisphere/point light, a spotlight and wall halo on the masterpiece, gold motes
+  when complete, eased with GLOW_SECONDS and instant under reduced motion.
+- Frames are picked by raycasting the painting meshes (userData.artworkId); walls are the only solids;
+  interactionRange is 3.5; the Sketch frame stays dimmed and locked until the pear is restored.
+- Royal Supper's art rework stays deferred. Don't start it.
+- The jam deadline is October 12 per the invitation; verify the live cutoff and time zone before submitting anything.
+
+How to work this session:
+- Ask me which museum ideas I want first. Candidates, all code-built:
+  - real gilded frames with depth and moulding;
+  - a small brass lamp over each frame that lights once that adventure is open (signposts the next objective);
+  - wainscot panelling, a dado rail and skirting; plank variation on the floor;
+  - a carpet runner with a gold border to the masterpiece;
+  - velvet rope stanchions in front of the masterpiece, a bench, entrance doors behind the spawn;
+  - small ceiling lights instead of one lamp;
+  - brass plaques in the game's Fredoka font;
+  - a soft shimmer on the frame to visit next;
+  - procedural footsteps and room tone.
+- Do them one at a time and show me each (screenshot or a link to try) before moving on.
+- Keep gameplay, saves and save IDs, artwork IDs, frame positions, the interaction/raycast contract,
+  return poses and the restoration ambience unchanged unless I ask. Props must not block walking to any frame
+  or the reticle ray to a painting. Keep the room readable (not too dark).
+- Keep draw calls and textures modest. Put every new geometry, material and texture through the scene's resources set
+  so they are disposed. Respect reduced motion.
+- Sounds stay original and procedural. Don't rerun make-audio.py, make-sketch-music.py or make-ui-audio.py
+  in a way that changes existing files I haven't asked to change. Record new audio in asset-sources/audio-manifest.json.
+- No DreamLayer generation without my explicit OK and a balance check (last recorded balance: 54 credits).
+- After changes, run typecheck, build and unit tests (--testTimeout=30000; tests/campaign-sketch.test.ts checks the layout).
+  Then run the browser specs that walk the museum: campaign.spec.ts, sketch-campaign.spec.ts, sketch-ending.spec.ts,
+  and sketch-art.spec.ts for the museum frame case.
+  - Point EVIDENCE_DIR at a new folder (for example docs/validation/museum-polish/regression/<spec>) so the accepted
+    S5B/S5C/art evidence is not rewritten.
+  - The Royal Supper butter and Sketch route bots are timing-sensitive and flaky under machine load; rerun a failed bot case
+    once and report reruns honestly.
+  - Unit runs can touch docs/validation/sketch-s4/s4b/unit-measurements.json; restore it if it changes.
+- When the museum is done, prepare the release:
+  - production build and a production-preview smoke test of the full campaign;
+  - a favicon (it currently 404s);
+  - an itch.io-ready zip of dist/ plus short submission text and a short DreamLayer asset/process note.
+  Don't upload, publish or submit anything; I'll do that.
+- Keep PLAN.md, NEXT_SESSION.md and AGENTS.md up to date. Commit or push only when I ask. No sub-agents unless I ask.
+```
 
 **Current, 2026-10-08: S6 human check recorded; v1 polish session.** The user played the full game New Game → ending. This session works through the user's UI/sound/polish list one change at a time (gameplay, collision, level data, saves unchanged unless asked), then a production build, preview campaign smoke test, itch.io zip of `dist/` and short submission text. No upload/publish/submit; the user does that after verifying the live jam cutoff (October 12 per the invitation). Royal Supper art/animation rework is deferred. No generation without explicit OK and a balance check (last 54).
 
