@@ -14,8 +14,11 @@ test('expanded isolated route, frozen timers, quality, recovery, replay and scen
   await page.goto('http://127.0.0.1:5173/?scene=royal-supper');
   await expect(page.locator('#hud')).toBeVisible();
   await page.screenshot({ path: 'test-results/expanded-start.png' });
-  await page.keyboard.press('Escape'); await page.getByLabel('Low rendering quality').check();
+  // v1 menus (2026-10-08): quality lives on the pause menu's Settings page.
+  await page.keyboard.press('Escape'); await page.getByRole('button', { name: 'Settings' }).click();
+  await page.getByLabel('Low quality').check();
   expect((await snapshot(page)).pixelRatio).toBeLessThanOrEqual(1);
+  await page.getByRole('button', { name: 'Back' }).click();
   await page.getByRole('button', { name: 'Resume', exact: false }).click();
   await page.setViewportSize({ width: 960, height: 540 }); await page.setViewportSize({ width: 1280, height: 720 });
   await page.keyboard.press('KeyR');
@@ -52,7 +55,7 @@ test('expanded isolated route, frozen timers, quality, recovery, replay and scen
     }
     if (index !== 2 && index !== 4) return;
     await page.keyboard.down('KeyD'); await page.evaluate(() => window.dispatchEvent(new Event('blur')));
-    await expect(page.getByRole('heading', { name: 'Paused.' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Paused' })).toBeVisible();
     const paused = await snapshot(page); await page.waitForTimeout(250); const frozen = await snapshot(page);
     expect(frozen.body).toEqual(paused.body); expect(frozen.session).toEqual(paused.session); expect(frozen.updateCount).toBe(paused.updateCount);
     await page.getByRole('button', { name: 'Resume', exact: false }).click(); await page.keyboard.up('KeyD');
@@ -68,7 +71,8 @@ test('expanded isolated route, frozen timers, quality, recovery, replay and scen
   expect((await snapshot(page)).session.checkpointId).toBe('after-diner'); expect((await snapshot(page)).session.fork).toBe('bridged');
   await page.keyboard.down('KeyD'); await page.keyboard.down('Space'); await page.waitForTimeout(2600); await page.keyboard.up('Space'); await page.keyboard.up('KeyD');
   await page.keyboard.press('KeyR'); await page.waitForTimeout(150); expect((await snapshot(page)).body?.x).toBeCloseTo(372);
-  await page.keyboard.press('Escape'); await page.getByLabel('Low rendering quality').uncheck();
+  await page.keyboard.press('Escape'); await page.getByRole('button', { name: 'Settings' }).click();
+  await page.getByLabel('Low quality').uncheck(); await page.getByRole('button', { name: 'Back' }).click();
   await page.getByRole('button', { name: 'Restart adventure', exact: true }).click(); expect((await snapshot(page)).session.fork).toBe('upright');
   await expandedRoute(page); await expect(page.locator('#modal')).toContainText('replay adds no duplicate');
   expect((await snapshot(page)).campaign.collectedPieceIds).toEqual(['golden-pear']);

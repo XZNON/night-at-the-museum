@@ -123,6 +123,85 @@ save('royal-supper.entrance', party.crop((0, y0, 2048, y0 + round(2048 * 1.8 / 2
      'Museum painting of the banquet: the second guest table, cropped to the 2.8 x 1.8 side frame.',
      max_side=1120, lift=False)
 
+# --- tablecloth (review fix, 2026-10-09) ---------------------------------------------
+# The route's ground is the feast table. Its cloth is cut from the backdrop
+# reference's own tablecloth: from the front edge's ink line to the hem, the
+# floor below the hem keyed out. Each column is shifted so the edge line is a
+# straight top (it lies on the colliders' flat tops) and the line is thinned to
+# the props' outline weight. The scene repeats it mirrored, stretched down to
+# the hem below the view, and caps each table end with a fold.
+ref = np.asarray(Image.open(REFS / 'backdrop-v1.png').convert('RGB')).astype(int)
+CLOTH = (0, 1062, 2560, 1380)
+a = ref[CLOTH[1]:CLOTH[3], CLOTH[0]:CLOTH[2]]
+lum = a.sum(2) / 3
+tops = np.array([next((y for y in range(4, 34) if lum[y, x] < 120), -1) for x in range(a.shape[1])], float)
+known = tops >= 0
+tops = np.interp(np.arange(len(tops)), np.where(known)[0], tops[known])
+tops = np.round(np.convolve(np.pad(tops, 6, mode='edge'), np.ones(13) / 13, 'valid')).astype(int)
+floor = np.median(a[-1], 0)
+below = np.abs(a - floor).sum(2) < 75
+height = a.shape[0] - tops.max()
+cloth = np.zeros((height, a.shape[1], 4), np.uint8)
+for x in range(a.shape[1]):
+    column = a[tops[x]:tops[x] + height, x]
+    keep = ~below[tops[x]:tops[x] + height, x]
+    # Only the floor connected to the bottom is keyed: scan up to the hem.
+    alpha = np.full(height, 255, np.uint8)
+    y = height - 1
+    while y >= 0 and not keep[y]:
+        alpha[y] = 0; y -= 1
+    cloth[:, x, :3] = column; cloth[:, x, 3] = alpha
+# Thin the edge line (about 8 px in the backdrop) to about 4 px.
+line = 10
+top_band = Image.fromarray(cloth[:line]).resize((cloth.shape[1], line // 2), Image.LANCZOS)
+cloth = np.concatenate([np.asarray(top_band), cloth[line:]])
+alpha = Image.fromarray(cloth[:, :, 3]).filter(ImageFilter.MinFilter(3)).filter(ImageFilter.GaussianBlur(0.8))
+cloth[:, :, 3] = np.asarray(alpha)
+cloth_image = save('royal-supper.cloth', cloth, 'supper.backdrop.reference-v1', list(CLOTH),
+                   'Tablecloth for the route\'s table segments: the backdrop\'s own cloth from its edge line to the hem, edge straightened and thinned, floor keyed.',
+                   max_side=2560)
+
+# A fold at each table end: the cloth's first columns shaded toward the outer
+# edge, a rounded top corner, an ink outline down the edge and two creases.
+# Its inner side fades in so it lies over the repeated cloth without a seam.
+cap_w, scale = 96, 4
+base = np.asarray(cloth_image).astype(float)[:, :cap_w].copy()
+h = base.shape[0]
+shade = np.linspace(0.62, 1.0, cap_w)[None, :, None]
+base[:, :, :3] *= shade
+ink = np.median(np.asarray(cloth_image)[1:4, :, :3].reshape(-1, 3), 0)
+mask = Image.new('L', (cap_w * scale, h * scale), 0)
+draw = ImageDraw.Draw(mask)
+edge, radius = 5 * scale, 26 * scale
+draw.rounded_rectangle((edge, 0, cap_w * scale + radius, h * scale + radius), radius, fill=255)
+lines = Image.new('L', mask.size, 0)
+ld = ImageDraw.Draw(lines)
+ld.rounded_rectangle((edge, 0, cap_w * scale + radius, h * scale + radius), radius, outline=255, width=4 * scale)
+for x0, x1, y0 in ((30, 24, 0.18), (58, 54, 0.42)):
+    ld.line((x0 * scale, y0 * h * scale, x1 * scale, h * scale), fill=150, width=2 * scale)
+mask = np.asarray(mask.resize((cap_w, h), Image.LANCZOS)).astype(float) / 255
+lines = np.asarray(lines.resize((cap_w, h), Image.LANCZOS)).astype(float) / 255 * mask
+fade = np.clip((cap_w - np.arange(cap_w)) / (cap_w * 0.3), 0, 1)[None, :]
+cap = np.zeros((h, cap_w, 4))
+cap[:, :, :3] = base[:, :, :3] * (1 - lines[:, :, None]) + ink * lines[:, :, None]
+cap[:, :, 3] = np.minimum(base[:, :, 3], mask * 255) * fade
+cap[:, :, 3] = np.maximum(cap[:, :, 3], lines * base[:, :, 3])
+save('royal-supper.cloth-left', cap, 'supper.backdrop.reference-v1', list(CLOTH),
+     'Table end fold: the cloth\'s first columns shaded, rounded corner and ink edge (drawn locally).', max_side=2560, lift=False)
+save('royal-supper.cloth-right', cap[:, ::-1].copy(), 'supper.backdrop.reference-v1', list(CLOTH),
+     'Table end fold, mirrored.', max_side=2560, lift=False)
+
+# The candle canopy (user, review fixes 2026-10-09): velvet from a curtain
+# panel beside the centre window and a gilded trim from the right portrait
+# frame's straight left edge, turned to lie along the canopy's underside.
+VELVET = (962, 170, 1132, 470)
+save('royal-supper.velvet', Image.fromarray(ref[VELVET[1]:VELVET[3], VELVET[0]:VELVET[2]].astype('uint8')),
+     'supper.backdrop.reference-v1', list(VELVET), 'Canopy velvet: curtain panel crop, repeated mirrored.', max_side=512)
+TRIM = (1598, 120, 1632, 350)
+trim_rgb = Image.fromarray(ref[TRIM[1]:TRIM[3], TRIM[0]:TRIM[2]].astype('uint8')).rotate(90, expand=True)
+save('royal-supper.trim', trim_rgb, 'supper.backdrop.reference-v1', list(TRIM),
+     'Canopy gilded trim: the portrait frame\'s straight edge turned horizontal, repeated mirrored.', max_side=512)
+
 # --- food ----------------------------------------------------------------------
 food = cutout('food-v1')
 FOOD = dict(bread=(300, 180, 840, 650), butter=(1070, 300, 1650, 640), crumb=(1860, 350, 2260, 630),
@@ -141,7 +220,15 @@ WARE = dict(basket=(285, 330, 1015, 745), goblet=(1110, 100, 1465, 745), cover=(
             plate=(320, 790, 2230, 925))
 part = {k: crop(ware, v) for k, v in WARE.items()}
 save('royal-supper.basket', part['basket'], 'supper.tableware.reference-v1', WARE['basket'], 'Start basket; drawn deeper than its collider.')
-save('royal-supper.goblet', part['goblet'], 'supper.tableware.reference-v1', WARE['goblet'], 'Goblet arch under its plate.')
+goblet = save('royal-supper.goblet', part['goblet'], 'supper.tableware.reference-v1', WARE['goblet'], 'Goblet arch under its plate.')
+# Goblet stands under the floating bread and dessert pieces (user, review fixes
+# 2026-10-09): the goblet's cup at its own proportions, and a slice of its
+# straight stem that the scene repeats down past the view. Same width, so the
+# stem stays registered under the cup.
+save('royal-supper.stand-cup', goblet.crop((0, 0, goblet.width, 336)), 'supper.tableware.reference-v1', WARE['goblet'],
+     'Goblet stand cup: the goblet down to its straight stem.', lift=False)
+save('royal-supper.stand-stem', goblet.crop((0, 336, goblet.width, 368)), 'supper.tableware.reference-v1', WARE['goblet'],
+     'Goblet stand stem: a straight slice of the goblet stem, repeated down.', lift=False)
 # The heroine's smock is teal: the casserole she hides behind turns plum-crimson
 # (teal hues only; its gold trim and ink keep their colours).
 hsv = np.asarray(Image.fromarray(part['cover'][:, :, :3].astype('uint8')).convert('HSV')).copy()
@@ -154,6 +241,17 @@ strip('royal-supper.plate', part['plate'], 0.08, (0.40, 0.60), 0.08, 'supper.tab
 # The sheet's fork lost its tines; the fork comes from its own upright reference.
 fork = trim(cutout('fork-v1'))
 save('royal-supper.fork', fork, 'supper.fork.reference-v1', None, 'Upright fork that topples into the bridge.', max_side=768)
+# Toppled, the fork's left side is the bridge's walking edge. The fork is
+# narrower at the neck and handle, so each row is shifted until its outline
+# starts at the left: lying across the gap, its top is straight along the
+# whole landing (review fix, 2026-10-09). The upright fork keeps its shape.
+bridge = np.zeros_like(fork)
+for y in range(fork.shape[0]):
+    solid = np.where(fork[y, :, 3] > 128)[0]
+    shift = max(0, solid[0] - 2) if len(solid) else 0
+    bridge[y, :fork.shape[1] - shift] = fork[y, shift:]
+save('royal-supper.fork-bridge', trim(bridge), 'supper.fork.reference-v1', None,
+     'Toppled fork bridge: rows left-aligned so its top edge is straight on the landing.', max_side=768)
 
 # --- candles, fan and checkpoint flag ---------------------------------------------
 lights = cutout('candles-v1', flood=60)

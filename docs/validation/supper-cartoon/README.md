@@ -55,7 +55,7 @@ Script: `scripts/art-references.mjs supper v1 …` (the Sketch reference script 
 
 The user's own play-through of the new look; motion (flicker, bob, squash) only checked in stills; representative-machine performance; other browsers.
 
-## User review (2026-10-09) — fixes planned for the next session
+## User review (2026-10-09)
 
 1. Visible bars on the assets the player lands on (the landing-edge lines; any other code-drawn bar or box) must go.
 2. The casseroles look like they sink into the floor.
@@ -64,4 +64,30 @@ The user's own play-through of the new look; motion (flicker, bob, squash) only 
 6. The yellow line on the bread crumbs (their landing-edge line).
 7. Grapes come too late (the first pair needs about 21 s from the chute to the entry) and only about three waves are met; they should already be rolling and come in a denser continuous stream.
 
-(No item 4.) Prompt: docs/planning/NEXT_SESSION.md.
+(No item 4.) All fixed in the session below.
+
+## Review fixes (2026-10-09)
+
+One change at a time, each shown to the user as a screenshot board before moving on (boards in `review-fixes/`). New art is cut locally from the existing references (`scripts/prepare-supper-cartoon.py`, 0 credits; DreamLayer balance still 44): `fork-bridge`, `cloth`, `cloth-left`/`cloth-right`, `velvet`, `trim`, `stand-cup`, `stand-stem` (85 KB of WebP in all, recorded in `asset-sources/manifest.json`; the earlier 30 files re-export byte-identical).
+
+1. **Landing lines and bars** (`item1-landing-board.webp`). The landing-edge lines, the fork-landing strip and the candle-top boxes are gone. Each skin has a measured `surface` share so its drawn top edge sits on the collider top: the cake was drawn 0.21 u low (feet now on the frosting, the strawberries behind), the wax rim and basket rim moved up slightly; bread, butter, plates and jelly were already within 0.02 u. The toppled fork swaps (halfway through the topple) to `fork-bridge.webp`, its rows left-aligned so the top edge is straight along the bridge. The ember bar became the wick's glow growing until relight plus a small flame flickering back for the last 0.45 s (steady under reduced motion); the cover strip became a warm halo behind the casserole and the player falling into its shadow while HIDDEN. Hints and the flame cue reworded.
+2. **Casseroles** (`item2-covers-board.webp`). Drawn in front of the floor art (behind the player), lowered by the picture's 0.04 u bottom margin so the base touches the walking line, over a soft contact shadow.
+3. **The table** (`item3-table-board.webp`, mock `item3-floating-mock.webp`). One tablecloth segment per ground run (touching runs share one cloth; under a butter slab the cloth starts at the slab's foot), its straightened, thinned edge line on the collider top, hanging to y −2.9 below every view, with a shaded fold at each end over a pit; pits stay dark gaps. The platter strips on the ground are gone; the raised grape dishes and the goblet arch stand on goblets on the cloth. For the floating bread section and the dessert ascent the user picked **goblet stands** (B) from three in-game mocks (as now / goblet stands / ribbons; the temporary mock switch and spec were removed): the goblet's cup at its own proportions under each piece and its straight stem repeated down past the view; no collision. The canopy is velvet from the backdrop curtains with a gilt trim from a portrait frame along its underside (user).
+4. **Grapes** (`item4-grapes-board.webp`; gameplay change asked for by the user). Period 6.5 → 3.5 s (the user chose it over 3.0 and 4.0 after seeing the tuning; all three have a recorded route), `wakeX: 99` and `preroll: 23.1`: the run is full on arrival (11–12 grapes on the ground at any moment), nothing pops into view, an after-butter retry always starts with the last pair just off the entry and the next 2 s away, and grapes still roll off at x 168. `grapeRects` is a pure export of the model. The route recorder records each grape-section move on a grape-free copy and starts it at the first frame whose whole path keeps 0.45 u clear of the stream (it waits on the dishes): grape stage 24.7 s. New unit tests: run full on arrival, still pairs, never past the entry at any phase, clock wakes at the butter, retries reset the phase.
+
+5. **Remaining code shapes** (`item5-code-shapes-board.webp`; user follow-up: "still code blocks on top of the cauldron and other places"). The candle holder's brass boxes became gilt bars (the frame trim) on goblet-stem posts; the flame's rectangular heat box a soft round glow; the canopy's straight-cut ends (one showed as a red block above the first casserole) got gilt edges; three gold cones above the king's plate were removed. Left in code but never in view: a floor slab below every camera and a fallback for art types that no longer exist.
+6. **Plates on the goblets** (`item6-goblet-plates-board.webp`; user: "the golden glasses have plates on them but they still have the blocks on them as well"). A raised dish's plate strip filled its whole 0.6 collider, so its middle read as a slab under the plate rim. Each raised dish (grape dishes, goblet arch, dessert shelf/drop, king's plate) is now a stack of three thin plates at the platter's own proportions filling the same collider; the solid underside the player can bump into stays visible.
+
+### Verification
+
+- Typecheck and production build pass (the >500 kB chunk warning predates this). Unit tests 244/244 (`--testTimeout=30000`; two new grape tests); `docs/validation/sketch-s4/s4b/unit-measurements.json` unchanged. The production preview was restarted after each build.
+- Browser (Chromium): `art.spec.ts`, `audio.spec.ts`, `movement-lane.spec.ts` pass. `campaign.spec.ts`: 5/6 on the first run; the production full-route case failed in its replay leg, where the route bot missed the butter stage four times (no hazard cue: the known wall-clock flake; the butter is unchanged); it passed on one rerun (butter retries 1 and 2). 6/6 overall. `supper-cartoon.spec.ts` passes every run (final run: one butter and one dessert bot retry). The grape stage passed first try in every browser run, dev and production.
+- `blockout.spec.ts` is updated to the v1 menus (quality on the pause menu's Settings page as "Low quality", the "Paused" title) and passes (two butter bot retries).
+- Headless Chromium renders about 145 fps at the bread and butter views, so the table art does not slow the bots.
+- Order: after the main run, presentation-only changes followed: the lowest bread slice's stand, then item 5 (holder, heat glow, canopy edges, cones), then item 6 (plate stacks). After each, typecheck and build were rerun, the preview restarted, and `art.spec.ts` and `supper-cartoon.spec.ts` (these captures) rerun (latest build: `art.spec.ts` passed; `supper-cartoon.spec.ts` failed once when the butter bot missed four times under machine load, other apps busy; the butter inputs and gameplay are unchanged by construction; it passed on one rerun with one butter and one dessert retry); the Royal Supper and route unit tests 22/22. Campaign, audio, movement-lane and blockout ran on the build before these presentation changes.
+
+Captures (`review-fixes/`, WebP, 1280×720 unless named 960): the six item boards and the floating-pieces mock; `start-1280`, `start-960`, `bread-play-1..2`, `end-0..6`, `grapes-play-1..5` (1 is the after-butter retry phase), `fork-play-1..2`, `candles-play-1..3`, `hidden-1280`, `hidden-960` (HIDDEN under the diner's look), `diner-play-1..5`, `dessert-play-1..4`.
+
+### Not verified
+
+The user's own play-through of the fixes (next); motion (the wick glow growth, pre-relight flicker, halo) only in stills and the bot run; representative-machine performance; other browsers.

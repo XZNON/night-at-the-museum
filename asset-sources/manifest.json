@@ -3403,6 +3403,141 @@
       "sha256": "6203ec89311837dd6d936682170e51f56dc67aa5d5a7392fafd59f46c5f245f2"
     },
     {
+      "id": "royal-supper.cloth",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.backdrop.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/backdrop-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/cloth.webp",
+      "preparedPixelSize": {
+        "width": 2560,
+        "height": 292
+      },
+      "cropBox": [
+        0,
+        1062,
+        2560,
+        1380
+      ],
+      "preparationNotes": "Tablecloth for the route's table segments: the backdrop's own cloth from its edge line to the hem, edge straightened and thinned, floor keyed. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "26ce7a47de77e690a67a96e653d3142412fcdda59792486521e61085dbdf50f3"
+    },
+    {
+      "id": "royal-supper.cloth-left",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.backdrop.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/backdrop-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/cloth-left.webp",
+      "preparedPixelSize": {
+        "width": 96,
+        "height": 292
+      },
+      "cropBox": [
+        0,
+        1062,
+        2560,
+        1380
+      ],
+      "preparationNotes": "Table end fold: the cloth's first columns shaded, rounded corner and ink edge (drawn locally). Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "16e8965c1c9c490201b5e3d4dc311d539388bdca343622408d8e1249c6094b86"
+    },
+    {
+      "id": "royal-supper.cloth-right",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.backdrop.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/backdrop-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/cloth-right.webp",
+      "preparedPixelSize": {
+        "width": 96,
+        "height": 292
+      },
+      "cropBox": [
+        0,
+        1062,
+        2560,
+        1380
+      ],
+      "preparationNotes": "Table end fold, mirrored. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "c1cc201761373763bf89887398b1b6dcc2a8d0f9e51fe17fc9718961a1ffb192"
+    },
+    {
+      "id": "royal-supper.velvet",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.backdrop.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/backdrop-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/velvet.webp",
+      "preparedPixelSize": {
+        "width": 170,
+        "height": 300
+      },
+      "cropBox": [
+        962,
+        170,
+        1132,
+        470
+      ],
+      "preparationNotes": "Canopy velvet: curtain panel crop, repeated mirrored. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "ac150f46769e4640b4df78cce667e453debe239393558780f5f08add652c2275"
+    },
+    {
+      "id": "royal-supper.trim",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.backdrop.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/backdrop-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/trim.webp",
+      "preparedPixelSize": {
+        "width": 230,
+        "height": 34
+      },
+      "cropBox": [
+        1598,
+        120,
+        1632,
+        350
+      ],
+      "preparationNotes": "Canopy gilded trim: the portrait frame's straight edge turned horizontal, repeated mirrored. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "519c419fe9920ed56c52503e9a6b11da6f677444857ebc69da8e1028fc6f60cc"
+    },
+    {
       "id": "royal-supper.crumb",
       "world": "royal-supper",
       "provider": "DreamLayer",
@@ -3781,6 +3916,60 @@
       "sha256": "72b632bcf9e1baa2ff1bc9943410ceca0879a116df9360284ad8b1091c5a8d7f"
     },
     {
+      "id": "royal-supper.stand-cup",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.tableware.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/tableware-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/stand-cup.webp",
+      "preparedPixelSize": {
+        "width": 267,
+        "height": 336
+      },
+      "cropBox": [
+        1110,
+        100,
+        1465,
+        745
+      ],
+      "preparationNotes": "Goblet stand cup: the goblet down to its straight stem. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "705d37dbfb2967857106a0275a8ddc6fd443f0225e4edad36f1f365fa59ea766"
+    },
+    {
+      "id": "royal-supper.stand-stem",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.tableware.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/tableware-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/stand-stem.webp",
+      "preparedPixelSize": {
+        "width": 267,
+        "height": 32
+      },
+      "cropBox": [
+        1110,
+        100,
+        1465,
+        745
+      ],
+      "preparationNotes": "Goblet stand stem: a straight slice of the goblet stem, repeated down. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "77824ac5a3fdeaed99514aa6429608a3816d3dd7e903ba9fd5bfee4be08ad807"
+    },
+    {
       "id": "royal-supper.cover",
       "world": "royal-supper",
       "provider": "DreamLayer",
@@ -3909,6 +4098,28 @@
       "cropBox": null,
       "preparationNotes": "Upright fork that topples into the bridge. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
       "sha256": "8a8a3e87e256c7f476889c855d546f4ed2c151b5474c9dfe7e52682a1d8b41c6"
+    },
+    {
+      "id": "royal-supper.fork-bridge",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.fork.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/fork-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/fork-bridge.webp",
+      "preparedPixelSize": {
+        "width": 124,
+        "height": 768
+      },
+      "cropBox": null,
+      "preparationNotes": "Toppled fork bridge: rows left-aligned so its top edge is straight on the landing. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "93a36408a307f63339b0ff2a159bd8433efa2d511857a68275d9e5836cc0c290"
     },
     {
       "id": "royal-supper.holder",

@@ -4,6 +4,8 @@ Start with the [current handoff](planning/NEXT_SESSION.md), then the [build plan
 
 ## Current work
 
+Latest, 2026-10-09: **Royal Supper review fixes done** (no code bars, casseroles on the floor, the ground as a feast table with goblet stands, a denser grape stream already rolling; [evidence](validation/supper-cartoon/README.md#review-fixes-2026-10-09)). Next: the user's play-through, then release prep ([handoff](planning/NEXT_SESSION.md)).
+
 Latest, 2026-10-08: **v1 polish done** (title screen, clean HUD, pause menu, restoration screens, museum layout and ambience, UI sounds; [evidence](validation/v1-polish/README.md)). Next: museum polish, then release prep ([handoff](planning/NEXT_SESSION.md)).
 
 Latest, 2026-10-07: **next is S5B** (Sketch frame in the museum, campaign claim of the light); the enchanted light acts as the sun in the campaign (user). Prompt: [NEXT_SESSION](planning/NEXT_SESSION.md).

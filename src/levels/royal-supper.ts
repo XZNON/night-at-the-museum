@@ -17,7 +17,8 @@ export interface RoyalSupperLevel {
   fork: InteractionDefinition & { pivot: { x: number; y: number }; length: number };
   candle: { id: 'candle-flame'; period: number; safeSeconds: number; flames: (Rect & { offAt: number })[]; fan: { x: number; y: number };
     holder: { baseY: number; crossbarY: number; waxBaseY: number } };
-  grapes: { startX: number; endX: number; y: number; radius: number; speed: number; period: number; offsets: number[]; approachSeconds: number; approachHeight: number };
+  grapes: { startX: number; endX: number; y: number; radius: number; speed: number; period: number; offsets: number[]; approachSeconds: number; approachHeight: number;
+    wakeX: number; preroll: number };
   diner: { zone: Rect; cover: (Rect & { id: string })[]; away: number; warning: number; look: number };
   pear: Rect;
 }
@@ -40,8 +41,8 @@ export const royalSupper: RoyalSupperLevel = {
     { start: 99, name: 'Butter & crumbs', hint: 'Faster slides carry through jumps. Touching a crumb retries this section.' },
     { start: 164, name: 'Rolling grapes', hint: 'Watch the regular pairs. Jump over grapes; the higher dishes are safe.' },
     { start: 260, name: 'The fork bridge', hint: 'The gap is too wide. E topples the fork; wait until it settles.' },
-    { start: 285, name: 'Fan & three candles', hint: 'Follow the fan: jump onto each ember, then jump the gaps before relighting.' },
-    { start: 317, name: 'The watchful diner', hint: 'Three crossings get longer. Keep your feet inside the blue strip; HIDDEN confirms safety.' },
+    { start: 285, name: 'Fan & three candles', hint: 'Follow the fan: hop onto each smoking candle before its wick flickers alight.' },
+    { start: 317, name: 'The watchful diner', hint: 'Three crossings get longer. Hide fully behind a casserole; it glows while you are safe.' },
     { start: 374, name: 'Jelly & dessert ascent', hint: 'Bounce up, cross the cake shelf, then drop to the second jelly for the final rise.' },
   ],
   platforms: [
@@ -86,7 +87,14 @@ export const royalSupper: RoyalSupperLevel = {
   candle: { id: 'candle-flame', period: 11, safeSeconds: 2,
     flames: [296, 302, 308].map((x, i) => ({ x, y: 3.2, width: 3, height: 3.8, offAt: 2 + i * 1.1 })), fan: { x: 292, y: 8.3 },
     holder: { baseY: -2.2, crossbarY: -0.4, waxBaseY: 0.4 } },
-  grapes: { startX: 259, endX: 168, y: 2.4, radius: 0.55, speed: 4.2, period: 6.5, offsets: [0, 1.4], approachSeconds: 1.3, approachHeight: 3.6 },
+  // Grapes (user, review fixes 2026-10-09): a continuous, denser stream of
+  // ground pairs, already rolling across the whole run when the player gets
+  // there. The clock wakes at the butter (out of sight of the run) with
+  // `preroll` seconds already rolled: on an after-butter retry the last pair
+  // has just left the entry. Pairs still drop out of the chute and roll off
+  // at the entry (endX), never reaching the checkpoint.
+  grapes: { startX: 259, endX: 168, y: 2.4, radius: 0.55, speed: 4.2, period: 3.5, offsets: [0, 1.4], approachSeconds: 1.3, approachHeight: 3.6,
+    wakeX: 99, preroll: 23.1 },
   diner: { zone: { x: 320, y: 2.4, width: 50, height: 30 }, away: 2.4, warning: 0.85, look: 2,
     cover: [{ id: 'cover-0', x: 320, y: 2.4, width: 4.8, height: 1.9 },
       { id: 'cover-1', x: 333, y: 2.4, width: 4.4, height: 1.9 },

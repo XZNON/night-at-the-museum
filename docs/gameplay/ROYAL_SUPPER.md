@@ -33,7 +33,7 @@ The user selected the mechanics and progression style; this sequence is the work
 | --- | --- | --- |
 | Bread basket and crockery | Introduce ordinary jump, then double jump through increasingly tall bread/plate steps and standing-height goblet passages | Starting spawn; no extra checkpoint for each small jump |
 | Butter and crumbs | Controlled slippery run; time jumps over crumbs while momentum persists, then land on a clear dish | One checkpoint after clearing the section |
-| Rolling grapes | Predictable rolling waves with visible approach; mix stepped landings and airborne avoidance | One checkpoint after clearing the section |
+| Rolling grapes | Predictable, continuous stream of ground pairs, already rolling when the player arrives (user, 2026-10-09); mix stepped landings and airborne avoidance | One checkpoint after clearing the section |
 | Fork crossing | E topples the fork into the required bridge; dimensions account for full double-jump reach | Preserve settled bridge; checkpoint after crossing |
 | Fan and three candles | Automatic rotating fan briefly extinguishes candles one by one. Commit and cross before flames return | One checkpoint after the entire timed section; none between the candles |
 | Diner attention and cover | Three safe dishes, followed by three progressively longer crossings (13, 15 and about 20 units to safety), with narrowing cover widths | One checkpoint after the whole watched passage |
@@ -56,6 +56,7 @@ Checkpoint spacing follows completed hard sections, not every platform. Tune sec
 - Grapes enter through visible approach space, never on top of the player or a checkpoint. Hazard contact causes checkpoint recovery.
 - Increase challenge through spacing/waves and landing positions; avoid random impossible sequences.
 - Reset the retry wave to a readable phase after failure. Pause/blur freezes grape motion and spawn timing; leaving the scene stops its updates.
+- **Review fix, 2026-10-09 (user): the run is already full when the player arrives, with a continuous, denser stream of ground pairs.** A pair (two grapes 1.4 s apart, speed 4.2) drops out of the goblet chute every 3.5 s (was 6.5 s): 11–12 grapes roll along the run at any moment. The grape clock wakes at the butter (x 99, out of sight of the run) with 23.1 s already rolled (`preroll`), so nothing pops into view; on an after-butter retry the last pair has just rolled off the entry and the next reaches it 2 s later, the same phase every time. Grapes still roll off at x 168, never reaching the checkpoint (163) or where the player waits at the entry (up to 166.2). The raised dishes (on goblet stands) stay the safe spots; the recorded route waits on each dish for a clear window. Still pairs on the ground; no new height lanes.
 
 ## Fork interaction
 
@@ -70,7 +71,7 @@ Checkpoint spacing follows completed hard sections, not every platform. Tune sec
 - Use the approved trident-shaped holder with three candles as the visual basis. Each flame has an explicit independent hazard volume.
 - Three 3-unit-wide candle tops are separated by 3-unit gaps. Jump onto the first candle, between both pairs, and across the 4-unit exit gap; there is no floor bridging the arms. A common brass foot, stem and crossbar sit below the route and provide no walkable shortcut.
 - A fan automatically rotates/sweeps, extinguishing the flames in sequence. Each remains safe for a limited interval, then relights. The section requires timely forward traversal; waiting indefinitely within it is not a solution.
-- Let the player observe the cycle from a safe entry area. Fan orientation, diminishing flame/embers and relighting cues communicate which candle is safe and when the window is closing.
+- Let the player observe the cycle from a safe entry area. Fan orientation, the smoking wick whose glow grows until relight, and a small flame flickering back for the last 0.45 s (steady under reduced motion) communicate which candle is safe and when the window is closing (review fix, 2026-10-09: no ember bar).
 - Timing values come from measured jumps and tested traversal. Choose offsets/windows that admit a reliable route with the allowed double jump, then tune difficulty. No permanently safe snuffer action replaces the timing challenge.
 - Current jump-route windows open at 2.0 / 3.1 / 4.2 seconds in the 11-second cycle, each for 2 seconds. The canopy underside is at y7, allowing full ordinary jumps between y3.2 tops; heat fills the clearance to prevent jumping above lit candles. Deep column collision prevents an underneath shortcut.
 - Relit flame contact burns and recovers at the last checkpoint, even if the player has not crossed fast enough. There is no checkpoint midway through the three-candle challenge.
@@ -83,7 +84,7 @@ Checkpoint spacing follows completed hard sections, not every platform. Tune sec
 - A visible head-turn lead-in precedes the active look phase; afterwards the diner looks away. Implement one scripted cycle first, rather than general AI.
 - During LOOK, soft golden rays shine from the painted eyes toward the table. Remove the old animated eye spheres; AWAY and TURNING retain normal banquet lighting. The rays stay behind player/cover silhouettes and share the paused gameplay phase. This visual change was requested on 2026-10-06; detection bounds and timings remain unchanged.
 - Authored goblet/dish cover regions protect only a fully hidden player body. Art must explain cover boundaries and its height; pixels do not perform line-of-sight simulation.
-- The dish fills the protection volume. An inset blue floor strip marks safe foot-centre positions, including both edges; it turns green when the player is fully hidden, matching the HIDDEN status. Use only a tiny numeric boundary tolerance, not a grace period that makes genuine exposure safe.
+- The dish fills the protection volume. While the whole body is inside it (the HIDDEN status), the casserole glows with a warm halo and the player falls into its shadow (review fix, 2026-10-09; this replaced an inset blue/green floor strip, a code-drawn bar the user asked to remove). Use only a tiny numeric boundary tolerance, not a grace period that makes genuine exposure safe.
 - Cap the passage at three cover crossings. Increase travel distance and narrow the safe dishes rather than extending a repeated pattern. Keep the same visible attention cycle and whole-section checkpoint.
 - Reaching the exposed section from a checkpoint must not cause instant unavoidable detection. Tune lead-in/look-away intervals against actual travel time and provide reachable cover.
 - Being caught returns to the last checkpoint with a clear cue. Freeze attention timing on pause/blur and stop it with scene lifecycle.

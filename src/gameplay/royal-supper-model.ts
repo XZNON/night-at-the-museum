@@ -14,6 +14,21 @@ export const createSupperSession = (): SupperSession => ({
   artworkId: 'royal-supper', checkpointId: 'basket-start', fork: 'upright', forkElapsed: 0,
   grapeElapsed: 0, candleElapsed: 0, dinerElapsed: 0, grapesStarted: false, candlesStarted: false, dinerStarted: false,
 });
+// The grape stream is a pure function of its clock: `preroll` seconds have
+// already rolled when the clock starts, so the whole run is full of pairs.
+export function grapeRects(grapes: RoyalSupperLevel['grapes'], elapsed: number): Rect[] {
+  const g = grapes; const time = elapsed + g.preroll;
+  const lifetime = (g.startX - g.endX) / g.speed;
+  const result: Rect[] = [];
+  for (const offset of g.offsets) {
+    for (let wave = Math.max(0, Math.ceil((time - offset - lifetime) / g.period)); wave * g.period + offset <= time; wave++) {
+      const age = time - offset - wave * g.period;
+      const y = g.y + Math.max(0, g.approachSeconds - age) / g.approachSeconds * g.approachHeight;
+      result.push({ x: g.startX - age * g.speed - g.radius, y, width: g.radius * 2, height: g.radius * 2 });
+    }
+  }
+  return result;
+}
 const contains = (cover: Rect, body: Rect): boolean => body.x >= cover.x - 0.001 && body.x + body.width <= cover.x + cover.width + 0.001 &&
   body.y >= cover.y - 0.001 && body.y + body.height <= cover.y + cover.height + 0.001;
 
@@ -54,20 +69,7 @@ export class RoyalSupperModel {
     return phase < d.away ? 'AWAY' : phase < d.away + d.warning ? 'TURNING' : 'LOOK';
   }
   get hidden(): boolean { return this.level.diner.cover.some(c => contains(c, this.controller.body)); }
-  get grapes(): Rect[] {
-    if (!this.session.grapesStarted) return [];
-    const g = this.level.grapes;
-    const lifetime = (g.startX - g.endX) / g.speed;
-    const result: Rect[] = [];
-    for (const offset of g.offsets) {
-      for (let wave = Math.max(0, Math.ceil((this.session.grapeElapsed - offset - lifetime) / g.period)); wave * g.period + offset <= this.session.grapeElapsed; wave++) {
-        const age = this.session.grapeElapsed - offset - wave * g.period;
-        const y = g.y + Math.max(0, g.approachSeconds - age) / g.approachSeconds * g.approachHeight;
-        result.push({ x: g.startX - age * g.speed - g.radius, y, width: g.radius * 2, height: g.radius * 2 });
-      }
-    }
-    return result;
-  }
+  get grapes(): Rect[] { return this.session.grapesStarted ? grapeRects(this.level.grapes, this.session.grapeElapsed) : []; }
   restartCheckpoint(): void {
     const spawn = this.checkpoint.spawn;
     this.controller.respawn(spawn.x, spawn.y);
@@ -94,7 +96,9 @@ export class RoyalSupperModel {
     }
     if (input.interactPressed && this.prompt) { this.session.fork = 'toppling'; this.notify('Stand back — the fork is toppling…'); }
     const x = this.controller.body.x;
-    if (x >= this.level.sections[2].start) this.session.grapesStarted = true;
+    // The grape clock wakes out of sight of the run (from the butter on, or at
+    // once on an after-butter retry), so the stream never pops into view.
+    if (x >= this.level.grapes.wakeX) this.session.grapesStarted = true;
     if (x >= this.level.sections[4].start) this.session.candlesStarted = true;
     if (x >= this.level.sections[5].start) this.session.dinerStarted = true;
     if (this.session.grapesStarted) this.session.grapeElapsed += dt;
@@ -108,7 +112,7 @@ export class RoyalSupperModel {
     }
     if (b.y < this.level.deathY) { this.recover('A slip, not a setback. Returning to checkpoint…'); return; }
     if (this.level.candle.flames.some((h, i) => this.flameLit(i) && overlaps(b, h))) {
-      this.recover('Too hot! Follow the fan’s ember windows.'); return;
+      this.recover('Too hot! Cross while the candles smoke.'); return;
     }
     if (this.grapes.some(g => overlaps(b, g))) { this.recover('A rolling grape! Watch the next pair before jumping.'); return; }
     if (this.dinerPhase === 'LOOK' && overlaps(b, this.level.diner.zone) && !this.hidden) {

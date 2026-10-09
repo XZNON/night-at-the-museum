@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { CharacterController, idleControls } from '../src/gameplay/controller';
 import { Progression } from '../src/campaign/progression';
-import { createSupperSession, RoyalSupperModel } from '../src/gameplay/royal-supper-model';
+import { createSupperSession, grapeRects, RoyalSupperModel } from '../src/gameplay/royal-supper-model';
 import { royalSupper, movementLane } from '../src/levels/royal-supper';
 import { FixedClock } from '../src/core/loop';
 const dt = 1 / 60;
@@ -195,17 +195,46 @@ describe('required gates, cyclic hazards and recovery', () => {
     model.restartCheckpoint(); model.controller.respawn(327, 2.4); model.session.dinerElapsed = 3.3; run(model, 1);
     expect(model.recoveryRemaining).toBeGreaterThan(0);
   });
-  it('grapes are repeatable, spawn above a collider-protected chute and cannot overlap checkpoint spawns', () => {
+  it('grapes are repeatable, drop out of a collider-protected chute and cannot overlap checkpoint spawns', () => {
     const { model } = create(); model.session.grapesStarted = true; model.session.grapeElapsed = 0;
-    expect(model.grapes[0].y).toBe(6); const first = model.grapes;
-    model.session.grapeElapsed = 4; expect(model.grapes[0].x).toBeCloseTo(241.65);
-    for (const cp of royalSupper.checkpoints) expect(model.grapes.every(g => g.x + g.width < cp.spawn.x || g.x > cp.spawn.x + 0.65)).toBe(true);
+    const first = model.grapes; const g = royalSupper.grapes;
+    // A pair's first grape appears at the chute, above the route, at this phase.
+    model.session.grapeElapsed = g.period - g.preroll % g.period;
+    const spawned = model.grapes.find(r => r.y > 5.9);
+    expect(spawned?.y).toBeCloseTo(6); expect(spawned!.x + g.radius).toBeCloseTo(g.startX);
+    for (let t = 0; t < 2 * g.period; t += 0.05) {
+      model.session.grapeElapsed = t;
+      for (const cp of royalSupper.checkpoints) expect(model.grapes.every(r => r.x + r.width < cp.spawn.x || r.x > cp.spawn.x + 0.65)).toBe(true);
+    }
     model.restartCheckpoint(); model.session.grapesStarted = true; expect(model.grapes).toEqual(first);
+  });
+  it('the grape run is already full on arrival, a continuous stream of ground pairs that rolls off before the entry', () => {
+    const g = royalSupper.grapes; const run = (t: number) => grapeRects(g, t).filter(r => r.y === g.y);
+    // Full on arrival: grounded pairs from the entry to the chute.
+    const arrival = run(0).map(r => r.x + g.radius);
+    expect(arrival.length).toBeGreaterThanOrEqual(10);
+    expect(Math.min(...arrival)).toBeLessThan(180); expect(Math.max(...arrival)).toBeGreaterThan(245);
+    // On an after-butter retry the last pair has just rolled off the entry.
+    expect(Math.min(...arrival)).toBeGreaterThan(g.endX + 8);
+    for (let t = 0; t < 3 * g.period; t += 1 / 60) {
+      const grapes = grapeRects(g, t);
+      // Never past the entry, where the player waits (x <= 166.85 with its width).
+      expect(grapes.every(r => r.x >= g.endX - g.radius - 1e-9)).toBe(true);
+      // Still pairs on the ground: never more than two grapes within one pair's spread.
+      for (const r of grapes) expect(grapes.filter(o => Math.abs(o.x - r.x) <= g.speed * g.offsets[1] + 1e-6).length).toBeLessThanOrEqual(2);
+    }
+  });
+  it('the grape clock wakes at the butter, out of sight of the run', () => {
+    const { model } = create(); model.session.checkpointId = 'before-butter'; model.restartCheckpoint(); run(model, 10);
+    expect(model.session.grapesStarted).toBe(false);
+    model.controller.respawn(royalSupper.grapes.wakeX + 0.5, 2.4); run(model, 1); expect(model.session.grapesStarted).toBe(true);
   });
   it('grape contact resets to the safe completed-section checkpoint and resets the rolling wave', () => {
     const { model } = create(); model.session.checkpointId = 'after-butter'; model.session.grapesStarted = true; model.session.grapeElapsed = 4;
-    model.controller.respawn(model.grapes[0].x, 2.4); run(model, 1); expect(model.recoveryRemaining).toBeGreaterThan(0);
-    run(model, 23); expect(model.controller.body.x).toBe(163); expect(model.session.grapeElapsed).toBe(0);
+    const grounded = model.grapes.find(r => r.y === royalSupper.grapes.y)!;
+    model.controller.respawn(grounded.x, 2.4); run(model, 1); expect(model.recoveryRemaining).toBeGreaterThan(0);
+    // Back at the checkpoint the clock restarts from the same readable phase.
+    run(model, 23); expect(model.controller.body.x).toBe(163); expect(model.session.grapeElapsed).toBeLessThanOrEqual(2 * dt + 1e-9);
   });
   it('collection requires the completed route and is idempotent on replay', () => {
     const { model, progress } = create(); model.controller.respawn(435, 15.6); run(model, 1); expect(model.completed).toBe(false);

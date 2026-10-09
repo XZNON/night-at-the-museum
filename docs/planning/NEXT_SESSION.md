@@ -1,86 +1,19 @@
-# Next session — Royal Supper review fixes, then release prep
+# Next session — the user's Royal Supper play-through, then release prep
 
-**User review of the cartoon rework, 2026-10-09 (to do in the next session, not this one):**
-1. Remove the visible bars on the assets the player lands on: the landing-edge lines on every platform top, and any other code-drawn bar or box that still shows. The art's own top must line up with the collider top.
-2. The casserole covers look like they sink into the floor.
-3. The ground should look like **the player is running on a table**: tablecloth tabletop as the ground, the cloth hanging down to the bottom of the screen. No plain platter bars and no leftover code-drawn bars or boxes (both).
-4. (No item 4: the user's numbering slip.)
-5. The yellow line along the floor must go (part of 1).
-6. The bread crumbs still show a yellow line (their landing-edge line, part of 1).
-7. Grapes come far too late and the player meets only about three waves. They should already be rolling across the whole run when the player arrives, and come continuously in a denser stream ("more grapes, denser stream"; still pairs on the ground, not new height lanes).
+**Latest, 2026-10-09: Royal Supper review fixes implemented, one change at a time with screenshots; stop for the user's play-through.** All of the user's review items are fixed:
+1. No code-drawn landing lines, bars or boxes: art tops sit on the collider tops (measured `surface` shares; a straightened fork bridge); the ember timer is the wick's growing glow plus a flicker before relight; HIDDEN is a casserole halo plus a shaded player.
+2. The casseroles stand on the floor (in front of the floor art, base on the line, contact shadow).
+3. The ground is a feast table: tablecloth per ground run hanging below the view, end folds over pits, pits stay dark; grape dishes on goblets; floating bread and dessert pieces on goblet stands (the user's pick of three mocks); velvet canopy with gilt trim.
+4. Grapes (gameplay change the user asked for): a continuous denser stream of ground pairs every 3.5 s (was 6.5 s; the user chose 3.5), already rolling when the player arrives; the same safe phase on every after-butter retry.
+5. Follow-up after the user's look ("still code blocks"): candle holder as gilt bars on goblet-stem posts, a soft heat glow instead of the flame's box, gilt edges on the canopy ends, the gold cones over the king's plate removed; the plates on the goblets drawn as stacks of three thin plates instead of a block. No code-drawn shape is left in view.
 
-Use the paste-ready prompt below. Release prep follows in the session after.
+All art cut locally (0 credits; DreamLayer balance still 44). Collision, landing heights, other timings and level data, saves and save IDs unchanged. Typecheck, build, unit 244/244; browser art, audio, movement lane, campaign (6/6 after one rerun of the known butter-bot flake), the Supper evidence spec and the updated `blockout.spec.ts` pass. See the [evidence](../validation/supper-cartoon/README.md#review-fixes-2026-10-09) and DECISIONS ("Royal Supper review fixes"). Committed and pushed on the user's request (2026-10-09); later commits need new authorization.
 
-## Paste-ready Royal Supper review-fix prompt (next session)
+Play: [Royal Supper study](http://127.0.0.1:5173/?scene=royal-supper) (isolated, saves untouched) or the campaign from the [normal entry](http://127.0.0.1:5173/). Things to judge in the play-through: the grape density (3.5 s) and the arrival phase; whether the wick glow/flicker reads as a timer; whether the halo/shade reads as HIDDEN; the table, the goblet stands and the canopy at your display size.
 
-```text
-Continue The Last Curator in C:\Users\XZNON\DreamLayer (main). The Royal Supper cartoon rework is implemented,
-committed and pushed (the commit after 6026f84); check git status and preserve any newer local changes.
-Goal of this session: fix my review of the cartoon Royal Supper, one change at a time, showing me a screenshot of each
-before moving on. Then stop for my play-through. The jam deadline is October 12, so keep the scope tight.
+Next: the user's verdict (small adjustments if asked), then release prep with the paste-ready prompt below. `blockout.spec.ts` was updated to the v1 menus this session and passes.
 
-Start by reading AGENTS.md, docs/README.md, docs/planning/PLAN.md, docs/planning/NEXT_SESSION.md (the review list at the
-top), docs/planning/DECISIONS.md (the "Royal Supper cartoon rework" entry), docs/gameplay/ROYAL_SUPPER.md and
-docs/validation/supper-cartoon/README.md. Check the environment (node/npm, dev server 5173, preview 4173; restart the
-preview after each build).
-
-Code facts (verify before editing):
-- src/scenes/royal-supper.ts buildPlatforms draws each skinned platform plus a landing-edge line:
-  this.box(..., top - 0.025, 0.98, p.width, 0.05, 0.03, imageArt.lip); the lip colours are in supperPlatformArt
-  (src/assets/supper-props.ts). Also code-drawn: forkLanding (bridge top strip once toppled), a box on each candle
-  top (0xffe7bf), the ember timer bar (this.embers, orange), the cyan floor strip inside each cover (coverStrips,
-  turns green while hidden), the canopy boxes, and the checkpoint flags.
-- Covers: the casserole picture fills each cover rect (c.y = 2.4 is the floor top) at z -0.4, behind the floor
-  platters (z 0.95).
-- Ground: the long ground runs are 'plate' platforms drawn as a repeated platter strip (crockery 86..99,
-  butter-exit 161..169, grape-run 168..260, fork-bank, fork-far-dish 282..296, after-candle-dish 315..374,
-  dessert-entry, dessert-shelf, dessert-drop, kings-plate). The route has real pits: the bread section (0..86) is
-  floating bread with no ground, gaps between the butter slabs, the fork gap, between the three candles, the dessert
-  ascent. deathY is -4. The backdrop's far table edge sits at y 2.1 (supperPropPresentation.backdrop).
-- Grapes (src/levels/royal-supper.ts): startX 259 → endX 168, speed 4.2, period 6.5, pairs offsets [0, 1.4],
-  approachSeconds 1.3, approachHeight 3.6. RoyalSupperModel.grapes starts the clock when x >= sections[2].start (164);
-  the first pair spawns at the chute (259) and needs about 21 s to reach the entry, so the player meets about three
-  waves. The scene sizes its grape mesh pool from these values.
-
-Do, in order:
-1. Landing bars and lines (items 1, 5, 6): remove every visible landing-edge line, the fork-landing strip and the
-   candle-top boxes. The art's top must sit exactly on each collider top: adjust the cutouts' crops in
-   scripts/prepare-supper-cartoon.py (or the scene placement) so no transparent margin or outline offset leaves the
-   player floating or sunk; check bread, crumbs, butter, cake, jelly, platters, the fork bridge and the candle tops
-   at 1280x720 and 960x540. Replace the code cues that are bars with art-native cues and keep them readable:
-   the ember timer (for example the wick's glow or smoke fading, plus a flicker just before relight) and the cover
-   hiding cue (for example the casserole glows or the player dims while HIDDEN). Update the section hints that
-   mention "blue strip" or embers to match.
-2. Covers (item 2): the casserole must sit on the surface, not sink into it (z order and base line).
-3. The table (item 3): make the ground read as the tabletop with the tablecloth hanging to the bottom of the screen.
-   Collision and pits stay exactly as they are, so a pit must still look like a pit: one table segment under each
-   ground collider (cloth top at the collider top, cloth hanging down past the view's bottom, cloth ends folding
-   down at the segment edges), dark gaps between segments. Floor dishes and food stand on the cloth. For the
-   floating bread section and the dessert ascent, show me a mock first and ask how the floating pieces should read.
-   Prefer cutting the cloth from the existing backdrop's tablecloth (0 credits); if a new DreamLayer tablecloth
-   sheet is needed, ask me first and check the balance (last 44 credits).
-4. Grapes (item 7, a gameplay change I asked for): the grape run is already full of rolling grapes when the player
-   reaches it, with a continuous, denser stream (shorter period; still pairs on the ground). Keep it fair: no grape
-   on or about to hit the after-butter checkpoint spawn (163) or the entry, a readable first approach, the raised
-   grape dishes still useful, retries reset to the same readable phase, pause/blur still freezes it. Tune with the
-   route recorder (tests/route-plan.ts must still find a route), update tests/royal-supper.test.ts expectations,
-   the grape rules in docs/gameplay/ROYAL_SUPPER.md and DECISIONS. Show me the tuning before finalising.
-
-Rules:
-- Collision, landing heights, other timings, level data outside the grapes, saves and save IDs stay unchanged.
-- Presentation goes through the scene's resources set; respect reduced motion; no new dependencies.
-- No DreamLayer generation without my OK and a balance check.
-- After the changes run typecheck, build and unit tests (--testTimeout=30000), then the browser specs art.spec.ts,
-  audio.spec.ts, movement-lane.spec.ts, campaign.spec.ts and supper-cartoon.spec.ts with
-  EVIDENCE_DIR=docs/validation/supper-cartoon/review-fixes (convert captures to webp). Bot retries/flakes: rerun once
-  and report honestly. blockout.spec.ts is stale since the v1 menus (it looks for "Low rendering quality"); update it
-  to the current pause/Settings menus if time allows, otherwise leave it for release prep and say so.
-- Restore docs/validation/sketch-s4/s4b/unit-measurements.json if a unit run changes it.
-- Update PLAN, NEXT_SESSION, DECISIONS, AGENTS and the supper-cartoon evidence README. Commit or push only when I ask.
-  No sub-agents unless I ask.
-```
-
-**Latest, 2026-10-09: Royal Supper cartoon rework implemented and reviewed; committed and pushed on the user's request.** The user moved it ahead of release prep and chose: match the Sketch's cartoon style; everything visible; code animation plus drawn diner frames; DreamLayer sheets cut locally. Pilot (backdrop, food, diner) approved by the user, then the rest: 10 credits in all (54 → 44). Cartoon banquet hall, food, tableware, candles, fan, flags, a velvet candle canopy, a plum casserole cover (teal blended with the heroine), and a giant diner seated behind the far table with eating / turning / looking frames; a second banquet edit hangs in the museum. Gameplay, collision, level data and saves unchanged. See the [evidence](../validation/supper-cartoon/README.md), DECISIONS and `scripts/prepare-supper-cartoon.py`. Play: [Royal Supper study](http://127.0.0.1:5173/?scene=royal-supper) or the campaign. The user reviewed it (list at the top); next: the review-fix prompt above, then release prep with the prompt below (rerun `art.spec.ts` and `supper-cartoon.spec.ts` with the release specs).
+**Latest, 2026-10-09: Royal Supper cartoon rework implemented and reviewed; committed and pushed on the user's request.** The user moved it ahead of release prep and chose: match the Sketch's cartoon style; everything visible; code animation plus drawn diner frames; DreamLayer sheets cut locally. Pilot (backdrop, food, diner) approved by the user, then the rest: 10 credits in all (54 → 44). Cartoon banquet hall, food, tableware, candles, fan, flags, a velvet candle canopy, a plum casserole cover (teal blended with the heroine), and a giant diner seated behind the far table with eating / turning / looking frames; a second banquet edit hangs in the museum. Gameplay, collision, level data and saves unchanged. See the [evidence](../validation/supper-cartoon/README.md), DECISIONS and `scripts/prepare-supper-cartoon.py`. Play: [Royal Supper study](http://127.0.0.1:5173/?scene=royal-supper) or the campaign. The user reviewed it; the review fixes are done (top of this file); next: the user's play-through, then release prep with the prompt below (rerun `art.spec.ts` and `supper-cartoon.spec.ts` with the release specs).
 
 **Later sessions (user, 2026-10-09; each on its own request):**
 - **Story stills and dialogue at the start and the end.** A few illustrated stills with short dialogue that explain the story when a new game starts (why the masterpiece is damaged, the curator's task) and close it after the restoration (around the ending). Content, number of stills, art source (DreamLayer generation needs the user's OK and a balance check; last 44 credits), skippability and replay behaviour are to be agreed with the user first. Saves and gameplay unchanged unless asked.

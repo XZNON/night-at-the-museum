@@ -32,6 +32,14 @@ prompts, costs and the preparation recipe:
 `scripts/prepare-supper-cartoon.py`, `asset-sources/manifest.json`. Evidence:
 [docs/validation/supper-cartoon](../validation/supper-cartoon/README.md).
 
+Review fixes (user, 2026-10-09): nothing the player lands on shows a
+code-drawn line, bar or box; the drawn top edge is the landing. Cues are
+art-native (a wick's glow, a casserole's halo). The ground is the feast table:
+tablecloth cut from the backdrop's own cloth, one segment per ground run with
+folded ends, so pits stay dark gaps; raised dishes and floating pieces stand on
+goblets (the user's choice); the candle canopy is curtain velvet with a gilt
+trim. All cut locally from the existing references.
+
 ## Unfinished Sketch — separate selected direction
 
 Further user clarification: modern cartoon 2.5D, with a dimensional animated-world feel rather than flat 2D, pixel art or retro tiles. Side-view gameplay keeps its plane while platform/board thickness, rounded prop volume, layered scenery and soft stylised lighting establish depth. These cues must preserve foreground gameplay readability. Existing illustrated player poses can remain; no new full-3D character, free-depth controller or rendering engine is requested.
