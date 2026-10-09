@@ -74,7 +74,7 @@ S3A's reviewed hard challenge is preserved. **S3B is implemented at its playable
 
 | Document | Purpose |
 | --- | --- |
-| [Art direction](art/ART_DIRECTION.md) | Completed M3 direction and separate cartoon 2.5D Sketch direction |
+| [Art direction](art/ART_DIRECTION.md) | Royal Supper cartoon rework (2026-10-09), cartoon 2.5D Sketch direction, historical M3 direction |
 | [Asset workflow](art/ASSETS.md) | Provider/credit rules, preparation, provenance and required assets |
 | [Technology](reference/TECH_STACK.md) | Stack, rendering and performance rationale |
 | [Masterpiece](reference/MASTERPIECE.md) | Composition and restoration story |
@@ -84,7 +84,7 @@ S3A's reviewed hard challenge is preserved. **S3B is implemented at its playable
 
 These stay beside their files rather than being mixed into the planning folders:
 
-- [M3 props](validation/m3-props/README.md), [cohesion verification](validation/art-cohesion/README.md), [Sketch S1 evidence](validation/sketch-s1/) and [Sketch S2 evidence](validation/sketch-s2/).
+- [Royal Supper cartoon rework](validation/supper-cartoon/README.md), [M3 props](validation/m3-props/README.md), [cohesion verification](validation/art-cohesion/README.md), [Sketch S1 evidence](validation/sketch-s1/) and [Sketch S2 evidence](validation/sketch-s2/).
 - [Reference review](../asset-sources/reference-review.md), [original production-slice plan](../asset-sources/production-slice.md), [style comparisons](../asset-sources/style-previews/README.md) and [cohesion preparation](../asset-sources/production/cohesion-v1/README.md).
 - Asset provenance remains in `asset-sources/`; runtime assets remain in `public/assets/`. Historical evidence is not a new test result or generation authorization.
 

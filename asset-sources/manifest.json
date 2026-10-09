@@ -369,7 +369,7 @@
       "inputPath": "asset-sources/references/banquet-v5.png",
       "inputSha256": "deb5483015401138ea36d5ee81c6821626c840c950d489295c4d60fbd69c05dc",
       "sourcePath": "asset-sources/production/supper-background.png",
-      "runtimePath": "public/assets/supper/background.webp",
+      "runtimePath": "asset-sources/production/supper-m3-runtime/background.webp",
       "promptPath": "asset-sources/prompts/supper-background.txt",
       "provider": "DreamLayer",
       "idempotencyKey": "last-curator-m3-supper-background-20261005-v1",
@@ -407,7 +407,8 @@
         "agentVerified": true,
         "referencesApproved": true,
         "evidence": "Actual camera inspection at 1280x720/960x540 and final 9-scenario Chromium production/isolated regression passed. Output approval remains distinct from user-approved references."
-      }
+      },
+      "retiredFromRuntime": "2026-10-09: replaced by the Royal Supper cartoon rework (public/assets/supper/cartoon/); file kept here for provenance."
     },
     {
       "id": "royal-supper.bread",
@@ -421,7 +422,7 @@
       "inputPath": "asset-sources/references/banquet-v5.png",
       "inputSha256": "deb5483015401138ea36d5ee81c6821626c840c950d489295c4d60fbd69c05dc",
       "sourcePath": "asset-sources/production/bread-side.png",
-      "runtimePath": "public/assets/supper/bread.png",
+      "runtimePath": "asset-sources/production/supper-m3-runtime/bread.png",
       "promptPath": "asset-sources/prompts/bread-side.txt",
       "provider": "DreamLayer",
       "idempotencyKey": "last-curator-m3-bread-side-20261005-v1",
@@ -459,7 +460,8 @@
         "referencesApproved": true,
         "evidence": "Actual camera inspection at 1280x720/960x540 and final 9-scenario Chromium production/isolated regression passed. Output approval remains distinct from user-approved references."
       },
-      "activeRevisionId": "royal-supper.bread.cohesion-v1"
+      "activeRevisionId": "royal-supper.bread.cohesion-v1",
+      "retiredFromRuntime": "2026-10-09: replaced by the Royal Supper cartoon rework (public/assets/supper/cartoon/); file kept here for provenance."
     },
     {
       "id": "royal-supper.bread.cutout",
@@ -790,33 +792,6 @@
       "runtimeSha256": "fca97f795f739401f3500250e439f894a4f26f1fc478722583f54b15740a38cc"
     },
     {
-      "id": "royal-supper.entrance",
-      "world": "royal-supper",
-      "provider": "DreamLayer",
-      "operation": "local_preparation",
-      "referenceIds": [
-        "banquet.reference.v5"
-      ],
-      "sourcePath": "asset-sources/references/banquet-v5.png",
-      "executionId": null,
-      "creditsSpent": 0,
-      "approved": false,
-      "status": "integrated",
-      "runtimePath": "public/assets/supper/entrance.webp",
-      "preparedPixelSize": {
-        "width": 1600,
-        "height": 900
-      },
-      "preparationNotes": "Approved banquet reference resized for the existing museum frame; room geometry unchanged.",
-      "runtimeSha256": "fa0fe1e031f175a1fec716e0e54befc4765bcb5df851c39743402f00b7bd38f6",
-      "integrationEvidence": {
-        "date": "2026-10-06",
-        "agentVerified": true,
-        "referencesApproved": true,
-        "evidence": "Actual camera inspection at 1280x720/960x540 and final 9-scenario Chromium production/isolated regression passed. Output approval remains distinct from user-approved references."
-      }
-    },
-    {
       "id": "royal-supper.bread.cartoon-preview",
       "status": "rejected",
       "world": "royal-supper",
@@ -921,401 +896,6 @@
       "preparationNotes": "User explicitly authorized generating remaining props here after repeated DreamLayer failure. Pending collider/camera QA."
     },
     {
-      "id": "royal-supper.basket",
-      "world": "royal-supper",
-      "provider": "OpenAI ImageGen",
-      "operation": "local_preparation",
-      "referenceIds": [
-        "royal-supper.food-sheet.imagegen"
-      ],
-      "sourcePath": "asset-sources/production/imagegen/food-sheet.png",
-      "executionId": null,
-      "creditsSpent": null,
-      "approved": false,
-      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
-      "status": "integrated",
-      "runtimePath": "public/assets/supper/props/basket.png",
-      "preparedPixelSize": {
-        "width": 640,
-        "height": 160
-      },
-      "cropBox": [
-        70,
-        246,
-        567,
-        365
-      ],
-      "runtimeSha256": "82d75198f65bc0a81eaa14d3260f34c2add96d30dff1b08ccc536ea2968d2913",
-      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes.",
-      "activeRevisionId": "royal-supper.basket.cohesion-v1"
-    },
-    {
-      "id": "royal-supper.butter",
-      "world": "royal-supper",
-      "provider": "OpenAI ImageGen",
-      "operation": "local_preparation",
-      "referenceIds": [
-        "royal-supper.food-sheet.imagegen"
-      ],
-      "sourcePath": "asset-sources/production/imagegen/food-sheet.png",
-      "executionId": null,
-      "creditsSpent": null,
-      "approved": false,
-      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
-      "status": "integrated",
-      "runtimePath": "public/assets/supper/props/butter.png",
-      "preparedPixelSize": {
-        "width": 640,
-        "height": 128
-      },
-      "cropBox": [
-        651,
-        292,
-        1100,
-        380
-      ],
-      "runtimeSha256": "ccebf469937e80c5a0571e23d99a0dd8e20294c2fadc83755171f00e20a081b8",
-      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
-    },
-    {
-      "id": "royal-supper.crumb",
-      "world": "royal-supper",
-      "provider": "OpenAI ImageGen",
-      "operation": "local_preparation",
-      "referenceIds": [
-        "royal-supper.food-sheet.imagegen"
-      ],
-      "sourcePath": "asset-sources/production/imagegen/food-sheet.png",
-      "executionId": null,
-      "creditsSpent": null,
-      "approved": false,
-      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
-      "status": "integrated",
-      "runtimePath": "public/assets/supper/props/crumb.png",
-      "preparedPixelSize": {
-        "width": 192,
-        "height": 175
-      },
-      "cropBox": [
-        1270,
-        120,
-        1585,
-        415
-      ],
-      "runtimeSha256": "5663ddebf12ddcd83c7b93b4351078e3d7480f37152392db77b62d5218b0cf0e",
-      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes.",
-      "activeRevisionId": "royal-supper.crumb.cohesion-v1"
-    },
-    {
-      "id": "royal-supper.grape",
-      "world": "royal-supper",
-      "provider": "OpenAI ImageGen",
-      "operation": "local_preparation",
-      "referenceIds": [
-        "royal-supper.food-sheet.imagegen"
-      ],
-      "sourcePath": "asset-sources/production/imagegen/food-sheet.png",
-      "executionId": null,
-      "creditsSpent": null,
-      "approved": false,
-      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
-      "status": "integrated",
-      "runtimePath": "public/assets/supper/props/grape.png",
-      "preparedPixelSize": {
-        "width": 191,
-        "height": 192
-      },
-      "cropBox": [
-        165,
-        608,
-        426,
-        865
-      ],
-      "runtimeSha256": "dd19b8c955a2cc4dc5aa279ab38702b6816e9a233244844d9d97f1de7561b91d",
-      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
-    },
-    {
-      "id": "royal-supper.jelly",
-      "world": "royal-supper",
-      "provider": "OpenAI ImageGen",
-      "operation": "local_preparation",
-      "referenceIds": [
-        "royal-supper.food-sheet.imagegen"
-      ],
-      "sourcePath": "asset-sources/production/imagegen/food-sheet.png",
-      "executionId": null,
-      "creditsSpent": null,
-      "approved": false,
-      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
-      "status": "integrated",
-      "runtimePath": "public/assets/supper/props/jelly.png",
-      "preparedPixelSize": {
-        "width": 640,
-        "height": 96
-      },
-      "cropBox": [
-        590,
-        756,
-        1082,
-        829
-      ],
-      "runtimeSha256": "cd6c3a525c066bcb82b419016d1d3486497e9b10da64a7bf70b8b36c40dfcd68",
-      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
-    },
-    {
-      "id": "royal-supper.cake",
-      "world": "royal-supper",
-      "provider": "OpenAI ImageGen",
-      "operation": "local_preparation",
-      "referenceIds": [
-        "royal-supper.food-sheet.imagegen"
-      ],
-      "sourcePath": "asset-sources/production/imagegen/food-sheet.png",
-      "executionId": null,
-      "creditsSpent": null,
-      "approved": false,
-      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
-      "status": "integrated",
-      "runtimePath": "public/assets/supper/props/cake.png",
-      "preparedPixelSize": {
-        "width": 640,
-        "height": 200
-      },
-      "cropBox": [
-        1164,
-        695,
-        1600,
-        830
-      ],
-      "runtimeSha256": "d42d8cccc08459f9f692fd60b33bcbd5fa2a8ccf40f54d23a2bbf3c349f366c5",
-      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes.",
-      "activeRevisionId": "royal-supper.cake.cohesion-v1"
-    },
-    {
-      "id": "royal-supper.plate",
-      "world": "royal-supper",
-      "provider": "OpenAI ImageGen",
-      "operation": "local_preparation",
-      "referenceIds": [
-        "royal-supper.crockery-sheet.imagegen"
-      ],
-      "sourcePath": "asset-sources/production/imagegen/crockery-sheet.png",
-      "executionId": null,
-      "creditsSpent": null,
-      "approved": false,
-      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
-      "status": "integrated",
-      "runtimePath": "public/assets/supper/props/plate.png",
-      "preparedPixelSize": {
-        "width": 768,
-        "height": 96
-      },
-      "cropBox": [
-        136,
-        353,
-        972,
-        416
-      ],
-      "runtimeSha256": "aa41ef6df181065ffeab054d299c7d3a5354800d073f248494d2a36dcae87469",
-      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
-    },
-    {
-      "id": "royal-supper.goblet",
-      "world": "royal-supper",
-      "provider": "OpenAI ImageGen",
-      "operation": "local_preparation",
-      "referenceIds": [
-        "royal-supper.crockery-sheet.imagegen"
-      ],
-      "sourcePath": "asset-sources/production/imagegen/crockery-sheet.png",
-      "executionId": null,
-      "creditsSpent": null,
-      "approved": false,
-      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
-      "status": "integrated",
-      "runtimePath": "public/assets/supper/props/goblet.png",
-      "preparedPixelSize": {
-        "width": 256,
-        "height": 366
-      },
-      "cropBox": [
-        1050,
-        35,
-        1395,
-        530
-      ],
-      "runtimeSha256": "697035115cef03c4d5fc79f0dbc0daf9a07806699e28237dd00f4096c2d2af23",
-      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
-    },
-    {
-      "id": "royal-supper.cover",
-      "world": "royal-supper",
-      "provider": "OpenAI ImageGen",
-      "operation": "local_preparation",
-      "referenceIds": [
-        "royal-supper.crockery-sheet.imagegen"
-      ],
-      "sourcePath": "asset-sources/production/imagegen/crockery-sheet.png",
-      "executionId": null,
-      "creditsSpent": null,
-      "approved": false,
-      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
-      "status": "integrated",
-      "runtimePath": "public/assets/supper/props/cover.png",
-      "preparedPixelSize": {
-        "width": 640,
-        "height": 256
-      },
-      "cropBox": [
-        108,
-        709,
-        959,
-        917
-      ],
-      "runtimeSha256": "f566cb92eb45c25bbcad0b9e7d87a4d4b6f459422509c971f9140aa92823eeb7",
-      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
-    },
-    {
-      "id": "royal-supper.wax",
-      "world": "royal-supper",
-      "provider": "OpenAI ImageGen",
-      "operation": "local_preparation",
-      "referenceIds": [
-        "royal-supper.crockery-sheet.imagegen"
-      ],
-      "sourcePath": "asset-sources/production/imagegen/crockery-sheet.png",
-      "executionId": null,
-      "creditsSpent": null,
-      "approved": false,
-      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
-      "status": "integrated",
-      "runtimePath": "public/assets/supper/props/wax.png",
-      "preparedPixelSize": {
-        "width": 256,
-        "height": 256
-      },
-      "cropBox": [
-        1140,
-        668,
-        1382,
-        916
-      ],
-      "runtimeSha256": "c5ceee8aab34902f6d52c9d8e7d358db057042f1c0473412318757440d2589f2",
-      "preparationNotes": "Inspected ImageGen sheet. Rectangular front-face crop registered to existing collider; alpha made opaque inside that panel. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
-    },
-    {
-      "id": "royal-supper.fork",
-      "world": "royal-supper",
-      "provider": "OpenAI ImageGen",
-      "operation": "local_preparation",
-      "referenceIds": [
-        "royal-supper.mechanics-sheet.imagegen"
-      ],
-      "sourcePath": "asset-sources/production/imagegen/mechanics-sheet.png",
-      "executionId": null,
-      "creditsSpent": null,
-      "approved": false,
-      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
-      "status": "integrated",
-      "runtimePath": "public/assets/supper/props/fork.png",
-      "preparedPixelSize": {
-        "width": 69,
-        "height": 490
-      },
-      "cropBox": [
-        366,
-        0,
-        461,
-        505
-      ],
-      "runtimeSha256": "5ea661f6a7498aff130375c3ef8a75484402d6b12b0f677d45eea70b8b630fcc",
-      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
-    },
-    {
-      "id": "royal-supper.fan",
-      "world": "royal-supper",
-      "provider": "OpenAI ImageGen",
-      "operation": "local_preparation",
-      "referenceIds": [
-        "royal-supper.mechanics-sheet.imagegen"
-      ],
-      "sourcePath": "asset-sources/production/imagegen/mechanics-sheet.png",
-      "executionId": null,
-      "creditsSpent": null,
-      "approved": false,
-      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
-      "status": "integrated",
-      "runtimePath": "public/assets/supper/props/fan.png",
-      "preparedPixelSize": {
-        "width": 384,
-        "height": 365
-      },
-      "cropBox": [
-        956,
-        0,
-        1492,
-        493
-      ],
-      "runtimeSha256": "3e3d9294014238079710131ddc19f238ad2512f549f3f28e7c38fa11d643c32a",
-      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
-    },
-    {
-      "id": "royal-supper.holder",
-      "world": "royal-supper",
-      "provider": "OpenAI ImageGen",
-      "operation": "local_preparation",
-      "referenceIds": [
-        "royal-supper.mechanics-sheet.imagegen"
-      ],
-      "sourcePath": "asset-sources/production/imagegen/mechanics-sheet.png",
-      "executionId": null,
-      "creditsSpent": null,
-      "approved": false,
-      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
-      "status": "integrated",
-      "runtimePath": "public/assets/supper/props/holder.png",
-      "preparedPixelSize": {
-        "width": 658,
-        "height": 335
-      },
-      "cropBox": [
-        84,
-        567,
-        759,
-        924
-      ],
-      "runtimeSha256": "c7e55a019537f33bf43abc2fd91fe1356ade25b369575c65b7a9e70464a8f42b",
-      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
-    },
-    {
-      "id": "royal-supper.diner",
-      "world": "royal-supper",
-      "provider": "OpenAI ImageGen",
-      "operation": "local_preparation",
-      "referenceIds": [
-        "royal-supper.mechanics-sheet.imagegen"
-      ],
-      "sourcePath": "asset-sources/production/imagegen/mechanics-sheet.png",
-      "executionId": null,
-      "creditsSpent": null,
-      "approved": false,
-      "creditEvidence": "Local crop/resize of ImageGen source; no DreamLayer request.",
-      "status": "integrated",
-      "runtimePath": "public/assets/supper/props/diner.png",
-      "preparedPixelSize": {
-        "width": 640,
-        "height": 434
-      },
-      "cropBox": [
-        873,
-        493,
-        1555,
-        941
-      ],
-      "runtimeSha256": "cd4b09e6dbe8cb077049d14e79cb1f231ecac9bbd41b90471aef641c0f2b7915",
-      "preparationNotes": "Inspected ImageGen sheet. Alpha cutout trimmed at threshold 80; soft edge alpha preserved. Local Lanczos resize. Original sheet preserved. No gameplay coordinate changes."
-    },
-    {
       "id": "royal-supper.bread.cohesion-v1",
       "status": "integrated",
       "world": "royal-supper",
@@ -1327,7 +907,7 @@
       ],
       "sourcePath": "public/assets/supper/bread.png",
       "sourceSha256": "ad3b465110d8fb04f53ba0e2874a2428a8bc2986b5dd0152190387b59bc3d0c0",
-      "runtimePath": "public/assets/supper/cohesion-v1/bread.png",
+      "runtimePath": "asset-sources/production/supper-m3-runtime/cohesion-v1/bread.png",
       "runtimeSha256": "f5c98f27eacc617991c4b45f75cae921c6a9d23db7cafdb20bcef7892acdaf68",
       "preparedPixelSize": {
         "width": 640,
@@ -1341,7 +921,8 @@
       "preparationNotes": "Edge-preserving Kuwahara radius 5, blend 0.88. Original prepared pixels/source preserved. Exact size and alpha retained; no invented pores/holes, palette substitution, shape or geometry changes. Reproduce with scripts/prepare-cohesion.py.",
       "preparedAt": "2026-10-06",
       "cameraValidatedAt": "2026-10-06",
-      "cameraValidation": "Real-control pilot/production state inspection at 1280x720 and 960x540; docs/validation/art-cohesion/README.md. Agent QA, not renewed user reference approval."
+      "cameraValidation": "Real-control pilot/production state inspection at 1280x720 and 960x540; docs/validation/art-cohesion/README.md. Agent QA, not renewed user reference approval.",
+      "retiredFromRuntime": "2026-10-09: replaced by the Royal Supper cartoon rework (public/assets/supper/cartoon/); file kept here for provenance."
     },
     {
       "id": "royal-supper.basket.cohesion-v1",
@@ -1355,7 +936,7 @@
       ],
       "sourcePath": "public/assets/supper/props/basket.png",
       "sourceSha256": "82d75198f65bc0a81eaa14d3260f34c2add96d30dff1b08ccc536ea2968d2913",
-      "runtimePath": "public/assets/supper/cohesion-v1/basket.png",
+      "runtimePath": "asset-sources/production/supper-m3-runtime/cohesion-v1/basket.png",
       "runtimeSha256": "bf7e924bd06a6320e03e5149b0f610278c7cd7c1bb8e3a2ecb14dadc3a0c6c0d",
       "preparedPixelSize": {
         "width": 640,
@@ -1369,7 +950,8 @@
       "preparationNotes": "Edge-preserving Kuwahara radius 3, blend 0.75. Original prepared pixels/source preserved. Exact size and alpha retained; no invented pores/holes, palette substitution, shape or geometry changes. Reproduce with scripts/prepare-cohesion.py.",
       "preparedAt": "2026-10-06",
       "cameraValidatedAt": "2026-10-06",
-      "cameraValidation": "Real-control pilot/production state inspection at 1280x720 and 960x540; docs/validation/art-cohesion/README.md. Agent QA, not renewed user reference approval."
+      "cameraValidation": "Real-control pilot/production state inspection at 1280x720 and 960x540; docs/validation/art-cohesion/README.md. Agent QA, not renewed user reference approval.",
+      "retiredFromRuntime": "2026-10-09: replaced by the Royal Supper cartoon rework (public/assets/supper/cartoon/); file kept here for provenance."
     },
     {
       "id": "royal-supper.crumb.cohesion-v1",
@@ -1383,7 +965,7 @@
       ],
       "sourcePath": "public/assets/supper/props/crumb.png",
       "sourceSha256": "5663ddebf12ddcd83c7b93b4351078e3d7480f37152392db77b62d5218b0cf0e",
-      "runtimePath": "public/assets/supper/cohesion-v1/crumb.png",
+      "runtimePath": "asset-sources/production/supper-m3-runtime/cohesion-v1/crumb.png",
       "runtimeSha256": "6c237ff0ccef7d0cd1ddef5248b1a24cbcbf42783914109b39305612604dd3c4",
       "preparedPixelSize": {
         "width": 192,
@@ -1397,7 +979,8 @@
       "preparationNotes": "Edge-preserving Kuwahara radius 4, blend 0.85. Original prepared pixels/source preserved. Exact size and alpha retained; no invented pores/holes, palette substitution, shape or geometry changes. Reproduce with scripts/prepare-cohesion.py.",
       "preparedAt": "2026-10-06",
       "cameraValidatedAt": "2026-10-06",
-      "cameraValidation": "Real-control pilot/production state inspection at 1280x720 and 960x540; docs/validation/art-cohesion/README.md. Agent QA, not renewed user reference approval."
+      "cameraValidation": "Real-control pilot/production state inspection at 1280x720 and 960x540; docs/validation/art-cohesion/README.md. Agent QA, not renewed user reference approval.",
+      "retiredFromRuntime": "2026-10-09: replaced by the Royal Supper cartoon rework (public/assets/supper/cartoon/); file kept here for provenance."
     },
     {
       "id": "royal-supper.cake.cohesion-v1",
@@ -1411,7 +994,7 @@
       ],
       "sourcePath": "public/assets/supper/props/cake.png",
       "sourceSha256": "d42d8cccc08459f9f692fd60b33bcbd5fa2a8ccf40f54d23a2bbf3c349f366c5",
-      "runtimePath": "public/assets/supper/cohesion-v1/cake.png",
+      "runtimePath": "asset-sources/production/supper-m3-runtime/cohesion-v1/cake.png",
       "runtimeSha256": "d7b60974776d87a76bb2342d76b8173c9c7d32a89defe7d873899368e783a3f4",
       "preparedPixelSize": {
         "width": 640,
@@ -1425,7 +1008,8 @@
       "preparationNotes": "Edge-preserving Kuwahara radius 4, blend 0.85. Original prepared pixels/source preserved. Exact size and alpha retained; no invented pores/holes, palette substitution, shape or geometry changes. Reproduce with scripts/prepare-cohesion.py.",
       "preparedAt": "2026-10-06",
       "cameraValidatedAt": "2026-10-06",
-      "cameraValidation": "Real-control pilot/production state inspection at 1280x720 and 960x540; docs/validation/art-cohesion/README.md. Agent QA, not renewed user reference approval."
+      "cameraValidation": "Real-control pilot/production state inspection at 1280x720 and 960x540; docs/validation/art-cohesion/README.md. Agent QA, not renewed user reference approval.",
+      "retiredFromRuntime": "2026-10-09: replaced by the Royal Supper cartoon rework (public/assets/supper/cartoon/); file kept here for provenance."
     },
     {
       "id": "sketch.pendulum-plank.reference-v1",
@@ -3470,6 +3054,1104 @@
       "approved": false,
       "status": "prepared",
       "preparationNotes": "entrance-v1 padded to a 2560 square with its paper colour (painting at rows 560..2000) as the input of the entrance-empty v2 edit."
+    },
+    {
+      "id": "supper.backdrop.reference-v1",
+      "status": "generated",
+      "world": "royal-supper",
+      "purpose": "Royal Supper cartoon rework reference; cut locally into runtime art",
+      "referenceIds": [],
+      "operation": "text_to_image",
+      "parentPath": null,
+      "sourcePath": "asset-sources/references/supper/backdrop-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/supper-backdrop.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-supper-backdrop-reference-v1",
+      "generatedAt": "2026-10-09T08:31:36.873188+00:00",
+      "executionId": "ac91ee6b-b55a-4cf0-b557-a639387df70c",
+      "creditsSpent": 1,
+      "balanceBefore": 54,
+      "balanceAfter": 53,
+      "pixelSize": {
+        "width": 2560,
+        "height": 1440
+      },
+      "preparationNotes": "Pilot; style approved by the user 2026-10-09. Cut into royal-supper.background. Generated by the art-references script; the local CLI stream ended while the job ran and the image was recovered with the same idempotency key (no second charge).",
+      "approved": true,
+      "conversationId": "b2dae849-f11a-4b6c-bfd1-61d81efa65a3",
+      "outputAssetId": "e37733d8-5d06-4f18-a2fb-264b2542d2e6",
+      "sourceSha256": "f2923efcc2cdbeefd7a799447f60fdde882f6ab92006f6a5cf8a24ce96eb4737",
+      "creditEvidence": "Local CLI stream ended (\"terminated\") while the job ran; the next request saw 53 available (54 -> 53). Downloaded by an idempotent retry with the same key: same execution, balance 51 before and after (no second charge)."
+    },
+    {
+      "id": "supper.food.reference-v1",
+      "status": "generated",
+      "world": "royal-supper",
+      "purpose": "Royal Supper cartoon rework reference; cut locally into runtime art",
+      "referenceIds": [],
+      "operation": "text_to_image",
+      "parentPath": null,
+      "sourcePath": "asset-sources/references/supper/food-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/supper-food.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-supper-food-reference-v1",
+      "generatedAt": "2026-10-09T08:30:34.160Z",
+      "executionId": "5fb4e3b2-b013-4eeb-89ce-155d03ec2f93",
+      "creditsSpent": 1,
+      "balanceBefore": 53,
+      "balanceAfter": 52,
+      "pixelSize": {
+        "width": 2560,
+        "height": 1440
+      },
+      "preparationNotes": "Pilot; style approved by the user 2026-10-09. Cut into bread, butter, crumb, cake, jelly and grape.",
+      "approved": true,
+      "conversationId": "a0cd3ed5-f3c2-460e-bf54-e2e871d1cfa3",
+      "outputAssetId": "885deff2-7987-4b8e-af94-26373566c518",
+      "sourceSha256": "2e1884f13dd3be1cba906637f868fe506494a1e3729ae97ad45fa0210e37c659",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "supper.diner.reference-v1",
+      "status": "generated",
+      "world": "royal-supper",
+      "purpose": "Royal Supper cartoon rework reference; cut locally into runtime art",
+      "referenceIds": [],
+      "operation": "text_to_image",
+      "parentPath": null,
+      "sourcePath": "asset-sources/references/supper/diner-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/supper-diner.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-supper-diner-reference-v1",
+      "generatedAt": "2026-10-09T08:31:02.848Z",
+      "executionId": "6bd8abfb-21bb-4465-9d3b-ef3273f25b2e",
+      "creditsSpent": 1,
+      "balanceBefore": 52,
+      "balanceAfter": 51,
+      "pixelSize": {
+        "width": 2048,
+        "height": 2048
+      },
+      "preparationNotes": "Pilot; style approved by the user 2026-10-09. Came back smiling at the viewer rather than eating; used only as the parent of the three pose edits.",
+      "approved": true,
+      "conversationId": "31012ee3-ac03-47d0-aa1e-87bf2b6de996",
+      "outputAssetId": "891ee722-1eba-48b4-b305-07435bba8c18",
+      "sourceSha256": "e32a37b45491e68ef46cfc75debb8835c7b5f8c7f70dd49d0ac1712c44bbdf26",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "supper.backdrop-b.reference-v1",
+      "status": "generated",
+      "world": "royal-supper",
+      "purpose": "Royal Supper cartoon rework reference; cut locally into runtime art",
+      "referenceIds": [
+        "supper.backdrop.reference-v1"
+      ],
+      "operation": "image_to_image",
+      "parentPath": "asset-sources/references/supper/backdrop-v1.png",
+      "sourcePath": "asset-sources/references/supper/backdrop-b-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/supper-backdrop-b.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-supper-backdrop-b-reference-v1",
+      "generatedAt": "2026-10-09T08:38:46.658Z",
+      "executionId": "f7b2adf2-9edb-4452-bfd8-147f3140b640",
+      "creditsSpent": 1,
+      "balanceBefore": 51,
+      "balanceAfter": 50,
+      "pixelSize": {
+        "width": 2048,
+        "height": 2048
+      },
+      "preparationNotes": "Edit asked for different guests in the same hall; came back square and re-framed (closer camera), so it cannot tile beside v1. Cropped into the museum painting royal-supper.entrance.",
+      "approved": false,
+      "conversationId": "2e3c72bd-8f50-49c4-809f-4fb5e52908ec",
+      "outputAssetId": "14950f5a-5c3d-4ce6-ae07-e7f9f2a67660",
+      "sourceSha256": "6eda9e8c01d2b5659db3f513809bf777e31463a2d94efb15cdb75db16d29f145",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "supper.diner-look.reference-v1",
+      "status": "generated",
+      "world": "royal-supper",
+      "purpose": "Royal Supper cartoon rework reference; cut locally into runtime art",
+      "referenceIds": [
+        "supper.diner.reference-v1"
+      ],
+      "operation": "image_to_image",
+      "parentPath": "asset-sources/references/supper/diner-v1.png",
+      "sourcePath": "asset-sources/references/supper/diner-look-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/supper-diner-look.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-supper-diner-look-reference-v1",
+      "generatedAt": "2026-10-09T08:40:02.692Z",
+      "executionId": "2e4f6b35-8c56-40b2-b458-13c428e76179",
+      "creditsSpent": 1,
+      "balanceBefore": 50,
+      "balanceAfter": 49,
+      "pixelSize": {
+        "width": 2048,
+        "height": 2048
+      },
+      "preparationNotes": "LOOK pose (frowning stare, open mouth). Faint paper texture in its background; keyed by border flood.",
+      "approved": false,
+      "conversationId": "85a9e7ed-2670-4c38-b969-193341fa27bf",
+      "outputAssetId": "06b8b081-5954-4036-b2ad-a20f63b10202",
+      "sourceSha256": "eedb0de4a8d618e86617ebf6693139d023baeee82c900304ad48d3e6cf99be1d",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "supper.diner-eat.reference-v1",
+      "status": "generated",
+      "world": "royal-supper",
+      "purpose": "Royal Supper cartoon rework reference; cut locally into runtime art",
+      "referenceIds": [
+        "supper.diner.reference-v1"
+      ],
+      "operation": "image_to_image",
+      "parentPath": "asset-sources/references/supper/diner-v1.png",
+      "sourcePath": "asset-sources/references/supper/diner-eat-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/supper-diner-eat.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-supper-diner-eat-reference-v1",
+      "generatedAt": "2026-10-09T08:41:23.094Z",
+      "executionId": "91b07826-e5ac-4468-ad39-8c2d3100ad72",
+      "creditsSpent": 1,
+      "balanceBefore": 49,
+      "balanceAfter": 48,
+      "pixelSize": {
+        "width": 2048,
+        "height": 2048
+      },
+      "preparationNotes": "AWAY pose (eyes closed, chewing).",
+      "approved": false,
+      "conversationId": "49bb6434-8876-46a2-bff2-9a1dba4a7764",
+      "outputAssetId": "a1d12f44-7ab6-4902-8590-50986098a265",
+      "sourceSha256": "163325aec73a6710486efbff50db5e26f5d6f365bc02c7e50d808ff179fa6156",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "supper.diner-turn.reference-v1",
+      "status": "generated",
+      "world": "royal-supper",
+      "purpose": "Royal Supper cartoon rework reference; cut locally into runtime art",
+      "referenceIds": [
+        "supper.diner.reference-v1"
+      ],
+      "operation": "image_to_image",
+      "parentPath": "asset-sources/references/supper/diner-v1.png",
+      "sourcePath": "asset-sources/references/supper/diner-turn-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/supper-diner-turn.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-supper-diner-turn-reference-v1",
+      "generatedAt": "2026-10-09T08:43:37.025Z",
+      "executionId": "cd59e920-19ef-4e6e-b914-f8e61ff42a1f",
+      "creditsSpent": 1,
+      "balanceBefore": 48,
+      "balanceAfter": 47,
+      "pixelSize": {
+        "width": 2048,
+        "height": 2048
+      },
+      "preparationNotes": "TURNING pose (side-glance, raised brow).",
+      "approved": false,
+      "conversationId": "efb45ce0-3a25-4b2d-9a85-dff4cb7e1ea3",
+      "outputAssetId": "21b25c88-a96d-49fa-a752-80b26c02036c",
+      "sourceSha256": "f15807cd2ae05c0f28f89d0775adcc3afe2b579a142ab200173ec1fd9441b816",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "supper.tableware.reference-v1",
+      "status": "generated",
+      "world": "royal-supper",
+      "purpose": "Royal Supper cartoon rework reference; cut locally into runtime art",
+      "referenceIds": [],
+      "operation": "text_to_image",
+      "parentPath": null,
+      "sourcePath": "asset-sources/references/supper/tableware-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/supper-tableware.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-supper-tableware-reference-v1",
+      "generatedAt": "2026-10-09T08:44:03.351Z",
+      "executionId": "31d316f6-d62a-4c8f-9e00-c5860d2ff301",
+      "creditsSpent": 1,
+      "balanceBefore": 47,
+      "balanceAfter": 46,
+      "pixelSize": {
+        "width": 2560,
+        "height": 1440
+      },
+      "preparationNotes": "Basket, goblet, casserole (recoloured plum-crimson at preparation) and platter used. Its fork lost the tines and is unused; see supper.fork.reference-v1.",
+      "approved": false,
+      "conversationId": "06d4f7ee-1a39-4399-b774-1f7645aa1603",
+      "outputAssetId": "ff74cff0-1fd7-4355-8169-22a289d43a3b",
+      "sourceSha256": "be26562583aa871e84cb7cb2e7c2fdb36e83cbaeb38dc84db2e68b2985dfd8d2",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "supper.candles.reference-v1",
+      "status": "generated",
+      "world": "royal-supper",
+      "purpose": "Royal Supper cartoon rework reference; cut locally into runtime art",
+      "referenceIds": [],
+      "operation": "text_to_image",
+      "parentPath": null,
+      "sourcePath": "asset-sources/references/supper/candles-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/supper-candles.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-supper-candles-reference-v1",
+      "generatedAt": "2026-10-09T08:44:41.334Z",
+      "executionId": "02e36e53-2945-444f-acb8-2d95622579ad",
+      "creditsSpent": 1,
+      "balanceBefore": 46,
+      "balanceAfter": 45,
+      "pixelSize": {
+        "width": 2560,
+        "height": 1440
+      },
+      "preparationNotes": "Wax (wick cropped), flame, ember wick, fan and flag used; of the candelabrum only its foot is used (its cups are narrower than the route candles).",
+      "approved": false,
+      "conversationId": "0446c149-6a13-4dee-ae37-9e3e8870adaf",
+      "outputAssetId": "8ca51bee-b5ab-4d65-ae18-4db554182e73",
+      "sourceSha256": "52549dc5bec111803e415927498765f5cce1280043b8c75a68c366a0e98164d1",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "supper.fork.reference-v1",
+      "status": "generated",
+      "world": "royal-supper",
+      "purpose": "Royal Supper cartoon rework reference; cut locally into runtime art",
+      "referenceIds": [],
+      "operation": "text_to_image",
+      "parentPath": null,
+      "sourcePath": "asset-sources/references/supper/fork-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/supper-fork.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-supper-fork-reference-v1",
+      "generatedAt": "2026-10-09T08:46:08.738Z",
+      "executionId": "e26ff375-968d-448b-900d-f5dafb987bcf",
+      "creditsSpent": 1,
+      "balanceBefore": 45,
+      "balanceAfter": 44,
+      "pixelSize": {
+        "width": 1440,
+        "height": 2560
+      },
+      "preparationNotes": "Upright fork replacing the tableware sheet fork.",
+      "approved": false,
+      "conversationId": "20d81b8c-dbab-49a8-92e7-6a744fb8e146",
+      "outputAssetId": "9e581b68-55f3-436f-b505-3c6f502f0a3c",
+      "sourceSha256": "dc5c311153954fe4990b6bfe5ba5acbf02974d7fb8c0424db7df57c54c210159",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "royal-supper.background",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.backdrop.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/backdrop-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/background.webp",
+      "preparedPixelSize": {
+        "width": 2048,
+        "height": 1152
+      },
+      "cropBox": null,
+      "preparationNotes": "Whole hall at 2048x1152: saturation 0.72, 26% dusk haze, drape below the far table edge darkened to 42%. Mirrored tiling in the scene. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "f3b2948fa77da808b596c469ba69ee1c989874625ad90aa5ba6878ffd8e818fc"
+    },
+    {
+      "id": "royal-supper.entrance",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.backdrop-b.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/backdrop-b-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/entrance.webp",
+      "preparedPixelSize": {
+        "width": 1120,
+        "height": 720
+      },
+      "cropBox": [
+        0,
+        40,
+        2048,
+        1357
+      ],
+      "preparationNotes": "Museum painting of the banquet: the second guest table, cropped to the 2.8 x 1.8 side frame. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "6203ec89311837dd6d936682170e51f56dc67aa5d5a7392fafd59f46c5f245f2"
+    },
+    {
+      "id": "royal-supper.crumb",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.food.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/food-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/crumb.webp",
+      "preparedPixelSize": {
+        "width": 341,
+        "height": 240
+      },
+      "cropBox": [
+        1860,
+        350,
+        2260,
+        630
+      ],
+      "preparationNotes": "Crumb hazard. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "de244608e12e6fe2f8b7d84e699f98f4b3f30ff0d7eb357fe1999d8af61606cd"
+    },
+    {
+      "id": "royal-supper.jelly",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.food.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/food-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/jelly.webp",
+      "preparedPixelSize": {
+        "width": 512,
+        "height": 260
+      },
+      "cropBox": [
+        1015,
+        860,
+        1690,
+        1210
+      ],
+      "preparationNotes": "Jelly bounce pad; drawn deeper than its thin collider, sitting in its dish. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "52eb87f44fc7529a5120896b78bdc7fbf4e14aad55cc264ef948a94ab62a48fe"
+    },
+    {
+      "id": "royal-supper.grape",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.food.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/food-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/grape.webp",
+      "preparedPixelSize": {
+        "width": 319,
+        "height": 347
+      },
+      "cropBox": [
+        1860,
+        820,
+        2240,
+        1220
+      ],
+      "preparationNotes": "Rolling grape. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "9861adb3c9f8bc67dc79bba9e53e6e62d88ee5bda395f243a82f3f210d2c1694"
+    },
+    {
+      "id": "royal-supper.bread-left",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.food.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/food-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/bread-left.webp",
+      "preparedPixelSize": {
+        "width": 96,
+        "height": 424
+      },
+      "cropBox": [
+        300,
+        180,
+        840,
+        650
+      ],
+      "preparationNotes": "Bread slice platform. Left cap. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "f0e041e2f116a691f9e86cf975479b0377bb1b5bd39c0aaae36040acdd15b4e3"
+    },
+    {
+      "id": "royal-supper.bread",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.food.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/food-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/bread.webp",
+      "preparedPixelSize": {
+        "width": 192,
+        "height": 424
+      },
+      "cropBox": [
+        300,
+        180,
+        840,
+        650
+      ],
+      "preparationNotes": "Bread slice platform. Seamless middle tile (0.30..0.70). Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "25a1f6d58264bf5a5226022673d427bfc38ec6bf5fc4eea146311c4e2ef34760"
+    },
+    {
+      "id": "royal-supper.bread-right",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.food.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/food-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/bread-right.webp",
+      "preparedPixelSize": {
+        "width": 115,
+        "height": 424
+      },
+      "cropBox": [
+        300,
+        180,
+        840,
+        650
+      ],
+      "preparationNotes": "Bread slice platform. Right cap. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "21e7ede7c6b4a1230a56c899f7d0d745f759423a9b699d97a42ea0418429358b"
+    },
+    {
+      "id": "royal-supper.butter-left",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.food.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/food-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/butter-left.webp",
+      "preparedPixelSize": {
+        "width": 84,
+        "height": 302
+      },
+      "cropBox": [
+        1070,
+        300,
+        1650,
+        640
+      ],
+      "preparationNotes": "Butter slide. Left cap. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "2750234c5696c9e7e319e4067b25d2de858c7952867747f3056eccffdcb7c060"
+    },
+    {
+      "id": "royal-supper.butter",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.food.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/food-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/butter.webp",
+      "preparedPixelSize": {
+        "width": 116,
+        "height": 302
+      },
+      "cropBox": [
+        1070,
+        300,
+        1650,
+        640
+      ],
+      "preparationNotes": "Butter slide. Seamless middle tile (0.34..0.56). Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "83efb88c3f08b2ce28a148e8ac5f036a1889708dc79ca45ee6be3cfd74ad5cc0"
+    },
+    {
+      "id": "royal-supper.butter-right",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.food.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/food-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/butter-right.webp",
+      "preparedPixelSize": {
+        "width": 126,
+        "height": 302
+      },
+      "cropBox": [
+        1070,
+        300,
+        1650,
+        640
+      ],
+      "preparationNotes": "Butter slide. Right cap. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "30585620602ffb5bb0db616770d08b387d8a4531680053d3537f37170bdd9815"
+    },
+    {
+      "id": "royal-supper.cake-left",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.food.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/food-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/cake-left.webp",
+      "preparedPixelSize": {
+        "width": 58,
+        "height": 352
+      },
+      "cropBox": [
+        330,
+        800,
+        800,
+        1210
+      ],
+      "preparationNotes": "Dessert cake shelf. Left cap. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "a692e38d3969fae0d7f497b3e74e3921dea0ee2598533ae38eb98abe3d300b74"
+    },
+    {
+      "id": "royal-supper.cake",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.food.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/food-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/cake.webp",
+      "preparedPixelSize": {
+        "width": 132,
+        "height": 352
+      },
+      "cropBox": [
+        330,
+        800,
+        800,
+        1210
+      ],
+      "preparationNotes": "Dessert cake shelf. Seamless middle tile (0.30..0.62). Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "e5f7d59ce0f0ee5fe5ddf35e0f0b7a0bb227e02224a20907a2b4f6836fa0544a"
+    },
+    {
+      "id": "royal-supper.cake-right",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.food.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/food-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/cake-right.webp",
+      "preparedPixelSize": {
+        "width": 58,
+        "height": 352
+      },
+      "cropBox": [
+        330,
+        800,
+        800,
+        1210
+      ],
+      "preparationNotes": "Dessert cake shelf. Right cap. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "6a46b61a2e550e555edefc6a4bcb22cb9aba7020a3ffc830e4721bb608a888e8"
+    },
+    {
+      "id": "royal-supper.basket",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.tableware.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/tableware-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/basket.webp",
+      "preparedPixelSize": {
+        "width": 512,
+        "height": 287
+      },
+      "cropBox": [
+        285,
+        330,
+        1015,
+        745
+      ],
+      "preparationNotes": "Start basket; drawn deeper than its collider. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "b84482e895fd1565db8e1f14e83f09d4f14999b8f9a201f999af149c728fdb92"
+    },
+    {
+      "id": "royal-supper.goblet",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.tableware.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/tableware-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/goblet.webp",
+      "preparedPixelSize": {
+        "width": 267,
+        "height": 512
+      },
+      "cropBox": [
+        1110,
+        100,
+        1465,
+        745
+      ],
+      "preparationNotes": "Goblet arch under its plate. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "72b632bcf9e1baa2ff1bc9943410ceca0879a116df9360284ad8b1091c5a8d7f"
+    },
+    {
+      "id": "royal-supper.cover",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.tableware.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/tableware-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/cover.webp",
+      "preparedPixelSize": {
+        "width": 512,
+        "height": 191
+      },
+      "cropBox": [
+        1480,
+        405,
+        2325,
+        740
+      ],
+      "preparationNotes": "Casserole cover against the diner, recoloured from teal to plum-crimson. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "5e8380ee471904d6ae08b78ce296b77ea7975917111fe1cf3db72df7a89bd1e3"
+    },
+    {
+      "id": "royal-supper.plate-left",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.tableware.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/tableware-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/plate-left.webp",
+      "preparedPixelSize": {
+        "width": 150,
+        "height": 117
+      },
+      "cropBox": [
+        320,
+        790,
+        2230,
+        925
+      ],
+      "preparationNotes": "Serving platter for plates and crockery. Left cap. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "e7ddc44d4af9951c9464d7929959eeef7a3f49e48352afc32e5e596eedc24e38"
+    },
+    {
+      "id": "royal-supper.plate",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.tableware.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/tableware-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/plate.webp",
+      "preparedPixelSize": {
+        "width": 375,
+        "height": 117
+      },
+      "cropBox": [
+        320,
+        790,
+        2230,
+        925
+      ],
+      "preparationNotes": "Serving platter for plates and crockery. Seamless middle tile (0.40..0.60). Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "5b62331c1b3127bf3d84d5d8ddd82c9328d0443ae4f96b2c7757085590794add"
+    },
+    {
+      "id": "royal-supper.plate-right",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.tableware.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/tableware-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/plate-right.webp",
+      "preparedPixelSize": {
+        "width": 150,
+        "height": 117
+      },
+      "cropBox": [
+        320,
+        790,
+        2230,
+        925
+      ],
+      "preparationNotes": "Serving platter for plates and crockery. Right cap. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "8107e658e177e38018f8a53c25674c60ef0244b9aa47acb309767c7970b1e320"
+    },
+    {
+      "id": "royal-supper.fork",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.fork.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/fork-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/fork.webp",
+      "preparedPixelSize": {
+        "width": 124,
+        "height": 768
+      },
+      "cropBox": null,
+      "preparationNotes": "Upright fork that topples into the bridge. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "8a8a3e87e256c7f476889c855d546f4ed2c151b5474c9dfe7e52682a1d8b41c6"
+    },
+    {
+      "id": "royal-supper.holder",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.candles.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/candles-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/holder.webp",
+      "preparedPixelSize": {
+        "width": 257,
+        "height": 148
+      },
+      "cropBox": [
+        360,
+        540,
+        650,
+        695
+      ],
+      "preparationNotes": "Candelabrum foot under the centre stem. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "0542fdb2c379b7c066877bdd240e15514932402e8fd876b3e4bde979d8123289"
+    },
+    {
+      "id": "royal-supper.wax",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.candles.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/candles-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/wax.webp",
+      "preparedPixelSize": {
+        "width": 266,
+        "height": 451
+      },
+      "cropBox": [
+        1135,
+        232,
+        1440,
+        695
+      ],
+      "preparationNotes": "Candle body. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "8048b0c62376ea2e0100c525048f583235b2dc223ea02653c0ec479074c19be9"
+    },
+    {
+      "id": "royal-supper.flame",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.candles.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/candles-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/flame.webp",
+      "preparedPixelSize": {
+        "width": 293,
+        "height": 512
+      },
+      "cropBox": [
+        1890,
+        145,
+        2225,
+        700
+      ],
+      "preparationNotes": "Lit flame (hazard drawn over its rect). Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "ac2fa65f81629dad6760339746314a142283504a37b57d93896e474a50ecc7a4"
+    },
+    {
+      "id": "royal-supper.ember",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.candles.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/candles-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/ember.webp",
+      "preparedPixelSize": {
+        "width": 105,
+        "height": 423
+      },
+      "cropBox": [
+        430,
+        840,
+        575,
+        1295
+      ],
+      "preparationNotes": "Smoking wick while a flame is out. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "fc8a63886ebd78e3e0ddd1eb0aa7a145e153b652cfdbc6ab5a6dbcacf73e0e6b"
+    },
+    {
+      "id": "royal-supper.fan",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.candles.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/candles-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/fan.webp",
+      "preparedPixelSize": {
+        "width": 459,
+        "height": 468
+      },
+      "cropBox": [
+        1040,
+        815,
+        1535,
+        1315
+      ],
+      "preparationNotes": "Fan rotor; its turn follows the candle clock. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "67d0c6e6a62293ee221502afb60c71a0ef87677a0dac9a9ff4b422c755c09720"
+    },
+    {
+      "id": "royal-supper.flag",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.candles.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/candles-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/flag.webp",
+      "preparedPixelSize": {
+        "width": 166,
+        "height": 425
+      },
+      "cropBox": [
+        1980,
+        840,
+        2180,
+        1295
+      ],
+      "preparationNotes": "Checkpoint flag. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "8cf5b44e413f7d31adb8d8edb928624ac85a3ba4149878d6bfc539ffaa60f8bd"
+    },
+    {
+      "id": "royal-supper.diner",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.diner-eat.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/diner-eat-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/diner.webp",
+      "preparedPixelSize": {
+        "width": 631,
+        "height": 640
+      },
+      "cropBox": [
+        258,
+        202,
+        1796,
+        1761
+      ],
+      "preparationNotes": "Watchful diner, eat pose; common registration box across the three poses. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "861fd05e5cb6f49be8f2243637bfa14bbdc32761f9507046ac3ed65e593d0c4b"
+    },
+    {
+      "id": "royal-supper.diner-turn",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.diner-turn.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/diner-turn-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/diner-turn.webp",
+      "preparedPixelSize": {
+        "width": 631,
+        "height": 640
+      },
+      "cropBox": [
+        258,
+        202,
+        1796,
+        1761
+      ],
+      "preparationNotes": "Watchful diner, turn pose; common registration box across the three poses. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "e428a17bb8c5af149ea7bfec274d53ac213a08a355d97ff9daed2d6521320244"
+    },
+    {
+      "id": "royal-supper.diner-look",
+      "world": "royal-supper",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "referenceIds": [
+        "supper.diner-look.reference-v1"
+      ],
+      "executionId": null,
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "sourcePath": "asset-sources/references/supper/diner-look-v1.png",
+      "runtimePath": "public/assets/supper/cartoon/diner-look.webp",
+      "preparedPixelSize": {
+        "width": 631,
+        "height": 640
+      },
+      "cropBox": [
+        258,
+        202,
+        1796,
+        1761
+      ],
+      "preparationNotes": "Watchful diner, look pose; common registration box across the three poses. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
+      "sha256": "f00483dc2c61b0cf67f111c3eeeb534056d848d791cc336b89e299f66e4a2a94"
     }
   ],
   "balanceAfterReferences": {

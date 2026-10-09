@@ -1,15 +1,17 @@
-The Last Curator — Royal Supper study
+The Last Curator — art provenance
 
-DreamLayer generated the approved masterpiece, banquet and restorer references,
-the player cutout, banquet scenery and bread source. Runtime player poses,
-background crops, bread front panels, matching pear and aligned restoration
-variants were prepared locally. Existing approved references are preserved.
+DreamLayer generated the approved masterpiece and the player heroine; the
+matching pear, the enchanted light and the aligned restoration variants were
+prepared locally from them. Existing approved references are preserved.
 
-After repeated DreamLayer upstream 503 failures, the user explicitly authorized
-OpenAI ImageGen for the remaining required Royal Supper props on 2026-10-06.
-Three reference-guided ImageGen sheets supplied basket, butter, crumb, grape,
-jelly, cake, platter, goblet, cover terrine, wax, fork, fan, trident holder and
-diner portrait. Runtime images are locally cropped/resized from these sheets.
+Royal Supper (cartoon rework, 2026-10-09, on the user's request): the banquet
+hall backdrop, the museum's banquet painting, the food, tableware, candles,
+fan, checkpoint flags and the watchful diner's three poses (eating, turning,
+looking) are cut locally from DreamLayer reference sheets by
+scripts/prepare-supper-cartoon.py. The earlier M3 Supper art (DreamLayer
+scenery and the props the user authorized from OpenAI ImageGen on 2026-10-06
+after repeated DreamLayer 503 failures) is no longer used at runtime; it is
+kept in the repository under asset-sources/production/supper-m3-runtime/.
 Collision geometry, landing edges, motion, flame/attention cues and gameplay
 remain authored code, independent of generated image pixels.
 
@@ -17,13 +19,12 @@ Unfinished Sketch: the toolbox mechanisms, ground, glue, lifts, nails, pickup
 and background tools (assets/sketch/) are cut locally from user-approved
 DreamLayer reference sheets by scripts/prepare-sketch-skins.py. The toolbox
 backdrop, torch and museum garage painting were generated with DreamLayer for
-the art pass on 2026-10-08 and prepared by the same script. Their sizes come from the level data; collision, hazards and
-gameplay cues remain authored code.
+the art pass on 2026-10-08 and prepared by the same script. Their sizes come
+from the level data; collision, hazards and gameplay cues remain authored code.
 
-Detailed sources, prompts, hashes and provider-specific cost evidence are in the
-repository's asset-sources/manifest.json. Known delivered DreamLayer usage is
-seven reference plus three production credits. Failed-job costs remain unknown;
-ImageGen billing is not exposed and is not counted as DreamLayer credit usage.
+Detailed sources, prompts, hashes and provider-specific credit evidence are in
+the repository's asset-sources/manifest.json. ImageGen billing is not exposed
+and is not counted as DreamLayer credit usage.
 
 Audio is original synthesized work; see audio/NOTICE.txt. Software dependency
 notices are in THIRD_PARTY_NOTICES.txt.

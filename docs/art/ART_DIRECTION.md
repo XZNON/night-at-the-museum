@@ -13,6 +13,25 @@ cream blouse, mustard satchel, dark boots. This supersedes "keep the small teal
 restorer's identity, cream scarf" and "keep existing registered player poses"
 below. Poses, provenance and registration: docs/art/SKETCH_ASSETS.md.
 
+## Royal Supper cartoon rework — user decision 2026-10-09
+
+The user chose to rework Royal Supper's art to **match the Sketch's cartoon
+look** (bold ink outlines, cel shading, poppy colours), covering everything
+visible, with code animation plus drawn diner pose frames, from DreamLayer
+reference sheets cut locally. This supersedes the M3 painterly target and the
+completed cohesion pass below for Royal Supper; the masterpiece, the golden
+pear and the museum stay as they are.
+
+Delivered: a cartoon banquet hall backdrop (the whole hall in view, hazed and
+with the tablecloth drape darkened so drops read), food, tableware, candles,
+fan, checkpoint flags and a giant watchful diner seated behind the far table
+edge with eating / turning / looking poses; a second banquet edit hangs in the
+museum. Collision, timings, level data and saves are unchanged. Sources,
+prompts, costs and the preparation recipe:
+`asset-sources/references/supper/`, `asset-sources/prompts/supper-*.txt`,
+`scripts/prepare-supper-cartoon.py`, `asset-sources/manifest.json`. Evidence:
+[docs/validation/supper-cartoon](../validation/supper-cartoon/README.md).
+
 ## Unfinished Sketch — separate selected direction
 
 Further user clarification: modern cartoon 2.5D, with a dimensional animated-world feel rather than flat 2D, pixel art or retro tiles. Side-view gameplay keeps its plane while platform/board thickness, rounded prop volume, layered scenery and soft stylised lighting establish depth. These cues must preserve foreground gameplay readability. Existing illustrated player poses can remain; no new full-3D character, free-depth controller or rendering engine is requested.

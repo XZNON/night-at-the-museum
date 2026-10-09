@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { placeholderArt, type ArtId } from '../assets/manifest';
-import { supperPlatformArt, supperPlatformOverrides, supperPropPresentation } from '../assets/supper-props';
+import { supperDinerPoses, supperPlatformArt, supperPlatformOverrides, supperPropPresentation, supperSkins } from '../assets/supper-props';
 import type { GameScene } from '../core/scenes';
 import type { Controls } from '../gameplay/controller';
 import { RoyalSupperModel } from '../gameplay/royal-supper-model';
@@ -30,6 +30,11 @@ export class RoyalSupperScene implements GameScene {
   private readonly flames: THREE.Group[] = [];
   private readonly embers: THREE.Mesh[] = [];
   private readonly heads: THREE.Group[] = [];
+  private readonly dinerPictures: THREE.Mesh[] = [];
+  private readonly wicks: THREE.Mesh[] = [];
+  private readonly flags: THREE.Group[] = [];
+  private readonly jellies: { group: THREE.Group; left: number; right: number }[] = [];
+  private bounce = { x: 0, at: -10 };
   private readonly backdrop = new THREE.Group();
   private readonly gaze = new THREE.Group();
   private readonly gazeRays: { mesh: THREE.Mesh; head: THREE.Group; eyeX: number }[] = [];
@@ -51,7 +56,7 @@ export class RoyalSupperScene implements GameScene {
     private readonly onComplete: (result: CampaignResult) => void, private readonly reducedMotion: boolean,
     private readonly sound: (cue: AudioCue) => void, private readonly art: Partial<Record<ArtId, HTMLImageElement>>) {
     this.model = new RoyalSupperModel(level, session, collect);
-    this.world.background = new THREE.Color(0x241720);
+    this.world.background = new THREE.Color(supperPropPresentation.backdrop.fill);
     this.world.add(new THREE.HemisphereLight(0xffe9cc, 0x382332, 2.2));
     const key = new THREE.DirectionalLight(0xffd2a0, 2.1); key.position.set(-8, 16, 14); this.world.add(key);
     this.camera.position.set(10, level.camera.y, 30); this.camera.lookAt(10, level.camera.y, 0);
@@ -94,13 +99,16 @@ export class RoyalSupperScene implements GameScene {
     }
     return texture;
   }
+  private aspect(id: ArtId): number { const image = this.art[id]!; return image.width / image.height; }
   private buildBackdrop(): void {
-    const l = this.level; const length = l.bounds.width;
-    const image = this.art['royal-supper.background']!;
-    const scenicHeight = 48 * image.height / image.width;
+    const l = this.level; const length = l.bounds.width; const b = supperPropPresentation.backdrop;
+    // The whole hall fits the view; its far table edge sits just below the
+    // route's ground. Mirrored neighbours meet edge to edge without a seam.
+    const height = b.width / this.aspect('royal-supper.background');
+    const centreY = b.tableY + b.tableEdge * height - height / 2;
     this.world.add(this.backdrop);
-    for (let x = -24, index = 0; x < length + 48; x += 48, index++) {
-      const scenic = this.picture('royal-supper.background', x + 24, 8, 48, scenicHeight, -9, this.backdrop, 0x776a5c);
+    for (let x = l.bounds.x - b.width, index = 0; x < l.bounds.x + length + b.width; x += b.width, index++) {
+      const scenic = this.picture('royal-supper.background', x + b.width / 2, centreY, b.width, height, -9, this.backdrop);
       if (index % 2) scenic.scale.x = -1;
     }
     this.box(length / 2, -6.5, -2, length + 20, 3, 4, 0x53303a);
@@ -108,7 +116,8 @@ export class RoyalSupperScene implements GameScene {
     for (const x of dinerPositions) {
       const d = supperPropPresentation.diner;
       const head = new THREE.Group(); head.position.set(x, d.centreY, -7); this.world.add(head);
-      this.picture('royal-supper.diner', 0, 0, d.width, d.height, 0, head, 0xc4ab97);
+      // The three poses share one registration; render swaps the texture.
+      this.dinerPictures.push(this.picture('royal-supper.diner', 0, 0, d.height * this.aspect('royal-supper.diner'), d.height, 0, head, 0xf0e6de));
       this.heads.push(head);
     }
     this.buildGaze();
@@ -134,7 +143,7 @@ export class RoyalSupperScene implements GameScene {
     this.heads.forEach((head, i) => {
       const left = i === 0 ? zone.x : (this.heads[i - 1].position.x + head.position.x) / 2;
       const right = i === this.heads.length - 1 ? zone.x + zone.width : (head.position.x + this.heads[i + 1].position.x) / 2;
-      for (const eyeX of [-d.eyeX, d.eyeX]) {
+      for (const eyeX of d.eyes) {
         const geometry = new THREE.BufferGeometry();
         geometry.setAttribute('position', new THREE.Float32BufferAttribute([
           -d.gaze.sourceWidth, 0, 0, d.gaze.sourceWidth, 0, 0,
@@ -159,60 +168,106 @@ export class RoyalSupperScene implements GameScene {
       }
       const imageArt = supperPlatformArt[p.art];
       if (imageArt) {
-        this.picture(supperPlatformOverrides[p.id] ?? imageArt.id, p.x + p.width / 2, p.y + p.height / 2,
-          p.width, p.height, 0.95, this.world, 0xffffff, imageArt.tileWidth ? Math.max(1, p.width / imageArt.tileWidth) : 1);
+        const id = supperPlatformOverrides[p.id] ?? imageArt.id; const skin = supperSkins[id] ?? {};
+        const top = p.y + p.height; const height = skin.depth ?? p.height; const z = skin.z ?? 0.95;
+        // A tall goblet block (the grape chute) is the goblet itself.
+        if (p.art === 'goblet' && p.height > 1.5) this.picture('royal-supper.goblet', p.x + p.width / 2, p.y + p.height / 2, p.width, p.height, z);
+        else if (skin.strip) this.strip(id, p.x, top - height / 2, p.width, height, z);
+        else if (p.art === 'jelly') {
+          // Pivot at the foot so a bounce squashes the jelly down into its dish.
+          const group = new THREE.Group(); group.position.set(p.x + p.width / 2, top - height, z); this.world.add(group);
+          this.picture(id, 0, height / 2, p.width, height, 0, group);
+          this.jellies.push({ group, left: p.x, right: p.x + p.width });
+        } else this.picture(id, p.x + p.width / 2, top - height / 2, p.width, height, z);
         // Exact landing edge; generated pixels never define the platform height.
-        this.box(p.x + p.width / 2, p.y + p.height - 0.025, 0.98, p.width, 0.05, 0.03, imageArt.lip);
-        if (p.art === 'goblet') {
-          const g = supperPropPresentation.gobletArch;
-          const height = Math.max(p.height, g.height);
-          this.picture('royal-supper.goblet', p.x + p.width / 2, p.y + p.height - height / 2,
-            Math.min(p.width, g.width), height, -1.5);
+        this.box(p.x + p.width / 2, top - 0.025, 0.98, p.width, 0.05, 0.03, imageArt.lip);
+        if (p.art === 'goblet' && p.height <= 1.5) {
+          const height = Math.max(p.height, supperPropPresentation.gobletArch.height);
+          this.picture('royal-supper.goblet', p.x + p.width / 2, top - height / 2,
+            height * this.aspect('royal-supper.goblet'), height, -1.5);
         }
         continue;
       }
+      if (p.art === 'ceiling') { this.canopy(p); continue; }
       const a = placeholderArt[p.art];
       this.box(p.x + p.width / 2, p.y + p.height / 2, 0, p.width, p.height, 1.6, a.color);
       this.box(p.x + p.width / 2, p.y + p.height - 0.07, 0.06, p.width, 0.14, 1.72, a.accent);
     }
     for (const c of this.level.diner.cover) {
       this.picture('royal-supper.cover', c.x + c.width / 2, c.y + c.height / 2, c.width, c.height, -0.4);
-      this.box(c.x, c.y + c.height / 2, 0, 0.1, c.height, 0.4, 0x8ddbea);
-      this.box(c.x + c.width, c.y + c.height / 2, 0, 0.1, c.height, 0.4, 0x8ddbea);
-      this.box(c.x + c.width / 2, c.y + c.height, 0, c.width, 0.09, 0.4, 0x8ddbea);
       // The dish silhouette fills the protection volume. The inset floor strip
       // marks safe FOOT CENTRES, so a player at its edge still fits fully inside.
       this.coverStrips.push(this.box(c.x + c.width / 2, c.y + 0.035, 0.95,
         c.width - this.level.tuning.width, 0.07, 0.18, 0x8ddbea));
     }
+    const f = supperPropPresentation.flag;
     for (const c of this.level.checkpoints) {
-      this.box(c.spawn.x - 0.25, c.spawn.y + 0.15, 1, 0.3, 0.3, 0.06, 0x8fd1a1);
+      // Pivot at the foot of the pole so reached flags can wave.
+      const flag = new THREE.Group(); flag.position.set(c.spawn.x + f.x, c.spawn.y, 0.9); this.world.add(flag);
+      this.picture('royal-supper.flag', 0, f.height / 2, f.height * this.aspect('royal-supper.flag'), f.height, 0, flag);
+      this.flags.push(flag);
     }
+  }
+  // Caps keep their drawn proportions at this height; the middle tile repeats
+  // a whole number of times across the rest, slightly under the caps.
+  private strip(id: ArtId, x: number, y: number, width: number, height: number, z: number): void {
+    const left = `${id}-left` as ArtId; const right = `${id}-right` as ArtId;
+    const fit = Math.min(1, width * 0.45 / (height * (this.aspect(left) + this.aspect(right))));
+    const lw = height * this.aspect(left) * fit; const rw = height * this.aspect(right) * fit; const mid = width - lw - rw;
+    this.picture(id, x + lw + mid / 2, y, mid + 0.04, height, z, this.world, 0xffffff,
+      Math.max(1, Math.round(mid / (height * this.aspect(id)))));
+    this.picture(left, x + lw / 2, y, lw, height, z + 0.002);
+    this.picture(right, x + width - rw / 2, y, rw, height, z + 0.002);
+  }
+  // The candle canopy keeps its collider; a velvet valance with a gold band
+  // marks its underside, the only edge the route meets.
+  private canopy(p: Rect): void {
+    const x = p.x + p.width / 2; const a = placeholderArt.ceiling;
+    this.box(x, p.y + p.height / 2, 0, p.width, p.height, 1.6, a.color);
+    this.box(x, p.y + 0.24, 0.84, p.width, 0.44, 0.06, a.accent);
+    this.box(x, p.y + 0.03, 0.86, p.width, 0.06, 0.06, supperPropPresentation.holder.ink);
   }
   private buildProps(): void {
     const l = this.level;
     this.fork.position.set(l.fork.pivot.x, l.fork.pivot.y - 0.125, 0.1);
-    this.picture('royal-supper.fork', 0, l.fork.length / 2, supperPropPresentation.fork.width,
+    // Toppled, the fork's local left side becomes its top (local x maps to -y):
+    // shift it so that side rests just above the bridge's landing top.
+    const fork = supperPropPresentation.fork;
+    this.picture('royal-supper.fork', fork.width / 2 - 0.125 - fork.top, l.fork.length / 2, fork.width,
       l.fork.length, 0.9, this.fork);
     this.fork.visible = l.fork.triggerBounds.x > 0;
     l.candle.flames.forEach(h => {
+      // Pivot at the wick so the flicker grows from the candle top. A faint
+      // glow keeps the whole hazard rect readable around the drawn flame.
       const flame = new THREE.Group(); flame.position.set(h.x + h.width / 2, h.y, 0.3); this.world.add(flame); this.flames.push(flame);
-      this.translucent(this.box(0, h.height / 2, 0, h.width, h.height, 1.3, 0xff9c44, flame), 0.24);
-      const outer = this.mesh(new THREE.ConeGeometry(h.width / 2, h.height, 12), 0xee7539, 0, h.height / 2, 0, flame);
-      (outer.material as THREE.MeshStandardMaterial).emissive.set(0xaa3d12);
-      const ember = this.box(h.x + h.width / 2, h.y + 0.08, 0.9, h.width, 0.16, 0.1, 0x79d6d7); this.embers.push(ember);
+      this.translucent(this.box(0, h.height / 2, -0.7, h.width, h.height, 0.05, 0xff9c44, flame), 0.14);
+      this.picture('royal-supper.flame', 0, h.height / 2, h.width * supperPropPresentation.flame.width, h.height, 0, flame);
+      // While out: a smoking wick, and the ember bar shrinking until relight.
+      const wick = 0.95;
+      this.wicks.push(this.picture('royal-supper.ember', h.x + h.width / 2, h.y + wick / 2, wick * this.aspect('royal-supper.ember'), wick, 0.85));
+      const ember = this.box(h.x + h.width / 2, h.y + 0.08, 0.9, h.width, 0.16, 0.1, 0xff9a3c); this.embers.push(ember);
+      (ember.material as THREE.MeshStandardMaterial).emissive.set(0xb4461a);
     });
     if (l.candle.flames.length) {
       const first = l.candle.flames[0]; const last = l.candle.flames.at(-1)!;
       const centre = (first.x + last.x + last.width) / 2;
       const holder = l.candle.holder;
       const armSpan = last.x + last.width / 2 - first.x - first.width / 2;
-      // Three cups align to the existing wax centres. The common brass holder
-      // remains decoration below the route, with no connecting collision floor.
-      this.picture('royal-supper.holder', centre, (holder.baseY + holder.waxBaseY) / 2,
-        armSpan * supperPropPresentation.holder.widthPerCupSpan, holder.waxBaseY - holder.baseY, -0.5);
+      // A dish under each wax centre, posts to a crossbar, a centre stem and
+      // the drawn foot. Decoration below the route, with no collision floor.
+      const hp = supperPropPresentation.holder;
+      const brass = (x: number, y: number, w: number, h: number, z: number) => {
+        this.box(x, y, z - 0.02, w + 0.1, h + 0.1, 0.04, hp.ink); this.box(x, y, z, w, h, 0.04, hp.brass, this.world, 0.3);
+      };
+      const footTop = holder.baseY + hp.footHeight;
+      brass(centre, holder.crossbarY, armSpan + hp.arm, hp.arm, -0.5);
+      brass(centre, (holder.crossbarY + footTop) / 2, hp.arm * 1.5, holder.crossbarY - footTop, -0.5);
+      this.picture('royal-supper.holder', centre, holder.baseY + hp.footHeight / 2,
+        hp.footHeight * this.aspect('royal-supper.holder'), hp.footHeight, -0.45);
       l.candle.flames.forEach(h => {
         const x = h.x + h.width / 2;
+        brass(x, (holder.crossbarY + holder.waxBaseY) / 2, hp.arm, holder.waxBaseY - holder.crossbarY, -0.5);
+        brass(x, holder.waxBaseY - hp.dish / 2, h.width + 2 * hp.dishOverhang, hp.dish, 0.88);
         this.picture('royal-supper.wax', x, (holder.waxBaseY + h.y) / 2, h.width, h.y - holder.waxBaseY, 0.9);
         this.box(x, h.y - 0.06, 0, h.width, 0.12, 1.7, 0xffe7bf);
       });
@@ -256,7 +311,7 @@ export class RoyalSupperScene implements GameScene {
     this.model.update(dt, input); this.elapsed += dt;
     if (!wasRecovering && this.model.recoveryRemaining > 0) this.sound('hazard');
     else if (!wasRecovering && !input.restartPressed) {
-      if (b.vy === this.level.tuning.bounceSpeed && oldVy < 0) this.sound('bounce');
+      if (b.vy === this.level.tuning.bounceSpeed && oldVy < 0) { this.sound('bounce'); this.bounce = { x: b.x + b.width / 2, at: this.elapsed }; }
       else if (b.vy > 0 && ((wasGrounded && !b.grounded) || (airReady && !this.model.controller.airJumpAvailable) || oldVy <= 0)) this.sound('jump');
       if (oldFork !== 'bridged' && this.model.session.fork === 'bridged') this.sound('fork');
       if (oldAttention !== 'TURNING' && this.model.dinerPhase === 'TURNING' && b.x >= this.level.sections[5].start && b.x < this.level.sections[6].start) this.sound('attention');
@@ -302,21 +357,41 @@ export class RoyalSupperScene implements GameScene {
     const t = s.fork === 'bridged' ? 1 : THREE.MathUtils.clamp(s.forkElapsed / this.level.fork.duration, 0, 1);
     this.fork.rotation.z = -Math.PI / 2 * (t * t * (3 - 2 * t));
     if (this.forkLanding) this.forkLanding.visible = s.fork === 'bridged';
-    this.flames.forEach((flame, i) => { flame.visible = this.model.flameLit(i); this.embers[i].visible = !flame.visible;
+    // Presentation clocks follow the fixed-step time, so they freeze with pause.
+    const clock = this.reducedMotion ? 0 : this.elapsed;
+    this.flames.forEach((flame, i) => { flame.visible = this.model.flameLit(i); this.embers[i].visible = this.wicks[i].visible = !flame.visible;
+      flame.scale.set(1 + Math.sin(clock * 11 + i * 2) * 0.04, 1 + Math.sin(clock * 7.3 + i) * 0.06, 1);
       this.embers[i].scale.x = Math.max(0.05, this.model.flameRemaining(i) / this.level.candle.safeSeconds); });
     // Fan uses the same frozen gameplay clock as extinguishing, not render time.
     this.fan.rotation.z = -this.model.candlePhase / this.level.candle.period * Math.PI * 2;
     const grapes = this.model.grapes;
     this.grapeMeshes.forEach((mesh, i) => { const g = grapes[i]; mesh.visible = !!g; if (g) {
       mesh.position.set(g.x + g.width / 2, g.y + g.height / 2, 0.4); mesh.rotation.z = -g.x / this.level.grapes.radius; } });
-    const headTilt = this.model.dinerPhase === 'LOOK' ? 0.5 : this.model.dinerPhase === 'TURNING' ? 0.25 : -0.25;
-    this.heads.forEach(head => { head.rotation.x = headTilt; });
-    this.gaze.visible = this.model.dinerPhase === 'LOOK';
-    const diner = supperPropPresentation.diner;
+    // Pose frames follow the attention phase: a chewing bob while away, a
+    // small lean-in while looking.
+    const phase = this.model.dinerPhase; const diner = supperPropPresentation.diner;
+    const dinerPose = this.texture(supperDinerPoses[phase]);
+    this.heads.forEach((head, i) => {
+      (this.dinerPictures[i].material as THREE.MeshBasicMaterial).map = dinerPose;
+      head.position.y = diner.centreY + (phase === 'AWAY' ? Math.abs(Math.sin(clock * 5 + i)) * 0.08 : 0);
+      head.scale.setScalar(phase === 'LOOK' && !this.reducedMotion ? 1.04 : 1);
+    });
+    this.gaze.visible = phase === 'LOOK';
     this.gazeRays.forEach(({ mesh, head, eyeX }) => {
-      // Match the projected painted eye as the head tilts; the shaft stays
-      // behind the player and cover so their silhouettes remain readable.
-      mesh.position.set(head.position.x + eyeX, diner.centreY + diner.eyeY * Math.cos(headTilt), diner.gaze.z);
+      // Start at the drawn eye; the shaft stays behind the player and cover so
+      // their silhouettes remain readable.
+      mesh.position.set(head.position.x + eyeX * head.scale.x, head.position.y + diner.eyeY * head.scale.y, diner.gaze.z);
+    });
+    const since = this.elapsed - this.bounce.at;
+    this.jellies.forEach(j => {
+      const hit = !this.reducedMotion && since < 0.6 && this.bounce.x >= j.left - 0.5 && this.bounce.x <= j.right + 0.5;
+      const k = hit ? Math.exp(-since * 7) * Math.cos(since * 28) : 0;
+      j.group.scale.set(1 + k * 0.12, 1 - k * 0.3, 1);
+    });
+    const reached = this.level.checkpoints.findIndex(c => c.id === s.checkpointId);
+    this.flags.forEach((flag, i) => {
+      (flag.children[0] as THREE.Mesh<THREE.BufferGeometry, THREE.MeshBasicMaterial>).material.color.setHex(i <= reached ? 0xffffff : 0x8d8794);
+      flag.rotation.z = i <= reached ? Math.sin(clock * 2.4 + i) * 0.06 : 0;
     });
     this.coverStrips.forEach((strip, i) => {
       const c = this.level.diner.cover[i]; const centre = b.x + b.width / 2;

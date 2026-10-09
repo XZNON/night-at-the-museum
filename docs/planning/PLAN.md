@@ -8,7 +8,9 @@ The deadline is not a reason to include unfinished systems. Verify the live jam 
 
 ## Current status
 
-**Later, user 2026-10-09 (not next; each on its own request):** story stills with short dialogue at game start and at the end, and a Royal Supper art/graphics rework. Details in NEXT_SESSION.
+**Latest, 2026-10-09: Royal Supper cartoon rework implemented and reviewed by the user (committed and pushed on the user's request); review fixes next session.** The user moved the Supper art rework ahead of release prep and chose: match the Sketch's cartoon style, everything visible, code animation plus drawn diner frames, DreamLayer sheets cut locally. 10 DreamLayer credits (54 → 44); gameplay, collision, level data and saves unchanged. See the log entry below and [evidence](../validation/supper-cartoon/README.md). User review (2026-10-09): remove the landing bars/lines (also on crumbs and the floor), casseroles sink into the floor, the ground should be a table with the cloth hanging to the screen bottom (no platter bars or code boxes), grapes already rolling and denser. Next: those fixes with the prompt in NEXT_SESSION, then release prep.
+
+**Later, user 2026-10-09 (each on its own request):** story stills with short dialogue at game start and at the end. Details in NEXT_SESSION.
 
 **Latest, 2026-10-09: museum polish implemented and regression-checked; committed and pushed on the user's request (`c97e303`).** The user's museum list, one change at a time with screenshots: gilded frames; wainscot, dado rail, skirting, cornice, faint wallpaper and a plank floor; a bordered velvet runner; brass picture lamps; a shimmer on the frame to visit next; procedural footsteps (wood/carpet) and room tone (`scripts/make-museum-audio.py`, 0 credits). Two user-requested changes beyond decoration: the museum camera is now interpolated (walking stuttered on 144 Hz displays), and **a new game opens with the masterpiece first** — Royal Supper and the Sketch are greyed out under dark lamps and Royal Supper is locked until the masterpiece has been opened once (never stored; see DECISIONS). Save identities unchanged. Unit 242/242; browser campaign 6/6 (new museum-polish case), audio, S5B 5/5, S5C 5/5 and Sketch-art 5/5, three Supper-bot flakes passing on one rerun each ([evidence](../validation/museum-polish/README.md)). Next: release prep (prompt in NEXT_SESSION).
 
@@ -841,3 +843,18 @@ Next: commit/push when the user asks; then release prep (prompt in NEXT_SESSION)
 
 Committed and pushed on the user's request (2026-10-09, `c97e303`). User, 2026-10-09: later sessions (not next) will add story stills with short dialogue at the start and the end, and rework Royal Supper's assets and graphics; recorded in NEXT_SESSION.
 
+
+### 2026-10-09 — Royal Supper cartoon rework (user moved it ahead of release prep)
+
+User choices: match the Sketch's cartoon style; everything visible; code animation plus drawn diner frames; DreamLayer sheets cut locally. Pilot (backdrop, food, diner) shown as a game-scale mock and approved by the user; then the second banquet edit, three diner pose edits, tableware and candle sheets and an upright fork. 10 credits (54 → 44); one backdrop job recovered by idempotent retry with no second charge.
+- `scripts/art-references.mjs` (the Sketch reference script generalised by world; `sketch-references.mjs` kept as a wrapper), prompts `asset-sources/prompts/supper-*.txt`, references `asset-sources/references/supper/`.
+- `scripts/prepare-supper-cartoon.py` (0 credits) writes 30 WebP cutouts to `public/assets/supper/cartoon/` (856 KB) plus manifest entries; M3 Supper runtime files moved to `asset-sources/production/supper-m3-runtime/`.
+- Scene (presentation only): whole-hall hazed backdrop with the far table edge at the route; strip skins; deeper basket/jelly; goblet grape chute; giant seated diner with eat/turn/look frames and eye-anchored gaze; cartoon flames, smoking wick and orange ember bar; code-drawn brass candelabrum; velvet canopy; slim offset fork; plum casserole covers; checkpoint flags. Code animation: flicker, chewing bob, lean-in, jelly squash, flag wave (off under reduced motion). The museum's Royal Supper painting is the second banquet edit at the side frames' 2.8 × 1.8 shape.
+
+Validation: typecheck, build, unit 242/242. Browser: new `supper-cartoon.spec.ts` (before/after captures) pass; `art.spec.ts` pass after its fan path update; audio and movement lane pass; campaign 6/6 after one rerun (route bot at the pear stage); `blockout.spec.ts` fails pre-existing (still expects the pre-v1 "Low rendering quality" checkbox; untouched since 2026-10-06). Evidence: [supper-cartoon](../validation/supper-cartoon/README.md).
+
+Not verified: the user's play-through of the new look, motion beyond stills, representative-machine performance, other browsers.
+
+User review, 2026-10-09 (to fix next session, prompt in NEXT_SESSION): no visible landing bars/lines (platform tops, crumbs, floor); casseroles sink into the floor; the ground becomes a table with its cloth hanging to the screen bottom, one segment per ground collider so pits stay pits; grapes already rolling at entry and denser (a gameplay change the user asked for). Then release prep (fix `blockout.spec.ts` for the v1 menus there if not done).
+
+Committed and pushed on the user's request (2026-10-09), together with the review-fix handoff.
