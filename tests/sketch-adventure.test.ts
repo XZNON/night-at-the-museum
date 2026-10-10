@@ -63,7 +63,10 @@ describe('S5A composition', () => {
     for (const key of ['solids', 'mechanisms', 'targets', 'surfaces', 'hazards', 'sections', 'sectionOrder', 'layers', 'guides', 'entryLegId', 'deathY', 'hint', 'sectionBlend', 'camera', 'bounds', 'goalBounds'] as const) {
       expect(route[key], key).toEqual(sketchLayersOneToThree[key]);
     }
-    expect(route.legs).toEqual(sketchLayersOneToThree.legs);
+    // Release (2026-10-10): only each leg's hint differs (a short player goal), and the route coaches.
+    expect(route.legs.map(({ hint: _, ...leg }) => leg)).toEqual(sketchLayersOneToThree.legs.map(({ hint: _, ...leg }) => leg));
+    expect(route.legs.every(leg => !!leg.hint)).toBe(true);
+    expect([route.coach, sketchLayersOneToThree.coach]).toEqual([true, undefined]);
     route.legs.forEach((leg, i) => expect(leg).not.toBe(sketchLayersOneToThree.legs[i]));
     expect(route.spawn).not.toBe(sketchLayersOneToThree.spawn);
     // The older preset gains nothing and keeps its review texts.

@@ -236,6 +236,21 @@ describe('required gates, cyclic hazards and recovery', () => {
     // Back at the checkpoint the clock restarts from the same readable phase.
     run(model, 23); expect(model.controller.body.x).toBe(163); expect(model.session.grapeElapsed).toBeLessThanOrEqual(2 * dt + 1e-9);
   });
+  it('a checkpoint jumped over is taken on the next landing past it, so the pear still counts (release play, 2026-10-10)', () => {
+    // Off the last candle, a long jump can land beyond the after-candle trigger (315.8–318.6).
+    const { model } = create(); model.session.checkpointId = 'after-fork'; model.session.fork = 'bridged';
+    model.controller.respawn(320, 2.4); model.controller.body.y = 4; run(model, 1);
+    expect(model.controller.body.grounded).toBe(false); expect(model.session.checkpointId).toBe('after-fork');
+    run(model, 60); expect(model.controller.body.grounded).toBe(true); expect(model.session.checkpointId).toBe('after-candle');
+    // Skipping the after-diner trigger as well: the landing on the king's plate catches up and the pear counts.
+    const skipped = create(); skipped.model.session.checkpointId = 'after-candle'; skipped.model.session.fork = 'bridged';
+    skipped.model.controller.respawn(434, 15.6); run(skipped.model, 2);
+    expect(skipped.model.session.checkpointId).toBe('after-diner');
+    skipped.model.controller.respawn(435, 15.6); run(skipped.model, 1); expect(skipped.model.collection?.changed).toBe(true);
+    // A gate still holds: without the toppled fork nothing past it is credited.
+    const gated = create(); gated.model.session.checkpointId = 'before-fork';
+    gated.model.controller.respawn(300, 3.2); run(gated.model, 2); expect(gated.model.session.checkpointId).toBe('before-fork');
+  });
   it('collection requires the completed route and is idempotent on replay', () => {
     const { model, progress } = create(); model.controller.respawn(435, 15.6); run(model, 1); expect(model.completed).toBe(false);
     model.session.checkpointId = 'after-diner'; model.session.fork = 'bridged'; run(model, 1); expect(model.collection?.changed).toBe(true);

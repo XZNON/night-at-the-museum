@@ -11,6 +11,9 @@ import type {
 } from '../levels/unfinished-sketch';
 import { LIFT_WALL_HEIGHT, LIFT_WALL_THICKNESS, sketchMovement } from '../levels/unfinished-sketch';
 
+/** How far beyond the grip radius a grounded player sees "jump, then grab" (a jump closes about this much). */
+const GRIP_HINT_JUMP = 2.5;
+
 // No Three.js, DOM, storage or museum references live here. The scene turns
 // pointer coordinates into a target ID; this model revalidates everything
 // against the current transforms at the consuming simulation tick.
@@ -74,6 +77,13 @@ export interface TargetView {
   reason: string;
 }
 
+/** A key the player-facing tips can show; `click` is the mouse button. */
+export type SketchTipKey = 'A' | 'D' | 'Space' | 'Q' | 'E' | 'R' | 'click';
+/** One part of a step tip: key glyphs and a short verb phrase. */
+export interface SketchTipPart { keys: SketchTipKey[]; text: string }
+/** A placed swing nail the player can grab now (in the air) or after a jump (on the ground). */
+export interface SketchGripHint { id: string; x: number; y: number; jumpFirst: boolean }
+
 export interface SketchHud {
   bay: string; bayName: string; hint: string; goal: string;
   nails: string; oldest: string; nearest: string;
@@ -83,6 +93,8 @@ export interface SketchHud {
   completed: boolean; recovering: boolean; elapsed: number;
   /** Route-only fields; absent in the Slice 1 bay playground. */
   layer?: string; checkpoint?: string; prompt?: string; endpoint?: string;
+  /** What to press now, on routes that coach the player (the adventure); empty when nothing applies. */
+  tip?: SketchTipPart[];
 }
 
 export interface SketchSession {
@@ -359,6 +371,26 @@ export abstract class SketchPlayfield {
     this.notify(surface!.kind === 'foothold' ? `Nail driven into ${surface!.label}. Its head is a step.`
       : `Nail driven into ${surface!.label}. Jump close and press E to grip; the bar carries it.`);
     return true;
+  }
+
+  /**
+   * The nearest placed swing nail within grabbing distance: in the air within
+   * the grip radius (E grabs it), or on the ground close enough that a jump
+   * brings it in reach. Prompts only; grabbing is still the movement's check.
+   */
+  gripHint(): SketchGripHint | null {
+    if (this.move.state !== 'normal') return null;
+    const b = this.controller.body;
+    const cx = b.x + b.width / 2; const cy = b.y + b.height / 2;
+    let best: GripSite | null = null; let distance = Infinity;
+    for (const grip of this.grips) {
+      const d = Math.hypot(cx - grip.x, cy - grip.y);
+      if (d < distance) { distance = d; best = grip; }
+    }
+    if (!best) return null;
+    if (!b.grounded && distance <= this.tuning.gripRadius) return { id: best.id, x: best.x, y: best.y, jumpFirst: false };
+    if (b.grounded && distance <= this.tuning.gripRadius + GRIP_HINT_JUMP) return { id: best.id, x: best.x, y: best.y, jumpFirst: true };
+    return null;
   }
 
   nearestValidTarget(): TargetView | null {
@@ -646,6 +678,8 @@ export class SketchRouteModel extends SketchPlayfield {
     // The entry leg's own feel, when a joined preset gives one.
     this.movement.retune(this.movementTuning(this.fieldSettings.wall));
     this.controller.airCoast = this.fieldSettings.airCoast === true;
+    // The adventure opens on its short layer goal (the hint), not the study's long one.
+    if (route.coach && this.leg.hint) this.notify(this.leg.hint);
   }
 
   legId: SketchRouteLegId;
@@ -1081,6 +1115,37 @@ export class SketchRouteModel extends SketchPlayfield {
       : `Nothing under you. Layer ${this.section.layer} restarts with two nails…`);
   }
 
+  /**
+   * Step tips for the adventure (`route.coach`): what to press for the next
+   * step, from the live state, shown until it no longer applies. Only while
+   * a layer is being crossed; lifts, the end ledge and recoveries have their own texts.
+   */
+  coachTip(): SketchTipPart[] {
+    if (!this.route.coach || this.stage !== 'traversal' || this.recoveryRemaining > 0 || this.completed) return [];
+    const swing: SketchTipPart = { keys: ['A', 'D'], text: 'Swing' };
+    if (this.move.state === 'swing') {
+      const oldest = this.placements[0];
+      if (this.grips.some(g => g.id !== this.move.swingTarget)) return [swing, { keys: ['Space'], text: 'Let go' }, { keys: ['E'], text: 'Grab the next nail' }];
+      if (this.availableNails === 0 && oldest && oldest.targetId !== this.move.swingTarget) return [swing, { keys: ['Q'], text: 'Free your oldest nail' }];
+      if (this.availableNails > 0 && this.freePlacement) return [swing, { keys: ['click'], text: 'Click the next bar to nail it' }];
+      return [swing, { keys: ['Space'], text: 'Let go' }];
+    }
+    if (this.move.state === 'wall-slide') return this.move.wallTransfer ? [{ keys: ['Space'], text: 'Kick off to the other board' }] : [];
+    const grip = this.gripHint();
+    if (grip) return grip.jumpFirst ? [{ keys: ['Space'], text: 'Jump to the nail' }, { keys: ['E'], text: 'Grab it' }] : [{ keys: ['E'], text: 'Grab the nail' }];
+    if (this.nailPickup && !this.pickupCollected) return [{ keys: [], text: 'Walk into the spare nail to pick it up' }];
+    if (this.freePlacement) {
+      if (this.grips.length) return [{ keys: ['Space'], text: 'Jump close to the nail' }, { keys: ['E'], text: 'Grab it' }];
+      if (this.availableNails === 0) return [{ keys: ['Q'], text: 'Pull back your oldest nail' }];
+      return [{ keys: ['click'], text: this.placements.length ? 'Click the moving bar to nail it' : 'Click the wooden strip to nail it, then stand on the nail' }];
+    }
+    const open = this.targetViews().some(v => this.targetEligible(v.id) && !v.occupiedBy && v.distance <= this.placementReach);
+    const tips: SketchTipPart[] = [];
+    if (open) tips.push(this.availableNails > 0 ? { keys: ['click'], text: 'Click a ring to nail the board still' } : { keys: ['Q'], text: 'Pull back your oldest nail to reuse it' });
+    if (this.walls.length) tips.push({ keys: ['Space'], text: 'Jump at a nailed board, then kick off it' });
+    return tips;
+  }
+
   /** Lift guidance for the HUD prompt. */
   private liftPrompt(): string {
     const lift = this.leg.lift;
@@ -1102,6 +1167,7 @@ export class SketchRouteModel extends SketchPlayfield {
       : this.stage === 'arrival' && this.section.layer === 3
       ? 'Safe ground reached. Explore the landing or press R to return here.'
       : this.stage === 'transit' ? `Riding the lift to Layer ${this.route.sections[this.leg.arrivalSectionId!].layer}. Walk and jump freely; the cab holds you on.`
+      : this.route.coach && this.leg.hint ? this.leg.hint
       : this.legId === 'layer-2' ? 'Pin A, then B. From B, Q recalls A for C. Time both active axes.' : this.leg.hint ?? this.route.hint;
     const hud = this.baseHud(this.route.id, this.route.id === 'layer-1' ? this.route.name : this.section.name, hint, this.route.goal);
     const checkpoint = this.stage === 'arrival' ? this.section.name.toLowerCase()
@@ -1115,6 +1181,7 @@ export class SketchRouteModel extends SketchPlayfield {
       layer: `${this.section.layer} / 3 · ${this.section.name}`,
       checkpoint: `Checkpoint / ${checkpoint}`,
       prompt: this.liftPrompt(),
+      tip: this.coachTip(),
       endpoint: this.completed ? (light ? light.endpoint : this.route.id === 'layer-3-walls' ? 'S4A endpoint reached · Wall climb clear · Stop for review'
         : this.route.id === 'layer-3-swings' ? 'S4B endpoint reached · Swing crossing clear · Stop for review'
         : this.route.id === 'layer-3' ? 'S4C endpoint reached · Wall climb and swing crossing clear · Stop for review'

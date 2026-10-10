@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "duration": 8046,
+  "events": [
+    {
+      "event": "reload during the restore animation: complete"
+    }
+  ],
+  "layerTwo": []
+}

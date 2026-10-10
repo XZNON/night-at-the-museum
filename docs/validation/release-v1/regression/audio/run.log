@@ -1,0 +1,6 @@
+
+Running 1 test using 1 worker
+
+  ✓  1 tests\browser\audio.spec.ts:2:1 › sound requires a gesture, pauses, follows volume and unloads on isolated scene exit (6.0s)
+
+  1 passed (7.6s)

@@ -4,6 +4,8 @@ Start with the [current handoff](planning/NEXT_SESSION.md), then the [build plan
 
 ## Current work
 
+Latest, 2026-10-10: **release prep done up to the upload; the game is Night at the Museum.** [Release materials and checklist](release/README.md), [evidence](validation/release-v1/README.md), [handoff](planning/NEXT_SESSION.md).
+
 Latest, 2026-10-09: **Royal Supper review fixes done** (no code bars, casseroles on the floor, the ground as a feast table with goblet stands, a denser grape stream already rolling; [evidence](validation/supper-cartoon/README.md#review-fixes-2026-10-09)). Next: the user's play-through, then release prep ([handoff](planning/NEXT_SESSION.md)).
 
 Latest, 2026-10-08: **v1 polish done** (title screen, clean HUD, pause menu, restoration screens, museum layout and ambience, UI sounds; [evidence](validation/v1-polish/README.md)). Next: museum polish, then release prep ([handoff](planning/NEXT_SESSION.md)).
@@ -41,6 +43,15 @@ Royal Supper/M3 and its scoped cohesion pass are complete. Unfinished Sketch rep
 Sketch uses two nails (three on Layer 3, after a pickup at its start), authored targets and FIFO recall; direct nail swinging has explicit E grip and A/D momentum, with no rope. The final world has three stacked layers, moderate camera focus on the active layer with adjacent-layer context, and modern cartoon 2.5D depth. See the [Sketch design and slices](gameplay/UNFINISHED_SKETCH.md) and [art direction](art/ART_DIRECTION.md).
 
 S3A's reviewed hard challenge is preserved. **S3B is implemented at its playable review gate:** [joined Layers 1/2](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layers-1-2) and [direct Layer 2](http://127.0.0.1:5173/?scene=unfinished-sketch&study=layer-2) now finish on safe Layer 3 ground after the second ride. Isolated S2 retains its original endpoint. Read [fresh S3B evidence](validation/sketch-s3/s3b/README.md), [the implementation plan](gameplay/SKETCH_S3B_PLAN.md) and [current review handoff](planning/NEXT_SESSION.md). Stop for user review before S4; the complete adventure/ending remain unimplemented. Current work is uncommitted over bd9cab7; earlier S3A/hard-v1 evidence is historical.
+
+## Release
+
+| Document | Purpose |
+| --- | --- |
+| [Release v1](release/README.md) | itch.io package, upload steps and release checklist |
+| [itch.io page](release/ITCH_PAGE.md) | Page text, embed settings, controls, jam answer |
+| [DreamLayer process](release/DREAMLAYER_PROCESS.md) | Asset sources, credits and process note |
+| [Credits](release/CREDITS.md) | Credits and licences |
 
 ## Planning and contracts
 

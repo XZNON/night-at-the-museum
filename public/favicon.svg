@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<defs><clipPath id="sky"><rect x="13" y="13" width="38" height="38" rx="1"/></clipPath></defs>
+<rect x="0" y="0" width="64" height="64" rx="12" fill="#1e151b"/>
+<rect x="7" y="7" width="50" height="50" rx="5" fill="#f2c46d"/>
+<rect x="10" y="10" width="44" height="44" rx="3" fill="#b08a5a"/>
+<rect x="13" y="13" width="38" height="38" rx="1" fill="#2b1d38"/>
+<g clip-path="url(#sky)">
+<circle cx="32" cy="36" r="14" fill="#f2c46d" opacity="0.28"/>
+<circle cx="32" cy="36" r="9" fill="#ffe3a1" opacity="1.0"/>
+<ellipse cx="32" cy="58" rx="30" ry="15" fill="#4a2f3a"/>
+</g>
+</svg>

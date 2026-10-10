@@ -288,6 +288,8 @@ export interface SketchRoute extends SketchPlayfieldData {
   parkedLifts?: SketchLift[];
   /** The torch on the terminal leg's exit ground; claiming its light is the endpoint (S5A). */
   light?: SketchLight;
+  /** Player-facing step tips at the prompt and short leg hints (the adventure; release, 2026-10-10). */
+  coach?: boolean;
 }
 
 const solid = (id: string, x: number, top: number, width: number, height = 1): Collider =>

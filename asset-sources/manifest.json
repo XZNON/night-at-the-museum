@@ -4363,6 +4363,344 @@
       ],
       "preparationNotes": "Watchful diner, look pose; common registration box across the three poses. Local script scripts/prepare-supper-cartoon.py, 0 credits.",
       "sha256": "f00483dc2c61b0cf67f111c3eeeb534056d848d791cc336b89e299f66e4a2a94"
+    },
+    {
+      "id": "release.favicon.svg",
+      "world": "shared",
+      "provider": "local",
+      "operation": "original_code_drawing",
+      "sourcePath": "scripts/make-favicon.py",
+      "runtimePath": "public/favicon.svg",
+      "runtimeSha256": "676671f9ae95b48c90bc464128b85881a00c62fd88ba5f27734e478712d30635",
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "preparationNotes": "Release favicon (2026-10-10): a gilded frame holding a dawn sun over a dark hill, drawn in code in the UI palette; no generated pixels."
+    },
+    {
+      "id": "release.favicon.png",
+      "world": "shared",
+      "provider": "local",
+      "operation": "original_code_drawing",
+      "sourcePath": "scripts/make-favicon.py",
+      "runtimePath": "public/favicon.png",
+      "runtimeSha256": "c3bdccf52485efe1fb99339a98213258956e278c6a8692ce461e07fe93f97b6d",
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "preparationNotes": "Release favicon (2026-10-10): a gilded frame holding a dawn sun over a dark hill, drawn in code in the UI palette; no generated pixels."
+    },
+    {
+      "id": "cover.gallery.reference-v1",
+      "status": "generated",
+      "world": "release",
+      "purpose": "itch.io cover art candidate (release v1, user request 2026-10-10); not in the game",
+      "referenceIds": [],
+      "operation": "text_to_image",
+      "parentPath": null,
+      "sourcePath": "asset-sources/references/cover/gallery-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/cover-gallery.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-cover-gallery-reference-v1",
+      "generatedAt": "2026-10-10T08:24:37.282Z",
+      "executionId": "ab0cb49e-8151-46b4-ac9c-3118ad0b0026",
+      "creditsSpent": 1,
+      "balanceBefore": 44,
+      "balanceAfter": 43,
+      "pixelSize": {
+        "width": 2048,
+        "height": 2048
+      },
+      "preparationNotes": "Reference only. Awaiting user review.",
+      "approved": false,
+      "conversationId": "66d64f53-dbbe-4ded-8647-75e11f522ba8",
+      "outputAssetId": "06b18c76-ed4b-4d2f-9b6e-32f533e10424",
+      "sourceSha256": "1437a98529a0038b790b57243feee0843a81879bd208492aa432369e6ff4681a",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "cover.leap.reference-v1",
+      "status": "generated",
+      "world": "release",
+      "purpose": "itch.io cover art candidate (release v1, user request 2026-10-10); not in the game",
+      "referenceIds": [],
+      "operation": "text_to_image",
+      "parentPath": null,
+      "sourcePath": "asset-sources/references/cover/leap-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/cover-leap.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-cover-leap-reference-v1",
+      "generatedAt": "2026-10-10T08:25:13.401Z",
+      "executionId": "78d1b8f2-2f49-4ae9-98ae-f18b3a8d1c65",
+      "creditsSpent": 1,
+      "balanceBefore": 43,
+      "balanceAfter": 42,
+      "pixelSize": {
+        "width": 2048,
+        "height": 2048
+      },
+      "preparationNotes": "Reference only. Awaiting user review.",
+      "approved": true,
+      "conversationId": "c8b8884d-efae-4238-aebd-28c12c3d9be8",
+      "outputAssetId": "bf7c0c96-6111-4486-a929-5b0927dfd453",
+      "sourceSha256": "942df96092134cde5f91f433accdaa351602beed4ae0109f3e48795b57070ade",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "cover.restore.reference-v1",
+      "status": "generated",
+      "world": "release",
+      "purpose": "itch.io cover art candidate (release v1, user request 2026-10-10); not in the game",
+      "referenceIds": [],
+      "operation": "text_to_image",
+      "parentPath": null,
+      "sourcePath": "asset-sources/references/cover/restore-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/cover-restore.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-cover-restore-reference-v1",
+      "generatedAt": "2026-10-10T08:25:54.676Z",
+      "executionId": "f8221c12-1ecb-4586-8216-6f29a7a4e55b",
+      "creditsSpent": 1,
+      "balanceBefore": 42,
+      "balanceAfter": 41,
+      "pixelSize": {
+        "width": 2048,
+        "height": 2048
+      },
+      "preparationNotes": "Reference only. Awaiting user review.",
+      "approved": false,
+      "conversationId": "cd95297c-b001-4983-beb3-47a907c5d7f7",
+      "outputAssetId": "4b52579b-43f8-4f91-bfae-822b473c6e76",
+      "sourceSha256": "b3218261a8bddd97aaddd40dddabad9a8802e5317c860de37a3adbb050adee02",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "release.cover-a",
+      "world": "release",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "sourcePath": "asset-sources/references/cover/gallery-v1.png",
+      "referenceIds": [
+        "cover.gallery.reference-v1"
+      ],
+      "runtimePath": null,
+      "outputPaths": [
+        "docs/release/cover/cover-a.png",
+        "docs/release/cover/cover-a@2x.png"
+      ],
+      "outputSha256": [
+        "ee9d0776dc4b28db25c2af187cdbec71cdbff5e7d4c54c75657ade5c3342179a",
+        "f6cb1d2e123894f54d611305aeb224edc2bf8544e70d7b92757489c887ca7b75"
+      ],
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "preparationNotes": "itch.io cover candidate (release v1, user request 2026-10-10): cropped to 630:500 and titled \"Night at the Museum\" locally in the bundled Fredoka by scripts/prepare-covers.py; the generated art has no lettering. Not part of the game build."
+    },
+    {
+      "id": "release.cover-b",
+      "world": "release",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "sourcePath": "asset-sources/references/cover/leap-v1.png",
+      "referenceIds": [
+        "cover.leap.reference-v1"
+      ],
+      "runtimePath": null,
+      "outputPaths": [
+        "docs/release/cover/cover-b.png",
+        "docs/release/cover/cover-b@2x.png"
+      ],
+      "outputSha256": [
+        "b9d20f0ea05b3b374e2189d22782e4995608c13c25905a1dddf55fc5684ba231",
+        "0827f04b96c2c4788fa5aea0a81f10052549b7f8e4e326df022ef790b6f90913"
+      ],
+      "creditsSpent": 0,
+      "approved": true,
+      "status": "approved",
+      "preparationNotes": "itch.io cover candidate (release v1, user request 2026-10-10): cropped to 630:500 and titled \"Night at the Museum\" locally in the bundled Fredoka by scripts/prepare-covers.py; the generated art has no lettering. Not part of the game build. Chosen by the user as the itch.io cover (2026-10-10)."
+    },
+    {
+      "id": "release.cover-c",
+      "world": "release",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "sourcePath": "asset-sources/references/cover/restore-v1.png",
+      "referenceIds": [
+        "cover.restore.reference-v1"
+      ],
+      "runtimePath": null,
+      "outputPaths": [
+        "docs/release/cover/cover-c.png",
+        "docs/release/cover/cover-c@2x.png"
+      ],
+      "outputSha256": [
+        "9af1f0da8233397cbe9b76bfdc108271846d4ddc7f1f07abd942bf0ccf14ba01",
+        "41a93654d1c803fac087fd0ee93cfbdeceb0b9aeba2b183369da6f3bb1711738"
+      ],
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "preparationNotes": "itch.io cover candidate (release v1, user request 2026-10-10): cropped to 630:500 and titled \"Night at the Museum\" locally in the bundled Fredoka by scripts/prepare-covers.py; the generated art has no lettering. Not part of the game build."
+    },
+    {
+      "id": "cover.alive.reference-v1",
+      "status": "generated",
+      "world": "release",
+      "purpose": "itch.io cover art candidate (release v1, user request 2026-10-10); not in the game",
+      "referenceIds": [],
+      "operation": "text_to_image",
+      "parentPath": null,
+      "sourcePath": "asset-sources/references/cover/alive-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/cover-alive.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-cover-alive-reference-v1",
+      "generatedAt": "2026-10-10T08:36:26.592Z",
+      "executionId": "c7c7d732-6ced-4f23-9841-cec1107152b0",
+      "creditsSpent": 1,
+      "balanceBefore": 41,
+      "balanceAfter": 40,
+      "pixelSize": {
+        "width": 2048,
+        "height": 2048
+      },
+      "preparationNotes": "Reference only. Awaiting user review.",
+      "approved": false,
+      "conversationId": "51d40991-7af9-4201-be88-88590134aa43",
+      "outputAssetId": "7b0c3ec1-5242-4c0c-9fd0-45a537c59772",
+      "sourceSha256": "f7ccfb51e3cb7f8359eea61652ec7a97ecd0ab5629d96ad9787ad7f3ddaac3e0",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "cover.portrait.reference-v1",
+      "status": "generated",
+      "world": "release",
+      "purpose": "itch.io cover art candidate (release v1, user request 2026-10-10); not in the game",
+      "referenceIds": [],
+      "operation": "text_to_image",
+      "parentPath": null,
+      "sourcePath": "asset-sources/references/cover/portrait-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/cover-portrait.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-cover-portrait-reference-v1",
+      "generatedAt": "2026-10-10T08:37:07.419Z",
+      "executionId": "350f38cb-fa6c-401d-9554-758008e9ca2a",
+      "creditsSpent": 1,
+      "balanceBefore": 40,
+      "balanceAfter": 39,
+      "pixelSize": {
+        "width": 2304,
+        "height": 1728
+      },
+      "preparationNotes": "Reference only. Awaiting user review.",
+      "approved": false,
+      "conversationId": "4198482c-a082-4f04-b685-9f7837b3f14d",
+      "outputAssetId": "e5543c89-9b58-4cef-8071-d964f58f4bda",
+      "sourceSha256": "e57a4d2ca63695be726a17683d34cb1ac19b4e7c6a07cf6e9cacf0e66819571b",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "cover.moonlit.reference-v1",
+      "status": "generated",
+      "world": "release",
+      "purpose": "itch.io cover art candidate (release v1, user request 2026-10-10); not in the game",
+      "referenceIds": [],
+      "operation": "text_to_image",
+      "parentPath": null,
+      "sourcePath": "asset-sources/references/cover/moonlit-v1.png",
+      "runtimePath": null,
+      "promptPath": "asset-sources/prompts/cover-moonlit.txt",
+      "provider": "DreamLayer",
+      "idempotencyKey": "last-curator-cover-moonlit-reference-v1",
+      "generatedAt": "2026-10-10T08:37:45.531Z",
+      "executionId": "9de8dbba-236f-4666-a674-90566238cb92",
+      "creditsSpent": 1,
+      "balanceBefore": 39,
+      "balanceAfter": 38,
+      "pixelSize": {
+        "width": 2048,
+        "height": 2048
+      },
+      "preparationNotes": "Reference only. Awaiting user review.",
+      "approved": false,
+      "conversationId": "fcf4f659-1208-45a2-8622-a347a9076c16",
+      "outputAssetId": "6f7443ea-417f-4d0b-8054-64410fbddad8",
+      "sourceSha256": "d5486c7457138655e9486b3f0f62e368cbfdf0580ed126c8681abe299448bf3b",
+      "creditEvidence": "Sequential API available-balance delta; one active local job."
+    },
+    {
+      "id": "release.cover-d",
+      "world": "release",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "sourcePath": "asset-sources/references/cover/alive-v1.png",
+      "referenceIds": [
+        "cover.alive.reference-v1"
+      ],
+      "runtimePath": null,
+      "outputPaths": [
+        "docs/release/cover/cover-d.png",
+        "docs/release/cover/cover-d@2x.png"
+      ],
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "preparationNotes": "itch.io cover candidate (release v1, user request 2026-10-10, second set after the rename): framed to 630:500 and titled \"Night at the Museum\" locally in the bundled Fredoka by scripts/prepare-covers.py; the generated art has no lettering. Not part of the game build.",
+      "outputSha256": [
+        "f0172a9cdfa2e3cfaec4f1a4a2faf754b4061bb0617d7c300d352a9e50e82f53",
+        "51b1230dc8b5d0bfc0bc67627b26fe7758efb734411a1dd0f4c21cfb988fe5e7"
+      ]
+    },
+    {
+      "id": "release.cover-e",
+      "world": "release",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "sourcePath": "asset-sources/references/cover/portrait-v1.png",
+      "referenceIds": [
+        "cover.portrait.reference-v1"
+      ],
+      "runtimePath": null,
+      "outputPaths": [
+        "docs/release/cover/cover-e.png",
+        "docs/release/cover/cover-e@2x.png"
+      ],
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "preparationNotes": "itch.io cover candidate (release v1, user request 2026-10-10, second set after the rename): framed to 630:500 and titled \"Night at the Museum\" locally in the bundled Fredoka by scripts/prepare-covers.py; the generated art has no lettering. Not part of the game build. Known defect: the generation gave her a black eye patch beside the loupe and a hammer instead of a nail.",
+      "outputSha256": [
+        "226b586448a2390d26e577f2e0618154a19d8fc01ec3a0be3c81020d3bb94903",
+        "19c7e4e4474b2840dbfa17d883a1ba0b1e7d8dc65620dac13577f0acaa59acd0"
+      ]
+    },
+    {
+      "id": "release.cover-f",
+      "world": "release",
+      "provider": "DreamLayer",
+      "operation": "local_preparation",
+      "sourcePath": "asset-sources/references/cover/moonlit-v1.png",
+      "referenceIds": [
+        "cover.moonlit.reference-v1"
+      ],
+      "runtimePath": null,
+      "outputPaths": [
+        "docs/release/cover/cover-f.png",
+        "docs/release/cover/cover-f@2x.png"
+      ],
+      "creditsSpent": 0,
+      "approved": false,
+      "status": "prepared",
+      "preparationNotes": "itch.io cover candidate (release v1, user request 2026-10-10, second set after the rename): framed to 630:500 and titled \"Night at the Museum\" locally in the bundled Fredoka by scripts/prepare-covers.py; the generated art has no lettering. Not part of the game build.",
+      "outputSha256": [
+        "16ac4559498f6e27c25633d4c86b814928961c34eaad611d3bde6ae2278473e9",
+        "32cb946fc008cf4559fecb2460c6d94bc51cb342608468fc4be4dab3a2280c6e"
+      ]
     }
   ],
   "balanceAfterReferences": {

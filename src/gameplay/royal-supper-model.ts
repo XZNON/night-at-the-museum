@@ -48,6 +48,7 @@ export class RoyalSupperModel {
       bounceIds: level.platforms.filter(p => p.art === 'jelly').map(p => p.id) };
   }
   get checkpoint() { return this.level.checkpoints.find(c => c.id === this.session.checkpointId) ?? this.level.checkpoints[0]; }
+  private nextCheckpoint() { return this.level.checkpoints[this.level.checkpoints.indexOf(this.checkpoint) + 1]; }
   gateOpen(_gate: Gate): boolean { return this.session.fork === 'bridged'; }
   get solids(): Collider[] { return this.level.platforms.filter(p => !p.gate || this.gateOpen(p.gate)); }
   get section() { return [...this.level.sections].reverse().find(s => this.controller.body.x >= s.start) ?? this.level.sections[0]; }
@@ -118,12 +119,15 @@ export class RoyalSupperModel {
     if (this.dinerPhase === 'LOOK' && overlaps(b, this.level.diner.zone) && !this.hidden) {
       this.recover('Caught in the diner’s gaze. Keep your whole body inside cover.'); return;
     }
-    // Only the next section-end checkpoint can advance the route. This also
-    // prevents an accidental future high jump from skipping required sections.
-    const next = this.level.checkpoints[this.level.checkpoints.indexOf(this.checkpoint) + 1];
-    if (b.grounded && next && (!next.requires || this.gateOpen(next.requires)) && overlaps(b, next.trigger)) {
-      this.session.checkpointId = next.id; this.notify('Checkpoint reached. Your path is remembered.');
+    // Checkpoints advance in order, on the ground and only through open gates.
+    // A trigger jumped over is taken on the next landing past it (centre beyond
+    // its left edge), so a long jump never strands the route before the pear.
+    let reached = false;
+    for (let next = this.nextCheckpoint(); b.grounded && next && (!next.requires || this.gateOpen(next.requires))
+      && (overlaps(b, next.trigger) || b.x + b.width / 2 >= next.trigger.x); next = this.nextCheckpoint()) {
+      this.session.checkpointId = next.id; reached = true;
     }
+    if (reached) this.notify('Checkpoint reached. Your path is remembered.');
     if (!this.completed && this.session.checkpointId === 'after-diner' && this.gateOpen('fork') && overlaps(b, this.level.pear)) {
       this.collection = this.collect();
       if (this.collection.ok) { this.completed = true; this.notify('The golden pear is yours.'); }

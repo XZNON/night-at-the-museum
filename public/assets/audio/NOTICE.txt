@@ -1,5 +1,5 @@
 The WAV files in this folder are original deterministic procedural audio created
-for The Last Curator. No external recordings, samples or compositions were used.
+for Night at the Museum. No external recordings, samples or compositions were used.
 The sources are scripts/make-audio.py and, for the Sketch's rock/metallic
 loop sketch.wav, scripts/make-sketch-music.py, and for the menu and interface
 sounds ui-*.wav, scripts/make-ui-audio.py, and for the museum footsteps

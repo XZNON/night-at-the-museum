@@ -1,0 +1,20 @@
+
+Running 5 tests using 1 worker
+
+  ✓  1 tests\browser\sketch-ending.spec.ts:98:1 › S5C production drag placement, wrong drops, ending, reload complete, Keep progress and Confirm reset (24.6s)
+  ✓  2 tests\browser\sketch-ending.spec.ts:166:1 › S5C production click placement and reload right after placement keeps it complete (8.2s)
+  ✓  3 tests\browser\sketch-ending.spec.ts:185:1 › S5C production keyboard placement; the sky before the pear and before the light; denied writes (23.0s)
+  ✓  4 tests\browser\sketch-ending.spec.ts:215:1 › S5C 960x540 keyboard placement and ending layout (7.1s)
+Expanded section reached before-butter 23.3
+Expanded section reached after-butter 38.4
+Expanded section reached before-fork 63.1
+Expanded section reached after-fork 67.6
+Expanded section reached after-candle 74.7
+Expanded section reached after-diner 94.3
+Expanded section reached pear 105.4
+Expanded route elapsed seconds / retries 105.622 0
+  ✓  5 tests\browser\sketch-ending.spec.ts:234:1 › S5C full campaign from New Game to the ending with real controls 1280 (4.2m)
+
+  Slow test file: tests\browser\sketch-ending.spec.ts (5.3m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  5 passed (5.4m)

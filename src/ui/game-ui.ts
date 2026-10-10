@@ -6,7 +6,7 @@ import { masterpieceImage } from './masterpiece';
 import { runtimeAssets, runtimeAssetUrl, type ArtId } from '../assets/manifest';
 import { isComplete, nextPlacement } from '../campaign/placement';
 import { museum } from '../levels/museum';
-import type { SketchHud } from '../gameplay/sketch-model';
+import type { SketchHud, SketchTipPart } from '../gameplay/sketch-model';
 import type { SketchBayId, SketchStudy } from '../levels/unfinished-sketch';
 import { sketchBayList } from '../levels/unfinished-sketch';
 import type { UiSound } from '../core/audio';
@@ -63,7 +63,7 @@ export class GameUi {
       <canvas id="world" tabindex="0" aria-label="Royal Supper. A or D to move, Space to jump, E to interact, R for checkpoint, Escape to pause."></canvas>
       <div class="vignette" aria-hidden="true"></div>
       <section id="hud" class="hud" hidden aria-label="Adventure status">
-        ${devHeader('The Last Curator', 'Royal Supper', 'section-name')}${corner(false)}
+        ${devHeader('Night at the Museum', 'Royal Supper', 'section-name')}${corner(false)}
         <div class="route-status"><span id="fork-state"></span><span id="candle-state"></span><span id="diner-state"></span><span id="jump-state"></span></div>
         <p id="section-hint" class="section-hint"></p>
         <div class="bottom-hud">${controls(SUPPER_KEYS)}
@@ -71,7 +71,7 @@ export class GameUi {
         <div id="prompt" class="prompt" hidden></div><div id="prompt-view" class="prompt-view" aria-hidden="true" hidden></div><div id="cue" class="cue" role="status" aria-live="polite"></div>
       </section>
       <section id="sketch-hud" class="hud" hidden aria-label="Sketch status">
-        ${devHeader('The Last Curator', 'Unfinished Sketch', 'sketch-bay-name', 'sketch-eyebrow')}${corner(false)}
+        ${devHeader('Night at the Museum', 'Unfinished Sketch', 'sketch-bay-name', 'sketch-eyebrow')}${corner(false)}
         <div id="nail-pips" class="nail-pips" aria-hidden="true"></div>
         <div class="sketch-status"><span id="sketch-layer"></span><span id="sketch-nails"></span><span id="sketch-oldest"></span><span id="sketch-nearest"></span><span id="sketch-motion"></span></div>
         <p id="sketch-hint" class="section-hint"></p>
@@ -234,7 +234,7 @@ export class GameUi {
       const label = remembered ? 'Continue' : 'New Game';
       this.show('menu', `<div class="title-art" aria-hidden="true" style="background-image:url('${masterpieceImage(complete ? 2 : 0)}')"></div>
         <div class="title-block"><p class="title-kicker">${complete ? 'The Garden Before Dawn · restored' : 'The Garden Before Dawn'}</p>
-        <h2 class="game-title">The Last <br>Curator</h2></div>
+        <h2 class="game-title">Night at <br>the Museum</h2></div>
         <nav class="title-menu" aria-label="Main menu"><button class="menu-button" data-action="start" aria-label="${label}">${label}</button>
         ${remembered ? '<button class="menu-button" data-action="reset">New Game</button>' : ''}</nav>`, 'title');
       return;
@@ -272,8 +272,8 @@ export class GameUi {
     this.sketchMode = mode; this.sketchCampaign = campaign;
     document.getElementById('sketch-hud')!.dataset.study = mode;
     document.getElementById('sketch-hud')!.toggleAttribute('data-campaign', campaign);
-    document.getElementById('sketch-eyebrow')!.textContent = campaign ? 'The Last Curator' : mode === 'adventure' ? 'Unfinished Sketch / S5A / The light' : mode === 'layers-1-3' ? 'Unfinished Sketch / S4D / Layers 1–3' : mode === 'layer-3' ? 'Unfinished Sketch / S4C / Joined Layer 3' : mode === 'layer-3-swings' ? 'Unfinished Sketch / S4B / Layer 3 swings' : mode === 'layer-3-walls' ? 'Unfinished Sketch / S4A / Layer 3 walls' : mode === 'layers-1-2' ? 'Unfinished Sketch / S3 / Joined layers' : mode === 'layer-2' ? 'Unfinished Sketch / S3 · Layer 2' : mode === 'layer-1'
-      ? 'The Last Curator · Slice 2 · Layer 1 of the unfinished picture' : 'The Last Curator · Slice 1 mechanics playground';
+    document.getElementById('sketch-eyebrow')!.textContent = campaign ? 'Night at the Museum' : mode === 'adventure' ? 'Unfinished Sketch / S5A / The light' : mode === 'layers-1-3' ? 'Unfinished Sketch / S4D / Layers 1–3' : mode === 'layer-3' ? 'Unfinished Sketch / S4C / Joined Layer 3' : mode === 'layer-3-swings' ? 'Unfinished Sketch / S4B / Layer 3 swings' : mode === 'layer-3-walls' ? 'Unfinished Sketch / S4A / Layer 3 walls' : mode === 'layers-1-2' ? 'Unfinished Sketch / S3 / Joined layers' : mode === 'layer-2' ? 'Unfinished Sketch / S3 · Layer 2' : mode === 'layer-1'
+      ? 'Night at the Museum · Slice 2 · Layer 1 of the unfinished picture' : 'Night at the Museum · Slice 1 mechanics playground';
     document.getElementById('sketch-bays')!.hidden = mode !== 'mechanics';
     const tag = document.querySelector<HTMLElement>('.build-tag');
     if (tag) tag.textContent = this.tagLabel();
@@ -298,7 +298,9 @@ export class GameUi {
     // The full route switches to the compact Layer 3 layout once it gets there.
     document.getElementById('sketch-hud')!.dataset.layer = state.layer?.charAt(0) ?? '';
     text('sketch-endpoint', state.endpoint ?? ''); document.getElementById('sketch-endpoint')!.hidden = !state.endpoint;
-    this.setPrompt('sketch-prompt', state.prompt ?? '');
+    // A lift's own guidance wins; otherwise the adventure's step tip (what to press now).
+    if (state.prompt || !state.tip?.length) this.setPrompt('sketch-prompt', state.prompt ?? '');
+    else this.setTip('sketch-prompt', state.tip);
     text('sketch-cue', state.cue); this.markBay(state.bay as SketchBayId);
     // A cue that repeats the hint on screen is left to the hint caption.
     document.getElementById('sketch-cue')!.classList.toggle('echo', state.cue === state.hint);
@@ -533,9 +535,19 @@ export class GameUi {
    * The accessible prompt text stays as written ("Click / E — Inspect the
    * masterpiece"); the visible copy draws its key as a glyph beside the verb.
    */
+  /** A step tip: key glyphs and short phrases on a dark pill, read out as plain text. */
+  private setTip(id: string, parts: SketchTipPart[]): void {
+    // The phrase says "click" itself where the mouse is meant.
+    const text = parts.map(p => [...p.keys.filter(k => k !== 'click'), p.text].join(' ')).join(' · ');
+    const el = document.getElementById(id)!; el.textContent = text; el.hidden = false;
+    const view = document.getElementById(`${id}-view`)!; view.hidden = false; view.classList.add('tip');
+    const html = parts.map(p => `<span class="tip-part">${p.keys.map(k => k === 'click' ? `<span class="key-icon">${icons.click}</span>` : `<kbd>${k}</kbd>`).join('')}`
+      + `<span>${escapeHtml(p.text)}</span></span>`).join('');
+    if (view.innerHTML !== html) view.innerHTML = html;
+  }
   private setPrompt(id: string, text: string): void {
     const el = document.getElementById(id)!; el.textContent = text; el.hidden = !text;
-    const view = document.getElementById(`${id}-view`)!; view.hidden = !text;
+    const view = document.getElementById(`${id}-view`)!; view.hidden = !text; view.classList.remove('tip');
     const match = /^(?:Click \/ )?([A-Z]) — (.+)$/.exec(text);
     const html = match ? `<kbd>${match[1]}</kbd><span>${escapeHtml(match[2])}</span>` : `<span>${escapeHtml(text)}</span>`;
     if (view.innerHTML !== html) view.innerHTML = html;

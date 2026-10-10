@@ -1,0 +1,42 @@
+
+Running 6 tests using 1 worker
+
+Expanded section reached before-butter 23.3
+Retry stage 1 0 Checkpoint / before butter 
+Expanded section reached after-butter 55.0
+Expanded section reached before-fork 80.2
+Expanded section reached after-fork 86.1
+Expanded section reached after-candle 102.3
+Expanded section reached after-diner 126.7
+Expanded section reached pear 138.3
+Expanded route elapsed seconds / retries 138.982 1
+Expanded section reached before-butter 23.3
+Retry stage 1 0 Checkpoint / before butter 
+Retry stage 1 1 Checkpoint / before butter 
+Expanded section reached after-butter 71.2
+Retry stage 2 0 Checkpoint / after butter A rolling grape! Watch the next pair before jumping.
+Expanded section reached before-fork 122.2
+Expanded section reached after-fork 128.1
+Expanded section reached after-candle 144.5
+Expanded section reached after-diner 168.9
+Expanded section reached pear 180.5
+Expanded route elapsed seconds / retries 181.209 3
+  ✓  1 tests\browser\campaign.spec.ts:97:1 › production museum → supper → pear → return → click placement → reload → replay → confirmed reset (5.8m)
+  ✓  2 tests\browser\campaign.spec.ts:173:3 › production drag placement from reloaded inventory retains wrong drops (4.9s)
+  ✓  3 tests\browser\campaign.spec.ts:173:3 › production keyboard placement from reloaded inventory retains wrong drops (4.7s)
+Expanded section reached before-butter 23.3
+Retry stage 1 0 Checkpoint / before butter 
+Expanded section reached after-butter 55.1
+Expanded section reached before-fork 80.5
+Expanded section reached after-fork 86.3
+Expanded section reached after-candle 102.6
+Expanded section reached after-diner 127.1
+Expanded section reached pear 138.6
+Expanded route elapsed seconds / retries 139.267 1
+  ✓  4 tests\browser\campaign.spec.ts:196:1 › production malformed saves and denied storage stay playable; settings persist (2.6m)
+  ✓  5 tests\browser\campaign.spec.ts:220:1 › museum input contexts, room bounds, drag look and pointer lock release/fallback (28.2s)
+  ✓  6 tests\browser\campaign.spec.ts:280:1 › museum polish: masterpiece first, lamps/shimmer target, smooth walking, footsteps and room tone (14.6s)
+
+  Slow test file: tests\browser\campaign.spec.ts (9.3m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  6 passed (9.4m)

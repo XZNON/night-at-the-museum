@@ -124,6 +124,7 @@ export class UnfinishedSketchScene implements GameScene {
   private aspect = 16 / 9;
   private viewHeight: number;
   private reducedMotion = false;
+  private gripKey: THREE.Sprite | null = null;
 
   constructor(readonly mode: SketchSceneMode, tuning: SketchTuning, playerImage: HTMLImageElement,
     private readonly onHud: (hud: SketchHud) => void,
@@ -650,6 +651,33 @@ export class UnfinishedSketchScene implements GameScene {
         this.letter(m.id.slice(-1).toUpperCase(), rig).position.set(0, 1.05, 1.5);
       }
     }
+  }
+
+  /** Release (user): an E keycap over the swing nail in reach, made once on first use. */
+  private keycap(): THREE.Sprite {
+    const canvas = document.createElement('canvas'); canvas.width = 128; canvas.height = 128;
+    const ctx = canvas.getContext('2d')!;
+    ctx.fillStyle = '#1a101699'; ctx.beginPath(); ctx.roundRect(8, 6, 112, 118, 28); ctx.fill();
+    ctx.fillStyle = '#b08a5a'; ctx.beginPath(); ctx.roundRect(18, 24, 92, 92, 22); ctx.fill();
+    ctx.fillStyle = '#fff1d8'; ctx.beginPath(); ctx.roundRect(18, 14, 92, 92, 22); ctx.fill();
+    ctx.fillStyle = '#1a1016'; ctx.font = `700 62px ${CANVAS_FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('E', 64, 62);
+    const texture = new THREE.CanvasTexture(canvas); this.resources.add(texture);
+    const material = new THREE.SpriteMaterial({ map: texture, depthTest: false, transparent: true }); this.resources.add(material);
+    const sprite = new THREE.Sprite(material); sprite.renderOrder = 20; this.world.add(sprite);
+    return sprite;
+  }
+  /** Bright and pulsing when the nail can be grabbed now (E in the air); faded when a jump must close the gap first. */
+  private renderGripKey(): void {
+    const grip = this.routeModel?.route.coach && this.interactive && this.model.recoveryRemaining <= 0 ? this.model.gripHint() : null;
+    if (grip) {
+      this.gripKey ??= this.keycap();
+      const at = this.blended(`t:${grip.id}`, grip.x, grip.y);
+      this.gripKey.position.set(at.x, at.y + 1.3, 2);
+      this.gripKey.scale.setScalar(1.15 * (this.reducedMotion || grip.jumpFirst ? 1 : 1 + Math.sin(this.elapsed * 7) * 0.08));
+      (this.gripKey.material as THREE.SpriteMaterial).opacity = grip.jumpFirst ? 0.55 : 1;
+    }
+    if (this.gripKey) this.gripKey.visible = !!grip;
   }
 
   /** A small inked letter sprite that follows its rig. */
@@ -1378,6 +1406,7 @@ export class UnfinishedSketchScene implements GameScene {
     if (this.goalMesh) (this.goalMesh.material as THREE.MeshBasicMaterial).color.setHex(this.model.completed ? C.goalDone : C.goal);
     if (this.mode.kind === 'route') this.animateLifts();
 
+    this.renderGripKey();
     this.camera.position.x = THREE.MathUtils.lerp(this.previousCamera.x, this.cameraPosition.x, alpha);
     this.camera.position.y = THREE.MathUtils.lerp(this.previousCamera.y, this.cameraPosition.y, alpha);
   }
@@ -1537,7 +1566,7 @@ export class UnfinishedSketchScene implements GameScene {
     this.lifts.clear();
     this.glueBubbles.length = 0;
     this.pickup = null;
-    this.torchLight = null; this.sparkles = null;
+    this.torchLight = null; this.sparkles = null; this.gripKey = null;
     this.world.clear();
   }
 }

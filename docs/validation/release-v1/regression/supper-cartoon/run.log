@@ -1,0 +1,15 @@
+
+Running 1 test using 1 worker
+
+Expanded section reached before-butter 23.3
+Expanded section reached after-butter 38.6
+Expanded section reached before-fork 63.5
+Expanded section reached after-fork 68.1
+Expanded section reached after-candle 75.5
+Expanded section reached after-diner 99.5
+Retry stage 6 0 Checkpoint / after diner A slip, not a setback. Returning to checkpoint…
+Expanded section reached pear 122.0
+Expanded route elapsed seconds / retries 122.446 1
+  ✓  1 tests\browser\supper-cartoon.spec.ts:11:1 › cartoon Royal Supper renders every section along the real route (2.1m)
+
+  1 passed (2.1m)

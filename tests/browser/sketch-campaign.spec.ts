@@ -73,7 +73,7 @@ test('S5B locked frame, opening after the pear is restored, and transition spam'
   d = await debug(page);
   expect([d.scene, d.sketch.study, d.canvasCount]).toEqual(['unfinished-sketch', 'campaign', 1]);
   expect(d.body).toMatchObject(layerOneStart);
-  await expect(page.locator('#sketch-eyebrow')).toHaveText('The Last Curator');
+  await expect(page.locator('#sketch-eyebrow')).toHaveText('Night at the Museum');
   await expect(page.locator('.build-tag')).toHaveCount(0);
   await noDevWords(page, 'first entry');
   await capture(page, 'campaign-entry');
@@ -217,7 +217,7 @@ test('S5B production: seeded saves show the frame state, objective and inventory
     expect(await page.evaluate(() => '__curatorDebug' in window)).toBe(false);
     await expect(page.locator('#modal')).not.toContainText(/mountain|S5A|Claim the light/i);
     // v1 polish: the title screen names the game; the old note is gone.
-    await expect(page.locator('#modal')).toContainText('The Last Curator');
+    await expect(page.locator('#modal')).toContainText('Night at the Museum');
     await expect(page.locator('.build-tag')).toHaveCount(0);
     await newMuseum(page, c.save !== null);
     await expect(page.locator('#objective')).toHaveText(c.objective);
@@ -233,7 +233,7 @@ test('S5B production: seeded saves show the frame state, objective and inventory
       await expect(page.locator('#museum-hud')).toBeVisible(); await expect(page.locator('#sketch-hud')).toBeHidden();
     } else {
       await expect(page.locator('#sketch-hud')).toBeVisible();
-      await expect(page.locator('#sketch-eyebrow')).toHaveText('The Last Curator');
+      await expect(page.locator('#sketch-eyebrow')).toHaveText('Night at the Museum');
       expect(await page.locator('#sketch-hud').innerText()).not.toMatch(DEV_WORDS);
       await page.waitForTimeout(300); await page.keyboard.press('Escape');
       await expect(page.locator('[data-action="replay"]')).toHaveText('Restart adventure');

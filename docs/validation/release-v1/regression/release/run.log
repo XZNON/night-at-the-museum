@@ -1,0 +1,8 @@
+
+Running 3 tests using 1 worker
+
+  ✓  1 tests\browser\release.spec.ts:64:1 › production entry: no dev hooks or direct levels, favicon and meta, clean console (3.6s)
+  ✓  2 tests\browser\release.spec.ts:79:1 › itch-like embed: subfolder, cross-site iframe, focus, saves, blur pause, fullscreen and resize (7.1s)
+  ✓  3 tests\browser\release.spec.ts:147:1 › itch-like embed: Royal Supper and the Sketch load every asset from the case-sensitive host (17.1s)
+
+  3 passed (31.5s)

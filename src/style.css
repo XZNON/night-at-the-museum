@@ -169,6 +169,12 @@ kbd { display: inline-grid; place-items: center; min-width: 24px; height: 24px; 
   font-size: 19px; font-weight: 600; color: var(--cream); text-shadow: 0 2px 4px #000, 0 0 16px #000c; pointer-events: none; animation: prompt-in .2s ease-out; }
 .prompt-view kbd { min-width: 30px; height: 30px; font-size: 15px; border-radius: 8px; }
 .museum-prompt-view { bottom: auto; top: calc(50% + 30px); }
+/* Step tips (release): what to press now, on a dark pill so they read over the bright Sketch. */
+.prompt-view.tip { gap: 0; padding: 8px 18px; border-radius: 999px; background: #1a1016c7; box-shadow: 0 4px 18px #0007; font-size: 18px; }
+.tip-part { display: inline-flex; align-items: center; gap: 6px; }
+.tip-part + .tip-part::before { content: ""; width: 7px; height: 7px; margin: 0 14px 0 10px; background: var(--gold); transform: rotate(45deg); box-shadow: 0 0 8px #f2c46d; }
+.tip-part > span:last-child { margin-left: 2px; }
+.prompt-view .key-icon { width: 30px; height: 30px; } .prompt-view .key-icon svg { width: 28px; height: 28px; }
 @keyframes prompt-in { from { opacity: 0; transform: translate(-50%, 6px); } to { opacity: 1; transform: translateX(-50%); } }
 .reticle { font-size: 0; width: 6px; height: 6px; border-radius: 50%; background: #fff1d8cc; box-shadow: 0 0 4px #000; }
 /* Sketch nails as icons: bright when in hand, faint once driven. */

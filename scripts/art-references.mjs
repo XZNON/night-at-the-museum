@@ -1,6 +1,6 @@
 // Sequential DreamLayer reference pass. Never imports into browser code.
 // Usage: node scripts/art-references.mjs <world> <version> <name:aspect | name<parent>...
-// <world> is sketch or supper. Each <name> reads
+// <world> is sketch, supper or cover. Each <name> reads
 // asset-sources/prompts/<world>-<name>[-<version>].txt.
 // name<parent edits the existing references/<world>/<parent>-<version>.png;
 // name<parent-vN edits that exact earlier version instead.
@@ -12,10 +12,11 @@ const root = 'asset-sources';
 const worlds = {
   sketch: { world: 'unfinished-sketch', purpose: 'Sketch mechanism style reference; not integrated' },
   supper: { world: 'royal-supper', purpose: 'Royal Supper cartoon rework reference; not integrated' },
+  cover: { world: 'release', purpose: 'itch.io cover art candidate (release v1, user request 2026-10-10); not in the game' },
 };
 const [prefix, version, ...requests] = process.argv.slice(2);
 if (!worlds[prefix] || !/^v\d+$/.test(version ?? '') || requests.length === 0)
-  throw new Error('Usage: node scripts/art-references.mjs <sketch|supper> <vN> <name:aspect>...');
+  throw new Error('Usage: node scripts/art-references.mjs <sketch|supper|cover> <vN> <name:aspect>...');
 await mkdir(`${root}/references/${prefix}`, { recursive: true });
 async function cli(args) {
   return await new Promise((resolve, reject) => {

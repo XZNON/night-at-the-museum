@@ -1,4 +1,4 @@
-import type { SketchMechanism, SketchRoute } from './unfinished-sketch';
+import type { SketchMechanism, SketchRoute, SketchRouteLegId } from './unfinished-sketch';
 import { l2Lift, sketchJoinedRoute, sketchLayerTwo } from './unfinished-sketch-layer2';
 import { l1Lift, sketchRoute } from './unfinished-sketch-route';
 
@@ -193,12 +193,21 @@ export const sketchLayersOneToThree: SketchRoute = {
  * light and ends the adventure. The torch stands toward the ledge's right
  * end, clear of its spawn (x 59), so the player walks to it.
  */
+const ADVENTURE_HINTS: Partial<Record<SketchRouteLegId, string>> = {
+  'layer-1': 'Nail the swinging boards still and climb across. Two nails: pull back the oldest to reuse it.',
+  'layer-2': 'Nail the boards and time your jumps past the swinging axes.',
+  'l3-walls': 'Pick up a spare nail, then climb by kicking between nailed boards.',
+  'l3-swings': 'Swing on your nails across the glue to the end ledge.',
+};
+
 export const sketchAdventure: SketchRoute = {
   ...sketchLayersOneToThree, id: 'adventure',
   name: 'The Unfinished Sketch',
   goal: 'Climb the unfinished picture, layer by layer, and claim the enchanted light.',
   spawn: { ...sketchLayersOneToThree.spawn },
-  legs: sketchLayersOneToThree.legs.map(leg => ({ ...leg })),
+  // Release (user, 2026-10-10): a short goal per layer; the step tips say what to press.
+  coach: true,
+  legs: sketchLayersOneToThree.legs.map(leg => ({ ...leg, hint: ADVENTURE_HINTS[leg.id] ?? leg.hint })),
   // The torch and the enchanted light above it: x 62..63.4, up to y 56.
   light: {
     id: 'sketch-light', x: 62, y: 54, width: 1.4, height: 2,
