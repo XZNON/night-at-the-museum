@@ -4,6 +4,7 @@ import type { Controls } from '../gameplay/controller';
 import { museum, type MuseumPose } from '../levels/museum';
 import type { ArtId } from '../assets/manifest';
 import { masterpieceStageArt } from '../ui/masterpiece';
+import { CANVAS_FONT } from '../ui/font';
 import type { StepSurface } from '../core/audio';
 
 /**
@@ -153,15 +154,14 @@ export class MuseumScene implements GameScene {
       this.resources.add(g); this.resources.add(m); this.resources.add(texture);
       const mesh = new THREE.Mesh(g, m); mesh.position.set(0, 0, 0.04); mesh.userData.artworkId = art.id;
       frame.add(mesh); this.solids.push(mesh);
-      const label = document.createElement('canvas'); label.width = 768; label.height = 96;
-      const t = new THREE.CanvasTexture(label); t.colorSpace = THREE.SRGBColorSpace;
-      const lg = new THREE.PlaneGeometry(art.width, 0.35); const lm = new THREE.MeshBasicMaterial({ map: t });
+      // A brass plate narrower than its frame; the canvas keeps the plate's proportions so the lettering is not stretched.
+      const plaqueWidth = Math.min(art.width * 0.68, 2.4);
+      const label = document.createElement('canvas'); label.width = 1024; label.height = Math.round(1024 * PLAQUE_HEIGHT / plaqueWidth);
+      const t = new THREE.CanvasTexture(label); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+      const lg = new THREE.PlaneGeometry(plaqueWidth, PLAQUE_HEIGHT); const lm = new THREE.MeshBasicMaterial({ map: t, alphaTest: 0.5 });
       this.resources.add(t); this.resources.add(lg); this.resources.add(lm);
       const plaque = new THREE.Mesh(lg, lm); plaque.position.set(0, Math.min(-paintedHeight / 2 - border - 0.26, DADO.bottom - 0.2 - art.y), 0.06); frame.add(plaque);
-      const drawPlaque = (line: string) => {
-        const ctx = label.getContext('2d')!; ctx.fillStyle = '#34252a'; ctx.fillRect(0, 0, 768, 96); ctx.fillStyle = '#e5cd9e'; ctx.textAlign = 'center';
-        ctx.font = '30px Georgia'; ctx.fillText(art.label, 384, 41); ctx.font = '18px sans-serif'; ctx.fillText(line, 384, 74); t.needsUpdate = true;
-      };
+      const drawPlaque = (line: string) => { brassPlaque(label, art.label, line); t.needsUpdate = true; };
       if (art.id === 'unfinished-sketch') this.drawSketchPlaque = drawPlaque;
       else if (art.id === 'masterpiece') this.drawMasterpiecePlaque = drawPlaque;
       else drawPlaque('The king has borrowed the golden pear');
@@ -714,6 +714,46 @@ function gildedFrame(w: number, h: number, border: number, gold: GildedMaterials
     const mesh = new THREE.Mesh(boss, gold.bead); mesh.position.set(sx * cx, sy * cy, 0.06); group.add(mesh);
   }
   return group;
+}
+
+/** Height (m) of a frame's brass plaque. */
+const PLAQUE_HEIGHT = 0.35;
+
+/**
+ * A brass plaque under a frame: a bevelled plate with two screws and the title
+ * and line engraved in the game's font. The corners are transparent (alpha-tested).
+ */
+function brassPlaque(c: HTMLCanvasElement, title: string, line: string): void {
+  const ctx = c.getContext('2d')!; const w = c.width; const h = c.height;
+  ctx.clearRect(0, 0, w, h);
+  const plate = new Path2D(); plate.roundRect(3, 3, w - 6, h - 6, h * 0.14);
+  const brass = ctx.createLinearGradient(0, 0, 0, h);
+  brass.addColorStop(0, '#e9c983'); brass.addColorStop(0.5, '#bd8d45'); brass.addColorStop(1, '#8a5c26');
+  ctx.fillStyle = brass; ctx.fill(plate);
+  // A soft sheen across the top and a dark lip all round.
+  const sheen = ctx.createLinearGradient(0, 0, w, 0);
+  sheen.addColorStop(0, '#fff3d000'); sheen.addColorStop(0.35, '#fff3d040'); sheen.addColorStop(0.6, '#fff3d000');
+  ctx.fillStyle = sheen; ctx.fill(plate);
+  ctx.lineWidth = 5; ctx.strokeStyle = '#5a3812'; ctx.stroke(plate);
+  const inset = h * 0.1;
+  ctx.beginPath(); ctx.roundRect(inset, inset, w - inset * 2, h - inset * 2, h * 0.08); ctx.lineWidth = 2; ctx.strokeStyle = '#f7e2a8aa'; ctx.stroke();
+  for (const x of [h * 0.26, w - h * 0.26]) {
+    const screw = ctx.createRadialGradient(x - 2, h / 2 - 2, 1, x, h / 2, h * 0.055);
+    screw.addColorStop(0, '#fbe9b9'); screw.addColorStop(1, '#6e4719');
+    ctx.fillStyle = screw; ctx.beginPath(); ctx.arc(x, h / 2, h * 0.055, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#4a2e0e'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - h * 0.035, h / 2 + h * 0.02); ctx.lineTo(x + h * 0.035, h / 2 - h * 0.02); ctx.stroke();
+  }
+  // Engraved lettering: a light edge under dark letters; long text shrinks to stay between the screws.
+  const room = w - h * 0.8;
+  const engrave = (text: string, weight: number, size: number, y: number) => {
+    let px = size;
+    do { ctx.font = `${weight} ${px}px ${CANVAS_FONT}`; px -= 2; } while (ctx.measureText(text).width > room && px > 10);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#fbe7b4b0'; ctx.fillText(text, w / 2, y + 2);
+    ctx.fillStyle = '#3a220b'; ctx.fillText(text, w / 2, y);
+  };
+  engrave(title, 600, Math.round(h * 0.36), h * 0.39);
+  engrave(line, 500, Math.round(h * 0.22), h * 0.71);
 }
 
 /**

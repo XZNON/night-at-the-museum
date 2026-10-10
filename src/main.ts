@@ -21,6 +21,7 @@ import { UnfinishedSketchScene } from './scenes/unfinished-sketch';
 import type { SketchSceneMode } from './scenes/unfinished-sketch';
 import { MuseumScene, type MuseumArtState } from './scenes/museum';
 import { GameUi } from './ui/game-ui';
+import { uiFontReady } from './ui/font';
 import { GameAudio } from './core/audio';
 import { loadArtSet } from './assets/images';
 import { supperArtIds, museumArtIds, sketchArtIds } from './assets/manifest';
@@ -206,7 +207,7 @@ async function enterMuseum(pose: MuseumPose = museum.spawn): Promise<void> {
     const changed = await manager.transition(async () => new MuseumScene(ui.canvas, pose, museumArt(),
       () => !paused && !manager?.transitioning && performance.now() >= inputReadyAt,
       id => { if (id === 'masterpiece') inspect(); else if (id === royalSupper.id) void startSupper(false); else if (id === sketchStage.artworkId) void startSketchAdventure(false); },
-      text => ui.museumPrompt(text), await loadArtSet(museumArtIds), surface => audio.footstep(surface)));
+      text => ui.museumPrompt(text), (await Promise.all([loadArtSet(museumArtIds), uiFontReady()]))[0], surface => audio.footstep(surface)));
     if (changed) { audio.setScene('museum'); inputReadyAt = performance.now() + TRANSITION_INPUT_SETTLE_MS; remembered = true; ui.museumState(progression.snapshot, museumArt().opened); ui.museumPrompt(''); resume(); ui.hintControls(); }
   } catch (error) { showError(error); }
 }
@@ -232,7 +233,7 @@ async function createSketchScene(mode: SketchSceneMode, onExit: (snapshot: Sketc
   onLightClaimed: () => void): Promise<UnfinishedSketchScene> {
   // The game-wide heroine poses plus the Sketch skins cut from the approved
   // references; nothing is generated here.
-  const art = await loadArtSet(sketchArtIds);
+  const [art] = await Promise.all([loadArtSet(sketchArtIds), uiFontReady()]);
   const scene = new UnfinishedSketchScene(mode, sketchTuning, art['player.idle']!, state => ui.updateSketchHud(state),
     onExit, ui.canvas, () => input.clear(), onLightClaimed,
     { 'walk-a': art['player.walk-a'], 'walk-b': art['player.walk-b'], jump: art['player.jump'] }, art);

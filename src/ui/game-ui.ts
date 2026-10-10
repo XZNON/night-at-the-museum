@@ -47,6 +47,7 @@ export class GameUi {
   private lastTick = 0;
   private inventoryTimer = 0;
   private controlsTimer = 0;
+  private noticeTimer = 0;
 
   constructor(root: HTMLElement, private readonly actions: UiActions, private readonly direct: boolean,
     private readonly study: 'supper' | 'sketch' = 'supper', private sketchMode: SketchStudy = 'mechanics') {
@@ -57,8 +58,7 @@ export class GameUi {
     const corner = (look: boolean) => `<div class="hud-corner">${look ? `<button data-action="look" class="icon-button" aria-label="Mouse look" title="Mouse look">${icons.mouse}</button>` : ''}
       <button data-action="pause" class="icon-button" aria-label="Pause" title="Pause · Esc">${icons.pause}</button></div>`;
     // Key glyphs and a short verb, no panel; they show on arrival, then fade out.
-    const controls = (rows: [string[], string][]) => `<div class="controls">${rows.map(([keys, label]) =>
-      `<span>${keys.map(k => k.startsWith('<svg') ? `<span class="key-icon">${k}</span>` : `<kbd>${k}</kbd>`).join('')} ${label}</span>`).join('')}</div>`;
+    const controls = (rows: [string[], string][]) => keyRow(rows, 'controls');
     root.innerHTML = `
       <canvas id="world" tabindex="0" aria-label="Royal Supper. A or D to move, Space to jump, E to interact, R for checkpoint, Escape to pause."></canvas>
       <div class="vignette" aria-hidden="true"></div>
@@ -66,7 +66,7 @@ export class GameUi {
         ${devHeader('The Last Curator', 'Royal Supper', 'section-name')}${corner(false)}
         <div class="route-status"><span id="fork-state"></span><span id="candle-state"></span><span id="diner-state"></span><span id="jump-state"></span></div>
         <p id="section-hint" class="section-hint"></p>
-        <div class="bottom-hud">${controls([[['A', 'D'], 'Move'], [['Space'], 'Jump ×2'], [['E'], 'Use'], [['R'], 'Checkpoint']])}
+        <div class="bottom-hud">${controls(SUPPER_KEYS)}
           <span id="checkpoint" class="checkpoint"></span></div>
         <div id="prompt" class="prompt" hidden></div><div id="prompt-view" class="prompt-view" aria-hidden="true" hidden></div><div id="cue" class="cue" role="status" aria-live="polite"></div>
       </section>
@@ -76,7 +76,7 @@ export class GameUi {
         <div class="sketch-status"><span id="sketch-layer"></span><span id="sketch-nails"></span><span id="sketch-oldest"></span><span id="sketch-nearest"></span><span id="sketch-motion"></span></div>
         <p id="sketch-hint" class="section-hint"></p>
         <div id="sketch-bays" class="sketch-bays">${sketchBayList.map((bay, i) => `<button class="quiet" data-action="bay" data-bay="${bay.id}">${i + 1} ${bay.name.split(' · ')[1]}</button>`).join('')}</div>
-        <div class="bottom-hud">${controls([[['A', 'D'], 'Move'], [['Space'], 'Jump'], [[icons.click], 'Nail'], [['Q'], 'Recall'], [['E'], 'Grab'], [['R'], 'Retry']])}<span id="sketch-goal" class="checkpoint"></span></div>
+        <div class="bottom-hud">${controls(SKETCH_KEYS)}<span id="sketch-goal" class="checkpoint"></span></div>
         <span id="sketch-endpoint" class="sketch-endpoint" hidden></span>
         <div id="sketch-prompt" class="prompt" hidden></div><div id="sketch-prompt-view" class="prompt-view" aria-hidden="true" hidden></div><div id="sketch-cue" class="cue" role="status" aria-live="polite"></div>
       </section>
@@ -202,15 +202,15 @@ export class GameUi {
       : this.sketchMode === 'layer-1' ? 'UNFINISHED SKETCH · LAYER 1 (SLICE 2)' : 'UNFINISHED SKETCH · SLICE 1 PLAYGROUND';
     return `${base}${this.direct ? ' · ISOLATED DEV SESSION' : ''}`;
   }
-  private show(mode: typeof this.mode, content: string, variant: 'card' | 'title' | 'pause' | 'reward' | 'ending' | 'inspect' = 'card'): void {
+  private show(mode: typeof this.mode, content: string, variant: 'title' | 'pause' | 'reward' | 'inspect'): void {
     this.mode = mode;
     this.hud.hidden = true;
     document.getElementById('museum-hud')!.hidden = true;
     document.getElementById('sketch-hud')!.hidden = true;
     this.modal.classList.remove('inspection-modal', 'ending-modal', 'title-modal', 'pause-modal', 'reward-modal', 'inspect-modal');
     this.modal.hidden = false;
-    if (variant !== 'card') this.modal.classList.add(`${variant}-modal`);
-    this.modal.innerHTML = variant === 'card' ? `<div class="menu-card">${content}</div>` : `<div class="title-screen">${content}</div>`;
+    this.modal.classList.add(`${variant}-modal`);
+    this.modal.innerHTML = `<div class="title-screen">${content}</div>`;
     this.modal.setAttribute('role', 'dialog');
     this.modal.setAttribute('aria-modal', 'true');
     this.shownAt = performance.now(); this.lastFocus = null;
@@ -239,107 +239,15 @@ export class GameUi {
         ${remembered ? '<button class="menu-button" data-action="reset">New Game</button>' : ''}</nav>`, 'title');
       return;
     }
-    if (this.study === 'sketch') {
-      if (this.sketchMode === 'adventure') {
-        this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S5A / Unfinished Sketch</p>
-        <h2>Claim<br><em>the light.</em></h2><p class="intro">An unfinished picture.<br>Three layers to climb.<br>An enchanted light waits in a torch.</p>
-        <p class="menu-description">Pin the swinging pendulums and ride the lift. Cross the boards past the axes and ride up again. Pick up a third nail, climb the criss-cross walls, then nail wood and swing over the glue. On the end ledge, walk to the torch and claim its enchanted light. A fall only sends you back to the start of the part you are in.</p>
-        <button class="primary" data-action="start">Enter the picture</button>
-        ${remembered ? '<button class="quiet" data-action="replay">Restart the Sketch</button>' : ''}
-        <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move / pump · <kbd>Space</kbd> Jump ×2 / kick / release · <kbd>E</kbd> Grip · Click pin or wood · <kbd>Q</kbd> Recall · <kbd>R</kbd> Retry</div>
-        <p class="small-note">Isolated study · Campaign saves are untouched.</p>`);
-        return;
-      }
-      if (this.sketchMode === 'layers-1-3') {
-        this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S4D / Layers 1–3</p>
-        <h2>The whole<br><em>picture.</em></h2><p class="intro">Four pendulums. Boards and axes.<br>Two lifts. Six walls.<br>Two moving swings.</p>
-        <p class="menu-description">Climb Layer 1 and step onto its lift. Cross Layer 2 to the left, walk to the far end and ride the second lift. On Layer 3, pick up the third nail and climb the criss-cross walls; landing on the high ledge takes it back. Then nail wood anywhere and swing over the glue onto the end ledge. A fall retries only the section you are in.</p>
-        <button class="primary" data-action="start">Enter the picture</button>
-        ${remembered ? '<button class="quiet" data-action="replay">Restart Layers 1–3</button>' : ''}
-        <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move / pump · <kbd>Space</kbd> Jump ×2 / kick / release · <kbd>E</kbd> Grip · Click pin or wood · <kbd>Q</kbd> Recall · <kbd>R</kbd> Retry</div>
-        <p class="small-note">Campaign saves are untouched. Stop at the fixed end ledge for S4D review.</p>`);
-        return;
-      }
-      if (this.sketchMode === 'layer-3') {
-        this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S4C / Joined Layer 3</p>
-        <h2>Walls, then<br><em>swings.</em></h2><p class="intro">Six walls to climb.<br>A glue pool to cross.<br>One Layer 3.</p>
-        <p class="menu-description">Pick up the third nail and climb the criss-cross walls: pin ahead, kick across, Q frees the oldest. From F, kick right over E onto the ledge. Landing there clears the climb and takes the third nail back. Then nail wood anywhere: strip F for a step, bar M1 and bar M2 for grips, and swing onto the end ledge. A fall during the crossing keeps the climb clear.</p>
-        <button class="primary" data-action="start">Enter Layer 3</button>
-        ${remembered ? '<button class="quiet" data-action="replay">Restart Layer 3</button>' : ''}
-        <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move / pump · <kbd>Space</kbd> Jump / kick / release · <kbd>E</kbd> Grip · Click pin or wood · <kbd>Q</kbd> Recall · <kbd>R</kbd> Retry</div>
-        <p class="small-note">Campaign saves are untouched. Stop at the fixed end ledge for S4C review.</p>`);
-        return;
-      }
-      if (this.sketchMode === 'layer-3-swings') {
-        this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S4B / Layer 3 swings</p>
-        <h2>Moving<br><em>swings.</em></h2><p class="intro">Glue below.<br>Two sliding bars.<br>Two nails, anywhere on wood.</p>
-        <p class="menu-description">No marked rings here: click anywhere along a wooden strip or bar to drive a nail, never into air. A nail in strip F grows a step. A nail in a bar is a grip the bar carries. Nail F and stand on it, nail M1, jump close and press E. While swinging, Q frees F so you can nail M2. Release, grip M2, then swing onto the end ledge. Where you nail decides what you can reach.</p>
-        <button class="primary" data-action="start">Enter the swing crossing</button>
-        ${remembered ? '<button class="quiet" data-action="replay">Restart swing crossing</button>' : ''}
-        <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move / pump · <kbd>Space</kbd> Jump / release · <kbd>E</kbd> Grip / release · Click wood · <kbd>Q</kbd> Recall</div>
-        <p class="small-note">Campaign saves are untouched. Stop at the fixed S4B end ledge for review.</p>`);
-        return;
-      }
-      if (this.sketchMode === 'layer-3-walls') {
-        this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S4A / Layer 3 walls</p>
-        <h2>Criss-cross<br><em>walls.</em></h2><p class="intro">Six moving outlines.<br>A third nail on the way.<br>Kick from wall to wall.</p>
-        <p class="menu-description">Pin A and B, pick up the third nail as you run right, and jump onto A. Space kicks you across to the opposite wall. A catch holds you for a moment, then you slide fast, so keep kicking. Keep the board ahead pinned: Q frees the oldest nail and you click the next board up. From F, kick right over E onto the ledge. Outlines cannot hold you.</p>
-        <button class="primary" data-action="start">Enter the wall climb</button>
-        ${remembered ? '<button class="quiet" data-action="replay">Restart wall climb</button>' : ''}
-        <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move · <kbd>Space</kbd> Jump / kick · Click pin · <kbd>Q</kbd> Recall · <kbd>R</kbd> Retry</div>
-        <p class="small-note">Campaign saves are untouched. Stop at the fixed S4A endpoint for review.</p>`);
-        return;
-      }
-      if (this.sketchMode === 'layers-1-2') {
-        this.show('menu', `<div class="menu-mark" aria-hidden="true">*</div><p class="eyebrow">The Last Curator / S3 / Joined layers</p>
-        <h2>One picture.<br><em>Two lifts.</em></h2><p class="intro">Four pendulums.<br>Three boards and two axes.<br>Two nails to reuse.</p>
-        <p class="menu-description">Climb Layer 1 and step onto its lift. Cross Layer 2 to the left, walk to the far end and ride the second lift to safe Layer 3 ground. Falling retries your current layer.</p>
-        <button class="primary" data-action="start">Continue the picture</button>
-        ${remembered ? '<button class="quiet" data-action="replay">Restart Layers 1 &amp; 2</button>' : ''}
-        <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move / <kbd>Space</kbd> Jump x2 / Click pin / <kbd>Q</kbd> Recall / <kbd>R</kbd> Retry</div>
-        <p class="small-note">Campaign saves are untouched. Stop on safe Layer 3 ground for review.</p>`);
-        return;
-      }
-      if (this.sketchMode === 'layer-2') {
-        this.show('menu', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / S3 · Layer 2</p>
-        <h2>Boards &amp;<br><em>axes.</em></h2><p class="intro">Three moving boards.<br>Two nails.<br>Axes that keep turning.</p>
-        <p class="menu-description">Moving outlines cannot hold you. Pin A and B, then recall A with Q to ink C. Narrow landings and fast red blades demand timed double jumps. Reach fixed ground, then walk left to the lift and step on to ride to Layer 3.</p>
-        <button class="primary" data-action="start">Enter Layer 2 <span>←</span></button>
-        ${remembered ? '<button class="quiet" data-action="replay">Restart Layer 2</button>' : ''}
-        <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move · <kbd>Space</kbd> Jump ×2 · Left click pin · <kbd>Q</kbd> Recall · <kbd>R</kbd> Retry</div>
-        <p class="small-note">Campaign saves are untouched. This study ends on safe Layer 3 ground.</p>`);
-        return;
-      }
-      if (this.sketchMode === 'layer-1') {
-        this.show('menu', `
-      <div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / Slice 2 · Layer 1</p>
-      <h2>Four<br><em>pendulums.</em></h2><p class="intro">One unfinished picture.<br>Two nails.<br>Three layers to climb.</p>
-      <p class="menu-description">Start at the bottom left. Pin a pendulum, land on it, pin the next, then press Q so the oldest nail frees one for the third. Each target is only in reach from the platform you just reached, so the reuse cannot be skipped. The lift at the right end of the exit ground carries you up to a safe Layer 2 landing.</p>
-      <button class="primary" data-action="start">Enter Layer 1 <span>→</span></button>
-      ${remembered ? '<button class="quiet" data-action="replay">Restart the route</button>' : ''}
-      <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move <span>·</span> <kbd>Space</kbd> Jump ×2 <span>·</span> Left click pin <span>·</span> <kbd>Q</kbd> Recall <span>·</span> <kbd>R</kbd> Retry</div>
-      <p class="small-note">Isolated development route · Campaign saves are untouched.<br>Layer 2's challenge, the second lift and Layer 3 are scenery only in this study.</p>`);
-        return;
-      }
-      this.show('menu', `
-      <div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / Slice 1 · mechanics playground</p>
-      <h2>Unfinished<br><em>Sketch.</em></h2><p class="intro">Two nails.<br>One picture still deciding<br>where its pieces go.</p>
-      <p class="menu-description">Six independent bays prove the FIFO nail ledger, frozen boards, active axes, pinned-wall slides, foothold nail heads and direct nail swinging — with no rope anywhere.</p>
-      <button class="primary" data-action="start">Enter the playground <span>→</span></button>
-      ${remembered ? '<button class="quiet" data-action="replay">Restart adventure</button>' : ''}
-      <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move / pump · <kbd>Space</kbd> Jump / release · <kbd>E</kbd> Grip / release · Click pin · <kbd>Q</kbd> Recall</div>
-      <p class="small-note">Isolated development study · Campaign saves are untouched.</p>`);
-      return;
-    }
-    this.show('menu', `
-      <div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">The Last Curator / Study No. 01</p>
-      <h2>Royal<br><em>Supper.</em></h2><p class="intro">A small restorer.<br>A very grand table.<br>One missing golden pear.</p>
-      <p class="menu-description">Double jump across a long banquet. Slide over butter, dodge grapes, follow the fan’s three ember windows, hide from diners and bounce up to the pear.</p>
-      <button class="primary" data-action="start">${remembered ? 'Continue the painting' : 'Enter the painting'} <span>→</span></button>
-      ${remembered ? '<button class="quiet" data-action="replay">Restart adventure</button>' : ''}
-      <div class="menu-controls"><kbd>A</kbd><kbd>D</kbd> Move <span>·</span> <kbd>Space</kbd> Jump <span>·</span> <kbd>E</kbd> Interact</div>
-      <p class="small-note">Isolated development study · Campaign saves are untouched.<br>Open the normal entry for the museum/restoration loop.</p>
-      ${import.meta.env.DEV ? '<div class="dev-actions"><button class="quiet" data-action="lane">Movement test lane</button></div>' : ''}`);
+    // Dev studies open in the title screen's look, over their own painting.
+    const sketch = this.study === 'sketch';
+    const card = sketch ? sketchStudyCards[this.sketchMode] : supperStudyCard;
+    const start = sketch ? card.start : remembered ? 'Continue the painting' : 'Enter the painting';
+    this.studyScreen('menu', sketch ? 'sketch.entrance' : 'royal-supper.entrance', card,
+      `<button class="menu-button" data-action="start">${start}</button>
+      ${remembered ? `<button class="menu-button" data-action="replay">${card.replay}</button>` : ''}
+      ${!sketch && import.meta.env.DEV ? '<button class="menu-button" data-action="lane">Movement test lane</button>' : ''}`,
+      sketch ? SKETCH_KEYS : SUPPER_KEYS);
   }
   play(context: 'museum' | 'supper' | 'sketch' = 'supper'): void {
     this.context = context;
@@ -469,10 +377,20 @@ export class GameUi {
   }
   finished(): void {
     this.hud.hidden = true;
-    this.show('finished', `<div class="menu-mark" aria-hidden="true">✦</div><p class="eyebrow">Royal Supper / Blockout complete</p>
-      <h2 class="compact">A path<br><em>restored.</em></h2><p class="menu-description">Fork bridged. Three timed flames crossed. Diner evaded. Golden pear recovered${this.collection?.changed === false ? ' again' : ''}.</p>
-      <button class="primary" data-action="replay">Replay the painting <span>→</span></button><button class="quiet" data-action="start">Re-enter at your checkpoint</button>
-      <p class="small-note">Open the normal entry for the museum/restoration loop.<br>This isolated study keeps progress in memory until reload.</p>`);
+    this.studyScreen('finished', 'royal-supper.entrance', { kicker: 'Royal Supper · study complete', title: 'A path<br><em>restored.</em>',
+      intro: `Fork bridged. Three timed flames crossed. Diner evaded. Golden pear recovered${this.collection?.changed === false ? ' again' : ''}.`, description: '',
+      note: 'Open the normal entry for the museum/restoration loop.<br>This isolated study keeps progress in memory until reload.' },
+      '<button class="menu-button" data-action="replay">Replay the painting</button><button class="menu-button" data-action="start">Re-enter at your checkpoint</button>',
+      SUPPER_KEYS);
+  }
+  /** A dev study's menu or finish: the study's painting behind a kicker, title, short lines, a text menu and its keys. */
+  private studyScreen(mode: 'menu' | 'finished', art: ArtId, card: Pick<StudyCard, 'kicker' | 'title' | 'intro' | 'description' | 'note'>,
+    buttons: string, keys: [string[], string][]): void {
+    this.show(mode, `<div class="title-art study-art" aria-hidden="true" style="background-image:url('${artUrl(art)}')"></div>
+      <div class="title-block"><p class="title-kicker">${card.kicker}</p><h2 class="game-title study-title">${card.title}</h2>
+      <p class="study-intro">${card.intro}</p>${card.description ? `<p class="study-description">${card.description}</p>` : ''}</div>
+      <nav class="title-menu" aria-label="Study">${buttons}</nav>
+      ${keyRow(keys, 'study-keys')}<p class="screen-small study-note">${card.note}</p>`, 'title');
   }
   error(message: string): void {
     this.hud.hidden = true;
@@ -510,7 +428,12 @@ export class GameUi {
     const el = document.getElementById('diagnostics')!; el.hidden = text === null;
     if (text !== null) el.textContent = text;
   }
-  notice(text: string): void { const el = document.getElementById('save-notice')!; el.textContent = text; el.hidden = !text; }
+  /** A save or sound notice: shown for a few seconds, then it fades; its text stays for screen readers. */
+  notice(text: string): void {
+    const el = document.getElementById('save-notice')!; el.textContent = text; el.hidden = !text;
+    window.clearTimeout(this.noticeTimer); el.classList.toggle('show', !!text);
+    if (text) this.noticeTimer = window.setTimeout(() => el.classList.remove('show'), NOTICE_MS);
+  }
   /** `opened`: the masterpiece has been looked at, so Royal Supper is open. */
   museumState(state: CampaignState, opened: boolean): void {
     const restored = state.restoredPieceIds.includes('golden-pear');
@@ -597,7 +520,7 @@ export class GameUi {
       <nav class="title-menu" aria-label="Reset"><button class="menu-button" data-action="cancel-reset">Keep progress</button>
       <button class="menu-button danger" data-action="confirm-reset">Confirm reset / New Game</button></nav></div>`, 'pause');
   }
-  dispose(): void { this.controller.abort(); window.clearTimeout(this.objectiveTimer); window.clearTimeout(this.inventoryTimer); window.clearTimeout(this.controlsTimer); this.flashTimers.forEach(t => window.clearTimeout(t)); }
+  dispose(): void { this.controller.abort(); window.clearTimeout(this.objectiveTimer); window.clearTimeout(this.inventoryTimer); window.clearTimeout(this.controlsTimer); window.clearTimeout(this.noticeTimer); this.flashTimers.forEach(t => window.clearTimeout(t)); }
   /** Shows a caption for a few seconds, then lets it fade. */
   private flash(id: string, ms: number): void {
     const el = document.getElementById(id);
@@ -627,10 +550,54 @@ const HINT_MS = 7000;
 const escapeHtml = (text: string): string => text.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 const CONTROLS_MS = 9000;
 const FRESH_MS = 3500;
+const NOTICE_MS = 8000;
 const icons = {
   pause: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.6"/><rect x="14" y="5" width="4" height="14" rx="1.6"/></svg>',
   click: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5a5.5 5.5 0 0 0-5.5 5.5v6a5.5 5.5 0 0 0 11 0V9A5.5 5.5 0 0 0 12 3.5Z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5A5.5 5.5 0 0 0 6.5 9v1.5H12Z"/></svg>',
   drag: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18M3 12l3.5-3.5M3 12l3.5 3.5M21 12l-3.5-3.5M21 12l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   nail: '<svg viewBox="0 0 24 32" aria-hidden="true"><rect x="3" y="2" width="18" height="5.5" rx="2.2"/><path d="M9.3 7.5h5.4l-1.4 18.5L12 30.5l-1.3-4.5Z"/></svg>',
   mouse: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="3.5" width="11" height="17" rx="5.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="11" y="7" width="2" height="4" rx="1"/></svg>',
+};
+/** Key glyphs (an SVG becomes an icon) beside a short verb, one span per action. */
+const keyRow = (rows: [string[], string][], cls: string): string => `<div class="${cls}">${rows.map(([keys, label]) =>
+  `<span>${keys.map(k => k.startsWith('<svg') ? `<span class="key-icon">${k}</span>` : `<kbd>${k}</kbd>`).join('')} ${label}</span>`).join('')}</div>`;
+const SUPPER_KEYS: [string[], string][] = [[['A', 'D'], 'Move'], [['Space'], 'Jump ×2'], [['E'], 'Use'], [['R'], 'Checkpoint']];
+const SKETCH_KEYS: [string[], string][] = [[['A', 'D'], 'Move'], [['Space'], 'Jump'], [[icons.click], 'Nail'], [['Q'], 'Recall'], [['E'], 'Grab'], [['R'], 'Retry']];
+
+/** What a dev study's menu says; the Supper study's start label follows whether it was entered before. */
+interface StudyCard { kicker: string; title: string; intro: string; description: string; start: string; replay: string; note: string }
+const supperStudyCard: StudyCard = {
+  kicker: 'Royal Supper · study', title: 'Royal<br><em>Supper.</em>', intro: 'A small restorer. A very grand table. One missing golden pear.',
+  description: 'Double jump across a long banquet. Slide over butter, dodge grapes, follow the fan’s three ember windows, hide from diners and bounce up to the pear.',
+  start: 'Enter the painting', replay: 'Restart adventure',
+  note: 'Isolated development study · Campaign saves are untouched.<br>Open the normal entry for the museum/restoration loop.',
+};
+const sketchStudyCards: Record<SketchStudy, StudyCard> = {
+  adventure: { kicker: 'Unfinished Sketch · S5A', title: 'Claim<br><em>the light.</em>', intro: 'An unfinished picture. Three layers to climb. An enchanted light waits in a torch.',
+    description: 'Pin the swinging pendulums and ride the lift. Cross the boards past the axes and ride up again. Pick up a third nail, climb the criss-cross walls, then nail wood and swing over the glue. On the end ledge, walk to the torch and claim its enchanted light. A fall only sends you back to the start of the part you are in.',
+    start: 'Enter the picture', replay: 'Restart the Sketch', note: 'Isolated study · Campaign saves are untouched.' },
+  'layers-1-3': { kicker: 'Unfinished Sketch · S4D', title: 'The whole<br><em>picture.</em>', intro: 'Four pendulums. Boards and axes. Two lifts. Six walls. Two moving swings.',
+    description: 'Climb Layer 1 and step onto its lift. Cross Layer 2 to the left, walk to the far end and ride the second lift. On Layer 3, pick up the third nail and climb the criss-cross walls; landing on the high ledge takes it back. Then nail wood anywhere and swing over the glue onto the end ledge. A fall retries only the section you are in.',
+    start: 'Enter the picture', replay: 'Restart Layers 1–3', note: 'Campaign saves are untouched. Stop at the fixed end ledge for S4D review.' },
+  'layer-3': { kicker: 'Unfinished Sketch · S4C', title: 'Walls, then<br><em>swings.</em>', intro: 'Six walls to climb. A glue pool to cross. One Layer 3.',
+    description: 'Pick up the third nail and climb the criss-cross walls: pin ahead, kick across, Q frees the oldest. From F, kick right over E onto the ledge. Landing there clears the climb and takes the third nail back. Then nail wood anywhere: strip F for a step, bar M1 and bar M2 for grips, and swing onto the end ledge. A fall during the crossing keeps the climb clear.',
+    start: 'Enter Layer 3', replay: 'Restart Layer 3', note: 'Campaign saves are untouched. Stop at the fixed end ledge for S4C review.' },
+  'layer-3-swings': { kicker: 'Unfinished Sketch · S4B', title: 'Moving<br><em>swings.</em>', intro: 'Glue below. Two sliding bars. Two nails, anywhere on wood.',
+    description: 'No marked rings here: click anywhere along a wooden strip or bar to drive a nail, never into air. A nail in strip F grows a step. A nail in a bar is a grip the bar carries. Nail F and stand on it, nail M1, jump close and press E. While swinging, Q frees F so you can nail M2. Release, grip M2, then swing onto the end ledge. Where you nail decides what you can reach.',
+    start: 'Enter the swing crossing', replay: 'Restart swing crossing', note: 'Campaign saves are untouched. Stop at the fixed S4B end ledge for review.' },
+  'layer-3-walls': { kicker: 'Unfinished Sketch · S4A', title: 'Criss-cross<br><em>walls.</em>', intro: 'Six moving outlines. A third nail on the way. Kick from wall to wall.',
+    description: 'Pin A and B, pick up the third nail as you run right, and jump onto A. Space kicks you across to the opposite wall. A catch holds you for a moment, then you slide fast, so keep kicking. Keep the board ahead pinned: Q frees the oldest nail and you click the next board up. From F, kick right over E onto the ledge. Outlines cannot hold you.',
+    start: 'Enter the wall climb', replay: 'Restart wall climb', note: 'Campaign saves are untouched. Stop at the fixed S4A endpoint for review.' },
+  'layers-1-2': { kicker: 'Unfinished Sketch · S3', title: 'One picture.<br><em>Two lifts.</em>', intro: 'Four pendulums. Three boards and two axes. Two nails to reuse.',
+    description: 'Climb Layer 1 and step onto its lift. Cross Layer 2 to the left, walk to the far end and ride the second lift to safe Layer 3 ground. Falling retries your current layer.',
+    start: 'Continue the picture', replay: 'Restart Layers 1 &amp; 2', note: 'Campaign saves are untouched. Stop on safe Layer 3 ground for review.' },
+  'layer-2': { kicker: 'Unfinished Sketch · S3 Layer 2', title: 'Boards &amp;<br><em>axes.</em>', intro: 'Three moving boards. Two nails. Axes that keep turning.',
+    description: 'Moving outlines cannot hold you. Pin A and B, then recall A with Q to ink C. Narrow landings and fast red blades demand timed double jumps. Reach fixed ground, then walk left to the lift and step on to ride to Layer 3.',
+    start: 'Enter Layer 2', replay: 'Restart Layer 2', note: 'Campaign saves are untouched. This study ends on safe Layer 3 ground.' },
+  'layer-1': { kicker: 'Unfinished Sketch · Slice 2', title: 'Four<br><em>pendulums.</em>', intro: 'One unfinished picture. Two nails. Three layers to climb.',
+    description: 'Start at the bottom left. Pin a pendulum, land on it, pin the next, then press Q so the oldest nail frees one for the third. Each target is only in reach from the platform you just reached, so the reuse cannot be skipped. The lift at the right end of the exit ground carries you up to a safe Layer 2 landing.',
+    start: 'Enter Layer 1', replay: 'Restart the route', note: 'Isolated development route · Campaign saves are untouched.<br>Layer 2’s challenge, the second lift and Layer 3 are scenery only in this study.' },
+  mechanics: { kicker: 'Unfinished Sketch · Slice 1', title: 'Unfinished<br><em>Sketch.</em>', intro: 'Two nails. One picture still deciding where its pieces go.',
+    description: 'Six independent bays prove the FIFO nail ledger, frozen boards, active axes, pinned-wall slides, foothold nail heads and direct nail swinging, with no rope anywhere.',
+    start: 'Enter the playground', replay: 'Restart adventure', note: 'Isolated development study · Campaign saves are untouched.' },
 };

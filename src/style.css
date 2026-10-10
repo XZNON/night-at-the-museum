@@ -14,48 +14,28 @@ button:disabled { cursor: wait; opacity: .5; }
 .hud button { pointer-events: auto; }
 .dev-header { padding: 28px 34px; display: flex; justify-content: space-between; align-items: flex-start; background: linear-gradient(#1c141ab0, transparent); text-shadow: 0 2px 8px #160f16; }
 .eyebrow { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: #d1ac78; }
-h1 { font: normal 32px Georgia, serif; margin: 7px 0 3px; }
+h1 { font: 600 30px var(--ui-font); margin: 7px 0 3px; }
 .section-name { font-size: 12px; color: #c6b7a7; }
 .quiet { background: transparent; padding: 12px 9px; color: #cfbd9f; font-size: 12px; }
-kbd { display: inline-block; font: 10px "Segoe UI", sans-serif; min-width: 20px; padding: 3px 5px; margin: 0 2px; border: 1px solid #c6ad7a50; border-radius: 3px; color: #ead6b4; background: #21192260; }
 .route-status { position: absolute; top: 38px; left: 50%; transform: translateX(-50%); color: #d0ba95; font-size: 11px; letter-spacing: .04em; text-align: center; padding: 9px 20px; border: 1px solid #ac8b5740; border-radius: 4px; background: #23182199; }
-.divider { margin: 0 12px; opacity: .5; }
-.route-track { margin-top: 10px; height: 2px; background: #ae95612b; width: 100%; }
-#route-progress { height: 100%; background: #d1ac78; }
 .bottom-hud { position: absolute; bottom: 34px; left: 34px; right: 34px; display: flex; justify-content: space-between; gap: 16px; align-items: center; }
 .controls { display: flex; gap: 18px; font-size: 11px; color: #d0bea2; padding: 8px 12px; background: #201620b3; border-radius: 4px; }
 .checkpoint { font-size: 10px; letter-spacing: .08em; color: #c0ac90; }
 .prompt { position: absolute; left: 50%; bottom: 135px; transform: translateX(-50%); padding: 13px 25px; border: 1px solid #d7b57b; background: #32232bee; color: #ffe6b3; font-size: 14px; border-radius: 4px; }
 .cue { position: absolute; bottom: 92px; left: 50%; transform: translateX(-50%); max-width: 80%; text-align: center; font-size: 12px; color: #ffe1aa; text-shadow: 0 2px 8px #000; }
 .modal { position: absolute; inset: 0; z-index: 3; background: radial-gradient(ellipse at 70% 20%, #68453755, transparent 55%), linear-gradient(105deg, #21151efa, #201720e8); display: flex; justify-content: center; align-items: center; padding: 22px; overflow-y: auto; }
-.menu-card { width: 430px; max-width: 100%; text-align: center; padding: 22px 30px; border-left: 1px solid #b3905740; border-right: 1px solid #b3905740; }
-.menu-mark { color: #ccaa71; font-size: 26px; margin-bottom: 24px; }
-h2 { font: normal clamp(48px, 7vw, 82px)/.94 Georgia, serif; letter-spacing: -.045em; margin: 20px 0; }
-h2 em { color: #d8b279; font-weight: normal; }
-h2.compact { font-size: 56px; }
-.intro { font: 18px/1.6 Georgia, serif; color: #d0c1ad; }
-.menu-description { font-size: 13px; line-height: 1.8; color: #c4b399; margin: 24px 0; }
-.primary, .secondary { width: 100%; padding: 16px 20px; text-align: left; border-radius: 3px; font-size: 13px; margin: 5px 0; }
-.primary { background: #d0ad74; color: #281b21; font-weight: 600; }
-.primary span { float: right; }
-.secondary { border: 1px solid #ae8a574a; background: #36252d; text-align: center; }
-.menu-controls { font-size: 11px; margin: 26px -8px 0; color: #b9a789; }
-.menu-controls span { margin: 0 7px; }
-.small-note { font-size: 10px; line-height: 1.8; color: #95826d; margin: 24px 0 0; }
 .build-tag { position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 8px; letter-spacing: .16em; color: #ad907180; pointer-events: none; }
-.setting { display: block; margin: 15px 0 0; font-size: 12px; color: #c4b399; }
-.setting input { accent-color: #d0ad74; }
-.dev-actions { margin-top: 5px; }
 .diagnostics { position: absolute; top: 145px; left: 34px; max-width: 85%; white-space: pre-wrap; font: 11px/1.7 Consolas, monospace; padding: 14px; background: #111e; color: #87e3c4; pointer-events: none; }
-@media (max-width: 800px) { .hud-top { padding: 16px; } .route-status { top: 112px; width: max-content; max-width: 90%; } .bottom-hud { left: 16px; right: 16px; bottom: 28px; flex-wrap: wrap; } .controls { gap: 9px; padding: 6px; } .checkpoint { width: 100%; } h1 { font-size: 27px; } .menu-card { padding: 10px 22px; } .menu-mark { margin-bottom: 12px; } }
-@media (max-height: 680px) { .menu-card { padding: 5px 28px; } h2 { font-size: 54px; margin: 12px 0; } h2.compact { font-size: 44px; } .intro { font-size: 15px; margin: 12px 0; } .menu-description { margin: 12px 0; } .menu-controls { margin-top: 14px; } .small-note { margin-top: 12px; } .menu-mark { margin-bottom: 10px; } .primary, .secondary { padding: 12px 16px; } }
+@media (max-width: 800px) { .hud-top { padding: 16px; } .route-status { top: 112px; width: max-content; max-width: 90%; } .bottom-hud { left: 16px; right: 16px; bottom: 28px; flex-wrap: wrap; } .controls { gap: 9px; padding: 6px; } .checkpoint { width: 100%; } h1 { font-size: 27px; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; } }
 .reticle { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #ead6b499; font: 20px monospace; }
 .inventory { font-size: 12px; padding: 10px 16px; background: #211922cc; border: 1px solid #ad907150; }
-.save-notice { position: absolute; top: 115px; left: 50%; transform: translateX(-50%); max-width: 80%; padding: 10px 16px; background: #3d292fee; border: 1px solid #ad9071; font-size: 12px; z-index: 5; }
+.save-notice { position: absolute; top: 96px; left: 50%; z-index: 5; max-width: min(640px, 86%); padding: 10px 18px; border-radius: 12px; background: #1a1016e6;
+  color: var(--cream); font-size: 15px; font-weight: 500; line-height: 1.4; text-align: center; box-shadow: 0 6px 22px #000a; pointer-events: none;
+  opacity: 0; transform: translate(-50%, -6px); transition: opacity .6s, transform .6s; }
+.save-notice::before { content: ""; display: inline-block; width: 8px; height: 8px; margin: 0 11px 2px 0; background: var(--gold); transform: rotate(45deg); box-shadow: 0 0 8px #f2c46d; }
+.save-notice.show { opacity: 1; transform: translate(-50%, 0); }
 .inspection-modal { background: #1e151bea; }
-.inspection-modal .menu-card { width: min(800px, 95vw); padding: 12px 22px; }
-.inspection-modal h2 { font-size: clamp(26px, 4vw, 38px); margin: 12px 0 18px; }
 .painting-study { position: relative; width: min(100%, calc(50vh * 1.7778)); margin: auto; border: 8px solid #967243; background: #363946; }
 .painting-study img { width: 100%; display: block; }
 .restoration-target { position: absolute; border: 2px dashed #eadab9; background: #21192255; color: #f4e5cb; font-size: 11px; padding: 0; border-radius: 45%; }
@@ -72,11 +52,7 @@ h2.compact { font-size: 56px; }
   background: radial-gradient(circle, #fff6d8e6 0, #ffd98a80 28%, #ffd98a00 70%); animation: sun-glow 1.6s ease-out; }
 @keyframes sun-glow { 0% { opacity: 0; transform: translate(-50%, -50%) scale(.2); } 35% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); } }
 .ending-art { display: block; width: 100%; max-height: 26vh; object-fit: cover; border: 6px solid #967243; margin: 6px 0 0; }
-.ending-close { font: italic 15px/1.6 Georgia, serif; color: #d8b279; margin: 0 0 14px; }
-.ending-modal .menu-mark { margin-bottom: 4px; }
 .ending-modal h2 { margin: 8px 0 14px; }
-.ending-modal .menu-description { margin: 14px 0 10px; }
-.ending-modal .small-note { margin-top: 10px; }
 .placement-message { min-height: 35px; font-size: 12px; line-height: 1.6; color: #decdae; margin: 10px 0; }
 .restoring { animation: restore-colour 1.2s ease-out; }
 @keyframes restore-colour { from { filter: saturate(0); } to { filter: saturate(1); } }
@@ -93,7 +69,9 @@ h2.compact { font-size: 56px; }
 .sketch-status [id="sketch-layer"] { color: #ffd7a1; }
 #sketch-hud[data-study="layer-3-walls"] .sketch-status, #sketch-hud[data-study="layer-3-swings"] .sketch-status, #sketch-hud[data-study="layer-3"] .sketch-status, #sketch-hud[data-study="layers-1-3"][data-layer="3"] .sketch-status, #sketch-hud[data-study="adventure"][data-layer="3"] .sketch-status { width: 240px; max-width: 240px; right: 20px; justify-content: flex-start; }
 #sketch-hud[data-study="layer-3-walls"] .section-hint, #sketch-hud[data-study="layer-3-swings"] .section-hint, #sketch-hud[data-study="layer-3"] .section-hint, #sketch-hud[data-study="layers-1-3"][data-layer="3"] .section-hint, #sketch-hud[data-study="adventure"][data-layer="3"] .section-hint { top: 170px; left: 24px; max-width: 225px; font-size: 11px; }
-.sketch-endpoint { position: absolute; bottom: 176px; left: 50%; transform: translateX(-50%); max-width: 74%; text-align: center; font-size: 12px; color: #123022; padding: 9px 18px; border-radius: 4px; background: #8ef0a8e6; border: 1px solid #4fbf78; }
+.sketch-endpoint { position: absolute; bottom: 176px; left: 50%; transform: translateX(-50%); max-width: 74%; text-align: center; font-size: 17px; font-weight: 600;
+  color: var(--cream); text-shadow: 0 2px 4px #000, 0 0 16px #000c; }
+.sketch-endpoint::before { content: ""; display: inline-block; width: 9px; height: 9px; margin: 0 12px 2px 0; background: var(--gold); transform: rotate(45deg); box-shadow: 0 0 10px #f2c46d; }
 #sketch-hud .section-hint { max-width: 470px; line-height: 1.5; }
 #sketch-hud .section-hint { top: 132px; left: 34px; max-width: 620px; color: #fdf0d2; }
 #sketch-hud:not([data-study="mechanics"]) .section-hint { color: #2b2440; background: #f6efdcee; padding: 8px 12px; border-left: 3px solid #6fd0ff; border-radius: 4px; }
@@ -177,7 +155,7 @@ kbd { display: inline-grid; place-items: center; min-width: 24px; height: 24px; 
 .inventory .inv-tip { right: 0; transform: translateY(4px); }
 .inventory .inv-item:hover .inv-tip, .inventory .inv-item:focus-visible .inv-tip, .inventory.fresh .inv-tip { transform: none; }
 /* v1 polish: no status readouts on screen. They stay in the DOM for screen readers. */
-.route-status, .sketch-status, .checkpoint, #sketch-hud .checkpoint, .prompt, #sketch-hud[data-campaign] .sketch-endpoint {
+.dev-header, .route-status, .sketch-status, .checkpoint, #sketch-hud .checkpoint, .prompt, #sketch-hud[data-campaign] .sketch-endpoint {
   position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden !important; clip-path: inset(50%) !important;
   white-space: nowrap !important; padding: 0 !important; margin: -1px !important; border: 0 !important; }
 /* Hints are short captions on arrival and on each change; cues are brief lines above the controls. */
@@ -304,3 +282,13 @@ kbd { display: inline-grid; place-items: center; min-width: 24px; height: 24px; 
   top: 92px; left: 26px; transform: translateX(-6px); width: auto; max-width: 240px; text-align: left; font-size: 15px; }
 #app #sketch-hud[data-study="layer-3-walls"] .section-hint.show, #app #sketch-hud[data-study="layer-3-swings"] .section-hint.show, #app #sketch-hud[data-study="layer-3"] .section-hint.show,
 #app #sketch-hud[data-study="layers-1-3"][data-layer="3"] .section-hint.show, #app #sketch-hud[data-study="adventure"][data-layer="3"] .section-hint.show { transform: none; }
+/* Dev studies: their menus and the Supper study's finish in the title screen's look, over the study's own painting. */
+.study-title { font-size: clamp(48px, 6.4vw, 92px); margin: 12px 0 20px; }
+.study-title em { font-style: normal; color: var(--gold); }
+.study-intro { max-width: 560px; margin: 0 0 10px; font-size: 19px; font-weight: 500; line-height: 1.45; color: var(--cream); text-shadow: 0 2px 6px #000c; }
+.study-description { max-width: 560px; margin: 0 0 24px; font-size: 14px; line-height: 1.55; color: #fff1d8b8; text-shadow: 0 2px 6px #000c; }
+.study-keys { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 24px 0 0; font-size: 14px; font-weight: 500;
+  color: var(--cream); text-shadow: 0 1px 3px #000, 0 0 12px #000a; }
+.study-keys > span { display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+.study-note { position: relative; z-index: 1; margin-top: 14px; line-height: 1.5; }
+@media (max-height: 640px) { .study-description { display: none; } .study-title { margin-bottom: 12px; } .study-keys { margin-top: 14px; } }

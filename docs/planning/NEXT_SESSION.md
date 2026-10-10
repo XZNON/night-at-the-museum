@@ -1,5 +1,7 @@
 # Next session — the user's Royal Supper play-through, then release prep
 
+**Latest, 2026-10-09: UI leftovers updated; stop for the user's look.** On the user's request every screen was audited for the old look. Updated: museum plaques (brass, Fredoka), the save/sound notice (fading line), the Sketch wall letters (Fredoka), and in the dev studies the menus, the Supper study finish and the Georgia header (hidden). Unit 244/244 and the release-relevant browser specs pass on the first run. See the [evidence](../validation/ui-leftovers/README.md). Uncommitted; commit/push only on the user's request. When running `campaign.spec.ts`, pass the path (`tests/browser/campaign.spec.ts`): the bare name also matches `sketch-campaign.spec.ts`, which writes into the accepted S5B folder without `EVIDENCE_DIR`.
+
 **Latest, 2026-10-09: Royal Supper review fixes implemented, one change at a time with screenshots; stop for the user's play-through.** All of the user's review items are fixed:
 1. No code-drawn landing lines, bars or boxes: art tops sit on the collider tops (measured `surface` shares; a straightened fork bridge); the ember timer is the wick's growing glow plus a flicker before relight; HIDDEN is a casserole halo plus a shaded player.
 2. The casseroles stand on the floor (in front of the floor art, base on the line, contact shadow).

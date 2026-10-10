@@ -10,6 +10,7 @@ import type {
 import { LIFT_WALL_HEIGHT, LIFT_WALL_THICKNESS } from '../levels/unfinished-sketch';
 import type { ArtId } from '../assets/manifest';
 import { sketchDecor, sketchSkin, sketchSupports, sketchToolbox as TB, sketchTorch, sketchSkinPalette as P, sketchSkinSize as S } from '../assets/sketch-skins';
+import { CANVAS_FONT } from '../ui/font';
 
 // Fully cartoon presentation: flat colour areas, simple cel-style shading and
 // bold outlines. Mechanisms, ground, glue, lifts and nails wear skins cut from
@@ -655,7 +656,7 @@ export class UnfinishedSketchScene implements GameScene {
   private letter(text: string, parent: THREE.Object3D): THREE.Sprite {
     const label = document.createElement('canvas'); label.width = 128; label.height = 64;
     const ctx = label.getContext('2d')!;
-    ctx.fillStyle = '#2b2440'; ctx.font = 'bold 46px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillStyle = '#2b2440'; ctx.font = `700 48px ${CANVAS_FONT}`; ctx.textAlign = 'center';
     ctx.fillText(text, 64, 50);
     const texture = new THREE.CanvasTexture(label); this.resources.add(texture);
     const material = new THREE.SpriteMaterial({ map: texture, depthTest: false }); this.resources.add(material);
